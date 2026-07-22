@@ -1,0 +1,113 @@
+# Read-only handler symbols whose coverage MUST be 100% after a successful
+# `make test-integration` run. Symbols are matched against the third column of
+# `go tool cover -func=<profile>` output (just the function name, not the
+# package or file path).
+#
+# STATUS: aspirational / not currently enforced. integration_registry_test.go
+# drives the CLI through its process entrypoint (run() in main.go), so
+# coverage lands on the generated command tree's anonymous RunE closures, not
+# on named `run*` functions like the ones below. Wiring this up would require
+# cmd/gencli to emit each RunE body as a named, directly-testable function.
+# `make coverage-check` will report every symbol below as "missing" until
+# that generator change lands; treat coverage-report/-html as the source of
+# truth for now.
+#
+# When you add a new read-only entry to integration_registry_test.go, append
+# its HandlerSym here. When you promote a Skip entry to live coverage, append
+# its HandlerSym here too. Lines beginning with `#` and blank lines are
+# ignored.
+#
+# DELIBERATELY EXCLUDED from the gate (kept here as commented references so
+# future maintainers can see what is intentionally not yet enforced):
+#
+# TODO(phase 2): table-writer symbols in internal/output/table.go — the
+# current harness only exercises --output=json. Re-enable by promoting the
+# replay-based table tests proposed in the plan and adding the writers'
+# symbol names here.
+#
+# TODO(phase 2): remaining policy.go handlers beyond the two top-level lists
+#                already enforced below (manager, aggregate, incident, etc.).
+# TODO(phase 2): graphql query / table-schema, budget report, credential,
+#                bill-connect handlers (all currently marked Skip in registry).
+# TODO(phase 2): saas/usage-group cost handlers (no list endpoint to source
+#                --cost-id from), saas/metrics/query, saas/data/*.
+
+runBudgetList
+runBudgetGet
+runBudgetCloudVendorAccountList
+runContractList
+runContractGet
+runDimensionList
+runDimensionGet
+runTagDimensionList
+runTagDimensionGet
+runOrganizationGet
+runLoginPolicyGet
+runIPAccessControlList
+runUserList
+runUserGet
+runUserOrgList
+runRoleList
+runRoleGet
+runGroupList
+runGroupGet
+runGroupMembershipList
+runMSPCustomerList
+runMSPCustomerGet
+runServiceAccountList
+runServiceAccountGet
+runServiceAccountClientList
+runServiceAccountClientGet
+runCapabilityList
+runCapabilityGet
+runAccessRuleList
+runAPIEventList
+runEventList
+runCustomizationTypeList
+runCustomizationTypeGet
+runCustomizationList
+runCustomizationGet
+runDataInventoryConnectorList
+runDataInventoryConnectorGet
+runDataInventoryConnectorCount
+runDataInventoryConnectorStatus
+runSAML2SingleIdentityProviderGet
+runSAML2IdentityProviderList
+runSAML2IdentityProviderGet
+runSAML2DomainList
+runSAML2DomainGet
+runSAML2SigningKeyList
+runSAML2SigningKeyGet
+runSaaSObjectDefinitionList
+runSaaSObjectDefinitionGet
+runSaaSImportJobList
+runSaaSImportJobGet
+runSaaSCustomerGroupTypeList
+runSaaSCustomerGroupTypeGet
+runSaaSCustomerGroupList
+runSaaSCustomerGroupGet
+runSaaSUsageGroupList
+runSaaSUsageGroupGet
+runSaaSManagedApplicationList
+runSaaSManagedApplicationGet
+runSaaSLicenseList
+runSaaSLicenseGet
+runSaaSDiscoveredAppUsageList
+runSaaSActivityCount
+
+# ---- Promoted: SaaS license sub-resource chain ----
+runSaaSLicenseFeeList
+runSaaSLicenseFeeGet
+runSaaSLicenseNoteList
+runSaaSLicenseNoteGet
+runSaaSLicenseTermList
+runSaaSLicenseTermGet
+runSaaSLicensePurchaseList
+runSaaSLicensePurchaseGet
+runSaaSLicenseAllocationList
+
+# ---- Promoted: SaaS managed-application sub-resources ----
+runSaaSManagedApplicationEventList
+runSaaSManagedApplicationEventGet
+runSaaSManagedApplicationUserList
+runSaaSManagedApplicationUserGet

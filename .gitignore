@@ -1,0 +1,9 @@
+# Compiled binaries / build artifacts (built via `make build` or `go build`).
+/flexera-cli
+/gencli
+/gendocs
+/regencli
+
+# Coverage artifacts (produced by `make test-integration` / `make coverage-html`).
+/coverage.integration.out
+/coverage.html
