@@ -49,6 +49,8 @@ func newOnboardingCreateCmd() *cobra.Command {
 		fIncludeBPC          string
 		fIncludeCostAndUsage string
 		fIncludeInventory    string
+		fOnboardingType      string
+		fPartnerTenantID     string
 		fProvider            string
 		fRoleARN             string
 		fSubscriptionID      string
@@ -97,6 +99,12 @@ func newOnboardingCreateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("include-inventory") {
 				fields["IncludeInventory"] = fIncludeInventory
+			}
+			if cmd.Flags().Changed("onboarding-type") {
+				fields["OnboardingType"] = fOnboardingType
+			}
+			if cmd.Flags().Changed("partner-tenant-id") {
+				fields["PartnerTenantId"] = fPartnerTenantID
 			}
 			if cmd.Flags().Changed("provider") {
 				fields["Provider"] = fProvider
@@ -155,6 +163,8 @@ func newOnboardingCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&fOnboardingType, "onboarding-type", "", "OnboardingType (body)")
+	c.Flags().StringVar(&fPartnerTenantID, "partner-tenant-id", "", "PartnerTenantId (body)")
 	c.Flags().StringVar(&fProvider, "provider", "", "Provider (body)")
 	c.Flags().StringVar(&fRoleARN, "role-arn", "", "RoleARN (body)")
 	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")
@@ -224,13 +234,21 @@ func newOnboardingReplaceCmd() *cobra.Command {
 		connectorID          string
 		provider             string
 		bodyRaw              string
+		fBillingAccountID    string
+		fClientID            string
+		fClientSecret        string
 		fConnectorName       string
 		fExcludeRegion       []string
+		fExternalID          string
 		fIncludeBPC          string
 		fIncludeCostAndUsage string
 		fIncludeInventory    string
+		fOnboardingType      string
+		fPartnerTenantID     string
+		fRoleARN             string
 		fSubscriptionID      string
 		fTenantID            string
+		fTokenURL            string
 		dryRun               bool
 		yes                  bool
 	)
@@ -255,11 +273,23 @@ func newOnboardingReplaceCmd() *cobra.Command {
 				params.Provider = provider
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("billing-account-id") {
+				fields["BillingAccountId"] = fBillingAccountID
+			}
+			if cmd.Flags().Changed("client-id") {
+				fields["ClientId"] = fClientID
+			}
+			if cmd.Flags().Changed("client-secret") {
+				fields["ClientSecret"] = fClientSecret
+			}
 			if cmd.Flags().Changed("connector-name") {
 				fields["ConnectorName"] = fConnectorName
 			}
 			if cmd.Flags().Changed("exclude-region") {
 				fields["ExcludeRegion"] = fExcludeRegion
+			}
+			if cmd.Flags().Changed("external-id") {
+				fields["ExternalId"] = fExternalID
 			}
 			if cmd.Flags().Changed("include-bpc") {
 				fields["IncludeBPC"] = fIncludeBPC
@@ -270,11 +300,23 @@ func newOnboardingReplaceCmd() *cobra.Command {
 			if cmd.Flags().Changed("include-inventory") {
 				fields["IncludeInventory"] = fIncludeInventory
 			}
+			if cmd.Flags().Changed("onboarding-type") {
+				fields["OnboardingType"] = fOnboardingType
+			}
+			if cmd.Flags().Changed("partner-tenant-id") {
+				fields["PartnerTenantId"] = fPartnerTenantID
+			}
+			if cmd.Flags().Changed("role-arn") {
+				fields["RoleARN"] = fRoleARN
+			}
 			if cmd.Flags().Changed("subscription-id") {
 				fields["SubscriptionId"] = fSubscriptionID
 			}
 			if cmd.Flags().Changed("tenant-id") {
 				fields["TenantId"] = fTenantID
+			}
+			if cmd.Flags().Changed("token-url") {
+				fields["TokenUrl"] = fTokenURL
 			}
 			var typed any
 			if len(fields) > 0 {
@@ -311,13 +353,21 @@ func newOnboardingReplaceCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
 	c.Flags().StringVar(&provider, "provider", "", "provider (query)")
+	c.Flags().StringVar(&fBillingAccountID, "billing-account-id", "", "BillingAccountId (body)")
+	c.Flags().StringVar(&fClientID, "client-id", "", "ClientId (body)")
+	c.Flags().StringVar(&fClientSecret, "client-secret", "", "ClientSecret (body)")
 	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
 	c.Flags().StringSliceVar(&fExcludeRegion, "exclude-region", nil, "ExcludeRegion (body)")
+	c.Flags().StringVar(&fExternalID, "external-id", "", "ExternalId (body)")
 	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&fOnboardingType, "onboarding-type", "", "OnboardingType (body)")
+	c.Flags().StringVar(&fPartnerTenantID, "partner-tenant-id", "", "PartnerTenantId (body)")
+	c.Flags().StringVar(&fRoleARN, "role-arn", "", "RoleARN (body)")
 	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")
 	c.Flags().StringVar(&fTenantID, "tenant-id", "", "TenantId (body)")
+	c.Flags().StringVar(&fTokenURL, "token-url", "", "TokenUrl (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

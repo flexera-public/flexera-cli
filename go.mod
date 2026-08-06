@@ -28,3 +28,5 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 )
+
+replace github.com/flexera-public/unified-go-client => /Users/bk/src/github.com/flexera/unified-go-client

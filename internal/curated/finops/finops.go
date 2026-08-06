@@ -61,14 +61,14 @@ func NewCmd() *cobra.Command {
 	c.AddCommand(
 		billingCenter, cost, recommendation, billMonth, adjustment,
 		newReportCmd("anomaly-report", "Run an anomaly report", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-			resp, err := clients.BillAnalysis.AnomaliesReportWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
+			resp, err := clients.BillAnalysis.AnomaliesReportWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return nil, nil, err
 			}
 			return resp.HTTPResponse, resp.Body, nil
 		}),
 		newReportCmd("forecast-report", "Run a forecast report", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-			resp, err := clients.BillAnalysis.ForecastsReportWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
+			resp, err := clients.BillAnalysis.ForecastsReportWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return nil, nil, err
 			}
@@ -215,7 +215,7 @@ func newCostGetCmd() *cobra.Command {
 
 func newCostAggregatedCmd() *cobra.Command {
 	return newPOSTBodyCmd("aggregated", "Raw POST /costs/aggregated", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsAggregatedWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
+		resp, err := clients.BillAnalysis.CostsAggregatedWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -225,7 +225,7 @@ func newCostAggregatedCmd() *cobra.Command {
 
 func newCostSelectCmd() *cobra.Command {
 	return newPOSTBodyCmd("select", "Raw POST /costs/select", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsSelectWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
+		resp, err := clients.BillAnalysis.CostsSelectWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -235,7 +235,7 @@ func newCostSelectCmd() *cobra.Command {
 
 func newCostExportSelectCmd() *cobra.Command {
 	return newPOSTBodyCmd("export-select", "Raw POST /costs/select/export", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsExportSelectWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
+		resp, err := clients.BillAnalysis.CostsExportSelectWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -258,7 +258,7 @@ func newCostDimensionsCmd() *cobra.Command {
 				v := ba.CostsDimensionsParamsDataset(d)
 				params.Dataset = &v
 			}
-			resp, err := clients.BillAnalysis.CostsDimensionsWithResponse(cmd.Context(), int64(deps.Config.OrgID), params)
+			resp, err := clients.BillAnalysis.CostsDimensionsWithResponse(cmd.Context(), deps.Config.OrgID, params)
 			if err != nil {
 				return err
 			}
@@ -284,7 +284,7 @@ func newCostMetricsCmd() *cobra.Command {
 				v := ba.CostsMetricsParamsDataset(d)
 				params.Dataset = &v
 			}
-			resp, err := clients.BillAnalysis.CostsMetricsWithResponse(cmd.Context(), int64(deps.Config.OrgID), params)
+			resp, err := clients.BillAnalysis.CostsMetricsWithResponse(cmd.Context(), deps.Config.OrgID, params)
 			if err != nil {
 				return err
 			}
@@ -308,7 +308,7 @@ func newCostExportStatusCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillAnalysis.CostsExportSelectStatusWithResponse(cmd.Context(), int64(deps.Config.OrgID), exportID)
+			resp, err := clients.BillAnalysis.CostsExportSelectStatusWithResponse(cmd.Context(), deps.Config.OrgID, exportID, nil)
 			if err != nil {
 				return err
 			}
@@ -383,7 +383,7 @@ func newBillMonthListCmd() *cobra.Command {
 				params.OrderBy = &v
 			}
 			// Raw client so empty-date fields don't trip the strict decoder.
-			httpResp, err := clients.BillAnalysis.BillMonthsSearch(cmd.Context(), int64(deps.Config.OrgID), params)
+			httpResp, err := clients.BillAnalysis.BillMonthsSearch(cmd.Context(), deps.Config.OrgID, params)
 			if err != nil {
 				return err
 			}
@@ -412,7 +412,7 @@ func newAdjustmentShowCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			httpResp, err := clients.BillAnalysis.AdjustmentDefinitionShow(cmd.Context(), int64(deps.Config.OrgID))
+			httpResp, err := clients.BillAnalysis.AdjustmentDefinitionShow(cmd.Context(), deps.Config.OrgID, nil)
 			if err != nil {
 				return err
 			}
@@ -454,7 +454,7 @@ func newAdjustmentUpdateCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillAnalysis.AdjustmentDefinitionUpdateWithBodyWithResponse(cmd.Context(), int64(deps.Config.OrgID), "application/json", strings.NewReader(string(body)))
+			resp, err := clients.BillAnalysis.AdjustmentDefinitionUpdateWithBodyWithResponse(cmd.Context(), deps.Config.OrgID, nil, "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return err
 			}

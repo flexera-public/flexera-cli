@@ -31,8 +31,14 @@ func NewCmd() *cobra.Command {
 	c.AddCommand(
 		newRegulatoryComplianceAssetStatisticsCmd(),
 		newRegulatoryComplianceFilterCmd(),
+		newRegulatoryComplianceConformitySummaryCmd(),
+		newRegulatoryComplianceFailedAssetCmd(),
 		newRegulatoryComplianceLifecycleForecastCmd(),
 		newRegulatoryComplianceLifecycleTrendCmd(),
+		newRegulatoryComplianceListCmd(),
+		newRegulatoryComplianceOverviewCmd(),
+		newRegulatoryComplianceSuppressCmd(),
+		newRegulatoryComplianceYearWiseAssetListCmd(),
 	)
 	return c
 }
@@ -167,6 +173,153 @@ func newRegulatoryComplianceFilterCmd() *cobra.Command {
 	return c
 }
 
+// newRegulatoryComplianceConformitySummaryCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/conformity-summary (operationId: Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post)
+func newRegulatoryComplianceConformitySummaryCmd() *cobra.Command {
+	var (
+		bodyRaw     string
+		fFrameworks []string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:   "conformity-summary",
+		Short: "Regulatory Compliance Conformity Summary",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("frameworks") {
+				fields["frameworks"] = fFrameworks
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskGetConformitySummaryRiskV1OrgsOrgIdRegulatoryComplianceConformitySummaryPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/conformity-summary"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskGetConformitySummaryRiskV1OrgsOrgIdRegulatoryComplianceConformitySummaryPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringSliceVar(&fFrameworks, "frameworks", nil, "frameworks (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newRegulatoryComplianceFailedAssetCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/failed-asset (operationId: Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post)
+func newRegulatoryComplianceFailedAssetCmd() *cobra.Command {
+	var (
+		skipToken       string
+		bodyRaw         string
+		fPageSize       int
+		fRuleName       string
+		fShowSuppressed string
+		dryRun          bool
+		yes             bool
+	)
+	c := &cobra.Command{
+		Use:   "failed-asset",
+		Short: "Regulatory Compliance Failed Assets",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			params := flexera.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostParams{}
+			if cmd.Flags().Changed("skip-token") {
+				v := skipToken
+				params.SkipToken = &v
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("page-size") {
+				fields["pageSize"] = fPageSize
+			}
+			if cmd.Flags().Changed("rule-name") {
+				fields["ruleName"] = fRuleName
+			}
+			if cmd.Flags().Changed("show-suppressed") {
+				fields["showSuppressed"] = fShowSuppressed
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/failed-asset"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params, body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&skipToken, "skip-token", "", "skipToken (query)")
+	c.Flags().IntVar(&fPageSize, "page-size", 0, "pageSize (body)")
+	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
+	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
 // newRegulatoryComplianceLifecycleForecastCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-forecast (operationId: Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post)
 func newRegulatoryComplianceLifecycleForecastCmd() *cobra.Command {
 	var (
@@ -286,6 +439,291 @@ func newRegulatoryComplianceLifecycleTrendCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newRegulatoryComplianceListCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/list (operationId: Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post)
+func newRegulatoryComplianceListCmd() *cobra.Command {
+	var (
+		bodyRaw             string
+		fComplianceStandard string
+		fControlID          string
+		fDate               string
+		fFeatureType        string
+		dryRun              bool
+		yes                 bool
+	)
+	c := &cobra.Command{
+		Use:   "list",
+		Short: "Regulatory Compliance BPC Rule List",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("compliance-standard") {
+				fields["complianceStandard"] = fComplianceStandard
+			}
+			if cmd.Flags().Changed("control-id") {
+				fields["controlId"] = fControlID
+			}
+			if cmd.Flags().Changed("date") {
+				fields["date"] = fDate
+			}
+			if cmd.Flags().Changed("feature-type") {
+				fields["featureType"] = fFeatureType
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskGetBpcRuleListRiskV1OrgsOrgIdRegulatoryComplianceListPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/list"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskGetBpcRuleListRiskV1OrgsOrgIdRegulatoryComplianceListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fComplianceStandard, "compliance-standard", "", "complianceStandard (body)")
+	c.Flags().StringVar(&fControlID, "control-id", "", "controlId (body)")
+	c.Flags().StringVar(&fDate, "date", "", "date (body)")
+	c.Flags().StringVar(&fFeatureType, "feature-type", "", "featureType (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newRegulatoryComplianceOverviewCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview (operationId: Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post)
+func newRegulatoryComplianceOverviewCmd() *cobra.Command {
+	var (
+		bodyRaw    string
+		fProviders []string
+		dryRun     bool
+		yes        bool
+	)
+	c := &cobra.Command{
+		Use:   "overview",
+		Short: "On-Prem BPC Misconfiguration Overview",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("providers") {
+				fields["providers"] = fProviders
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskGetMisconfigOverviewRiskV1OrgsOrgIdRegulatoryComplianceMisconfigurationOverviewPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskGetMisconfigOverviewRiskV1OrgsOrgIdRegulatoryComplianceMisconfigurationOverviewPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringSliceVar(&fProviders, "providers", nil, "providers (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newRegulatoryComplianceSuppressCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress (operationId: Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post)
+func newRegulatoryComplianceSuppressCmd() *cobra.Command {
+	var (
+		bodyRaw   string
+		fUserName string
+		dryRun    bool
+		yes       bool
+	)
+	c := &cobra.Command{
+		Use:   "suppress",
+		Short: "Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("user-name") {
+				fields["userName"] = fUserName
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskSuppressRegulatoryComplianceRuleOrAssetRiskV1OrgsOrgIdRegulatoryComplianceRuleSuppressPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskSuppressRegulatoryComplianceRuleOrAssetRiskV1OrgsOrgIdRegulatoryComplianceRuleSuppressPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fUserName, "user-name", "", "userName (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newRegulatoryComplianceYearWiseAssetListCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/year-wise-asset-list (operationId: Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post)
+func newRegulatoryComplianceYearWiseAssetListCmd() *cobra.Command {
+	var (
+		bodyRaw  string
+		fFields  []string
+		fFilter  string
+		fOrderBy string
+		dryRun   bool
+		yes      bool
+	)
+	c := &cobra.Command{
+		Use:   "year-wise-asset-list",
+		Short: "Regulatory Compliance Year-Wise Asset List",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("fields") {
+				fields["fields"] = fFields
+			}
+			if cmd.Flags().Changed("filter") {
+				fields["filter"] = fFilter
+			}
+			if cmd.Flags().Changed("order-by") {
+				fields["orderBy"] = fOrderBy
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.RiskGetYearWiseAssetListRiskV1OrgsOrgIdRegulatoryComplianceYearWiseAssetListPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/year-wise-asset-list"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.RiskGetYearWiseAssetListRiskV1OrgsOrgIdRegulatoryComplianceYearWiseAssetListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringSliceVar(&fFields, "fields", nil, "fields (body)")
+	c.Flags().StringVar(&fFilter, "filter", "", "filter (body)")
+	c.Flags().StringVar(&fOrderBy, "order-by", "", "orderBy (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

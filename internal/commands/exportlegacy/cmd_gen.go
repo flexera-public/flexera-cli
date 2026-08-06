@@ -35,7 +35,7 @@ func NewCmd() *cobra.Command {
 	return c
 }
 
-// newExportLegacyGetCmd — GET /vis/v2/orgs/{orgId}/exports/files/{id} (operationId: Vis_ExportDownload)
+// newExportLegacyGetCmd — GET /vis/v2/orgs/{orgId}/exports/files/{id} (operationId: Vis_Export_2)
 func newExportLegacyGetCmd() *cobra.Command {
 	var (
 		id string
@@ -56,7 +56,7 @@ func newExportLegacyGetCmd() *cobra.Command {
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			resp, err := client.VisExportDownloadWithResponse(cmd.Context(), deps.Config.OrgID, id)
+			resp, err := client.VisExport2WithResponse(cmd.Context(), deps.Config.OrgID, id)
 			if err != nil {
 				return err
 			}
@@ -71,7 +71,7 @@ func newExportLegacyGetCmd() *cobra.Command {
 	return c
 }
 
-// newExportLegacyListCmd — GET /vis/v2/orgs/{orgId}/exports (operationId: Vis_ExportIndex)
+// newExportLegacyListCmd — GET /vis/v2/orgs/{orgId}/exports (operationId: Vis_Export)
 func newExportLegacyListCmd() *cobra.Command {
 	var (
 		filter     string
@@ -91,7 +91,7 @@ func newExportLegacyListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			params := flexera.VisExportIndexParams{}
+			params := flexera.VisExportParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
@@ -104,7 +104,7 @@ func newExportLegacyListCmd() *cobra.Command {
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
-					resp, callErr := client.VisExportIndexWithResponse(ctx, deps.Config.OrgID, &p)
+					resp, callErr := client.VisExportWithResponse(ctx, deps.Config.OrgID, &p)
 					if callErr != nil {
 						return nil, callErr
 					}

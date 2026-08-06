@@ -55,7 +55,8 @@ func newServiceAccountClientClientsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := client.IamServiceAccountClientCreateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID)
+			params := flexera.IamServiceAccountClientCreateParams{}
+			resp, err := client.IamServiceAccountClientCreateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, &params)
 			if err != nil {
 				return err
 			}

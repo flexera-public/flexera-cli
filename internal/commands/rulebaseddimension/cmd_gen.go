@@ -35,6 +35,7 @@ func NewCmd() *cobra.Command {
 		newRuleBasedDimensionGetCmd(),
 		newRuleBasedDimensionRulesCmd(),
 		newRuleBasedDimensionListCmd(),
+		newRuleBasedDimensionSummaryCmd(),
 		newRuleBasedDimensionReplaceCmd(),
 		newRuleBasedDimensionUpdateCmd(),
 	)
@@ -299,6 +300,41 @@ func newRuleBasedDimensionListCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	return c
+}
+
+// newRuleBasedDimensionSummaryCmd — GET /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/summary (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_summary_show)
+func newRuleBasedDimensionSummaryCmd() *cobra.Command {
+	var (
+		id string
+	)
+	c := &cobra.Command{
+		Use:   "summary",
+		Short: "Show a rule-based dimension summary",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
+			}
+			resp, err := client.FinopsCustomizationsRuleBasedDimensionRuleBasedDimensionSummaryShowWithResponse(cmd.Context(), deps.Config.OrgID, id)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	return c
 }
 
