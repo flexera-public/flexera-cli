@@ -30,7 +30,8 @@ func NewCmd() *cobra.Command {
 	}
 	c.AddCommand(
 		newCostsAggregatedCmd(),
-		newCostsSelectCmd(),
+		newCostsCreateExportCmd(),
+		newCostsCreateSelectCmd(),
 		newCostsGetCmd(),
 		newCostsDimensionsCmd(),
 		newCostsMetricsCmd(),
@@ -38,13 +39,11 @@ func NewCmd() *cobra.Command {
 	return c
 }
 
-// newCostsAggregatedCmd — POST /orgs/{org}/costs/aggregated (operationId: BillAnalysis_costs_aggregated)
+// newCostsAggregatedCmd — POST /bill-analysis/orgs/{orgId}/costs/aggregated (operationId: BillAnalysis_costs_aggregated)
 func newCostsAggregatedCmd() *cobra.Command {
 	var (
-		org               int
 		bodyRaw           string
 		fBillingCenterIDs []string
-		fDataset          string
 		fDimensions       []string
 		fEndAt            string
 		fGranularity      string
@@ -62,6 +61,9 @@ func newCostsAggregatedCmd() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -69,9 +71,6 @@ func newCostsAggregatedCmd() *cobra.Command {
 			fields := map[string]any{}
 			if cmd.Flags().Changed("billing-center-ids") {
 				fields["billing_center_ids"] = fBillingCenterIDs
-			}
-			if cmd.Flags().Changed("dataset") {
-				fields["dataset"] = fDataset
 			}
 			if cmd.Flags().Changed("dimensions") {
 				fields["dimensions"] = fDimensions
@@ -112,14 +111,15 @@ func newCostsAggregatedCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
-			writePlan := map[string]any{"method": "POST /orgs/{org}/costs/aggregated"}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/costs/aggregated"}
+			writePlan["orgId"] = deps.Config.OrgID
 			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.BillAnalysisCostsAggregatedWithResponse(cmd.Context(), org, body)
+			resp, err := client.BillAnalysisCostsAggregatedWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
@@ -129,9 +129,7 @@ func newCostsAggregatedCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
 	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billing_center_ids (body)")
-	c.Flags().StringVar(&fDataset, "dataset", "", "dataset (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().StringVar(&fEndAt, "end-at", "", "end_at (body)")
 	c.Flags().StringVar(&fGranularity, "granularity", "", "granularity (body)")
@@ -146,13 +144,111 @@ func newCostsAggregatedCmd() *cobra.Command {
 	return c
 }
 
-// newCostsSelectCmd — POST /orgs/{org}/costs/select (operationId: BillAnalysis_costs_select)
-func newCostsSelectCmd() *cobra.Command {
+// newCostsCreateExportCmd — POST /bill-analysis/orgs/{orgId}/costs/export/select (operationId: BillAnalysis_costs_exportSelect)
+func newCostsCreateExportCmd() *cobra.Command {
 	var (
-		org               int
+		bodyRaw                         string
+		fAdjDimensionGranularity        string
+		fAggregateToRequestedDimensions bool
+		fBillingCenterIDs               []string
+		fDimensions                     []string
+		fEndAt                          string
+		fGranularity                    string
+		fMetrics                        []string
+		fStartAt                        string
+		dryRun                          bool
+		yes                             bool
+	)
+	c := &cobra.Command{
+		Use:   "create-export",
+		Short: "exportSelect costs",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("adj-dimension-granularity") {
+				fields["adj_dimension_granularity"] = fAdjDimensionGranularity
+			}
+			if cmd.Flags().Changed("aggregate-to-requested-dimensions") {
+				fields["aggregate_to_requested_dimensions"] = fAggregateToRequestedDimensions
+			}
+			if cmd.Flags().Changed("billing-center-ids") {
+				fields["billing_center_ids"] = fBillingCenterIDs
+			}
+			if cmd.Flags().Changed("dimensions") {
+				fields["dimensions"] = fDimensions
+			}
+			if cmd.Flags().Changed("end-at") {
+				fields["end_at"] = fEndAt
+			}
+			if cmd.Flags().Changed("granularity") {
+				fields["granularity"] = fGranularity
+			}
+			if cmd.Flags().Changed("metrics") {
+				fields["metrics"] = fMetrics
+			}
+			if cmd.Flags().Changed("start-at") {
+				fields["start_at"] = fStartAt
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.BillAnalysisCostsExportSelectJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/costs/export/select"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.BillAnalysisCostsExportSelectWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fAdjDimensionGranularity, "adj-dimension-granularity", "", "adj_dimension_granularity (body)")
+	c.Flags().BoolVar(&fAggregateToRequestedDimensions, "aggregate-to-requested-dimensions", false, "aggregate_to_requested_dimensions (body)")
+	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billing_center_ids (body)")
+	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
+	c.Flags().StringVar(&fEndAt, "end-at", "", "end_at (body)")
+	c.Flags().StringVar(&fGranularity, "granularity", "", "granularity (body)")
+	c.Flags().StringSliceVar(&fMetrics, "metrics", nil, "metrics (body)")
+	c.Flags().StringVar(&fStartAt, "start-at", "", "start_at (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newCostsCreateSelectCmd — POST /bill-analysis/orgs/{orgId}/costs/select (operationId: BillAnalysis_costs_select)
+func newCostsCreateSelectCmd() *cobra.Command {
+	var (
 		bodyRaw           string
 		fBillingCenterIDs []string
-		fDataset          string
 		fDimensions       []string
 		fEndAt            string
 		fGranularity      string
@@ -164,11 +260,14 @@ func newCostsSelectCmd() *cobra.Command {
 		yes               bool
 	)
 	c := &cobra.Command{
-		Use:   "select",
+		Use:   "create-select",
 		Short: "select costs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -176,9 +275,6 @@ func newCostsSelectCmd() *cobra.Command {
 			fields := map[string]any{}
 			if cmd.Flags().Changed("billing-center-ids") {
 				fields["billing_center_ids"] = fBillingCenterIDs
-			}
-			if cmd.Flags().Changed("dataset") {
-				fields["dataset"] = fDataset
 			}
 			if cmd.Flags().Changed("dimensions") {
 				fields["dimensions"] = fDimensions
@@ -216,14 +312,15 @@ func newCostsSelectCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
-			writePlan := map[string]any{"method": "POST /orgs/{org}/costs/select"}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/costs/select"}
+			writePlan["orgId"] = deps.Config.OrgID
 			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.BillAnalysisCostsSelectWithResponse(cmd.Context(), org, body)
+			resp, err := client.BillAnalysisCostsSelectWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
@@ -233,9 +330,7 @@ func newCostsSelectCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
 	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billing_center_ids (body)")
-	c.Flags().StringVar(&fDataset, "dataset", "", "dataset (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().StringVar(&fEndAt, "end-at", "", "end_at (body)")
 	c.Flags().StringVar(&fGranularity, "granularity", "", "granularity (body)")
@@ -249,18 +344,20 @@ func newCostsSelectCmd() *cobra.Command {
 	return c
 }
 
-// newCostsGetCmd — GET /orgs/{org}/costs/export/select/{exportId} (operationId: BillAnalysis_costs_export_select_status)
+// newCostsGetCmd — GET /bill-analysis/orgs/{orgId}/costs/export/select/{exportId} (operationId: BillAnalysis_costs_exportSelectStatus)
 func newCostsGetCmd() *cobra.Command {
 	var (
-		org      int
 		exportID string
 	)
 	c := &cobra.Command{
 		Use:   "get",
-		Short: "get cost export status",
+		Short: "exportSelectStatus costs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -268,7 +365,7 @@ func newCostsGetCmd() *cobra.Command {
 			if strings.TrimSpace(exportID) == "" {
 				return fmt.Errorf("--export-id is required")
 			}
-			resp, err := client.BillAnalysisCostsExportSelectStatusWithResponse(cmd.Context(), org, exportID)
+			resp, err := client.BillAnalysisCostsExportSelectStatusWithResponse(cmd.Context(), int64(deps.Config.OrgID), exportID)
 			if err != nil {
 				return err
 			}
@@ -278,33 +375,26 @@ func newCostsGetCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
 	c.Flags().StringVar(&exportID, "export-id", "", "exportId (path, required)")
 	return c
 }
 
-// newCostsDimensionsCmd — GET /orgs/{org}/costs/dimensions (operationId: BillAnalysis_costs_dimensions)
+// newCostsDimensionsCmd — GET /bill-analysis/orgs/{orgId}/costs/dimensions (operationId: BillAnalysis_costs_dimensions)
 func newCostsDimensionsCmd() *cobra.Command {
-	var (
-		org     int
-		dataset string
-	)
 	c := &cobra.Command{
 		Use:   "dimensions",
 		Short: "dimensions costs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.BillAnalysisCostsDimensionsParams{}
-			if cmd.Flags().Changed("dataset") {
-				ev := flexera.BillAnalysisCostsDimensionsParamsDataset(dataset)
-				params.Dataset = &ev
-			}
-			resp, err := client.BillAnalysisCostsDimensionsWithResponse(cmd.Context(), org, &params)
+			resp, err := client.BillAnalysisCostsDimensionsWithResponse(cmd.Context(), int64(deps.Config.OrgID))
 			if err != nil {
 				return err
 			}
@@ -314,33 +404,25 @@ func newCostsDimensionsCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
-	c.Flags().StringVar(&dataset, "dataset", "", "dataset (query)")
 	return c
 }
 
-// newCostsMetricsCmd — GET /orgs/{org}/costs/metrics (operationId: BillAnalysis_costs_metrics)
+// newCostsMetricsCmd — GET /bill-analysis/orgs/{orgId}/costs/metrics (operationId: BillAnalysis_costs_metrics)
 func newCostsMetricsCmd() *cobra.Command {
-	var (
-		org     int
-		dataset string
-	)
 	c := &cobra.Command{
 		Use:   "metrics",
 		Short: "metrics costs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.BillAnalysisCostsMetricsParams{}
-			if cmd.Flags().Changed("dataset") {
-				ev := flexera.BillAnalysisCostsMetricsParamsDataset(dataset)
-				params.Dataset = &ev
-			}
-			resp, err := client.BillAnalysisCostsMetricsWithResponse(cmd.Context(), org, &params)
+			resp, err := client.BillAnalysisCostsMetricsWithResponse(cmd.Context(), int64(deps.Config.OrgID))
 			if err != nil {
 				return err
 			}
@@ -350,7 +432,5 @@ func newCostsMetricsCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
-	c.Flags().StringVar(&dataset, "dataset", "", "dataset (query)")
 	return c
 }

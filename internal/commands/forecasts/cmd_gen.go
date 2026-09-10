@@ -34,10 +34,9 @@ func NewCmd() *cobra.Command {
 	return c
 }
 
-// newForecastsCreateCmd — POST /orgs/{org}/forecasts/report (operationId: BillAnalysis_forecasts_report)
+// newForecastsCreateCmd — POST /bill-analysis/orgs/{orgId}/forecasts/report (operationId: BillAnalysis_forecasts_report)
 func newForecastsCreateCmd() *cobra.Command {
 	var (
-		org               int
 		bodyRaw           string
 		fBillingCenterIDs []string
 		fDimensions       []string
@@ -55,6 +54,9 @@ func newForecastsCreateCmd() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -96,14 +98,15 @@ func newForecastsCreateCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
-			writePlan := map[string]any{"method": "POST /orgs/{org}/forecasts/report"}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/forecasts/report"}
+			writePlan["orgId"] = deps.Config.OrgID
 			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.BillAnalysisForecastsReportWithResponse(cmd.Context(), org, body)
+			resp, err := client.BillAnalysisForecastsReportWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
@@ -113,7 +116,6 @@ func newForecastsCreateCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
 	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billingCenterIds (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().StringVar(&fEndAt, "end-at", "", "endAt (body)")

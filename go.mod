@@ -3,7 +3,8 @@ module github.com/flexera-public/flexera-cli
 go 1.25.1
 
 require (
-	github.com/flexera-public/unified-go-client v0.0.0-20260721203537-38febaab5886
+	github.com/flexera-public/unified-go-client v0.0.0-20260909235601-81880de8cf35
+	github.com/google/uuid v1.5.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
@@ -14,7 +15,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/fsnotify/fsnotify v1.9.0 // indirect
 	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
-	github.com/google/uuid v1.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/oapi-codegen/runtime v1.1.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
@@ -28,5 +28,3 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.28.0 // indirect
 )
-
-replace github.com/flexera-public/unified-go-client => /Users/bk/src/github.com/flexera/unified-go-client

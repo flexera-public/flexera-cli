@@ -27,19 +27,27 @@ import (
 	billconnectgcp "github.com/flexera-public/flexera-cli/internal/commands/billconnectgcp"
 	billconnectsnowflake "github.com/flexera-public/flexera-cli/internal/commands/billconnectsnowflake"
 	billing "github.com/flexera-public/flexera-cli/internal/commands/billing"
+	billingaudit "github.com/flexera-public/flexera-cli/internal/commands/billingaudit"
 	billingcenteraccessrules "github.com/flexera-public/flexera-cli/internal/commands/billingcenteraccessrules"
 	billingcenters "github.com/flexera-public/flexera-cli/internal/commands/billingcenters"
+	billingcredits "github.com/flexera-public/flexera-cli/internal/commands/billingcredits"
+	billingsettings "github.com/flexera-public/flexera-cli/internal/commands/billingsettings"
 	billmonths "github.com/flexera-public/flexera-cli/internal/commands/billmonths"
 	budget "github.com/flexera-public/flexera-cli/internal/commands/budget"
 	capability "github.com/flexera-public/flexera-cli/internal/commands/capability"
 	cloudvendoraccount "github.com/flexera-public/flexera-cli/internal/commands/cloudvendoraccount"
+	cloudvendoraccounts "github.com/flexera-public/flexera-cli/internal/commands/cloudvendoraccounts"
+	commitmentreallocationsetting "github.com/flexera-public/flexera-cli/internal/commands/commitmentreallocationsetting"
 	compliance "github.com/flexera-public/flexera-cli/internal/commands/compliance"
 	connector "github.com/flexera-public/flexera-cli/internal/commands/connector"
-	connectorstatus "github.com/flexera-public/flexera-cli/internal/commands/connectorstatus"
 	contracts "github.com/flexera-public/flexera-cli/internal/commands/contracts"
+	costs "github.com/flexera-public/flexera-cli/internal/commands/costs"
 	credential "github.com/flexera-public/flexera-cli/internal/commands/credential"
 	currencysetting "github.com/flexera-public/flexera-cli/internal/commands/currencysetting"
 	customcatalog "github.com/flexera-public/flexera-cli/internal/commands/customcatalog"
+	customdashboards "github.com/flexera-public/flexera-cli/internal/commands/customdashboards"
+	customdimension "github.com/flexera-public/flexera-cli/internal/commands/customdimension"
+	customdimensions "github.com/flexera-public/flexera-cli/internal/commands/customdimensions"
 	customergroup "github.com/flexera-public/flexera-cli/internal/commands/customergroup"
 	customergrouptype "github.com/flexera-public/flexera-cli/internal/commands/customergrouptype"
 	customization "github.com/flexera-public/flexera-cli/internal/commands/customization"
@@ -48,7 +56,7 @@ import (
 	digestcredential "github.com/flexera-public/flexera-cli/internal/commands/digestcredential"
 	discoveredapplication "github.com/flexera-public/flexera-cli/internal/commands/discoveredapplication"
 	event "github.com/flexera-public/flexera-cli/internal/commands/event"
-	exportlegacy "github.com/flexera-public/flexera-cli/internal/commands/exportlegacy"
+	exportretired "github.com/flexera-public/flexera-cli/internal/commands/exportretired"
 	forecasts "github.com/flexera-public/flexera-cli/internal/commands/forecasts"
 	graphql "github.com/flexera-public/flexera-cli/internal/commands/graphql"
 	group "github.com/flexera-public/flexera-cli/internal/commands/group"
@@ -73,6 +81,7 @@ import (
 	oraclecredential "github.com/flexera-public/flexera-cli/internal/commands/oraclecredential"
 	organization "github.com/flexera-public/flexera-cli/internal/commands/organization"
 	organizationinvitation "github.com/flexera-public/flexera-cli/internal/commands/organizationinvitation"
+	orgdashboards "github.com/flexera-public/flexera-cli/internal/commands/orgdashboards"
 	orgloginpolicy "github.com/flexera-public/flexera-cli/internal/commands/orgloginpolicy"
 	policyaggregate "github.com/flexera-public/flexera-cli/internal/commands/policyaggregate"
 	policymanager "github.com/flexera-public/flexera-cli/internal/commands/policymanager"
@@ -86,6 +95,7 @@ import (
 	reportsubscriptions "github.com/flexera-public/flexera-cli/internal/commands/reportsubscriptions"
 	role "github.com/flexera-public/flexera-cli/internal/commands/role"
 	rulebaseddimension "github.com/flexera-public/flexera-cli/internal/commands/rulebaseddimension"
+	saasconnector "github.com/flexera-public/flexera-cli/internal/commands/saasconnector"
 	saasdata "github.com/flexera-public/flexera-cli/internal/commands/saasdata"
 	saml2domain "github.com/flexera-public/flexera-cli/internal/commands/saml2domain"
 	saml2identityprovider "github.com/flexera-public/flexera-cli/internal/commands/saml2identityprovider"
@@ -107,6 +117,7 @@ import (
 	userbillingcenters "github.com/flexera-public/flexera-cli/internal/commands/userbillingcenters"
 	userinvitation "github.com/flexera-public/flexera-cli/internal/commands/userinvitation"
 	usermemberships "github.com/flexera-public/flexera-cli/internal/commands/usermemberships"
+	userprofile "github.com/flexera-public/flexera-cli/internal/commands/userprofile"
 	usersettingblob "github.com/flexera-public/flexera-cli/internal/commands/usersettingblob"
 	vulnerability "github.com/flexera-public/flexera-cli/internal/commands/vulnerability"
 	vulnerabilitylocal "github.com/flexera-public/flexera-cli/internal/commands/vulnerabilitylocal"
@@ -129,19 +140,27 @@ func RegisterAll(root *cobra.Command) {
 		basiccredential.NewCmd(),
 		billconnectsnowflake.NewCmd(),
 		billing.NewCmd(),
+		billingaudit.NewCmd(),
 		billingcenteraccessrules.NewCmd(),
 		billingcenters.NewCmd(),
+		billingcredits.NewCmd(),
+		billingsettings.NewCmd(),
 		billmonths.NewCmd(),
 		budget.NewCmd(),
 		capability.NewCmd(),
 		cloudvendoraccount.NewCmd(),
+		cloudvendoraccounts.NewCmd(),
+		commitmentreallocationsetting.NewCmd(),
 		compliance.NewCmd(),
 		connector.NewCmd(),
-		connectorstatus.NewCmd(),
 		contracts.NewCmd(),
+		costs.NewCmd(),
 		credential.NewCmd(),
 		currencysetting.NewCmd(),
 		customcatalog.NewCmd(),
+		customdashboards.NewCmd(),
+		customdimension.NewCmd(),
+		customdimensions.NewCmd(),
 		customergroup.NewCmd(),
 		customergrouptype.NewCmd(),
 		customization.NewCmd(),
@@ -150,7 +169,7 @@ func RegisterAll(root *cobra.Command) {
 		digestcredential.NewCmd(),
 		discoveredapplication.NewCmd(),
 		event.NewCmd(),
-		exportlegacy.NewCmd(),
+		exportretired.NewCmd(),
 		forecasts.NewCmd(),
 		graphql.NewCmd(),
 		group.NewCmd(),
@@ -175,6 +194,7 @@ func RegisterAll(root *cobra.Command) {
 		oraclecredential.NewCmd(),
 		organization.NewCmd(),
 		organizationinvitation.NewCmd(),
+		orgdashboards.NewCmd(),
 		orgloginpolicy.NewCmd(),
 		policyaggregate.NewCmd(),
 		policymanager.NewCmd(),
@@ -188,6 +208,7 @@ func RegisterAll(root *cobra.Command) {
 		reportsubscriptions.NewCmd(),
 		role.NewCmd(),
 		rulebaseddimension.NewCmd(),
+		saasconnector.NewCmd(),
 		saasdata.NewCmd(),
 		saml2domain.NewCmd(),
 		saml2identityprovider.NewCmd(),
@@ -209,6 +230,7 @@ func RegisterAll(root *cobra.Command) {
 		userbillingcenters.NewCmd(),
 		userinvitation.NewCmd(),
 		usermemberships.NewCmd(),
+		userprofile.NewCmd(),
 		usersettingblob.NewCmd(),
 		vulnerability.NewCmd(),
 		vulnerabilitylocal.NewCmd(),

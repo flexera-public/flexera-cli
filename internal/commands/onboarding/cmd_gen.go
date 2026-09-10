@@ -29,17 +29,23 @@ func NewCmd() *cobra.Command {
 		Short: "Onboarding operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
-		newOnboardingCreateCmd(),
-		newOnboardingDeleteCmd(),
-		newOnboardingReplaceCmd(),
+		newOnboardingOnboardingAllCmd(),
+		newOnboardingAwsAllCmd(),
+		newOnboardingAzureAllCmd(),
+		newOnboardingDeleteDataInventoryCmd(),
+		newOnboardingDeleteUobsCmd(),
+		newOnboardingOnboardingCmd(),
+		newOnboardingAwsCmd(),
+		newOnboardingAzureCmd(),
 	)
 	return c
 }
 
-// newOnboardingCreateCmd — POST /data-inventory/v1/orgs/{org_id}/onboarding/ (operationId: Divnt_trigger_onboarding_post_data_inventory_v1_orgs_org_id_onboarding_post)
-func newOnboardingCreateCmd() *cobra.Command {
+// newOnboardingOnboardingAllCmd — POST /data-inventory/v1/orgs/{org_id}/onboarding/ (operationId: Divnt_trigger_onboarding_post_data_inventory_v1_orgs_org_id_onboarding_post)
+func newOnboardingOnboardingAllCmd() *cobra.Command {
 	var (
 		bodyRaw              string
+		fAccountType         string
 		fBillingAccountID    string
 		fClientID            string
 		fClientSecret        string
@@ -60,7 +66,7 @@ func newOnboardingCreateCmd() *cobra.Command {
 		yes                  bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
+		Use:   "onboarding-all",
 		Short: "Onboarding: Create",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -73,6 +79,9 @@ func newOnboardingCreateCmd() *cobra.Command {
 				return err
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("account-type") {
+				fields["AccountType"] = fAccountType
+			}
 			if cmd.Flags().Changed("billing-account-id") {
 				fields["BillingAccountId"] = fBillingAccountID
 			}
@@ -154,6 +163,7 @@ func newOnboardingCreateCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	c.Flags().StringVar(&fAccountType, "account-type", "", "AccountType (body)")
 	c.Flags().StringVar(&fBillingAccountID, "billing-account-id", "", "BillingAccountId (body)")
 	c.Flags().StringVar(&fClientID, "client-id", "", "ClientId (body)")
 	c.Flags().StringVar(&fClientSecret, "client-secret", "", "ClientSecret (body)")
@@ -176,8 +186,213 @@ func newOnboardingCreateCmd() *cobra.Command {
 	return c
 }
 
-// newOnboardingDeleteCmd — DELETE /data-inventory/v1/orgs/{org_id}/onboarding/{connector_id} (operationId: Divnt_trigger_onboarding_delete_data_inventory_v1_orgs_org_id_onboarding_connector_id_delete)
-func newOnboardingDeleteCmd() *cobra.Command {
+// newOnboardingAwsAllCmd — POST /uobs/v1/orgs/{org_id}/cloud/onboarding/aws (operationId: Uobs_trigger_onboarding_post_aws_uobs_v1_orgs_org_id_cloud_onboarding_aws_post)
+func newOnboardingAwsAllCmd() *cobra.Command {
+	var (
+		bodyRaw              string
+		fBillingAccountID    string
+		fConnectorName       string
+		fExternalID          string
+		fIncludeBPC          string
+		fIncludeCostAndUsage string
+		fIncludeInventory    string
+		fRoleARN             string
+		dryRun               bool
+		yes                  bool
+	)
+	c := &cobra.Command{
+		Use:   "aws-all",
+		Short: "Onboarding AWS: Create",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("billing-account-id") {
+				fields["BillingAccountId"] = fBillingAccountID
+			}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("external-id") {
+				fields["ExternalId"] = fExternalID
+			}
+			if cmd.Flags().Changed("include-bpc") {
+				fields["IncludeBPC"] = fIncludeBPC
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-inventory") {
+				fields["IncludeInventory"] = fIncludeInventory
+			}
+			if cmd.Flags().Changed("role-arn") {
+				fields["RoleARN"] = fRoleARN
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.UobsTriggerOnboardingPostAwsUobsV1OrgsOrgIdCloudOnboardingAwsPostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /uobs/v1/orgs/{org_id}/cloud/onboarding/aws"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.UobsTriggerOnboardingPostAwsUobsV1OrgsOrgIdCloudOnboardingAwsPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fBillingAccountID, "billing-account-id", "", "BillingAccountId (body)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fExternalID, "external-id", "", "ExternalId (body)")
+	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&fRoleARN, "role-arn", "", "RoleARN (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newOnboardingAzureAllCmd — POST /uobs/v1/orgs/{org_id}/cloud/onboarding/azure (operationId: Uobs_trigger_onboarding_post_azure_uobs_v1_orgs_org_id_cloud_onboarding_azure_post)
+func newOnboardingAzureAllCmd() *cobra.Command {
+	var (
+		bodyRaw              string
+		fBillingAccountID    string
+		fClientID            string
+		fClientSecret        string
+		fConnectorName       string
+		fIncludeBPC          string
+		fIncludeCostAndUsage string
+		fIncludeInventory    string
+		fSubscriptionID      string
+		fTenantID            string
+		fTokenURL            string
+		dryRun               bool
+		yes                  bool
+	)
+	c := &cobra.Command{
+		Use:   "azure-all",
+		Short: "Onboarding Azure: Create",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("billing-account-id") {
+				fields["BillingAccountId"] = fBillingAccountID
+			}
+			if cmd.Flags().Changed("client-id") {
+				fields["ClientId"] = fClientID
+			}
+			if cmd.Flags().Changed("client-secret") {
+				fields["ClientSecret"] = fClientSecret
+			}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("include-bpc") {
+				fields["IncludeBPC"] = fIncludeBPC
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-inventory") {
+				fields["IncludeInventory"] = fIncludeInventory
+			}
+			if cmd.Flags().Changed("subscription-id") {
+				fields["SubscriptionId"] = fSubscriptionID
+			}
+			if cmd.Flags().Changed("tenant-id") {
+				fields["TenantId"] = fTenantID
+			}
+			if cmd.Flags().Changed("token-url") {
+				fields["TokenUrl"] = fTokenURL
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.UobsTriggerOnboardingPostAzureUobsV1OrgsOrgIdCloudOnboardingAzurePostJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /uobs/v1/orgs/{org_id}/cloud/onboarding/azure"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.UobsTriggerOnboardingPostAzureUobsV1OrgsOrgIdCloudOnboardingAzurePostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fBillingAccountID, "billing-account-id", "", "BillingAccountId (body)")
+	c.Flags().StringVar(&fClientID, "client-id", "", "ClientId (body)")
+	c.Flags().StringVar(&fClientSecret, "client-secret", "", "ClientSecret (body)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")
+	c.Flags().StringVar(&fTenantID, "tenant-id", "", "TenantId (body)")
+	c.Flags().StringVar(&fTokenURL, "token-url", "", "TokenUrl (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newOnboardingDeleteDataInventoryCmd — DELETE /data-inventory/v1/orgs/{org_id}/onboarding/{connector_id} (operationId: Divnt_trigger_onboarding_delete_data_inventory_v1_orgs_org_id_onboarding_connector_id_delete)
+func newOnboardingDeleteDataInventoryCmd() *cobra.Command {
 	var (
 		connectorID string
 		provider    string
@@ -185,7 +400,7 @@ func newOnboardingDeleteCmd() *cobra.Command {
 		yes         bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
+		Use:   "delete-data-inventory",
 		Short: "Onboarding: Delete",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -228,12 +443,65 @@ func newOnboardingDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newOnboardingReplaceCmd — PUT /data-inventory/v1/orgs/{org_id}/onboarding/{connector_id} (operationId: Divnt_trigger_onboarding_put_data_inventory_v1_orgs_org_id_onboarding_connector_id_put)
-func newOnboardingReplaceCmd() *cobra.Command {
+// newOnboardingDeleteUobsCmd — DELETE /uobs/v1/orgs/{org_id}/cloud/onboarding (operationId: Uobs_trigger_onboarding_delete_uobs_v1_orgs_org_id_cloud_onboarding_delete)
+func newOnboardingDeleteUobsCmd() *cobra.Command {
+	var (
+		provider    string
+		connectorID string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:   "delete-uobs",
+		Short: "Onboarding: Delete",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			params := flexera.UobsTriggerOnboardingDeleteUobsV1OrgsOrgIdCloudOnboardingDeleteParams{}
+			if cmd.Flags().Changed("provider") {
+				params.Provider = provider
+			}
+			if cmd.Flags().Changed("connector-id") {
+				params.ConnectorId = connectorID
+			}
+			writePlan := map[string]any{"method": "DELETE /uobs/v1/orgs/{org_id}/cloud/onboarding"}
+			writePlan["orgId"] = deps.Config.OrgID
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.UobsTriggerOnboardingDeleteUobsV1OrgsOrgIdCloudOnboardingDeleteWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&provider, "provider", "", "provider (query)")
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (query)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newOnboardingOnboardingCmd — PUT /data-inventory/v1/orgs/{org_id}/onboarding/{connector_id} (operationId: Divnt_trigger_onboarding_put_data_inventory_v1_orgs_org_id_onboarding_connector_id_put)
+func newOnboardingOnboardingCmd() *cobra.Command {
 	var (
 		connectorID          string
 		provider             string
 		bodyRaw              string
+		fAccountType         string
 		fBillingAccountID    string
 		fClientID            string
 		fClientSecret        string
@@ -253,7 +521,7 @@ func newOnboardingReplaceCmd() *cobra.Command {
 		yes                  bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
+		Use:   "onboarding",
 		Short: "Onboarding: Update",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -273,6 +541,9 @@ func newOnboardingReplaceCmd() *cobra.Command {
 				params.Provider = provider
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("account-type") {
+				fields["AccountType"] = fAccountType
+			}
 			if cmd.Flags().Changed("billing-account-id") {
 				fields["BillingAccountId"] = fBillingAccountID
 			}
@@ -353,6 +624,7 @@ func newOnboardingReplaceCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
 	c.Flags().StringVar(&provider, "provider", "", "provider (query)")
+	c.Flags().StringVar(&fAccountType, "account-type", "", "AccountType (body)")
 	c.Flags().StringVar(&fBillingAccountID, "billing-account-id", "", "BillingAccountId (body)")
 	c.Flags().StringVar(&fClientID, "client-id", "", "ClientId (body)")
 	c.Flags().StringVar(&fClientSecret, "client-secret", "", "ClientSecret (body)")
@@ -368,6 +640,186 @@ func newOnboardingReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")
 	c.Flags().StringVar(&fTenantID, "tenant-id", "", "TenantId (body)")
 	c.Flags().StringVar(&fTokenURL, "token-url", "", "TokenUrl (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newOnboardingAwsCmd — PUT /uobs/v1/orgs/{org_id}/cloud/onboarding/aws/{connector_id} (operationId: Uobs_trigger_onboarding_put_aws_uobs_v1_orgs_org_id_cloud_onboarding_aws_connector_id_put)
+func newOnboardingAwsCmd() *cobra.Command {
+	var (
+		connectorID          string
+		bodyRaw              string
+		fConnectorName       string
+		fIncludeBPC          string
+		fIncludeCostAndUsage string
+		fIncludeInventory    string
+		dryRun               bool
+		yes                  bool
+	)
+	c := &cobra.Command{
+		Use:   "aws",
+		Short: "Onboarding AWS: Update",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("include-bpc") {
+				fields["IncludeBPC"] = fIncludeBPC
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-inventory") {
+				fields["IncludeInventory"] = fIncludeInventory
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.UobsTriggerOnboardingPutAwsUobsV1OrgsOrgIdCloudOnboardingAwsConnectorIdPutJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "PUT /uobs/v1/orgs/{org_id}/cloud/onboarding/aws/{connector_id}"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.UobsTriggerOnboardingPutAwsUobsV1OrgsOrgIdCloudOnboardingAwsConnectorIdPutWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newOnboardingAzureCmd — PUT /uobs/v1/orgs/{org_id}/cloud/onboarding/azure/{connector_id} (operationId: Uobs_trigger_onboarding_put_azure_uobs_v1_orgs_org_id_cloud_onboarding_azure_connector_id_put)
+func newOnboardingAzureCmd() *cobra.Command {
+	var (
+		connectorID          string
+		bodyRaw              string
+		fConnectorName       string
+		fIncludeBPC          string
+		fIncludeCostAndUsage string
+		fIncludeInventory    string
+		fSubscriptionID      string
+		fTenantID            string
+		dryRun               bool
+		yes                  bool
+	)
+	c := &cobra.Command{
+		Use:   "azure",
+		Short: "Onboarding Azure: Update",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("include-bpc") {
+				fields["IncludeBPC"] = fIncludeBPC
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-inventory") {
+				fields["IncludeInventory"] = fIncludeInventory
+			}
+			if cmd.Flags().Changed("subscription-id") {
+				fields["SubscriptionId"] = fSubscriptionID
+			}
+			if cmd.Flags().Changed("tenant-id") {
+				fields["TenantId"] = fTenantID
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.UobsTriggerOnboardingPutAzureUobsV1OrgsOrgIdCloudOnboardingAzureConnectorIdPutJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "PUT /uobs/v1/orgs/{org_id}/cloud/onboarding/azure/{connector_id}"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.UobsTriggerOnboardingPutAzureUobsV1OrgsOrgIdCloudOnboardingAzureConnectorIdPutWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
+	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")
+	c.Flags().StringVar(&fTenantID, "tenant-id", "", "TenantId (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

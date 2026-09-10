@@ -29,15 +29,17 @@ func NewCmd() *cobra.Command {
 		Short: "anomalies operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
-		newAnomaliesCreateCmd(),
+		newAnomaliesReportCmd(),
+		newAnomaliesAnomaliesCmd(),
+		newAnomaliesAggregatedCmd(),
+		newAnomaliesGetCmd(),
 	)
 	return c
 }
 
-// newAnomaliesCreateCmd — POST /orgs/{org}/anomalies/report (operationId: BillAnalysis_anomalies_report)
-func newAnomaliesCreateCmd() *cobra.Command {
+// newAnomaliesReportCmd — POST /bill-analysis/orgs/{orgId}/anomalies/report (operationId: BillAnalysis_anomalies_report)
+func newAnomaliesReportCmd() *cobra.Command {
 	var (
-		org                 int
 		bodyRaw             string
 		fBillingCenterIDs   []string
 		fDetectionMethod    string
@@ -53,11 +55,14 @@ func newAnomaliesCreateCmd() *cobra.Command {
 		yes                 bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
+		Use:   "report",
 		Short: "report anomalies",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -108,14 +113,15 @@ func newAnomaliesCreateCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
-			writePlan := map[string]any{"method": "POST /orgs/{org}/anomalies/report"}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/anomalies/report"}
+			writePlan["orgId"] = deps.Config.OrgID
 			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.BillAnalysisAnomaliesReportWithResponse(cmd.Context(), org, body)
+			resp, err := client.BillAnalysisAnomaliesReportWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
@@ -125,7 +131,6 @@ func newAnomaliesCreateCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&org, "org", 0, "org (path, required)")
 	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billingCenterIds (body)")
 	c.Flags().StringVar(&fDetectionMethod, "detection-method", "", "detectionMethod (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
@@ -139,5 +144,210 @@ func newAnomaliesCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newAnomaliesAnomaliesCmd — POST /bill-analysis/orgs/{orgId}/v2/anomalies (operationId: BillAnalysis_anomalies_index)
+func newAnomaliesAnomaliesCmd() *cobra.Command {
+	var (
+		bodyRaw     string
+		fEndAt      string
+		fLimit      int64
+		fMetric     string
+		fOffset     int64
+		fSortColumn string
+		fSortOrder  string
+		fStartAt    string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:   "anomalies",
+		Short: "index anomalies",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("end-at") {
+				fields["endAt"] = fEndAt
+			}
+			if cmd.Flags().Changed("limit") {
+				fields["limit"] = fLimit
+			}
+			if cmd.Flags().Changed("metric") {
+				fields["metric"] = fMetric
+			}
+			if cmd.Flags().Changed("offset") {
+				fields["offset"] = fOffset
+			}
+			if cmd.Flags().Changed("sort-column") {
+				fields["sortColumn"] = fSortColumn
+			}
+			if cmd.Flags().Changed("sort-order") {
+				fields["sortOrder"] = fSortOrder
+			}
+			if cmd.Flags().Changed("start-at") {
+				fields["startAt"] = fStartAt
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.BillAnalysisAnomaliesIndexJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/v2/anomalies"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.BillAnalysisAnomaliesIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fEndAt, "end-at", "", "endAt (body)")
+	c.Flags().Int64Var(&fLimit, "limit", 0, "limit (body)")
+	c.Flags().StringVar(&fMetric, "metric", "", "metric (body)")
+	c.Flags().Int64Var(&fOffset, "offset", 0, "offset (body)")
+	c.Flags().StringVar(&fSortColumn, "sort-column", "", "sortColumn (body)")
+	c.Flags().StringVar(&fSortOrder, "sort-order", "", "sortOrder (body)")
+	c.Flags().StringVar(&fStartAt, "start-at", "", "startAt (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newAnomaliesAggregatedCmd — POST /bill-analysis/orgs/{orgId}/v2/anomalies/aggregated (operationId: BillAnalysis_anomalies_aggregated)
+func newAnomaliesAggregatedCmd() *cobra.Command {
+	var (
+		bodyRaw  string
+		fEndAt   string
+		fMetric  string
+		fStartAt string
+		dryRun   bool
+		yes      bool
+	)
+	c := &cobra.Command{
+		Use:   "aggregated",
+		Short: "aggregated anomalies",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("end-at") {
+				fields["endAt"] = fEndAt
+			}
+			if cmd.Flags().Changed("metric") {
+				fields["metric"] = fMetric
+			}
+			if cmd.Flags().Changed("start-at") {
+				fields["startAt"] = fStartAt
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.BillAnalysisAnomaliesAggregatedJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/v2/anomalies/aggregated"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.BillAnalysisAnomaliesAggregatedWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&fEndAt, "end-at", "", "endAt (body)")
+	c.Flags().StringVar(&fMetric, "metric", "", "metric (body)")
+	c.Flags().StringVar(&fStartAt, "start-at", "", "startAt (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newAnomaliesGetCmd — GET /bill-analysis/orgs/{orgId}/v2/anomalies/{id} (operationId: BillAnalysis_anomalies_summary)
+func newAnomaliesGetCmd() *cobra.Command {
+	var (
+		id string
+	)
+	c := &cobra.Command{
+		Use:   "get",
+		Short: "summary anomalies",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
+			}
+			resp, err := client.BillAnalysisAnomaliesSummaryWithResponse(cmd.Context(), int64(deps.Config.OrgID), id)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	return c
 }
