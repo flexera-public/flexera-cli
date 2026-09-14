@@ -37,9 +37,11 @@ func NewCmd() *cobra.Command {
 // newSaaSOnboardingCreateCmd — POST /uobs/v1/orgs/{org_id}/saas/onboarding/validate (operationId: Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post)
 func newSaaSOnboardingCreateCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		dryRun  bool
-		yes     bool
+		bodyRaw        string
+		fConnectorName string
+		fProvider      string
+		dryRun         bool
+		yes            bool
 	)
 	c := &cobra.Command{
 		Use:   "create",
@@ -55,6 +57,12 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 				return err
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["connectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("provider") {
+				fields["provider"] = fProvider
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -88,6 +96,8 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "connectorName (body)")
+	c.Flags().StringVar(&fProvider, "provider", "", "provider (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

@@ -77,7 +77,6 @@ import (
 	ntlmcredential "github.com/flexera-public/flexera-cli/internal/commands/ntlmcredential"
 	oauth2credential "github.com/flexera-public/flexera-cli/internal/commands/oauth2credential"
 	objectdefinition "github.com/flexera-public/flexera-cli/internal/commands/objectdefinition"
-	onboarding "github.com/flexera-public/flexera-cli/internal/commands/onboarding"
 	oraclecredential "github.com/flexera-public/flexera-cli/internal/commands/oraclecredential"
 	organization "github.com/flexera-public/flexera-cli/internal/commands/organization"
 	organizationinvitation "github.com/flexera-public/flexera-cli/internal/commands/organizationinvitation"
@@ -190,7 +189,6 @@ func RegisterAll(root *cobra.Command) {
 		ntlmcredential.NewCmd(),
 		oauth2credential.NewCmd(),
 		objectdefinition.NewCmd(),
-		onboarding.NewCmd(),
 		oraclecredential.NewCmd(),
 		organization.NewCmd(),
 		organizationinvitation.NewCmd(),
