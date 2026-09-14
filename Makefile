@@ -35,8 +35,14 @@ LDFLAGS        := -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.bu
 
 .PHONY: build install test test-integration coverage-report coverage-html coverage-check completions docs clean
 
+generate: 
+	go generate ./...
+
 build:
 	go build -ldflags "$(LDFLAGS)" -o flexera-cli .
+
+refresh: generate build
+	@echo "Regenerated flexera-cli source, and built flexera-cli binary"
 
 install:
 	go install -ldflags "$(LDFLAGS)" .
