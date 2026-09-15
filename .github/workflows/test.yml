@@ -21,15 +21,14 @@ jobs:
         run: go vet ./...
 
       - name: go build
-        run: go build ./...
+        run: make build
 
       - name: go test
-        run: go test ./...
+        run: make test
 
       - name: Verify generated completions/docs are up to date
         run: |
-          make completions
-          make docs
+          make completions docs
           if ! git diff --quiet -- completions docs; then
             echo "::error::completions/ or docs/ are out of date; run 'make completions docs' and commit the result."
             git diff --stat -- completions docs

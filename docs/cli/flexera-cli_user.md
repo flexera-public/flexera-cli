@@ -32,5 +32,6 @@ User operations (generated from the unified OpenAPI spec)
 * [flexera-cli user get](flexera-cli_user_get.md)	 - Show an individual org user
 * [flexera-cli user groups](flexera-cli_user_groups.md)	 - Get user groups
 * [flexera-cli user orgs](flexera-cli_user_orgs.md)	 - List organizations the authenticated user can access
+* [flexera-cli user update](flexera-cli_user_update.md)	 - Update user name
 * [flexera-cli user users](flexera-cli_user_users.md)	 - Index an org's users
 

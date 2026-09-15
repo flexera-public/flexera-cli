@@ -35,6 +35,7 @@ func NewCmd() *cobra.Command {
 		newUserOrgsCmd(),
 		newUserUsersCmd(),
 		newUserGroupsCmd(),
+		newUserUpdateCmd(),
 	)
 	return c
 }
@@ -298,5 +299,77 @@ func newUserGroupsCmd() *cobra.Command {
 		},
 	}
 	c.Flags().IntVar(&id, "id", 0, "id (path, required)")
+	return c
+}
+
+// newUserUpdateCmd — PATCH /iam/v1/orgs/{orgId}/users/{id} (operationId: Iam_User_Update)
+func newUserUpdateCmd() *cobra.Command {
+	var (
+		id         int
+		bodyRaw    string
+		fFirstName string
+		fLastName  string
+		dryRun     bool
+		yes        bool
+	)
+	c := &cobra.Command{
+		Use:   "update",
+		Short: "Update user name",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("first-name") {
+				fields["firstName"] = fFirstName
+			}
+			if cmd.Flags().Changed("last-name") {
+				fields["lastName"] = fLastName
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.IamUserUpdateJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
+			writePlan := map[string]any{"method": "PATCH /iam/v1/orgs/{orgId}/users/{id}"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.IamUserUpdateWithResponse(cmd.Context(), deps.Config.OrgID, id, body)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().IntVar(&id, "id", 0, "id (path, required)")
+	c.Flags().StringVar(&fFirstName, "first-name", "", "firstName (body)")
+	c.Flags().StringVar(&fLastName, "last-name", "", "lastName (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }

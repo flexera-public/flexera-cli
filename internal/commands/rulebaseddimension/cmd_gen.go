@@ -29,27 +29,30 @@ func NewCmd() *cobra.Command {
 		Short: "Rule-Based Dimension operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
-		newRuleBasedDimensionRuleBasedDimensionsCmd(),
+		newRuleBasedDimensionCreateCmd(),
 		newRuleBasedDimensionDeleteCmd(),
 		newRuleBasedDimensionRulesAllCmd(),
 		newRuleBasedDimensionGetCmd(),
 		newRuleBasedDimensionRulesCmd(),
 		newRuleBasedDimensionListCmd(),
+		newRuleBasedDimensionSummaryCmd(),
 		newRuleBasedDimensionReplaceCmd(),
 		newRuleBasedDimensionUpdateCmd(),
 	)
 	return c
 }
 
-// newRuleBasedDimensionRuleBasedDimensionsCmd — POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id} (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create)
-func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
+// newRuleBasedDimensionCreateCmd — POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id} (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create)
+func newRuleBasedDimensionCreateCmd() *cobra.Command {
 	var (
 		id      string
 		bodyRaw string
 		fName   string
+		dryRun  bool
+		yes     bool
 	)
 	c := &cobra.Command{
-		Use:   "rule-based-dimensions",
+		Use:   "create",
 		Short: "Creates a rule-based dimension",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -83,6 +86,14 @@ func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
+			writePlan := map[string]any{"method": "POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
 			resp, err := client.FinopsCustomizationsRuleBasedDimensionRuleBasedDimensionCreateWithResponse(cmd.Context(), deps.Config.OrgID, id, body)
 			if err != nil {
 				return err
@@ -97,6 +108,8 @@ func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	c.Flags().StringVar(&fName, "name", "", "name (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -299,6 +312,41 @@ func newRuleBasedDimensionListCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	return c
+}
+
+// newRuleBasedDimensionSummaryCmd — GET /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/summary (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_summary_show)
+func newRuleBasedDimensionSummaryCmd() *cobra.Command {
+	var (
+		id string
+	)
+	c := &cobra.Command{
+		Use:   "summary",
+		Short: "Show a rule-based dimension summary",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
+			}
+			resp, err := client.FinopsCustomizationsRuleBasedDimensionRuleBasedDimensionSummaryShowWithResponse(cmd.Context(), deps.Config.OrgID, id)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	return c
 }
 

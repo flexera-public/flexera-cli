@@ -27,5 +27,6 @@ Project operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli project list](flexera-cli_project_list.md)	 - List projects accessible by the authenticated user
+* [flexera-cli project list-grs](flexera-cli_project_list-grs.md)	 - List projects accessible by the authenticated user
+* [flexera-cli project list-iam](flexera-cli_project_list-iam.md)	 - Index an org's projects
 

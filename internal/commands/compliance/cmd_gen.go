@@ -43,16 +43,17 @@ func NewCmd() *cobra.Command {
 // newComplianceControlCmd — POST /risk/v1/orgs/{orgId}/compliance/{standard_name}/control (operationId: Risk_get_standard_control_details_risk_v1_orgs_orgId_compliance_standard_name_control_post)
 func newComplianceControlCmd() *cobra.Command {
 	var (
-		standardName string
-		bodyRaw      string
-		fAccounts    []string
-		fCategory    []string
-		fEtime       string
-		fImc         bool
-		fLevel       int
-		fProviders   []string
-		fRegions     []string
-		fServices    []string
+		standardName  string
+		bodyRaw       string
+		fAccounts     []string
+		fCategory     []string
+		fEtime        string
+		fImc          bool
+		fLevel        int
+		fProviderType string
+		fProviders    []string
+		fRegions      []string
+		fServices     []string
 	)
 	c := &cobra.Command{
 		Use:   "control",
@@ -85,6 +86,9 @@ func newComplianceControlCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("level") {
 				fields["level"] = fLevel
+			}
+			if cmd.Flags().Changed("provider-type") {
+				fields["providerType"] = fProviderType
 			}
 			if cmd.Flags().Changed("providers") {
 				fields["providers"] = fProviders
@@ -126,6 +130,7 @@ func newComplianceControlCmd() *cobra.Command {
 	c.Flags().StringVar(&fEtime, "etime", "", "etime (body)")
 	c.Flags().BoolVar(&fImc, "imc", false, "imc (body)")
 	c.Flags().IntVar(&fLevel, "level", 0, "level (body)")
+	c.Flags().StringVar(&fProviderType, "provider-type", "", "providerType (body)")
 	c.Flags().StringSliceVar(&fProviders, "providers", nil, "providers (body)")
 	c.Flags().StringSliceVar(&fRegions, "regions", nil, "regions (body)")
 	c.Flags().StringSliceVar(&fServices, "services", nil, "services (body)")

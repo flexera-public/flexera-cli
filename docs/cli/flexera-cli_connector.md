@@ -30,4 +30,5 @@ Connector operations (generated from the unified OpenAPI spec)
 * [flexera-cli connector count](flexera-cli_connector_count.md)	 - Get connectors count by provider
 * [flexera-cli connector get](flexera-cli_connector_get.md)	 - Get information about a onboarded connector
 * [flexera-cli connector list](flexera-cli_connector_list.md)	 - List connectors for cloud Accounts in the Organization
+* [flexera-cli connector status](flexera-cli_connector_status.md)	 - Get status for all enabled products for a given connector
 

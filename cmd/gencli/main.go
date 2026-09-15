@@ -62,6 +62,7 @@ type param struct {
 	GoType   string // string|int64|int|bool|[]string
 	IsArray  bool
 	IsInt64  bool
+	IsUUID   bool
 	IsEnum   bool
 	EnumType string
 	In       string // path|query|header
@@ -454,6 +455,9 @@ func extractParams(op map[string]interface{}) (path, query []param, hasHeaders b
 			}
 			goType = "[]string"
 			isArray = true
+			if _, ok := items["enum"]; ok {
+				isEnum = true
+			}
 		default:
 			return nil, nil, false, false
 		}
@@ -464,6 +468,7 @@ func extractParams(op map[string]interface{}) (path, query []param, hasHeaders b
 			GoType:   goType,
 			IsArray:  isArray,
 			IsInt64:  isInt64,
+			IsUUID:   format == "uuid",
 			IsEnum:   isEnum,
 			In:       in,
 			Required: required,
@@ -602,6 +607,8 @@ type renderOp struct {
 	PathParams    []param // non-orgId path params (flags)
 	QueryParams   []param // excludes skipToken when paginated
 	PathArgExprs  []string
+	UUIDPathParams []param // subset of PathParams with IsUUID, for pre-call parsing
+	HasUUIDParams bool
 	HasBody       bool
 	BodyTypeName  string
 	BodyFields    []bodyField
@@ -656,6 +663,8 @@ func render(tag, pkg, cmdName string, ops []operation) ([]byte, error) {
 
 		genMethod := methodName(o.OperationID)
 
+		var uuidPathParams []param
+		hasUUIDParams := false
 		needsOrgID := false
 		var pathFlags []param
 		var pathArgExprs []string
@@ -676,6 +685,10 @@ func render(tag, pkg, cmdName string, ops []operation) ([]byte, error) {
 			if f.IsEnum {
 				f.EnumType = "flexera." + genMethod + "Params" + pascal(f.Name)
 				pathArgExprs = append(pathArgExprs, f.EnumType+"("+f.GoName+")")
+			} else if f.IsUUID {
+				pathArgExprs = append(pathArgExprs, f.GoName+"UUID")
+				uuidPathParams = append(uuidPathParams, f)
+				hasUUIDParams = true
 			} else {
 				pathArgExprs = append(pathArgExprs, f.GoName)
 			}
@@ -703,26 +716,28 @@ func render(tag, pkg, cmdName string, ops []operation) ([]byte, error) {
 		}
 
 		data.Ops = append(data.Ops, renderOp{
-			Constructor:   "new" + tagIdent + pascal(verb) + "Cmd",
-			Verb:          verb,
-			Short:         shortFor(o),
-			Method:        strings.ToUpper(o.Method),
-			Path:          o.Path,
-			OperationID:   o.OperationID,
-			GenMethod:     genMethod,
-			PathParams:    pathFlags,
-			QueryParams:   queryFlags,
-			PathArgExprs:  pathArgExprs,
-			HasBody:       o.HasBody,
-			BodyTypeName:  o.BodyTypeName,
-			BodyFields:    o.BodyFields,
-			NeedsOrgID:    needsOrgID,
-			ParamsType:    paramsType,
-			CanPaginate:   canPaginate,
-			Success2xx:    o.Success2xx,
-			HasJSONResp:   o.HasJSONResp,
-			IsWrite:       isWriteAction(o.Action),
-			IsDestructive: o.Action == "delete" || isDestructiveVerb(verb),
+			Constructor:    "new" + tagIdent + pascal(verb) + "Cmd",
+			Verb:           verb,
+			Short:          shortFor(o),
+			Method:         strings.ToUpper(o.Method),
+			Path:           o.Path,
+			OperationID:    o.OperationID,
+			GenMethod:      genMethod,
+			PathParams:     pathFlags,
+			QueryParams:    queryFlags,
+			PathArgExprs:   pathArgExprs,
+			UUIDPathParams: uuidPathParams,
+			HasUUIDParams:  hasUUIDParams,
+			HasBody:        o.HasBody,
+			BodyTypeName:   o.BodyTypeName,
+			BodyFields:     o.BodyFields,
+			NeedsOrgID:     needsOrgID,
+			ParamsType:     paramsType,
+			CanPaginate:    canPaginate,
+			Success2xx:     o.Success2xx,
+			HasJSONResp:    o.HasJSONResp,
+			IsWrite:        isWriteAction(o.Action),
+			IsDestructive:  o.Action == "delete" || isDestructiveVerb(verb),
 		})
 	}
 
@@ -995,6 +1010,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+{{- range .Ops }}{{- if .HasUUIDParams }}
+	"github.com/google/uuid"
+{{- break}}{{- end}}{{- end}}
 
 	"github.com/spf13/cobra"
 
@@ -1071,16 +1089,34 @@ func {{.Constructor}}() *cobra.Command {
 				return fmt.Errorf("--{{.FlagName}} is required")
 			}
 {{- end }}{{ end }}
+{{- range .UUIDPathParams }}
+			{{.GoName}}UUID, err := uuid.Parse({{.GoName}})
+			if err != nil {
+				return fmt.Errorf("--{{.FlagName}}: invalid UUID: %w", err)
+			}
+{{- end }}
 {{- if .ParamsType }}
 			params := {{.ParamsType}}{}
 {{- range .QueryParams }}
 {{- if .IsArray }}
 			if cmd.Flags().Changed("{{.FlagName}}") {
 {{- if .Required }}
+{{- if .IsEnum }}
+				var ev{{pascal .Name}} []{{.EnumType}}
+				for _, s := range {{.GoName}} { ev{{pascal .Name}} = append(ev{{pascal .Name}}, {{.EnumType}}(s)) }
+				params.{{ pascal .Name }} = ev{{pascal .Name}}
+{{- else }}
 				params.{{ pascal .Name }} = {{.GoName}}
+{{- end }}
+{{- else }}
+{{- if .IsEnum }}
+				var ev{{pascal .Name}} []{{.EnumType}}
+				for _, s := range {{.GoName}} { ev{{pascal .Name}} = append(ev{{pascal .Name}}, {{.EnumType}}(s)) }
+				params.{{ pascal .Name }} = &ev{{pascal .Name}}
 {{- else }}
 				v := {{.GoName}}
 				params.{{ pascal .Name }} = &v
+{{- end }}
 {{- end }}
 			}
 {{- else }}

@@ -29,18 +29,19 @@ func NewCmd() *cobra.Command {
 		Short: "Project operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
-		newProjectListCmd(),
+		newProjectListGrsCmd(),
+		newProjectListIamCmd(),
 	)
 	return c
 }
 
-// newProjectListCmd — GET /grs/users/{userId}/projects (operationId: Grs_Project_indexForOrg)
-func newProjectListCmd() *cobra.Command {
+// newProjectListGrsCmd — GET /grs/users/{userId}/projects (operationId: Grs_Project_indexForOrg)
+func newProjectListGrsCmd() *cobra.Command {
 	var (
 		userID int64
 	)
 	c := &cobra.Command{
-		Use:   "list",
+		Use:   "list-grs",
 		Short: "List projects accessible by the authenticated user",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -61,5 +62,33 @@ func newProjectListCmd() *cobra.Command {
 		},
 	}
 	c.Flags().Int64Var(&userID, "user-id", 0, "userId (path, required)")
+	return c
+}
+
+// newProjectListIamCmd — GET /iam/v1/orgs/{orgId}/projects (operationId: Iam_Project_Index)
+func newProjectListIamCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "list-iam",
+		Short: "Index an org's projects",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.IamProjectIndexWithResponse(cmd.Context(), deps.Config.OrgID)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
 	return c
 }

@@ -75,7 +75,7 @@ func newListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := client.IamUserOrgsIndexWithResponse(ctx, userID)
+			resp, err := client.IamUserMembershipsIndexWithResponse(ctx, userID)
 			if err != nil {
 				return err
 			}

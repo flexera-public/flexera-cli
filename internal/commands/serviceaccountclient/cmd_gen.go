@@ -30,7 +30,9 @@ func NewCmd() *cobra.Command {
 	}
 	c.AddCommand(
 		newServiceAccountClientClientsCmd(),
+		newServiceAccountClientClientSecretAllCmd(),
 		newServiceAccountClientDeleteCmd(),
+		newServiceAccountClientClientSecretCmd(),
 		newServiceAccountClientGetCmd(),
 		newServiceAccountClientListCmd(),
 	)
@@ -55,7 +57,8 @@ func newServiceAccountClientClientsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := client.IamServiceAccountClientCreateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID)
+			params := flexera.IamServiceAccountClientCreateParams{}
+			resp, err := client.IamServiceAccountClientCreateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, &params)
 			if err != nil {
 				return err
 			}
@@ -66,6 +69,44 @@ func newServiceAccountClientClientsCmd() *cobra.Command {
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	return c
+}
+
+// newServiceAccountClientClientSecretAllCmd — POST /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_Rotate)
+func newServiceAccountClientClientSecretAllCmd() *cobra.Command {
+	var (
+		serviceAccountID int
+		clientID         string
+	)
+	c := &cobra.Command{
+		Use:   "client-secret-all",
+		Short: "Rotate a service account client secret",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--client-id is required")
+			}
+			params := flexera.IamServiceAccountClientRotateParams{}
+			resp, err := client.IamServiceAccountClientRotateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID, &params)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
 	return c
 }
 
@@ -101,6 +142,55 @@ func newServiceAccountClientDeleteCmd() *cobra.Command {
 				return nil
 			}
 			resp, err := client.IamServiceAccountClientDeleteWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
+			if err != nil {
+				return err
+			}
+			if resp.StatusCode() != 204 {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			fmt.Fprintln(deps.Stdout, "OK")
+			return nil
+		},
+	}
+	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newServiceAccountClientClientSecretCmd — DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_DeleteOldSecret)
+func newServiceAccountClientClientSecretCmd() *cobra.Command {
+	var (
+		serviceAccountID int
+		clientID         string
+		dryRun           bool
+		yes              bool
+	)
+	c := &cobra.Command{
+		Use:   "client-secret",
+		Short: "Delete old service account client secret",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--client-id is required")
+			}
+			writePlan := map[string]any{"method": "DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret"}
+			writePlan["orgId"] = deps.Config.OrgID
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			resp, err := client.IamServiceAccountClientDeleteOldSecretWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
 			if err != nil {
 				return err
 			}

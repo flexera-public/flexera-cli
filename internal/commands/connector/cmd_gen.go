@@ -32,11 +32,12 @@ func NewCmd() *cobra.Command {
 		newConnectorGetCmd(),
 		newConnectorListCmd(),
 		newConnectorCountCmd(),
+		newConnectorStatusCmd(),
 	)
 	return c
 }
 
-// newConnectorGetCmd — GET /data-inventory/v1/orgs/{org_id}/connectors/{identifier} (operationId: Divnt_get_connector_data_inventory_v1_orgs_org_id_connectors_identifier_get)
+// newConnectorGetCmd — GET /uobs/v1/orgs/{org_id}/cloud/connectors/{identifier} (operationId: Uobs_get_connector_uobs_v1_orgs_org_id_cloud_connectors_identifier_get)
 func newConnectorGetCmd() *cobra.Command {
 	var (
 		identifier string
@@ -57,7 +58,7 @@ func newConnectorGetCmd() *cobra.Command {
 			if strings.TrimSpace(identifier) == "" {
 				return fmt.Errorf("--identifier is required")
 			}
-			resp, err := client.DivntGetConnectorDataInventoryV1OrgsOrgIdConnectorsIdentifierGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), identifier)
+			resp, err := client.UobsGetConnectorUobsV1OrgsOrgIdCloudConnectorsIdentifierGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), identifier)
 			if err != nil {
 				return err
 			}
@@ -71,7 +72,7 @@ func newConnectorGetCmd() *cobra.Command {
 	return c
 }
 
-// newConnectorListCmd — GET /data-inventory/v1/orgs/{org_id}/connectors/ (operationId: Divnt_list_connectors_data_inventory_v1_orgs_org_id_connectors_get)
+// newConnectorListCmd — GET /uobs/v1/orgs/{org_id}/cloud/connectors (operationId: Uobs_list_connectors_uobs_v1_orgs_org_id_cloud_connectors_get)
 func newConnectorListCmd() *cobra.Command {
 	var (
 		limit  int
@@ -91,7 +92,7 @@ func newConnectorListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			params := flexera.DivntListConnectorsDataInventoryV1OrgsOrgIdConnectorsGetParams{}
+			params := flexera.UobsListConnectorsUobsV1OrgsOrgIdCloudConnectorsGetParams{}
 			if cmd.Flags().Changed("limit") {
 				v := limit
 				params.Limit = &v
@@ -104,7 +105,7 @@ func newConnectorListCmd() *cobra.Command {
 				v := filter
 				params.Filter = &v
 			}
-			resp, err := client.DivntListConnectorsDataInventoryV1OrgsOrgIdConnectorsGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
+			resp, err := client.UobsListConnectorsUobsV1OrgsOrgIdCloudConnectorsGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
@@ -120,7 +121,7 @@ func newConnectorListCmd() *cobra.Command {
 	return c
 }
 
-// newConnectorCountCmd — GET /data-inventory/v1/orgs/{org_id}/connectors/count (operationId: Divnt_get_connectors_count_data_inventory_v1_orgs_org_id_connectors_count_get)
+// newConnectorCountCmd — GET /uobs/v1/orgs/{org_id}/cloud/connectors/count (operationId: Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get)
 func newConnectorCountCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:   "count",
@@ -135,7 +136,7 @@ func newConnectorCountCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := client.DivntGetConnectorsCountDataInventoryV1OrgsOrgIdConnectorsCountGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID))
+			resp, err := client.UobsGetConnectorsCountUobsV1OrgsOrgIdCloudConnectorsCountGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID))
 			if err != nil {
 				return err
 			}
@@ -145,5 +146,47 @@ func newConnectorCountCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	return c
+}
+
+// newConnectorStatusCmd — GET /uobs/v1/orgs/{org_id}/cloud/connectors/status (operationId: Uobs_get_connector_status_uobs_v1_orgs_org_id_cloud_connectors_status_get)
+func newConnectorStatusCmd() *cobra.Command {
+	var (
+		connectorID string
+		accountID   string
+	)
+	c := &cobra.Command{
+		Use:   "status",
+		Short: "Get status for all enabled products for a given connector",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			params := flexera.UobsGetConnectorStatusUobsV1OrgsOrgIdCloudConnectorsStatusGetParams{}
+			if cmd.Flags().Changed("connector-id") {
+				params.ConnectorId = connectorID
+			}
+			if cmd.Flags().Changed("account-id") {
+				v := accountID
+				params.AccountId = &v
+			}
+			resp, err := client.UobsGetConnectorStatusUobsV1OrgsOrgIdCloudConnectorsStatusGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (query)")
+	c.Flags().StringVar(&accountID, "account-id", "", "account_id (query)")
 	return c
 }

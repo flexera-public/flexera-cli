@@ -28,7 +28,13 @@ regulatory-compliance operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli regulatory-compliance asset-statistics](flexera-cli_regulatory-compliance_asset-statistics.md)	 - Regulatory Compliance Asset Statistics
+* [flexera-cli regulatory-compliance conformity-summary](flexera-cli_regulatory-compliance_conformity-summary.md)	 - Regulatory Compliance Conformity Summary
+* [flexera-cli regulatory-compliance failed-asset](flexera-cli_regulatory-compliance_failed-asset.md)	 - Regulatory Compliance Failed Assets
 * [flexera-cli regulatory-compliance filter](flexera-cli_regulatory-compliance_filter.md)	 - Regulatory Compliance Catalog Filter
 * [flexera-cli regulatory-compliance lifecycle-forecast](flexera-cli_regulatory-compliance_lifecycle-forecast.md)	 - Regulatory Compliance Lifecycle Forecast
 * [flexera-cli regulatory-compliance lifecycle-trend](flexera-cli_regulatory-compliance_lifecycle-trend.md)	 - Regulatory Compliance Lifecycle Trend
+* [flexera-cli regulatory-compliance list](flexera-cli_regulatory-compliance_list.md)	 - Regulatory Compliance BPC Rule List
+* [flexera-cli regulatory-compliance overview](flexera-cli_regulatory-compliance_overview.md)	 - On-Prem BPC Misconfiguration Overview
+* [flexera-cli regulatory-compliance suppress](flexera-cli_regulatory-compliance_suppress.md)	 - Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)
+* [flexera-cli regulatory-compliance year-wise-asset-list](flexera-cli_regulatory-compliance_year-wise-asset-list.md)	 - Regulatory Compliance Year-Wise Asset List
 
