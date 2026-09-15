@@ -33,6 +33,7 @@ import (
 	billingcredits "github.com/flexera-public/flexera-cli/internal/commands/billingcredits"
 	billingsettings "github.com/flexera-public/flexera-cli/internal/commands/billingsettings"
 	billmonths "github.com/flexera-public/flexera-cli/internal/commands/billmonths"
+	billupload "github.com/flexera-public/flexera-cli/internal/commands/billupload"
 	budget "github.com/flexera-public/flexera-cli/internal/commands/budget"
 	capability "github.com/flexera-public/flexera-cli/internal/commands/capability"
 	cloudvendoraccount "github.com/flexera-public/flexera-cli/internal/commands/cloudvendoraccount"
@@ -145,6 +146,7 @@ func RegisterAll(root *cobra.Command) {
 		billingcredits.NewCmd(),
 		billingsettings.NewCmd(),
 		billmonths.NewCmd(),
+		billupload.NewCmd(),
 		budget.NewCmd(),
 		capability.NewCmd(),
 		cloudvendoraccount.NewCmd(),
