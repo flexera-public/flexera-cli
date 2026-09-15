@@ -37,6 +37,7 @@ Flexera One unified API command-line client
 * [flexera-cli bill-connect](flexera-cli_bill-connect.md)	 - Bill Connect operations (generated from the unified OpenAPI spec)
 * [flexera-cli bill-connect-snowflake](flexera-cli_bill-connect-snowflake.md)	 - Bill Connect - Snowflake operations (generated from the unified OpenAPI spec)
 * [flexera-cli bill-months](flexera-cli_bill-months.md)	 - bill-months operations (generated from the unified OpenAPI spec)
+* [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - BillUpload operations (generated from the unified OpenAPI spec)
 * [flexera-cli billing](flexera-cli_billing.md)	 - Billing operations (generated from the unified OpenAPI spec)
 * [flexera-cli billing-audit](flexera-cli_billing-audit.md)	 - Billing Audit operations (generated from the unified OpenAPI spec)
 * [flexera-cli billing-center-access-rules](flexera-cli_billing-center-access-rules.md)	 - BillingCenterAccessRules operations (generated from the unified OpenAPI spec)
