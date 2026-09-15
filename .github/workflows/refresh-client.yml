@@ -50,20 +50,18 @@ jobs:
 
       - name: Regenerate CLI commands from updated spec
         working-directory: flexera-cli
-        run: go generate .
+        run: make generate
 
       - name: Regenerate completions and docs
         working-directory: flexera-cli
-        run: |
-          make completions
-          make docs
+        run: make completions docs
 
       - name: Run tests
         working-directory: flexera-cli
         run: |
           go vet ./...
-          go build ./...
-          go test ./...
+          make build
+          make test
 
       - name: Build change summary
         id: summary

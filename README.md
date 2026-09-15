@@ -225,13 +225,14 @@ Add `--debug` to any command to trace HTTP requests/responses on stderr
 ```sh
 make test                 # unit tests (no network, no credentials)
 go vet ./...
-make docs completions     # regenerate reference docs + completion scripts
+make completions docs     # regenerate reference docs + completion scripts
+make all                  # update Go deps + ../unified-openapi, then regenerate CLI
 ```
 
 The generated command tree is produced from the unified OpenAPI spec via
-`go generate ./...` (see `cmd/gencli` and `cmd/regencli`); do not hand-edit
-files under `internal/commands/`. Live, read-only integration tests are
-available via `make test-integration` (requires `FLEXERA_NAM_REFRESH_TOKEN`).
+`make generate` (or `make all`); do not hand-edit files under
+`internal/commands/`. Live, read-only integration tests are available via
+`make test-integration` (requires `FLEXERA_NAM_REFRESH_TOKEN`).
 
 The CLI is a thin shell over the unified Go client library at
 [`github.com/flexera-public/unified-go-client`](https://github.com/flexera-public/unified-go-client); prefer
