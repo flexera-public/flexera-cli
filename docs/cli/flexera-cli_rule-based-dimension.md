@@ -27,12 +27,13 @@ Rule-Based Dimension operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
+* [flexera-cli rule-based-dimension create](flexera-cli_rule-based-dimension_create.md)	 - Creates a rule-based dimension
 * [flexera-cli rule-based-dimension delete](flexera-cli_rule-based-dimension_delete.md)	 - Delete a rule-based dimension
 * [flexera-cli rule-based-dimension get](flexera-cli_rule-based-dimension_get.md)	 - Shows a rule-based dimension
 * [flexera-cli rule-based-dimension list](flexera-cli_rule-based-dimension_list.md)	 - Index rule-based dimensions
-* [flexera-cli rule-based-dimension create](flexera-cli_rule-based-dimension_create.md)	 - Creates a rule-based dimension
 * [flexera-cli rule-based-dimension replace](flexera-cli_rule-based-dimension_replace.md)	 - Creates/Replace a rules list
 * [flexera-cli rule-based-dimension rules](flexera-cli_rule-based-dimension_rules.md)	 - Shows the rules list
 * [flexera-cli rule-based-dimension rules-all](flexera-cli_rule-based-dimension_rules-all.md)	 - Deletes the rules list
+* [flexera-cli rule-based-dimension summary](flexera-cli_rule-based-dimension_summary.md)	 - Show a rule-based dimension summary
 * [flexera-cli rule-based-dimension update](flexera-cli_rule-based-dimension_update.md)	 - Updates a rule-based dimension
 

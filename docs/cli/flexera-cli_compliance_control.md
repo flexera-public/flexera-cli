@@ -16,6 +16,7 @@ flexera-cli compliance control [flags]
   -h, --help                   help for control
       --imc                    imc (body)
       --level int              level (body)
+      --provider-type string   providerType (body)
       --providers strings      providers (body)
       --regions strings        regions (body)
       --services strings       services (body)
