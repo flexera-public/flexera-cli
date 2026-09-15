@@ -2,13 +2,9 @@
 
 A command-line client for the **Flexera One unified API**.
 
-`flexera-cli` is a thin, exemplary consumer of the unified Flexera Go client
-library ([`github.com/flexera-public/unified-go-client`](https://github.com/flexera-public/unified-go-client)). All
-business logic, helpers, and curated operations live in that library; this
-binary only wires a [cobra](https://github.com/spf13/cobra) command tree —
-**most of it generated directly from the unified OpenAPI spec** — to it. If you
-are building another integration (a Terraform provider, a web app, an internal
-tool), prefer importing the Go client library directly; this CLI shows how.
+`flexera-cli` is a thin, exemplary consumer of the unified Flexera Go client library ([`github.com/flexera-public/unified-go-client`](https://github.com/flexera-public/unified-go-client)). 
+
+All business logic, helpers, and curated operations live in that library; this binary only wires a [cobra](https://github.com/spf13/cobra) command tree — **most of it generated directly from the unified OpenAPI spec** — to it.  If you are building another integration (a Terraform provider, a web app, an internal tool), prefer importing the Go client library directly; this CLI shows how.
 
 - **Generated commands** mirror the API surface (`budget`, `role`,
   `published-template`, `vulnerability`, …) with consistent verbs
@@ -16,6 +12,14 @@ tool), prefer importing the Go client library directly; this CLI shows how.
 - **Curated commands** wrap multi-step or non-spec workflows: `auth`,
   `finops` (Optima cost analytics), `policy` (with project auto-resolution),
   `grs`, `user-orgs`, and `curated` (e.g. AI cost-anomaly investigation).
+
+## Experimental Project
+
+This project is currently considered **experimental**.
+
+While we intend to minimize disruption, breaking changes may occur as we continue to evolve the design, APIs, and implementation. **Until the project reaches a stable v1.0.0 release, backward compatibility is not guaranteed.**
+
+We welcome feedback and contributions, but recommend evaluating the current level of stability before adopting this project in production environments.
 
 ---
 
