@@ -108,8 +108,36 @@ func main() {
 		generated = append(generated, genTag{Tag: tag, Pkg: pkg, Cmd: cmd})
 	}
 
+	verifyGenerated(generated)
+
 	writeRegister(generated)
 	fmt.Fprintf(os.Stderr, "regencli: wrote %d generated tag packages\n", len(generated))
+}
+
+// verifyGenerated type-checks every flexera.* / client.* symbol referenced
+// by the freshly generated command files against the real unified-go-client
+// package (loaded once via go/packages + go/types). This turns a spec/client
+// naming drift (e.g. an operationId or generated type renamed upstream)
+// into a hard regen-time failure instead of a downstream `go build` error —
+// or worse, a silent mismatch that only trips at runtime.
+func verifyGenerated(tags []genTag) {
+	sv, err := newSymbolVerifier()
+	check(err)
+
+	var issues []string
+	for _, t := range tags {
+		out := filepath.Join(commandsDir, t.Pkg, "cmd_gen.go")
+		issues = append(issues, sv.verifyFile(out)...)
+	}
+	if len(issues) > 0 {
+		fmt.Fprintln(os.Stderr, "regencli: symbol verification against unified-go-client failed:")
+		for _, msg := range issues {
+			fmt.Fprintln(os.Stderr, "  "+msg)
+		}
+		fmt.Fprintf(os.Stderr, "regencli: %d symbol mismatch(es); aborting before register_gen.go is written\n", len(issues))
+		os.Exit(1)
+	}
+	fmt.Fprintf(os.Stderr, "regencli: verified %d generated file(s) against unified-go-client symbols\n", len(tags))
 }
 
 type spec struct {
