@@ -29,7 +29,7 @@ func NewCmd() *cobra.Command {
 		Short: "Rule-Based Dimension operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
-		newRuleBasedDimensionRuleBasedDimensionsCmd(),
+		newRuleBasedDimensionCreateCmd(),
 		newRuleBasedDimensionDeleteCmd(),
 		newRuleBasedDimensionRulesAllCmd(),
 		newRuleBasedDimensionGetCmd(),
@@ -42,15 +42,17 @@ func NewCmd() *cobra.Command {
 	return c
 }
 
-// newRuleBasedDimensionRuleBasedDimensionsCmd — POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id} (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create)
-func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
+// newRuleBasedDimensionCreateCmd — POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id} (operationId: FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create)
+func newRuleBasedDimensionCreateCmd() *cobra.Command {
 	var (
 		id      string
 		bodyRaw string
 		fName   string
+		dryRun  bool
+		yes     bool
 	)
 	c := &cobra.Command{
-		Use:   "rule-based-dimensions",
+		Use:   "create",
 		Short: "Creates a rule-based dimension",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -84,6 +86,14 @@ func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
+			writePlan := map[string]any{"method": "POST /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}"}
+			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
+			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
 			resp, err := client.FinopsCustomizationsRuleBasedDimensionRuleBasedDimensionCreateWithResponse(cmd.Context(), deps.Config.OrgID, id, body)
 			if err != nil {
 				return err
@@ -98,6 +108,8 @@ func newRuleBasedDimensionRuleBasedDimensionsCmd() *cobra.Command {
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	c.Flags().StringVar(&fName, "name", "", "name (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 

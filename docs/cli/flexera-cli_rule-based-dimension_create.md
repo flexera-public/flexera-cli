@@ -1,18 +1,20 @@
-## flexera-cli rule-based-dimension rule-based-dimensions
+## flexera-cli rule-based-dimension create
 
 Creates a rule-based dimension
 
 ```
-flexera-cli rule-based-dimension rule-based-dimensions [flags]
+flexera-cli rule-based-dimension create [flags]
 ```
 
 ### Options
 
 ```
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
-  -h, --help          help for rule-based-dimensions
+      --dry-run       print the planned operation as JSON and exit without calling the API
+  -h, --help          help for create
       --id string     id (path, required)
       --name string   name (body)
+      --yes           confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
