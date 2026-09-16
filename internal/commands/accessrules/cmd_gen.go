@@ -58,11 +58,14 @@ func newAccessRulesListGroupsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.StatusCode() != 200 {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			var result any
+			if err := json.Unmarshal(resp.Body, &result); err != nil {
+				return fmt.Errorf("decoding response body: %w", err)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 		},
 	}
 	c.Flags().IntVar(&group, "group", 0, "group (path, required)")
@@ -92,11 +95,14 @@ func newAccessRulesListUsersCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.StatusCode() != 200 {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			var result any
+			if err := json.Unmarshal(resp.Body, &result); err != nil {
+				return fmt.Errorf("decoding response body: %w", err)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 		},
 	}
 	c.Flags().IntVar(&user, "user", 0, "user (path, required)")
