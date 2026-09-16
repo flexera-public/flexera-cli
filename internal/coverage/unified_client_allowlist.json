@@ -1,0 +1,1012 @@
+[
+  {
+    "symbol": ".#(*APIError).Error",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#(*AuthHelper).APIBaseURL",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).LoginBaseURL",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewOAuth2Doer",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewOAuthClient",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewOAuthClientWithResponses",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewProjectResolverWithOAuth",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewProjectResolverWithStaticToken",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewStaticTokenClient",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).NewTokenClient",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).TokenWithClientCredentials",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).TokenWithRefreshToken",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*AuthHelper).ValidateOAuth2Credentials",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#(*BillUploadPushTool).Description",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#(*BillUploadPushTool).Invoke",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#(*BillUploadPushTool).Name",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#(*BillingCenterResolver).ResolveOrUse",
+    "status": "excluded",
+    "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#(*BillingCenterResolver).TopLevelIDs",
+    "status": "excluded",
+    "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#(*Client).GraphQL",
+    "status": "covered",
+    "command": "graphql query"
+  },
+  {
+    "symbol": ".#(*Helper).GetCost",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).AccessToken",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).Do",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).Invalidate",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).Refresh",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).TokenExpiry",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*OAuth2Doer).ValidateCredentials",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*PartialError).Error",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#(*PartialError).Unwrap",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).AutoDetectProjectID",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).GetProjectByID",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).GetProjectByName",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).Invalidate",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).InvalidateAll",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).ListProjects",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*ProjectResolver).ResolveSingleProjectID",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#(*Registry).List",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#(*Registry).Lookup",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#(*Registry).MustRegister",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#(*Registry).Register",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#(*SharedTokenSource).Doer",
+    "status": "excluded",
+    "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*SharedTokenSource).Invalidate",
+    "status": "excluded",
+    "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(*SharedTokenSource).Token",
+    "status": "excluded",
+    "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#(ClientAuth).Validate",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#APIBaseURLForZone",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#APIError",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#AuthHelper",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#AuthHelperConfig",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#BearerTokenRequestEditor",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#BillUploadPushClient",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#BillUploadPushInput",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#BillUploadPushOutput",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#BillUploadPushTool",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#BillingCenterClient",
+    "status": "excluded",
+    "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#BillingCenterResolver",
+    "status": "excluded",
+    "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#ClientAuth",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#CollectPages",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#CostClient",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#CostResponse",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#DebugOptions",
+    "status": "excluded",
+    "reason": "--debug HTTP tracing plumbing wired automatically"
+  },
+  {
+    "symbol": ".#DefaultRetryConfig",
+    "status": "excluded",
+    "reason": "HTTP transport/retry plumbing wired automatically into every client"
+  },
+  {
+    "symbol": ".#Endpoint",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#Entry",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#ExpectStatus",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#ExtractSkipToken",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#FetchAll",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#FetchAllWithProgress",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#FilterRecommendationsByCategory",
+    "status": "covered",
+    "command": "finops recommendation list-*"
+  },
+  {
+    "symbol": ".#Granularity",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#GraphQLRequest",
+    "status": "covered",
+    "command": "graphql query"
+  },
+  {
+    "symbol": ".#GraphQLResponse",
+    "status": "covered",
+    "command": "graphql query"
+  },
+  {
+    "symbol": ".#GrsBaseURLForZone",
+    "status": "excluded",
+    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
+  },
+  {
+    "symbol": ".#Helper",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#IsCanonicalZone",
+    "status": "excluded",
+    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
+  },
+  {
+    "symbol": ".#JSONHandler",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#LoginBaseURLForZone",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#New",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#NewAuthHelper",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#NewBillUploadPushTool",
+    "status": "covered",
+    "command": "bill-upload push"
+  },
+  {
+    "symbol": ".#NewBillingCenterResolver",
+    "status": "excluded",
+    "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#NewClientWithResponsesForAuth",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#NewDebugDoer",
+    "status": "excluded",
+    "reason": "--debug HTTP tracing plumbing wired automatically"
+  },
+  {
+    "symbol": ".#NewOAuth2Doer",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#NewProjectResolver",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#NewRetryingHTTPClient",
+    "status": "excluded",
+    "reason": "HTTP transport/retry plumbing wired automatically into every client"
+  },
+  {
+    "symbol": ".#NewServerUrlFlexeraLogin",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#NewSharedTokenSource",
+    "status": "excluded",
+    "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#OAuth2Doer",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#OAuthConfig",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#OptimaBaseURL",
+    "status": "excluded",
+    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
+  },
+  {
+    "symbol": ".#Page",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#PageDetail",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#PageFetcher",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#ParseAPIError",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#ParseZone",
+    "status": "excluded",
+    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
+  },
+  {
+    "symbol": ".#PartialError",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#ProgressCallback",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#Project",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#ProjectResolver",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#ProjectResolverOption",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#Registry",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#Request",
+    "status": "covered",
+    "command": "finops cost get"
+  },
+  {
+    "symbol": ".#ResponseError",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#RetryConfig",
+    "status": "excluded",
+    "reason": "HTTP transport/retry plumbing wired automatically into every client"
+  },
+  {
+    "symbol": ".#SharedTokenSource",
+    "status": "excluded",
+    "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#SkipTokenFromURL",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#TokenResponse",
+    "status": "excluded",
+    "reason": "OAuth doer plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#Tool",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#UserIDFromToken",
+    "status": "covered",
+    "command": "user-orgs"
+  },
+  {
+    "symbol": ".#WithBearerToken",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#WithHTTPDebug",
+    "status": "excluded",
+    "reason": "--debug HTTP tracing plumbing wired automatically"
+  },
+  {
+    "symbol": ".#WithOptimaRouting",
+    "status": "excluded",
+    "reason": "automatic Optima-host routing plumbing wired into every client"
+  },
+  {
+    "symbol": ".#WithProjectsAPIVersion",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#WithProjectsCacheTTL",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#WithRetryingHTTPClient",
+    "status": "excluded",
+    "reason": "HTTP transport/retry plumbing wired automatically into every client"
+  },
+  {
+    "symbol": ".#WithSharedTokenSource",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#Wrap",
+    "status": "excluded",
+    "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#Write",
+    "status": "excluded",
+    "reason": "output rendering helper used internally by every command via deps.Printer"
+  },
+  {
+    "symbol": ".#WriteErrorJSON",
+    "status": "excluded",
+    "reason": "output rendering helper used internally by every command via deps.Printer"
+  },
+  {
+    "symbol": ".#WriteJSON",
+    "status": "excluded",
+    "reason": "output rendering helper used internally by every command via deps.Printer"
+  },
+  {
+    "symbol": ".#WriteTable",
+    "status": "excluded",
+    "reason": "output rendering helper used internally by every command via deps.Printer"
+  },
+  {
+    "symbol": ".#Zone",
+    "status": "excluded",
+    "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": "anomaly#(*Investigator).Description",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#(*Investigator).Invoke",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#(*Investigator).Name",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#(StaticResolver).TopLevelIDs",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#BillingCenterResolver",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DebugLogger",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DimensionAnomaly",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DimensionAnomalyAnalysis",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DiscoveryModeResult",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#FinOpsImpactAssessment",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#Input",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#Investigator",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#New",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#Output",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#ParsedRecency",
+    "status": "excluded",
+    "reason": "unexported recency-window parsing helpers used only inside anomaly.Investigator"
+  },
+  {
+    "symbol": "anomaly#StaticResolver",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#Summary",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#AggregatedRequestBody",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#AggregatedRequestBodyGranularity",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#AnalyticsQueryResult",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#FilterV1",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#FilterV1Type",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#ParseAnalyticsQueryResult",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#ReportRequestBody",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#ReportRequestBodyDetectionMethod",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#ReportRequestBodyGranularity",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#Row",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#SelectRequestBody",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#SelectRequestBodyGranularity",
+    "status": "excluded",
+    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
+  },
+  {
+    "symbol": "rightscale/bill_analysis#WithHeaders",
+    "status": "excluded",
+    "reason": "ClientOption (custom headers), transport-level plumbing"
+  },
+  {
+    "symbol": "rightscale/billing_center_service#WithHeader",
+    "status": "excluded",
+    "reason": "ClientOption (custom headers), transport-level plumbing"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSCreateIAMRole",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSCreateIAMUser",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSUpdateIAMRole",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSUpdateIAMUser",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AWSValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureCSPCreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureCSPDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureCSPGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureCSPUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureCSPValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureEAManagementCreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureEAManagementDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureEAManagementGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureEAManagementUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureEAManagementValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureMCACreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureMCADelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureMCAGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureMCAUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).AzureMCAValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).CommonBillIngestionCreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).CommonBillIngestionDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).CommonBillIngestionGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).CommonBillIngestionUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).CommonBillIngestionValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).DatabricksCreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).DatabricksDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).DatabricksGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).DatabricksUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).DatabricksValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).GCPCreate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).GCPDelete",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).GCPGet",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).GCPUpdate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).GCPValidate",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).List",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#(*Service).Validations",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#New",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/billconnect#Service",
+    "status": "excluded",
+    "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": "service/graphql/v1#(*Client).GenerateQuery",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
+    "symbol": "service/graphql/v1#(*ClientWithResponses).GenerateQuery",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
+    "symbol": "service/graphql/v1#GenerateQueryRequestBody",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
+    "symbol": "service/graphql/v1#GenerateQueryResponse",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
+    "symbol": "service/optima#Clients",
+    "status": "excluded",
+    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
+  },
+  {
+    "symbol": "service/optima#Config",
+    "status": "excluded",
+    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
+  },
+  {
+    "symbol": "service/optima#HttpRequestDoer",
+    "status": "excluded",
+    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
+  },
+  {
+    "symbol": "service/optima#NewClients",
+    "status": "excluded",
+    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
+  },
+  {
+    "symbol": "service/optima#NewClientsForZone",
+    "status": "excluded",
+    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
+  }
+]

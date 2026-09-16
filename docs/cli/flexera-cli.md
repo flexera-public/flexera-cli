@@ -85,6 +85,7 @@ Flexera One unified API command-line client
 * [flexera-cli metric-query](flexera-cli_metric-query.md)	 - Metric Query operations (generated from the unified OpenAPI spec)
 * [flexera-cli misconfiguration-ui](flexera-cli_misconfiguration-ui.md)	 - misconfiguration-ui operations (generated from the unified OpenAPI spec)
 * [flexera-cli msp-customer](flexera-cli_msp-customer.md)	 - MSP Customer operations (generated from the unified OpenAPI spec)
+* [flexera-cli msp-customer-domain](flexera-cli_msp-customer-domain.md)	 - MSP Customer Domain operations (generated from the unified OpenAPI spec)
 * [flexera-cli msp-customer-tag](flexera-cli_msp-customer-tag.md)	 - MSP Customer Tag operations (generated from the unified OpenAPI spec)
 * [flexera-cli msp-customer-v2](flexera-cli_msp-customer-v2.md)	 - MSP Customer V2 operations (generated from the unified OpenAPI spec)
 * [flexera-cli notifications](flexera-cli_notifications.md)	 - notifications operations (generated from the unified OpenAPI spec)

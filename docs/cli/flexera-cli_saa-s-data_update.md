@@ -9,10 +9,11 @@ flexera-cli saa-s-data update [flags]
 ### Options
 
 ```
-      --dry-run     print the planned operation as JSON and exit without calling the API
-  -h, --help        help for update
-      --id string   id (path, required)
-      --yes         confirm the operation (required for destructive ops)
+      --body string   raw JSON body (inline | @file | @-); overrides body field flags
+      --dry-run       print the planned operation as JSON and exit without calling the API
+  -h, --help          help for update
+      --id string     id (path, required)
+      --yes           confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands

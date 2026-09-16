@@ -4,6 +4,7 @@
 package billupload
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -45,6 +46,7 @@ func newBillUploadFilesCmd() *cobra.Command {
 	var (
 		billUploadID string
 		fileID       string
+		bodyRaw      string
 	)
 	c := &cobra.Command{
 		Use:   "files",
@@ -69,7 +71,14 @@ func newBillUploadFilesCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("--bill-upload-id: invalid UUID: %w", err)
 			}
-			resp, err := client.BillUploadBillUploadCreateFileWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID, fileID)
+			raw, err := clipkg.ResolveRawBody(bodyRaw, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body @file or --body @-")
+			}
+			resp, err := client.BillUploadBillUploadCreateFileWithBodyWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID, fileID, "application/octet-stream", bytes.NewReader(raw))
 			if err != nil {
 				return err
 			}
@@ -82,6 +91,7 @@ func newBillUploadFilesCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
 	c.Flags().StringVar(&fileID, "file-id", "", "fileId (path, required)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw request body (@file | @-)")
 	return c
 }
 

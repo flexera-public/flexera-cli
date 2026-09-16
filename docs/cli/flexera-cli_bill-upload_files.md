@@ -10,6 +10,7 @@ flexera-cli bill-upload files [flags]
 
 ```
       --bill-upload-id string   billUploadId (path, required)
+      --body string             raw request body (@file | @-)
       --file-id string          fileId (path, required)
   -h, --help                    help for files
 ```

@@ -72,6 +72,7 @@ import (
 	metricquery "github.com/flexera-public/flexera-cli/internal/commands/metricquery"
 	misconfigurationui "github.com/flexera-public/flexera-cli/internal/commands/misconfigurationui"
 	mspcustomer "github.com/flexera-public/flexera-cli/internal/commands/mspcustomer"
+	mspcustomerdomain "github.com/flexera-public/flexera-cli/internal/commands/mspcustomerdomain"
 	mspcustomertag "github.com/flexera-public/flexera-cli/internal/commands/mspcustomertag"
 	mspcustomerv2 "github.com/flexera-public/flexera-cli/internal/commands/mspcustomerv2"
 	notifications "github.com/flexera-public/flexera-cli/internal/commands/notifications"
@@ -185,6 +186,7 @@ func RegisterAll(root *cobra.Command) {
 		metricquery.NewCmd(),
 		misconfigurationui.NewCmd(),
 		mspcustomer.NewCmd(),
+		mspcustomerdomain.NewCmd(),
 		mspcustomertag.NewCmd(),
 		mspcustomerv2.NewCmd(),
 		notifications.NewCmd(),

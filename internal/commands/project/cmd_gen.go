@@ -67,6 +67,9 @@ func newProjectListGrsCmd() *cobra.Command {
 
 // newProjectListIamCmd — GET /iam/v1/orgs/{orgId}/projects (operationId: Iam_Project_Index)
 func newProjectListIamCmd() *cobra.Command {
+	var (
+		view string
+	)
 	c := &cobra.Command{
 		Use:   "list-iam",
 		Short: "Index an org's projects",
@@ -80,7 +83,12 @@ func newProjectListIamCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			resp, err := client.IamProjectIndexWithResponse(cmd.Context(), deps.Config.OrgID)
+			params := flexera.IamProjectIndexParams{}
+			if cmd.Flags().Changed("view") {
+				ev := flexera.IamProjectIndexParamsView(view)
+				params.View = &ev
+			}
+			resp, err := client.IamProjectIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
@@ -90,5 +98,6 @@ func newProjectListIamCmd() *cobra.Command {
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
+	c.Flags().StringVar(&view, "view", "", "view (query)")
 	return c
 }

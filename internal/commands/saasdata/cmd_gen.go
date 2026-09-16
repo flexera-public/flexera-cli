@@ -184,9 +184,10 @@ func newSaaSDataListCmd() *cobra.Command {
 // newSaaSDataUpdateCmd — PATCH /saas/v1/orgs/{orgId}/saas-data/{id} (operationId: Saas_SaaS_Data_upload)
 func newSaaSDataUpdateCmd() *cobra.Command {
 	var (
-		id     string
-		dryRun bool
-		yes    bool
+		id      string
+		bodyRaw string
+		dryRun  bool
+		yes     bool
 	)
 	c := &cobra.Command{
 		Use:   "update",
@@ -205,14 +206,31 @@ func newSaaSDataUpdateCmd() *cobra.Command {
 				return fmt.Errorf("--id is required")
 			}
 			params := flexera.SaasSaaSDataUploadParams{}
+			fields := map[string]any{}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+			}
+			var body flexera.SaasSaaSDataUploadJSONRequestBody
+			if err := json.Unmarshal(raw, &body); err != nil {
+				return fmt.Errorf("decoding request body: %w", err)
+			}
 			writePlan := map[string]any{"method": "PATCH /saas/v1/orgs/{orgId}/saas-data/{id}"}
 			writePlan["orgId"] = deps.Config.OrgID
+			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.SaasSaaSDataUploadWithResponse(cmd.Context(), deps.Config.OrgID, id, &params)
+			resp, err := client.SaasSaaSDataUploadWithResponse(cmd.Context(), deps.Config.OrgID, id, &params, body)
 			if err != nil {
 				return err
 			}
@@ -224,6 +242,7 @@ func newSaaSDataUpdateCmd() *cobra.Command {
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c

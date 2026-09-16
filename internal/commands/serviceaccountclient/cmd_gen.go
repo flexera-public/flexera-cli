@@ -35,6 +35,7 @@ func NewCmd() *cobra.Command {
 		newServiceAccountClientClientSecretCmd(),
 		newServiceAccountClientGetCmd(),
 		newServiceAccountClientListCmd(),
+		newServiceAccountClientClientSecretsCmd(),
 	)
 	return c
 }
@@ -274,5 +275,42 @@ func newServiceAccountClientListCmd() *cobra.Command {
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	return c
+}
+
+// newServiceAccountClientClientSecretsCmd — GET /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secrets (operationId: Iam_Service_Account_Client_IndexClientSecrets)
+func newServiceAccountClientClientSecretsCmd() *cobra.Command {
+	var (
+		serviceAccountID int
+		clientID         string
+	)
+	c := &cobra.Command{
+		Use:   "client-secrets",
+		Short: "Index a service account client's secrets",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--client-id is required")
+			}
+			resp, err := client.IamServiceAccountClientIndexClientSecretsWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
+			if err != nil {
+				return err
+			}
+			if resp.JSON200 == nil {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+		},
+	}
+	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
 	return c
 }

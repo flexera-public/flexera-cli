@@ -11,7 +11,9 @@ import (
 	clipkg "github.com/flexera-public/flexera-cli/internal/cli"
 	"github.com/flexera-public/flexera-cli/internal/commands"
 	authcmd "github.com/flexera-public/flexera-cli/internal/curated/auth"
+	billuploadcmd "github.com/flexera-public/flexera-cli/internal/curated/billupload"
 	finopscmd "github.com/flexera-public/flexera-cli/internal/curated/finops"
+	graphqlcmd "github.com/flexera-public/flexera-cli/internal/curated/graphql"
 	grscmd "github.com/flexera-public/flexera-cli/internal/curated/grs"
 	policycmd "github.com/flexera-public/flexera-cli/internal/curated/policy"
 	userorgscmd "github.com/flexera-public/flexera-cli/internal/curated/userorgs"
@@ -38,6 +40,12 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 	root.SetErr(stderr)
 
 	commands.RegisterAll(root)
+	if err := billuploadcmd.Attach(root); err != nil {
+		panic(err)
+	}
+	if err := graphqlcmd.Attach(root); err != nil {
+		panic(err)
+	}
 
 	for _, c := range []*cobra.Command{
 		authcmd.NewCmd(),

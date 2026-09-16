@@ -1,11 +1,17 @@
-## flexera-cli graphql
+## flexera-cli service-account-client client-secrets
 
-graphql operations (generated from the unified OpenAPI spec)
+Index a service account client's secrets
+
+```
+flexera-cli service-account-client client-secrets [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for graphql
+      --client-id string         clientId (path, required)
+  -h, --help                     help for client-secrets
+      --service-account-id int   serviceAccountId (path, required)
 ```
 
 ### Options inherited from parent commands
@@ -13,7 +19,6 @@ graphql operations (generated from the unified OpenAPI spec)
 ```
       --access-token string     static bearer access token
       --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
       --client-secret string    OAuth client secret
       --config string           config file (default $HOME/.flexera/config.yaml)
   -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
@@ -26,9 +31,5 @@ graphql operations (generated from the unified OpenAPI spec)
 
 ### SEE ALSO
 
-* [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli graphql generate](flexera-cli_graphql_generate.md)	 - Generate or modify a GraphQL query
-* [flexera-cli graphql graphql](flexera-cli_graphql_graphql.md)	 - query graphql
-* [flexera-cli graphql query](flexera-cli_graphql_query.md)	 - Execute a raw GraphQL query against /explore/graphql
-* [flexera-cli graphql table-schema](flexera-cli_graphql_table-schema.md)	 - tableSchema graphql
+* [flexera-cli service-account-client](flexera-cli_service-account-client.md)	 - Service Account Client operations (generated from the unified OpenAPI spec)
 

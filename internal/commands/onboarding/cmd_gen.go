@@ -50,7 +50,6 @@ func newOnboardingCreateCmd() *cobra.Command {
 		fIncludeBPC          string
 		fIncludeCostAndUsage string
 		fIncludeInventory    string
-		fOnboardingType      string
 		fPartnerTenantID     string
 		fProvider            string
 		fRoleARN             string
@@ -103,9 +102,6 @@ func newOnboardingCreateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("include-inventory") {
 				fields["IncludeInventory"] = fIncludeInventory
-			}
-			if cmd.Flags().Changed("onboarding-type") {
-				fields["OnboardingType"] = fOnboardingType
 			}
 			if cmd.Flags().Changed("partner-tenant-id") {
 				fields["PartnerTenantId"] = fPartnerTenantID
@@ -168,7 +164,6 @@ func newOnboardingCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
-	c.Flags().StringVar(&fOnboardingType, "onboarding-type", "", "OnboardingType (body)")
 	c.Flags().StringVar(&fPartnerTenantID, "partner-tenant-id", "", "PartnerTenantId (body)")
 	c.Flags().StringVar(&fProvider, "provider", "", "Provider (body)")
 	c.Flags().StringVar(&fRoleARN, "role-arn", "", "RoleARN (body)")
@@ -249,7 +244,6 @@ func newOnboardingReplaceCmd() *cobra.Command {
 		fIncludeBPC          string
 		fIncludeCostAndUsage string
 		fIncludeInventory    string
-		fOnboardingType      string
 		fPartnerTenantID     string
 		fRoleARN             string
 		fSubscriptionID      string
@@ -308,9 +302,6 @@ func newOnboardingReplaceCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("include-inventory") {
 				fields["IncludeInventory"] = fIncludeInventory
-			}
-			if cmd.Flags().Changed("onboarding-type") {
-				fields["OnboardingType"] = fOnboardingType
 			}
 			if cmd.Flags().Changed("partner-tenant-id") {
 				fields["PartnerTenantId"] = fPartnerTenantID
@@ -372,7 +363,6 @@ func newOnboardingReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&fIncludeBPC, "include-bpc", "", "IncludeBPC (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fIncludeInventory, "include-inventory", "", "IncludeInventory (body)")
-	c.Flags().StringVar(&fOnboardingType, "onboarding-type", "", "OnboardingType (body)")
 	c.Flags().StringVar(&fPartnerTenantID, "partner-tenant-id", "", "PartnerTenantId (body)")
 	c.Flags().StringVar(&fRoleARN, "role-arn", "", "RoleARN (body)")
 	c.Flags().StringVar(&fSubscriptionID, "subscription-id", "", "SubscriptionId (body)")

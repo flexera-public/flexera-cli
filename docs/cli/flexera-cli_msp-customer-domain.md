@@ -1,11 +1,11 @@
-## flexera-cli graphql
+## flexera-cli msp-customer-domain
 
-graphql operations (generated from the unified OpenAPI spec)
+MSP Customer Domain operations (generated from the unified OpenAPI spec)
 
 ### Options
 
 ```
-  -h, --help   help for graphql
+  -h, --help   help for msp-customer-domain
 ```
 
 ### Options inherited from parent commands
@@ -27,8 +27,5 @@ graphql operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli graphql generate](flexera-cli_graphql_generate.md)	 - Generate or modify a GraphQL query
-* [flexera-cli graphql graphql](flexera-cli_graphql_graphql.md)	 - query graphql
-* [flexera-cli graphql query](flexera-cli_graphql_query.md)	 - Execute a raw GraphQL query against /explore/graphql
-* [flexera-cli graphql table-schema](flexera-cli_graphql_table-schema.md)	 - tableSchema graphql
+* [flexera-cli msp-customer-domain verify](flexera-cli_msp-customer-domain_verify.md)	 - Verify an MSP's customer's IdP's domain
 

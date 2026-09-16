@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -87,5 +88,44 @@ func TestCuratedCommandSmoke(t *testing.T) {
 	}, &stdout, &stderr, noEnv, server.Client())
 	if exit != 0 {
 		t.Fatalf("policy applied-policy list exit=%d stderr=%s", exit, stderr.String())
+	}
+}
+
+// TestGraphQLQuerySmoke exercises the curated graphql query command backed
+// by flexera.(*Client).GraphQL, which POSTs to /explore/graphql -- a path
+// with no generated OpenAPI operation.
+func TestGraphQLQuerySmoke(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/explore/graphql" {
+			t.Errorf("unexpected path: %s", r.URL.Path)
+		}
+		if got := r.Header.Get("Authorization"); got == "" {
+			t.Errorf("expected an Authorization header, got none")
+		}
+		var body map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Errorf("decode request body: %v", err)
+		}
+		if body["query"] != "{ viewer { id } }" {
+			t.Errorf("unexpected query in request body: %v", body["query"])
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{"viewer":{"id":"42"}}}`))
+	}))
+	defer server.Close()
+
+	var stdout, stderr bytes.Buffer
+	exit := run(context.Background(), []string{
+		"graphql", "query",
+		"--body", `{"query":"{ viewer { id } }"}`,
+		"--api-base-url", server.URL,
+		"--org-id", "123",
+		"--access-token", "smoke-token",
+	}, &stdout, &stderr, noEnv, server.Client())
+	if exit != 0 {
+		t.Fatalf("graphql query exit=%d stderr=%s", exit, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), `"id"`) {
+		t.Fatalf("expected graphql response JSON, got %s", stdout.String())
 	}
 }

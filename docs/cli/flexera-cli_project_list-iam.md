@@ -9,7 +9,8 @@ flexera-cli project list-iam [flags]
 ### Options
 
 ```
-  -h, --help   help for list-iam
+  -h, --help          help for list-iam
+      --view string   view (query)
 ```
 
 ### Options inherited from parent commands

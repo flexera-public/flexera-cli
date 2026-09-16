@@ -36,6 +36,15 @@ func ResolveBody(raw string, typed any, stdin io.Reader) (json.RawMessage, error
 	return json.RawMessage(b), nil
 }
 
+// ResolveRawBody reads an arbitrary request body from --body. Unlike
+// ResolveBody, it does not require JSON; this is used for binary uploads.
+func ResolveRawBody(raw string, stdin io.Reader) ([]byte, error) {
+	if strings.TrimSpace(raw) == "" {
+		return nil, nil
+	}
+	return readBodyArg(raw, stdin)
+}
+
 // ConfirmWrite enforces the shared write-op confirmation contract used by
 // generated mutating commands. On --dry-run it prints a plan summary to w and
 // returns done=true (the caller should stop without calling the API).

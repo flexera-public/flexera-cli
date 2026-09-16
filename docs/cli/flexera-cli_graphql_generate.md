@@ -1,11 +1,19 @@
-## flexera-cli graphql
+## flexera-cli graphql generate
 
-graphql operations (generated from the unified OpenAPI spec)
+Generate or modify a GraphQL query
+
+```
+flexera-cli graphql generate [flags]
+```
 
 ### Options
 
 ```
-  -h, --help   help for graphql
+  -h, --help                   help for generate
+      --indent                 indent the generated query
+      --modify-prompt string   instruction for modifying --query
+      --prompt string          natural-language description of the desired query
+      --query string           existing GraphQL query to modify
 ```
 
 ### Options inherited from parent commands
@@ -26,9 +34,5 @@ graphql operations (generated from the unified OpenAPI spec)
 
 ### SEE ALSO
 
-* [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli graphql generate](flexera-cli_graphql_generate.md)	 - Generate or modify a GraphQL query
-* [flexera-cli graphql graphql](flexera-cli_graphql_graphql.md)	 - query graphql
-* [flexera-cli graphql query](flexera-cli_graphql_query.md)	 - Execute a raw GraphQL query against /explore/graphql
-* [flexera-cli graphql table-schema](flexera-cli_graphql_table-schema.md)	 - tableSchema graphql
+* [flexera-cli graphql](flexera-cli_graphql.md)	 - graphql operations (generated from the unified OpenAPI spec)
 
