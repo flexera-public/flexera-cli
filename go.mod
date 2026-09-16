@@ -3,7 +3,7 @@ module github.com/flexera-public/flexera-cli
 go 1.26.0
 
 require (
-	github.com/flexera-public/unified-go-client v0.0.0-20260916153814-c195915e7d06
+	github.com/flexera-public/unified-go-client v0.0.0-20260916190558-68c1899637cc
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10

@@ -42,6 +42,33 @@ func TestCollectOps_DropsNonJSONBody(t *testing.T) {
 	}
 }
 
+func TestCollectOps_AcceptsOctetStreamBody(t *testing.T) {
+	post := map[string]interface{}{
+		"tags":             []interface{}{"sample"},
+		"x-flexera-action": "action",
+		"operationId":      "uploadFile",
+		"requestBody": map[string]interface{}{
+			"content": map[string]interface{}{
+				"application/octet-stream": map[string]interface{}{},
+			},
+		},
+		"responses": map[string]interface{}{
+			"204": map[string]interface{}{"description": "ok"},
+		},
+	}
+	rawPath, err := json.Marshal(map[string]interface{}{"post": post})
+	if err != nil {
+		t.Fatal(err)
+	}
+	ops, drops := collectOps(&spec{Paths: map[string]json.RawMessage{"/foo/{id}/files/{name}": rawPath}}, "sample")
+	if len(drops) != 0 {
+		t.Fatalf("expected no drops, got %v", drops)
+	}
+	if len(ops) != 1 || !ops[0].HasRawBody || ops[0].RawBodyType != "application/octet-stream" {
+		t.Fatalf("unexpected raw-body operation: %+v", ops)
+	}
+}
+
 // TestSupportedActionsCount asserts the supportedActions map carries
 // exactly the seven verbs gencli emits cobra leaves for. "query" was
 // reserved in the design but dropped per S3 plan-review since no

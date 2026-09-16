@@ -53,6 +53,7 @@ var curatedCanonical = map[string]bool{
 var supportedActions = map[string]bool{
 	"list": true, "get": true, "create": true,
 	"replace": true, "update": true, "delete": true,
+	"action": true,
 }
 
 type genTag struct {

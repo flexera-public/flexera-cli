@@ -48,6 +48,8 @@ type operation struct {
 	QueryParams   []param
 	HasHeaders    bool
 	HasBody       bool
+	HasRawBody    bool
+	RawBodyType   string
 	BodyTypeName  string // generated client's "<Method>JSONRequestBody"
 	BodyFields    []bodyField
 	Paginated     bool
@@ -243,19 +245,25 @@ func collectOps(s *spec, tag string) ([]operation, []drop) {
 			}
 
 			hasBody := false
-			hasNonJSONBody := false
+			hasRawBody := false
+			rawBodyType := ""
+			hasUnsupportedBody := false
 			var bodyFields []bodyField
 			if rb, ok := op["requestBody"].(map[string]interface{}); ok {
 				if content, ok := rb["content"].(map[string]interface{}); ok {
 					if jc, ok := content["application/json"].(map[string]interface{}); ok {
 						hasBody = true
 						bodyFields = extractBodyFields(s, jc)
+					} else if octets, ok := content["application/octet-stream"].(map[string]interface{}); ok {
+						hasRawBody = true
+						rawBodyType = "application/octet-stream"
+						_ = octets
 					} else if len(content) > 0 {
-						hasNonJSONBody = true
+						hasUnsupportedBody = true
 					}
 				}
 			}
-			if hasNonJSONBody {
+			if hasUnsupportedBody {
 				drops = append(drops, drop{Method: m, Path: p, Action: action, Reason: "non-JSON request body"})
 				continue
 			}
@@ -278,6 +286,8 @@ func collectOps(s *spec, tag string) ([]operation, []drop) {
 				QueryParams:   qps,
 				HasHeaders:    hasHeaders,
 				HasBody:       hasBody,
+				HasRawBody:    hasRawBody,
+				RawBodyType:   rawBodyType,
 				BodyTypeName:  methodName(opID) + "JSONRequestBody",
 				BodyFields:    bodyFields,
 				Paginated:     pag,
@@ -613,6 +623,8 @@ type renderOp struct {
 	UUIDPathParams []param // subset of PathParams with IsUUID, for pre-call parsing
 	HasUUIDParams  bool
 	HasBody        bool
+	HasRawBody     bool
+	RawBodyType    string
 	BodyTypeName   string
 	BodyFields     []bodyField
 	NeedsOrgID     bool
@@ -734,6 +746,8 @@ func render(tag, pkg, cmdName string, ops []operation) ([]byte, error) {
 			UUIDPathParams: uuidPathParams,
 			HasUUIDParams:  hasUUIDParams,
 			HasBody:        o.HasBody,
+			HasRawBody:     o.HasRawBody,
+			RawBodyType:    o.RawBodyType,
 			BodyTypeName:   o.BodyTypeName,
 			BodyFields:     o.BodyFields,
 			NeedsOrgID:     needsOrgID,
@@ -1017,6 +1031,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+{{- range .Ops }}{{- if .HasRawBody }}
+	"bytes"
+{{- break}}{{- end}}{{- end}}
 {{- range .Ops }}{{- if .HasUUIDParams }}
 	"github.com/google/uuid"
 {{- break}}{{- end}}{{- end}}
@@ -1052,7 +1069,7 @@ func NewCmd() *cobra.Command {
 {{- $op := . }}
 // {{.Constructor}} — {{.Method}} {{.Path}} (operationId: {{.OperationID}})
 func {{.Constructor}}() *cobra.Command {
-{{- if or .PathParams .QueryParams .HasBody .IsWrite }}
+{{- if or .PathParams .QueryParams .HasBody .HasRawBody .IsWrite }}
 	var (
 {{- range .PathParams }}
 		{{.GoName}} {{.GoType}}
@@ -1064,8 +1081,10 @@ func {{.Constructor}}() *cobra.Command {
 		noPaginate bool
 		skipToken  string
 {{- end }}
-{{- if .HasBody }}
+{{- if or .HasBody .HasRawBody }}
 		bodyRaw string
+{{- end }}
+{{- if .HasBody }}
 {{- range .BodyFields }}
 		{{.GoVar}} {{.GoType}}
 {{- end }}
@@ -1170,12 +1189,21 @@ func {{.Constructor}}() *cobra.Command {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
 {{- end }}
+{{- if .HasRawBody }}
+			raw, err := clipkg.ResolveRawBody(bodyRaw, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				return fmt.Errorf("a request body is required: pass --body @file or --body @-")
+			}
+{{- end }}
 {{- if .IsWrite }}
 			writePlan := map[string]any{"method": "{{.Method}} {{.Path}}"}
 {{- if .NeedsOrgID }}
 			writePlan["orgId"] = deps.Config.OrgID
 {{- end }}
-{{- if .HasBody }}
+{{- if or .HasBody .HasRawBody }}
 			writePlan["body"] = json.RawMessage(raw)
 {{- end }}
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, {{.IsDestructive}}, deps.Stdout, writePlan); werr != nil {
@@ -1207,7 +1235,7 @@ func {{.Constructor}}() *cobra.Command {
 			}
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 {{- else }}
-			resp, err := client.{{.GenMethod}}WithResponse(cmd.Context(){{ range .PathArgExprs }}, {{.}}{{ end }}{{ if .ParamsType }}, &params{{ end }}{{ if .HasBody }}, body{{ end }})
+			resp, err := client.{{.GenMethod}}{{if .HasRawBody}}WithBody{{end}}WithResponse(cmd.Context(){{ range .PathArgExprs }}, {{.}}{{ end }}{{ if .ParamsType }}, &params{{ end }}{{ if .HasBody }}, body{{ end }}{{ if .HasRawBody }}, "{{.RawBodyType}}", bytes.NewReader(raw){{ end }})
 			if err != nil {
 				return err
 			}
@@ -1274,7 +1302,7 @@ func {{.Constructor}}() *cobra.Command {
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 {{- end }}
-{{- if .HasBody }}
+{{- if or .HasBody .HasRawBody }}
 {{- range .BodyFields }}
 {{- if eq .GoType "string" }}
 	c.Flags().StringVar(&{{.GoVar}}, "{{.FlagName}}", "", "{{.JSONKey}} (body)")
@@ -1290,7 +1318,7 @@ func {{.Constructor}}() *cobra.Command {
 	c.Flags().StringSliceVar(&{{.GoVar}}, "{{.FlagName}}", nil, "{{.JSONKey}} (body)")
 {{- end }}
 {{- end }}
-	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().StringVar(&bodyRaw, "body", "", "{{if .HasRawBody}}raw request body (@file | @-){{else}}raw JSON body (inline | @file | @-); overrides body field flags{{end}}")
 {{- end }}
 {{- if .IsWrite }}
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
