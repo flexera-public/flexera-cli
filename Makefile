@@ -10,6 +10,8 @@
 #   make coverage-report     — print line/func coverage from the integration run
 #   make coverage-html       — open coverage.html in the default browser
 #   make coverage-check      — enforce 100% on read-only handler allowlist
+#   make check-client-coverage — fail if unified-go-client gained hand-written
+#                                symbols with no triaged CLI-coverage decision
 #   make install             — go install the binary into $GOPATH/bin
 #   make completions         — generate shell-completion scripts (completions/)
 #   make docs                — regenerate the Markdown command reference (docs/cli/)
@@ -37,7 +39,7 @@ COMMIT         ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo unknown
 DATE           ?= $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 LDFLAGS        := -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.buildDate=$(DATE)
 
-.PHONY: all update-deps update-unified-openapi build install test test-integration coverage-report coverage-html coverage-check completions docs clean
+.PHONY: all update-deps update-unified-openapi build install test test-integration coverage-report coverage-html coverage-check check-client-coverage completions docs clean
 
 # all updates Go dependencies and the sibling unified-openapi checkout, then
 # regenerates the CLI from the refreshed OpenAPI spec.
@@ -115,6 +117,14 @@ coverage-html: $(COVER_PROFILE)
 
 coverage-check: $(COVER_PROFILE)
 	bash $(SCRIPTS_DIR)/check_coverage.sh $(COVER_PROFILE) $(SCRIPTS_DIR)/readonly_symbols.txt
+
+# check-client-coverage scans unified-go-client for hand-written (non
+# generated) exported symbols and fails if any lack a triage entry in
+# internal/coverage/unified_client_allowlist.json. This is the
+# drift-prevention check for upstream helper functions/types with no
+# OpenAPI operation behind them, which cmd/gencli therefore cannot see.
+check-client-coverage:
+	go run ./cmd/checkcoverage
 
 clean:
 	rm -f flexera-cli $(COVER_PROFILE) $(COVER_HTML)

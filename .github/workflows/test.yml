@@ -26,6 +26,9 @@ jobs:
       - name: go test
         run: make test
 
+      - name: Check unified-go-client hand-written symbol coverage
+        run: make check-client-coverage
+
       - name: Verify generated completions/docs are up to date
         run: |
           make completions docs
