@@ -37,22 +37,23 @@ import (
 )
 
 type operation struct {
-	Method       string
-	Path         string
-	OperationID  string
-	Summary      string
-	Tag          string
-	Action       string
-	Resource     string
-	PathParams   []param
-	QueryParams  []param
-	HasHeaders   bool
-	HasBody      bool
-	BodyTypeName string // generated client's "<Method>JSONRequestBody"
-	BodyFields   []bodyField
-	Paginated    bool
-	Success2xx   string // "200", "201", or "204"
-	HasJSONResp  bool
+	Method        string
+	Path          string
+	OperationID   string
+	Summary       string
+	Tag           string
+	Action        string
+	Resource      string
+	PathParams    []param
+	QueryParams   []param
+	HasHeaders    bool
+	HasBody       bool
+	BodyTypeName  string // generated client's "<Method>JSONRequestBody"
+	BodyFields    []bodyField
+	Paginated     bool
+	Success2xx    string // "200", "201", or "204"
+	HasJSONResp   bool
+	HasSchemaResp bool
 }
 
 type param struct {
@@ -259,29 +260,30 @@ func collectOps(s *spec, tag string) ([]operation, []drop) {
 				continue
 			}
 
-			success, hasJSON := successCode(op)
+			success, hasJSON, hasSchema := successCode(op)
 			if success == "" {
 				drops = append(drops, drop{Method: m, Path: p, Action: action, Reason: "no 2xx success response"})
 				continue
 			}
 
 			ops = append(ops, operation{
-				Method:       m,
-				Path:         p,
-				OperationID:  opID,
-				Summary:      summary,
-				Tag:          tag,
-				Action:       action,
-				Resource:     resource,
-				PathParams:   pps,
-				QueryParams:  qps,
-				HasHeaders:   hasHeaders,
-				HasBody:      hasBody,
-				BodyTypeName: methodName(opID) + "JSONRequestBody",
-				BodyFields:   bodyFields,
-				Paginated:    pag,
-				Success2xx:   success,
-				HasJSONResp:  hasJSON,
+				Method:        m,
+				Path:          p,
+				OperationID:   opID,
+				Summary:       summary,
+				Tag:           tag,
+				Action:        action,
+				Resource:      resource,
+				PathParams:    pps,
+				QueryParams:   qps,
+				HasHeaders:    hasHeaders,
+				HasBody:       hasBody,
+				BodyTypeName:  methodName(opID) + "JSONRequestBody",
+				BodyFields:    bodyFields,
+				Paginated:     pag,
+				Success2xx:    success,
+				HasJSONResp:   hasJSON,
+				HasSchemaResp: hasSchema,
 			})
 		}
 	}
@@ -483,7 +485,7 @@ func extractParams(op map[string]interface{}) (path, query []param, hasHeaders b
 	return path, query, hasHeaders, true
 }
 
-func successCode(op map[string]interface{}) (code string, hasJSON bool) {
+func successCode(op map[string]interface{}) (code string, hasJSON, hasSchema bool) {
 	responses, _ := op["responses"].(map[string]interface{})
 	for _, c := range []string{"200", "201", "204"} {
 		resp, ok := responses[c].(map[string]interface{})
@@ -493,12 +495,13 @@ func successCode(op map[string]interface{}) (code string, hasJSON bool) {
 		content, _ := resp["content"].(map[string]interface{})
 		for ct := range content {
 			if strings.Contains(ct, "json") {
-				return c, true
+				return c, true, false
 			}
 		}
-		return c, false
+		_, hasSchema := resp["schema"]
+		return c, false, hasSchema
 	}
-	return "", false
+	return "", false, false
 }
 
 func methodName(opID string) string {
@@ -597,28 +600,30 @@ type renderData struct {
 }
 
 type renderOp struct {
-	Constructor   string
-	Verb          string
-	Short         string
-	Method        string
-	Path          string
-	OperationID   string
-	GenMethod     string
-	PathParams    []param // non-orgId path params (flags)
-	QueryParams   []param // excludes skipToken when paginated
-	PathArgExprs  []string
+	Constructor    string
+	Verb           string
+	Short          string
+	Method         string
+	Path           string
+	OperationID    string
+	GenMethod      string
+	PathParams     []param // non-orgId path params (flags)
+	QueryParams    []param // excludes skipToken when paginated
+	PathArgExprs   []string
 	UUIDPathParams []param // subset of PathParams with IsUUID, for pre-call parsing
-	HasUUIDParams bool
-	HasBody       bool
-	BodyTypeName  string
-	BodyFields    []bodyField
-	NeedsOrgID    bool
-	ParamsType    string
-	CanPaginate   bool
-	Success2xx    string
-	HasJSONResp   bool
-	IsWrite       bool
-	IsDestructive bool
+	HasUUIDParams  bool
+	HasBody        bool
+	BodyTypeName   string
+	BodyFields     []bodyField
+	NeedsOrgID     bool
+	ParamsType     string
+	CanPaginate    bool
+	Success2xx     string
+	HasJSONResp    bool
+	HasSchemaResp  bool
+	HasRawJSONResp bool
+	IsWrite        bool
+	IsDestructive  bool
 }
 
 func isWriteAction(a string) bool {
@@ -736,6 +741,8 @@ func render(tag, pkg, cmdName string, ops []operation) ([]byte, error) {
 			CanPaginate:    canPaginate,
 			Success2xx:     o.Success2xx,
 			HasJSONResp:    o.HasJSONResp,
+			HasSchemaResp:  o.HasSchemaResp,
+			HasRawJSONResp: o.Action == "list" && o.Success2xx == "200" && !o.HasJSONResp && o.HasSchemaResp,
 			IsWrite:        isWriteAction(o.Action),
 			IsDestructive:  o.Action == "delete" || isDestructiveVerb(verb),
 		})
@@ -1220,6 +1227,15 @@ func {{.Constructor}}() *cobra.Command {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+{{- else if .HasRawJSONResp }}
+			if resp.StatusCode() != 200 {
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+			var result any
+			if err := json.Unmarshal(resp.Body, &result); err != nil {
+				return fmt.Errorf("decoding response body: %w", err)
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 {{- else }}
 			if resp.StatusCode() >= 300 {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)

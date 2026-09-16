@@ -59,3 +59,28 @@ func TestSupportedActionsCount(t *testing.T) {
 		t.Errorf(`supportedActions still carries "query"; expected dropped`)
 	}
 }
+
+func TestRender_ListsUntypedJSONResponses(t *testing.T) {
+	src, err := render("Sample", "sample", "sample", []operation{{
+		Method:        "get",
+		Path:          "/orgs/{orgId}/widgets",
+		OperationID:   "Sample_Widget_index",
+		Action:        "list",
+		Success2xx:    "200",
+		HasSchemaResp: true,
+	}})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	got := string(src)
+	for _, want := range []string{
+		"if resp.StatusCode() != 200",
+		"json.Unmarshal(resp.Body, &result)",
+		"return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)",
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("generated command does not contain %q:\n%s", want, got)
+		}
+	}
+}
