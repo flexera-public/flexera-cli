@@ -8,8 +8,8 @@ github.com/cpuguy83/go-md2man/v2 v2.0.7/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6N
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/flexera-public/unified-go-client v0.0.0-20260916190558-68c1899637cc h1:dixLdGhIT+ZUvTC+eCLJoZh8vAd917bLrXp2tCgtG90=
-github.com/flexera-public/unified-go-client v0.0.0-20260916190558-68c1899637cc/go.mod h1:oZos/sF14rmH/hPyicmTSgq0jSN/FwBIyJ/uq4etij8=
+github.com/flexera-public/unified-go-client v0.0.0-20260916204811-1f8ba1f35480 h1:EkA266r5wPGKuPjTVmNtL4VX/H9ebbygxZmCbagzxnk=
+github.com/flexera-public/unified-go-client v0.0.0-20260916204811-1f8ba1f35480/go.mod h1:oZos/sF14rmH/hPyicmTSgq0jSN/FwBIyJ/uq4etij8=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=

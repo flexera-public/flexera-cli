@@ -11,12 +11,15 @@
 //     invisible to cmd/gencli. These only get CLI coverage when a human
 //     notices them and writes a curated command (internal/curated/...).
 //
-// This package finds every exported top-level func/method/type declared in
-// a hand-written file (identified by the absence of the standard
-// "// Code generated ... DO NOT EDIT." header used consistently across
-// every generated file in the module) so that gap (2) can be tracked
-// against a checked-in allowlist instead of relying on someone remembering
-// to look.
+// This package finds every exported top-level declaration in a hand-written
+// file so that gap (2) can be tracked against a checked-in allowlist
+// instead of relying on someone remembering to look. For the root package
+// it prefers unified-go-client's own generator-maintained
+// client_extensions_manifest.json (see manifest.go); everywhere else
+// (sub-packages, and the root package on older checkouts without a
+// manifest) it falls back to identifying hand-written files by the absence
+// of the standard "// Code generated ... DO NOT EDIT." header used
+// consistently across every generated file in the module.
 package coverage
 
 import (
@@ -41,10 +44,11 @@ type Symbol struct {
 	// Package is the import path relative to the module root ("." for the
 	// root package, "anomaly", "service/graphql/v1", etc).
 	Package string
-	// Name is the declaration name. Methods are named "(*Recv).Method" or
-	// "(Recv).Method" depending on the receiver's pointer-ness.
+	// Name is the declaration name. Methods are named "(Recv).Method"
+	// (the receiver's pointer-ness is not encoded, since a type cannot have
+	// both a value- and pointer-receiver method of the same name).
 	Name string
-	// Kind is "func", "method", or "type".
+	// Kind is "func", "method", "type", "var", or "const".
 	Kind string
 	// File is the path (relative to moduleDir) the symbol was declared in,
 	// for error messages.
@@ -74,12 +78,23 @@ func isGenerated(path string) (bool, error) {
 }
 
 // Scan walks moduleDir (the root of an unified-go-client checkout or module
-// cache directory) and returns every exported top-level func, method, and
-// type declared in hand-written (non-generated) .go files. Test files,
-// example/tool directories under cmd/, and vendor are skipped.
+// cache directory) and returns every exported top-level func, method, type,
+// var, and const declared in hand-written (non-generated) .go files. Test
+// files, example/tool directories under cmd/, and vendor are skipped.
+//
+// For the root package, Scan prefers unified-go-client's own
+// client_extensions_manifest.json (see loadExtensionsManifest) over
+// AST-parsing root-package files itself, falling back to the AST scan only
+// when no manifest is present. Sub-packages (service/*, rightscale/*, ...)
+// have no equivalent manifest upstream, so they are always AST-scanned.
 func Scan(moduleDir string) ([]Symbol, error) {
-	var symbols []Symbol
-	err := filepath.WalkDir(moduleDir, func(path string, d os.DirEntry, err error) error {
+	rootSymbols, haveManifest, err := loadExtensionsManifest(moduleDir)
+	if err != nil {
+		return nil, err
+	}
+
+	symbols := append([]Symbol(nil), rootSymbols...)
+	err = filepath.WalkDir(moduleDir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -93,6 +108,10 @@ func Scan(moduleDir string) ([]Symbol, error) {
 			if path != moduleDir && name == "cmd" {
 				return filepath.SkipDir
 			}
+			return nil
+		}
+		if haveManifest && filepath.Dir(path) == moduleDir {
+			// Root-package symbols already came from the manifest above.
 			return nil
 		}
 		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
@@ -147,21 +166,42 @@ func scanFile(moduleDir, path string) ([]Symbol, error) {
 				symbols = append(symbols, Symbol{Package: pkg, Name: d.Name.Name, Kind: "func", File: rel})
 				continue
 			}
-			recv := receiverName(d.Recv.List[0].Type)
-			if !ast.IsExported(strings.TrimPrefix(recv, "*")) {
+			recv := strings.TrimPrefix(receiverName(d.Recv.List[0].Type), "*")
+			if !ast.IsExported(recv) {
 				continue
 			}
+			// Receiver pointer-ness is dropped from Name (Go forbids a type
+			// from having both a value- and pointer-receiver method of the
+			// same name, so this can't collide), matching the shape of
+			// unified-go-client's client_extensions_manifest.json, which
+			// records only the bare receiver type name.
 			symbols = append(symbols, Symbol{Package: pkg, Name: "(" + recv + ")." + d.Name.Name, Kind: "method", File: rel})
 		case *ast.GenDecl:
-			if d.Tok != token.TYPE {
-				continue
-			}
-			for _, spec := range d.Specs {
-				ts, ok := spec.(*ast.TypeSpec)
-				if !ok || !ts.Name.IsExported() {
-					continue
+			switch d.Tok {
+			case token.TYPE:
+				for _, spec := range d.Specs {
+					ts, ok := spec.(*ast.TypeSpec)
+					if !ok || !ts.Name.IsExported() {
+						continue
+					}
+					symbols = append(symbols, Symbol{Package: pkg, Name: ts.Name.Name, Kind: "type", File: rel})
 				}
-				symbols = append(symbols, Symbol{Package: pkg, Name: ts.Name.Name, Kind: "type", File: rel})
+			case token.VAR, token.CONST:
+				kind := "var"
+				if d.Tok == token.CONST {
+					kind = "const"
+				}
+				for _, spec := range d.Specs {
+					vs, ok := spec.(*ast.ValueSpec)
+					if !ok {
+						continue
+					}
+					for _, name := range vs.Names {
+						if name.IsExported() {
+							symbols = append(symbols, Symbol{Package: pkg, Name: name.Name, Kind: kind, File: rel})
+						}
+					}
+				}
 			}
 		}
 	}

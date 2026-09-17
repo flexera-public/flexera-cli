@@ -1,7 +1,7 @@
 # Makefile for flexera-cli
 #
 # Common workflows:
-#   make all                 — update Go deps + ../unified-openapi, then `make generate`
+#   make all                 — update Go deps, then regenerate from the pinned OpenAPI spec
 #   make generate            — regenerate all commands from the OpenAPI spec
 #   make build               — build the flexera-cli binary (version-stamped)
 #   make refresh             — regenerate commands and build the binary
@@ -41,9 +41,9 @@ LDFLAGS        := -X main.version=$(VERSION) -X main.commit=$(COMMIT) -X main.bu
 
 .PHONY: all update-deps update-unified-openapi build install test test-integration coverage-report coverage-html coverage-check check-client-coverage completions docs clean
 
-# all updates Go dependencies and the sibling unified-openapi checkout, then
-# regenerates the CLI from the refreshed OpenAPI spec.
-all: update-deps update-unified-openapi generate
+# all updates Go dependencies and regenerates the CLI from the committed,
+# pinned OpenAPI spec.
+all: update-deps generate
 	@echo "Updated dependencies and regenerated flexera-cli source"
 
 # update-deps upgrades all Go module dependencies to their latest versions
@@ -52,17 +52,10 @@ update-deps:
 	go get -u github.com/flexera-public/unified-go-client@latest
 	go mod tidy
 
-# update-unified-openapi pulls the latest changes for the sibling
-# unified-openapi checkout (../unified-openapi) used as the spec source of
-# truth for `make generate`.
+# update-unified-openapi downloads an immutable snapshot of the requested
+# upstream branch (main by default) and records its commit and SHA-256.
 update-unified-openapi:
-	@if [ -d ../unified-openapi/.git ]; then \
-		echo "Updating ../unified-openapi..."; \
-		git -C ../unified-openapi pull --ff-only; \
-	else \
-		echo "error: ../unified-openapi not found; clone git@github.com:flexera-public/unified-openapi.git as a sibling directory" >&2; \
-		exit 1; \
-	fi
+	./scripts/update-unified-openapi $(REF)
 
 generate: 
 	go generate ./...

@@ -28,14 +28,6 @@ jobs:
         with:
           path: flexera-cli
 
-      # generate.go resolves the spec at ../unified-openapi/openapi3.json
-      # relative to the flexera-cli working directory, so check the spec
-      # repo out as a sibling directory.
-      - uses: actions/checkout@v7
-        with:
-          repository: flexera-public/unified-openapi
-          path: unified-openapi
-
       - uses: actions/setup-go@v5
         with:
           go-version-file: flexera-cli/go.mod
@@ -47,6 +39,10 @@ jobs:
         run: |
           go get github.com/flexera-public/unified-go-client@main
           go mod tidy
+
+      - name: Update pinned unified-openapi snapshot
+        working-directory: flexera-cli
+        run: make update-unified-openapi
 
       - name: Regenerate CLI commands from updated spec
         working-directory: flexera-cli
@@ -106,6 +102,7 @@ jobs:
           add-paths: |
             go.mod
             go.sum
+            unified-openapi
             internal/commands
             completions
             docs

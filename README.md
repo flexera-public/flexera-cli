@@ -226,13 +226,19 @@ Add `--debug` to any command to trace HTTP requests/responses on stderr
 make test                 # unit tests (no network, no credentials)
 go vet ./...
 make completions docs     # regenerate reference docs + completion scripts
-make all                  # update Go deps + ../unified-openapi, then regenerate CLI
+make all                  # update Go deps, then regenerate from the pinned OpenAPI spec
 ```
 
-The generated command tree is produced from the unified OpenAPI spec via
-`make generate` (or `make all`); do not hand-edit files under
+The generated command tree is produced from the committed, pinned unified
+OpenAPI spec via `make generate` (or `make all`); do not hand-edit files under
 `internal/commands/`. Live, read-only integration tests are available via
 `make test-integration` (requires `FLEXERA_NAM_REFRESH_TOKEN`).
+
+To update the OpenAPI snapshot, run `make update-unified-openapi`. This resolves
+the requested upstream branch (default: `main`), downloads the immutable
+snapshot, and records its repository, commit, and SHA-256 in
+`unified-openapi/PIN`. Use `make update-unified-openapi REF=<branch>` to pin a
+different branch before regenerating the command tree.
 
 The CLI is a thin shell over the unified Go client library at
 [`github.com/flexera-public/unified-go-client`](https://github.com/flexera-public/unified-go-client); prefer

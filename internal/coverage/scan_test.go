@@ -68,10 +68,10 @@ func ExportedButATestFile() {}
 	if s, ok := got[".#ExportedHandWritten"]; !ok || s.Kind != "func" {
 		t.Errorf("expected hand-written exported func to be found, got %+v ok=%v", s, ok)
 	}
-	if s, ok := got[".#(*Widget).Do"]; !ok || s.Kind != "method" {
+	if s, ok := got[".#(Widget).Do"]; !ok || s.Kind != "method" {
 		t.Errorf("expected exported method on exported receiver to be found, got %+v ok=%v", s, ok)
 	}
-	if _, ok := got[".#(*Widget).do"]; ok {
+	if _, ok := got[".#(Widget).do"]; ok {
 		t.Error("expected unexported method to be excluded")
 	}
 	if _, ok := got[".#(unexportedType).Exported"]; ok {
@@ -79,6 +79,84 @@ func ExportedButATestFile() {}
 	}
 	if s, ok := got[".#Widget"]; !ok || s.Kind != "type" {
 		t.Errorf("expected exported type to be found, got %+v ok=%v", s, ok)
+	}
+}
+
+func TestScanPrefersExtensionsManifest(t *testing.T) {
+	dir := t.TempDir()
+	// A root-package .go file that, if AST-scanned, would report a
+	// different symbol than the manifest. Presence of the manifest should
+	// make Scan trust it instead of parsing this file for the root package.
+	writeFile(t, dir, "hand.go", `package pkg
+
+func FromAST() {}
+`)
+	writeFile(t, dir, "client_extensions_manifest.json", `{
+  "formatVersion": 1,
+  "package": "flexera",
+  "files": [
+    {
+      "path": "hand.go",
+      "declarations": [
+        {"name": "FromManifest", "kind": "func"},
+        {"name": "MaxZone", "kind": "const"},
+        {"name": "APIBaseURL", "kind": "method", "receiver": "AuthHelper"}
+      ]
+    }
+  ]
+}`)
+	// Sub-packages have no manifest coverage upstream, so they must still
+	// be AST-scanned even when the root manifest is present.
+	writeFile(t, dir, "service/thing/v1/thing.go", `package v1
+
+func Thing() {}
+
+const (
+	ExportedConst = "const"
+	unexportedConst = "unexported"
+)
+
+var (
+	ExportedVar = "var"
+	unexportedVar = "unexported"
+)
+`)
+
+	symbols, err := Scan(dir)
+	if err != nil {
+		t.Fatalf("Scan: %v", err)
+	}
+	got := make(map[string]Symbol, len(symbols))
+	for _, s := range symbols {
+		got[s.Key()] = s
+	}
+
+	if _, ok := got[".#FromAST"]; ok {
+		t.Error("expected root-package file to not be AST-scanned when a manifest is present")
+	}
+	if _, ok := got[".#FromManifest"]; !ok {
+		t.Error("expected manifest-reported func to be found")
+	}
+	if s, ok := got[".#MaxZone"]; !ok || s.Kind != "const" {
+		t.Errorf("expected manifest-reported const to be found, got %+v ok=%v", s, ok)
+	}
+	if s, ok := got[".#(AuthHelper).APIBaseURL"]; !ok || s.Kind != "method" {
+		t.Errorf("expected manifest-reported method to be found, got %+v ok=%v", s, ok)
+	}
+	if _, ok := got["service/thing/v1#Thing"]; !ok {
+		t.Error("expected sub-package symbol to still be AST-scanned")
+	}
+	if s, ok := got["service/thing/v1#ExportedConst"]; !ok || s.Kind != "const" {
+		t.Errorf("expected exported sub-package const to be found, got %+v ok=%v", s, ok)
+	}
+	if s, ok := got["service/thing/v1#ExportedVar"]; !ok || s.Kind != "var" {
+		t.Errorf("expected exported sub-package var to be found, got %+v ok=%v", s, ok)
+	}
+	if _, ok := got["service/thing/v1#unexportedConst"]; ok {
+		t.Error("expected unexported sub-package const to be excluded")
+	}
+	if _, ok := got["service/thing/v1#unexportedVar"]; ok {
+		t.Error("expected unexported sub-package var to be excluded")
 	}
 }
 

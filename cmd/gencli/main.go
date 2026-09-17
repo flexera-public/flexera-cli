@@ -3,7 +3,7 @@
 //
 // Usage:
 //
-//	go run ./cmd/gencli -spec ../unified-openapi/openapi3.json \
+//	go run ./cmd/gencli -spec unified-openapi/openapi3.json \
 //	    -tag Budget -pkg budget -cmd budget-gen -out internal/commands/budget/cmd_gen.go
 //
 // The generated file declares, in its own package:

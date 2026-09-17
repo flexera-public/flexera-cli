@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	specPath    = "../unified-openapi/openapi3.json"
+	specPath    = "unified-openapi/openapi3.json"
 	commandsDir = "internal/commands"
 	modulePath  = "github.com/flexera-public/flexera-cli"
 	// cmdSuffix is appended to every generated root command name. Empty now
