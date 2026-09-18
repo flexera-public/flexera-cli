@@ -48,7 +48,7 @@ all: update-deps generate
 
 # update-deps upgrades all Go module dependencies to their latest versions
 # and tidies/vendors go.mod & go.sum accordingly.
-update-deps:
+update-deps: update-unified-openapi
 	go get -u github.com/flexera-public/unified-go-client@latest
 	go mod tidy
 

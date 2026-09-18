@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -38,7 +39,11 @@ func Execute(ctx context.Context, root *cobra.Command, deps *Deps) int {
 		if deps != nil && deps.Stderr != nil {
 			stderr = deps.Stderr
 		}
-		_ = (Printer{}).RenderError(stderr, err)
+		if isCommandLineError(err) {
+			_, _ = fmt.Fprintln(stderr, err)
+		} else {
+			_ = (Printer{}).RenderError(stderr, err)
+		}
 		var ee *ExitError
 		if errors.As(err, &ee) && ee.Code != 0 {
 			return ee.Code
@@ -46,4 +51,12 @@ func Execute(ctx context.Context, root *cobra.Command, deps *Deps) int {
 		return 1
 	}
 	return 0
+}
+
+func isCommandLineError(err error) bool {
+	message := strings.ToLower(err.Error())
+	return strings.HasPrefix(message, "unknown command ") ||
+		strings.HasPrefix(message, "unknown flag:") ||
+		strings.HasPrefix(message, "flag needs an argument:") ||
+		strings.HasPrefix(message, "invalid argument ")
 }

@@ -700,6 +700,66 @@
     "command": "grs project list / policy (project auto-detection)"
   },
   {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Description",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Invoke",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Name",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#NewRuleBasedDimensionBulkTool",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkClient",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkInput",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkOutput",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkResult",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionSpec",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkTool",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#WithProjectResolverStaticToken",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#WithProjectResolverTokenSource",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
     "symbol": ".#WithProjectsCacheTTL",
     "status": "covered",
     "command": "grs project list / policy (project auto-detection)"

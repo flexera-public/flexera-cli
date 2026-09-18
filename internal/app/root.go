@@ -16,6 +16,7 @@ import (
 	graphqlcmd "github.com/flexera-public/flexera-cli/internal/curated/graphql"
 	grscmd "github.com/flexera-public/flexera-cli/internal/curated/grs"
 	policycmd "github.com/flexera-public/flexera-cli/internal/curated/policy"
+	rulebaseddimensioncmd "github.com/flexera-public/flexera-cli/internal/curated/rulebaseddimension"
 	userorgscmd "github.com/flexera-public/flexera-cli/internal/curated/userorgs"
 	workflowscmd "github.com/flexera-public/flexera-cli/internal/curated/workflows"
 	flexera "github.com/flexera-public/unified-go-client"
@@ -44,6 +45,9 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 		panic(err)
 	}
 	if err := graphqlcmd.Attach(root); err != nil {
+		panic(err)
+	}
+	if err := rulebaseddimensioncmd.Attach(root); err != nil {
 		panic(err)
 	}
 

@@ -35,6 +35,20 @@ func TestUnknownCommand(t *testing.T) {
 	if exit == 0 {
 		t.Fatal("expected non-zero exit for unknown command")
 	}
+	if strings.Contains(stderr.String(), `"error"`) {
+		t.Fatalf("expected human-readable command error, got %s", stderr.String())
+	}
+}
+
+func TestRuleBasedDimensionCompatibilityAlias(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	exit := run(context.Background(), []string{"rule-base-dimension", "bulk", "--help"}, &stdout, &stderr, noEnv, &http.Client{})
+	if exit != 0 {
+		t.Fatalf("alias help exit=%d stderr=%s", exit, stderr.String())
+	}
+	if !strings.Contains(stdout.String(), "Create or update rule-based dimensions") {
+		t.Fatalf("expected bulk help, got %s", stdout.String())
+	}
 }
 
 // TestGeneratedCommandSmoke exercises a spec-generated command end-to-end
