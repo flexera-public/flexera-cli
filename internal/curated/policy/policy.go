@@ -45,6 +45,9 @@ func NewCmd() *cobra.Command {
 			newPolicyTemplateListCmd(), newPolicyTemplateGetCmd(), newPolicyTemplateCreateCmd(),
 			newPolicyTemplateValidateCmd(), newPolicyTemplateUpdateCmd(), newPolicyTemplateDeleteCmd(),
 			newPolicyTemplateEvaluateCmd()),
+		group("meta", "Relationship-aware applied-policy meta operations (project-scoped)",
+			newMetaDiscoverCmd(), newMetaAuditCmd(), newMetaTerminateChildrenCmd(),
+			newMetaTerminateOrphanedCmd()),
 	)
 	return c
 }
@@ -123,7 +126,11 @@ func resolvePolicyProjectID(ctx context.Context, deps *clipkg.Deps, projectID in
 	if err != nil {
 		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
 	}
-	resolver, err := flexera.NewProjectResolver(client)
+	opts, err := deps.Factory().ProjectResolverOptions(deps.Config)
+	if err != nil {
+		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
+	}
+	resolver, err := flexera.NewProjectResolver(client, opts...)
 	if err != nil {
 		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
 	}
@@ -971,6 +978,152 @@ func newPolicyTemplateEvaluateCmd() *cobra.Command {
 	addProjectFlag(c, &projectID)
 	c.Flags().StringVar(&id, "id", "", "Policy template ID")
 	c.Flags().StringVar(&filePath, "file", "", "Path to JSON payload file, or - to read from stdin")
+	return c
+}
+
+// ===================== meta (relationship-aware, project-scoped) =====================
+
+func newMetaDiscoverCmd() *cobra.Command {
+	var projectID int
+	c := &cobra.Command{Use: "discover", Short: "Discover applied-policy parent/child relationships", Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			pid, err := resolvePolicyProjectID(cmd.Context(), deps, projectID)
+			if err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			wf := flexera.NewPolicyMetaWorkflow(client)
+			snapshot, err := wf.Discover(cmd.Context(), int64(deps.Config.OrgID), int64(pid))
+			if err != nil {
+				return err
+			}
+			return render(deps, snapshot)
+		}}
+	addProjectFlag(c, &projectID)
+	return c
+}
+
+func newMetaAuditCmd() *cobra.Command {
+	var projectID int
+	c := &cobra.Command{Use: "audit", Short: "Audit status of every applied policy in a project", Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			pid, err := resolvePolicyProjectID(cmd.Context(), deps, projectID)
+			if err != nil {
+				return err
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			wf := flexera.NewPolicyMetaWorkflow(client)
+			out, err := wf.Audit(cmd.Context(), int64(deps.Config.OrgID), int64(pid))
+			if err != nil {
+				return err
+			}
+			return render(deps, out)
+		}}
+	addProjectFlag(c, &projectID)
+	return c
+}
+
+func newMetaTerminateChildrenCmd() *cobra.Command {
+	var projectID int
+	var parentID string
+	var yes, dryRun bool
+	c := &cobra.Command{Use: "terminate-children", Short: "Delete all unambiguous children of a parent applied policy", Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := requireFlag(parentID, "parent applied policy ID is required; use --parent-id"); err != nil {
+				return err
+			}
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			pid, err := resolvePolicyProjectID(cmd.Context(), deps, projectID)
+			if err != nil {
+				return err
+			}
+			if !dryRun {
+				if err := tableUnsupported(deps, "policy meta terminate-children"); err != nil {
+					return err
+				}
+				if !yes {
+					return errors.New("destructive operation requires --yes (or use --dry-run to preview)")
+				}
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			wf := flexera.NewPolicyMetaWorkflow(client)
+			out, err := wf.TerminateChildren(cmd.Context(), flexera.PolicyMetaTerminationInput{
+				OrgID:     int64(deps.Config.OrgID),
+				ProjectID: int64(pid),
+				ParentID:  strings.TrimSpace(parentID),
+				DryRun:    dryRun,
+			})
+			if err != nil {
+				return err
+			}
+			return render(deps, out)
+		}}
+	addProjectFlag(c, &projectID)
+	c.Flags().StringVar(&parentID, "parent-id", "", "Parent applied policy ID")
+	c.Flags().BoolVar(&yes, "yes", false, "Confirm the operation; required unless --dry-run")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "Preview matched children without deleting them")
+	return c
+}
+
+func newMetaTerminateOrphanedCmd() *cobra.Command {
+	var projectID int
+	var yes, dryRun bool
+	c := &cobra.Command{Use: "terminate-orphaned", Short: "Delete applied policies whose parent reference is orphaned", Args: cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
+			pid, err := resolvePolicyProjectID(cmd.Context(), deps, projectID)
+			if err != nil {
+				return err
+			}
+			if !dryRun {
+				if err := tableUnsupported(deps, "policy meta terminate-orphaned"); err != nil {
+					return err
+				}
+				if !yes {
+					return errors.New("destructive operation requires --yes (or use --dry-run to preview)")
+				}
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			wf := flexera.NewPolicyMetaWorkflow(client)
+			out, err := wf.TerminateOrphaned(cmd.Context(), flexera.PolicyMetaTerminationInput{
+				OrgID:     int64(deps.Config.OrgID),
+				ProjectID: int64(pid),
+				DryRun:    dryRun,
+			})
+			if err != nil {
+				return err
+			}
+			return render(deps, out)
+		}}
+	addProjectFlag(c, &projectID)
+	c.Flags().BoolVar(&yes, "yes", false, "Confirm the operation; required unless --dry-run")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "Preview matched orphaned policies without deleting them")
 	return c
 }
 

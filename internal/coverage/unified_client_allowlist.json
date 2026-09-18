@@ -145,6 +145,26 @@
     "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
+    "symbol": ".#(PolicyMetaWorkflow).Audit",
+    "status": "covered",
+    "command": "policy meta audit"
+  },
+  {
+    "symbol": ".#(PolicyMetaWorkflow).Discover",
+    "status": "covered",
+    "command": "policy meta discover"
+  },
+  {
+    "symbol": ".#(PolicyMetaWorkflow).TerminateChildren",
+    "status": "covered",
+    "command": "policy meta terminate-children"
+  },
+  {
+    "symbol": ".#(PolicyMetaWorkflow).TerminateOrphaned",
+    "status": "covered",
+    "command": "policy meta terminate-orphaned"
+  },
+  {
     "symbol": ".#(ProjectResolver).AutoDetectProjectID",
     "status": "covered",
     "command": "grs project list / policy (project auto-detection)"
@@ -485,6 +505,11 @@
     "reason": "OAuth doer plumbing used internally by the client factory"
   },
   {
+    "symbol": ".#NewPolicyMetaWorkflow",
+    "status": "covered",
+    "command": "policy meta discover / audit / terminate-children / terminate-orphaned"
+  },
+  {
     "symbol": ".#NewProjectResolver",
     "status": "covered",
     "command": "grs project list / policy (project auto-detection)"
@@ -533,6 +558,46 @@
     "symbol": ".#PageFetcher",
     "status": "excluded",
     "reason": "generic pagination helper used internally by generated/curated commands"
+  },
+  {
+    "symbol": ".#AppliedPolicyRelationship",
+    "status": "covered",
+    "command": "policy meta discover"
+  },
+  {
+    "symbol": ".#PolicyMetaAuditOutput",
+    "status": "covered",
+    "command": "policy meta audit"
+  },
+  {
+    "symbol": ".#PolicyMetaSnapshot",
+    "status": "covered",
+    "command": "policy meta discover"
+  },
+  {
+    "symbol": ".#PolicyMetaStatus",
+    "status": "covered",
+    "command": "policy meta audit"
+  },
+  {
+    "symbol": ".#PolicyMetaTerminationInput",
+    "status": "covered",
+    "command": "policy meta terminate-children / terminate-orphaned"
+  },
+  {
+    "symbol": ".#PolicyMetaTerminationOutput",
+    "status": "covered",
+    "command": "policy meta terminate-children / terminate-orphaned"
+  },
+  {
+    "symbol": ".#PolicyMetaWorkflow",
+    "status": "covered",
+    "command": "policy meta discover / audit / terminate-children / terminate-orphaned"
+  },
+  {
+    "symbol": ".#PolicyMetaWorkflowClient",
+    "status": "covered",
+    "command": "policy meta discover / audit / terminate-children / terminate-orphaned"
   },
   {
     "symbol": ".#ParseAPIError",

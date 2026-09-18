@@ -135,6 +135,27 @@ func (f Factory) NewAPIClientForBaseURL(cfg cliconfig.CommonConfig, baseURL stri
 	return flexera.NewClientWithResponsesForAuth(auth)
 }
 
+// ProjectResolverOptions returns the flexera.ProjectResolverOption(s) that
+// should be passed to flexera.NewProjectResolver so its GRS lookup is
+// authenticated explicitly rather than relying on the resolver's fallback
+// (inspecting request editors / unwrapping the client's HTTP doer for a
+// bearer token). Static-token configs get a fixed token; OAuth configs get
+// the same per-process SharedTokenSource used by the generated clients, so
+// token refreshes are shared and consistent with the rest of the CLI.
+func (f Factory) ProjectResolverOptions(cfg cliconfig.CommonConfig) ([]flexera.ProjectResolverOption, error) {
+	if cfg.HasAccessToken() {
+		return []flexera.ProjectResolverOption{flexera.WithProjectResolverStaticToken(cfg.AccessToken)}, nil
+	}
+	src, err := f.tokenSourceFor(cfg)
+	if err != nil {
+		return nil, err
+	}
+	if src == nil {
+		return nil, nil
+	}
+	return []flexera.ProjectResolverOption{flexera.WithProjectResolverTokenSource(src.Token)}, nil
+}
+
 func (f Factory) TokenWithClientCredentials(ctx context.Context, cfg cliconfig.CommonConfig) (*flexera.AuthTokenResponseBody, error) {
 	helper, err := f.NewAuthHelper(cfg)
 	if err != nil {

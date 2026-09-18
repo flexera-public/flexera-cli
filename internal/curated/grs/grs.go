@@ -54,7 +54,10 @@ func newProjectListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			opts := []flexera.ProjectResolverOption{}
+			opts, err := deps.Factory().ProjectResolverOptions(deps.Config)
+			if err != nil {
+				return err
+			}
 			if apiVersion != "" {
 				opts = append(opts, flexera.WithProjectsAPIVersion(apiVersion))
 			}
