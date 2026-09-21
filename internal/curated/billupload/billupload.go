@@ -3,6 +3,7 @@
 package billupload
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -50,12 +51,53 @@ func NewPushCmd() *cobra.Command {
 	return c
 }
 
-// Attach adds the curated push workflow below the generated bill-upload
-// command, preserving the generated direct endpoint commands.
+// NewVerifyCmd builds the bill-upload verify workflow command. Verification
+// is a purely local, offline CSV check: it never makes network calls.
+func NewVerifyCmd() *cobra.Command {
+	var files []string
+	c := &cobra.Command{
+		Use:   "verify",
+		Short: "Verify local CBI bill-upload CSV file(s) before uploading",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, _ []string) error {
+			if len(files) == 0 {
+				return errors.New("at least one --file is required")
+			}
+			deps := clipkg.DepsFrom(cmd.Context())
+
+			results := make(map[string]flexera.BillUploadVerifyResult, len(files))
+			invalid := false
+			for _, path := range files {
+				result, err := flexera.VerifyCBIBillUploadCSVFile(path)
+				if err != nil {
+					return fmt.Errorf("verify %q: %w", path, err)
+				}
+				if !result.Valid {
+					invalid = true
+				}
+				results[path] = result
+			}
+
+			if err := deps.Printer.Render(deps.Stdout, deps.Config.Output, results); err != nil {
+				return err
+			}
+			if invalid {
+				return fmt.Errorf("one or more bill-upload CSV files failed verification")
+			}
+			return nil
+		},
+	}
+	c.Flags().StringSliceVar(&files, "file", nil, "local CSV file to verify (repeatable, required)")
+	return c
+}
+
+// Attach adds the curated push and verify workflows below the generated
+// bill-upload command, preserving the generated direct endpoint commands.
 func Attach(root *cobra.Command) error {
 	for _, command := range root.Commands() {
 		if command.Name() == "bill-upload" {
 			command.AddCommand(NewPushCmd())
+			command.AddCommand(NewVerifyCmd())
 			return nil
 		}
 	}

@@ -80,6 +80,11 @@
     "command": "bill-upload push"
   },
   {
+    "symbol": ".#(BillUploadVerifyIssue).String",
+    "status": "excluded",
+    "reason": "fmt.Stringer helper on BillUploadVerifyResult's issue type; the CLI renders structured output via the printer, not this string form"
+  },
+  {
     "symbol": ".#(BillingCenterResolver).ResolveOrUse",
     "status": "excluded",
     "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
@@ -220,6 +225,21 @@
     "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
   },
   {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Description",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Invoke",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#(RuleBasedDimensionBulkTool).Name",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
     "symbol": ".#(SharedTokenSource).Doer",
     "status": "excluded",
     "reason": "shared OAuth token-source plumbing used internally by the client factory"
@@ -260,6 +280,11 @@
     "reason": "response/error-parsing helpers used internally by every command"
   },
   {
+    "symbol": ".#AppliedPolicyRelationship",
+    "status": "covered",
+    "command": "policy meta discover"
+  },
+  {
     "symbol": ".#AuthHelper",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
@@ -295,6 +320,16 @@
     "command": "bill-upload push"
   },
   {
+    "symbol": ".#BillUploadVerifyIssue",
+    "status": "covered",
+    "command": "bill-upload verify"
+  },
+  {
+    "symbol": ".#BillUploadVerifyResult",
+    "status": "covered",
+    "command": "bill-upload verify"
+  },
+  {
     "symbol": ".#BillingCenterClient",
     "status": "excluded",
     "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
@@ -303,6 +338,16 @@
     "symbol": ".#BillingCenterResolver",
     "status": "excluded",
     "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
+  },
+  {
+    "symbol": ".#CBIBillUploadRequiredHeaders",
+    "status": "excluded",
+    "reason": "reference data consumed internally by VerifyCBIBillUploadCSV; not itself CLI-facing"
+  },
+  {
+    "symbol": ".#CBIBillUploadValidHeaders",
+    "status": "excluded",
+    "reason": "reference data consumed internally by VerifyCBIBillUploadCSV; not itself CLI-facing"
   },
   {
     "symbol": ".#ClientAuth",
@@ -333,6 +378,11 @@
     "symbol": ".#DefaultRetryConfig",
     "status": "excluded",
     "reason": "HTTP transport/retry plumbing wired automatically into every client"
+  },
+  {
+    "symbol": ".#DefaultRuleBasedDimensionCSVOptions",
+    "status": "covered",
+    "command": "rule-based-dimension from_csv"
   },
   {
     "symbol": ".#DefaultZone",
@@ -403,6 +453,16 @@
     "symbol": ".#FilterRecommendationsByCategory",
     "status": "covered",
     "command": "finops recommendation list-*"
+  },
+  {
+    "symbol": ".#GenerateRuleBasedDimensionsFromCSV",
+    "status": "covered",
+    "command": "rule-based-dimension from_csv"
+  },
+  {
+    "symbol": ".#GenerateRuleBasedDimensionsFromCSVFile",
+    "status": "covered",
+    "command": "rule-based-dimension from_csv"
   },
   {
     "symbol": ".#GoaErrorMediaType",
@@ -520,6 +580,11 @@
     "reason": "HTTP transport/retry plumbing wired automatically into every client"
   },
   {
+    "symbol": ".#NewRuleBasedDimensionBulkTool",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
     "symbol": ".#NewServerUrlFlexeraLogin",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
@@ -560,9 +625,19 @@
     "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
-    "symbol": ".#AppliedPolicyRelationship",
-    "status": "covered",
-    "command": "policy meta discover"
+    "symbol": ".#ParseAPIError",
+    "status": "excluded",
+    "reason": "response/error-parsing helpers used internally by every command"
+  },
+  {
+    "symbol": ".#ParseZone",
+    "status": "excluded",
+    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
+  },
+  {
+    "symbol": ".#PartialError",
+    "status": "excluded",
+    "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
     "symbol": ".#PolicyMetaAuditOutput",
@@ -598,21 +673,6 @@
     "symbol": ".#PolicyMetaWorkflowClient",
     "status": "covered",
     "command": "policy meta discover / audit / terminate-children / terminate-orphaned"
-  },
-  {
-    "symbol": ".#ParseAPIError",
-    "status": "excluded",
-    "reason": "response/error-parsing helpers used internally by every command"
-  },
-  {
-    "symbol": ".#ParseZone",
-    "status": "excluded",
-    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
-  },
-  {
-    "symbol": ".#PartialError",
-    "status": "excluded",
-    "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
     "symbol": ".#ProgressCallback",
@@ -655,6 +715,56 @@
     "reason": "HTTP transport/retry plumbing wired automatically into every client"
   },
   {
+    "symbol": ".#RuleBasedDimensionBulkClient",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkInput",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkOutput",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkResult",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionBulkTool",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionCSVColumnOverride",
+    "status": "covered",
+    "command": "rule-based-dimension from_csv"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionCSVDescriptionColumnPrefix",
+    "status": "excluded",
+    "reason": "CSV DSL constant consumed internally by GenerateRuleBasedDimensionsFromCSV; not itself CLI-facing"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionCSVOptions",
+    "status": "covered",
+    "command": "rule-based-dimension from_csv"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionCSVTemplateData",
+    "status": "excluded",
+    "reason": "template data type passed to Go text/template rendering inside GenerateRuleBasedDimensionsFromCSV; not itself CLI-facing"
+  },
+  {
+    "symbol": ".#RuleBasedDimensionSpec",
+    "status": "covered",
+    "command": "rule-based-dimension bulk"
+  },
+  {
     "symbol": ".#SharedTokenSource",
     "status": "excluded",
     "reason": "shared OAuth token-source plumbing used internally by the client factory"
@@ -680,6 +790,16 @@
     "command": "user-orgs"
   },
   {
+    "symbol": ".#VerifyCBIBillUploadCSV",
+    "status": "covered",
+    "command": "bill-upload verify"
+  },
+  {
+    "symbol": ".#VerifyCBIBillUploadCSVFile",
+    "status": "covered",
+    "command": "bill-upload verify"
+  },
+  {
     "symbol": ".#WithBearerToken",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
@@ -695,67 +815,17 @@
     "reason": "automatic Optima-host routing plumbing wired into every client"
   },
   {
-    "symbol": ".#WithProjectsAPIVersion",
-    "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
-  },
-  {
-    "symbol": ".#(RuleBasedDimensionBulkTool).Description",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#(RuleBasedDimensionBulkTool).Invoke",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#(RuleBasedDimensionBulkTool).Name",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#NewRuleBasedDimensionBulkTool",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionBulkClient",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionBulkInput",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionBulkOutput",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionBulkResult",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionSpec",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
-    "symbol": ".#RuleBasedDimensionBulkTool",
-    "status": "covered",
-    "command": "rule-based-dimension bulk"
-  },
-  {
     "symbol": ".#WithProjectResolverStaticToken",
     "status": "covered",
     "command": "grs project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#WithProjectResolverTokenSource",
+    "status": "covered",
+    "command": "grs project list / policy (project auto-detection)"
+  },
+  {
+    "symbol": ".#WithProjectsAPIVersion",
     "status": "covered",
     "command": "grs project list / policy (project auto-detection)"
   },
@@ -845,26 +915,6 @@
     "command": "curated anomaly-investigation"
   },
   {
-    "symbol": "anomaly#BillingCenterResolver",
-    "status": "covered",
-    "command": "curated anomaly-investigation"
-  },
-  {
-    "symbol": "anomaly#DebugLogger",
-    "status": "covered",
-    "command": "curated anomaly-investigation"
-  },
-  {
-    "symbol": "anomaly#DimensionAnomaly",
-    "status": "covered",
-    "command": "curated anomaly-investigation"
-  },
-  {
-    "symbol": "anomaly#DimensionAnomalyAnalysis",
-    "status": "covered",
-    "command": "curated anomaly-investigation"
-  },
-  {
     "symbol": "anomaly#BaselineLookbackDaily",
     "status": "excluded",
     "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
@@ -875,7 +925,32 @@
     "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
   },
   {
-    "symbol": "anomaly#DiscoveryModeResult",
+    "symbol": "anomaly#BillingCenterResolver",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DebugLogger",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DefaultRecencyDaily",
+    "status": "excluded",
+    "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
+  },
+  {
+    "symbol": "anomaly#DefaultRecencyMonthly",
+    "status": "excluded",
+    "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
+  },
+  {
+    "symbol": "anomaly#DimensionAnomaly",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
+  },
+  {
+    "symbol": "anomaly#DimensionAnomalyAnalysis",
     "status": "covered",
     "command": "curated anomaly-investigation"
   },
@@ -898,6 +973,11 @@
     "symbol": "anomaly#DiscoveryCategoryThresholdNotRecent",
     "status": "excluded",
     "reason": "anomaly discovery classification constants used internally by anomaly.Investigator, not standalone CLI capabilities"
+  },
+  {
+    "symbol": "anomaly#DiscoveryModeResult",
+    "status": "covered",
+    "command": "curated anomaly-investigation"
   },
   {
     "symbol": "anomaly#FinOpsImpactAssessment",
@@ -923,16 +1003,6 @@
     "symbol": "anomaly#Output",
     "status": "covered",
     "command": "curated anomaly-investigation"
-  },
-  {
-    "symbol": "anomaly#DefaultRecencyDaily",
-    "status": "excluded",
-    "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "anomaly#DefaultRecencyMonthly",
-    "status": "excluded",
-    "reason": "recency-window defaults used internally by anomaly.Investigator, not standalone CLI capabilities"
   },
   {
     "symbol": "anomaly#ParsedRecency",
