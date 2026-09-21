@@ -35,3 +35,4 @@ flexera-cli rule-based-dimension bulk [flags]
 ### SEE ALSO
 
 * [flexera-cli rule-based-dimension](flexera-cli_rule-based-dimension.md)	 - Rule-Based Dimension operations (generated from the unified OpenAPI spec)
+

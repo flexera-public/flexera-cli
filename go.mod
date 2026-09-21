@@ -7,7 +7,7 @@ go 1.26.0
 // replace github.com/flexera-public/unified-go-client => ../unified-go-client
 
 require (
-	github.com/flexera-public/unified-go-client v0.0.0-20260918205017-fbb9ecfc670a
+	github.com/flexera-public/unified-go-client v0.0.0-20260918214935-68a65340a80c
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10
