@@ -34,4 +34,5 @@ BillUpload operations (generated from the unified OpenAPI spec)
 * [flexera-cli bill-upload list](flexera-cli_bill-upload_list.md)	 - GET /optima/orgs/{orgId}/billUploads
 * [flexera-cli bill-upload operations](flexera-cli_bill-upload_operations.md)	 - POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations
 * [flexera-cli bill-upload push](flexera-cli_bill-upload_push.md)	 - Create, upload, and commit a bill upload
+* [flexera-cli bill-upload verify](flexera-cli_bill-upload_verify.md)	 - Verify local CBI bill-upload CSV file(s) before uploading
 

@@ -1,19 +1,16 @@
-## flexera-cli rule-based-dimension bulk
+## flexera-cli bill-upload verify
 
-Create or update rule-based dimensions from JSON input
+Verify local CBI bill-upload CSV file(s) before uploading
 
 ```
-flexera-cli rule-based-dimension bulk [flags]
+flexera-cli bill-upload verify [flags]
 ```
 
 ### Options
 
 ```
-      --continue-on-error   continue processing after a dimension fails
-      --dry-run             validate and report dimensions without making API calls
-      --file string         path to JSON input, or - to read JSON from stdin
-  -h, --help                help for bulk
-      --input string        inline JSON input (mutually exclusive with --file)
+      --file strings   local CSV file to verify (repeatable, required)
+  -h, --help           help for verify
 ```
 
 ### Options inherited from parent commands
@@ -34,5 +31,5 @@ flexera-cli rule-based-dimension bulk [flags]
 
 ### SEE ALSO
 
-* [flexera-cli rule-based-dimension](flexera-cli_rule-based-dimension.md)	 - Rule-Based Dimension operations (generated from the unified OpenAPI spec)
+* [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - BillUpload operations (generated from the unified OpenAPI spec)
 
