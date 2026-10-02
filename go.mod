@@ -4,10 +4,10 @@ go 1.26.0
 
 // Uncomment the following `replace` line to override go module reference and use a local source (../unified-go-client)
 // Helpful if you want to test changes in the local version of unified-go-client without publishing it.
-// replace github.com/flexera-public/unified-go-client => ../unified-go-client
+replace github.com/flexera-public/unified-go-client => ../unified-go-client
 
 require (
-	github.com/flexera-public/unified-go-client v0.0.0-20260918214935-68a65340a80c
+	github.com/flexera-public/unified-go-client v0.0.0-20261001183948-92b58ffbc17f
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.10.2
 	github.com/spf13/pflag v1.0.10

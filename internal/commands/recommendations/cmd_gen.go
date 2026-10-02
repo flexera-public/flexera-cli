@@ -35,10 +35,9 @@ func NewCmd() *cobra.Command {
 	return c
 }
 
-// newRecommendationsListCmd — GET /recommendations/orgs/{orgID}/recommendations (operationId: OptimaRecommendations_Recommendations_index)
+// newRecommendationsListCmd — GET /recommendations/orgs/{orgId}/recommendations (operationId: OptimaRecommendations_Recommendations_index)
 func newRecommendationsListCmd() *cobra.Command {
 	var (
-		orgID            int
 		billingCenterIDs []string
 		view             string
 		statuses         []string
@@ -49,6 +48,9 @@ func newRecommendationsListCmd() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -69,31 +71,25 @@ func newRecommendationsListCmd() *cobra.Command {
 				}
 				params.Statuses = &evStatuses
 			}
-			resp, err := client.OptimaRecommendationsRecommendationsIndexWithResponse(cmd.Context(), orgID, &params)
+			resp, err := client.OptimaRecommendationsRecommendationsIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 200 {
+			if resp.JSON200 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			var result any
-			if err := json.Unmarshal(resp.Body, &result); err != nil {
-				return fmt.Errorf("decoding response body: %w", err)
-			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgID (path, required)")
 	c.Flags().StringSliceVar(&billingCenterIDs, "billing-center-i-ds", nil, "billingCenterIDs (query)")
 	c.Flags().StringVar(&view, "view", "", "view (query)")
 	c.Flags().StringSliceVar(&statuses, "statuses", nil, "statuses (query)")
 	return c
 }
 
-// newRecommendationsReplaceCmd — PUT /recommendations/orgs/{orgID}/recommendations/updatestatus (operationId: OptimaRecommendations_Recommendations_updateStatus)
+// newRecommendationsReplaceCmd — PUT /recommendations/orgs/{orgId}/recommendations/updatestatus (operationId: OptimaRecommendations_Recommendations_updateStatus)
 func newRecommendationsReplaceCmd() *cobra.Command {
 	var (
-		orgID              int
 		bodyRaw            string
 		fId                string
 		fSnoozedTargetDate string
@@ -108,6 +104,9 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
+			if err := deps.Config.RequireOrgID(); err != nil {
+				return err
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -140,14 +139,15 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 			if err := json.Unmarshal(raw, &body); err != nil {
 				return fmt.Errorf("decoding request body: %w", err)
 			}
-			writePlan := map[string]any{"method": "PUT /recommendations/orgs/{orgID}/recommendations/updatestatus"}
+			writePlan := map[string]any{"method": "PUT /recommendations/orgs/{orgId}/recommendations/updatestatus"}
+			writePlan["orgId"] = deps.Config.OrgID
 			writePlan["body"] = json.RawMessage(raw)
 			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.OptimaRecommendationsRecommendationsUpdateStatusWithResponse(cmd.Context(), orgID, body)
+			resp, err := client.OptimaRecommendationsRecommendationsUpdateStatusWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
@@ -158,7 +158,6 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 			return nil
 		},
 	}
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgID (path, required)")
 	c.Flags().StringVar(&fId, "id", "", "id (body)")
 	c.Flags().StringVar(&fSnoozedTargetDate, "snoozed-target-date", "", "snoozedTargetDate (body)")
 	c.Flags().StringVar(&fStatus, "status", "", "status (body)")

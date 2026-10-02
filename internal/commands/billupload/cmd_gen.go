@@ -82,11 +82,10 @@ func newBillUploadFilesCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.JSON201 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
@@ -145,11 +144,10 @@ func newBillUploadOperationsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.JSON200 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
@@ -214,11 +212,10 @@ func newBillUploadCreateCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.JSON201 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&fBillConnectID, "bill-connect-id", "", "billConnectId (body)")
@@ -309,11 +306,10 @@ func newBillUploadGetCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			if resp.JSON200 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
@@ -352,14 +348,10 @@ func newBillUploadListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 200 {
+			if resp.JSON200 == nil {
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			var result any
-			if err := json.Unmarshal(resp.Body, &result); err != nil {
-				return fmt.Errorf("decoding response body: %w", err)
-			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billingPeriod, "billing-period", "", "billingPeriod (query)")

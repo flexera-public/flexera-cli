@@ -1,16 +1,13 @@
 // Package graphql provides the non-OpenAPI GraphQL commands: the raw
 // /explore/graphql query helper (flexera.(*Client).GraphQL) and the query
-// generate/modify helper (service/graphql/v1's GenerateQuery).
+// generate/modify helper (flexera.(*ClientWithResponses).GenerateQuery).
 package graphql
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"strings"
 
-	graphqllib "github.com/flexera-public/unified-go-client/service/graphql/v1"
 	"github.com/spf13/cobra"
 
 	clipkg "github.com/flexera-public/flexera-cli/internal/cli"
@@ -99,26 +96,11 @@ func NewGenerateCmd() *cobra.Command {
 			if strings.TrimSpace(prompt) == "" && strings.TrimSpace(query) == "" {
 				return fmt.Errorf("one of --prompt or --query is required")
 			}
-			base, err := baseClient(deps)
+			apiClient, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			client, err := graphqllib.NewClient(
-				base.Server,
-				graphqllib.WithHTTPClient(base.Client),
-				graphqllib.WithRequestEditorFn(func(ctx context.Context, req *http.Request) error {
-					for _, editor := range base.RequestEditors {
-						if err := editor(ctx, req); err != nil {
-							return err
-						}
-					}
-					return nil
-				}),
-			)
-			if err != nil {
-				return err
-			}
-			result, err := client.GenerateQuery(cmd.Context(), int64(deps.Config.OrgID), graphqllib.GenerateQueryRequestBody{
+			result, err := apiClient.GenerateQuery(cmd.Context(), int64(deps.Config.OrgID), flexera.GenerateQueryRequestBody{
 				Prompt:       prompt,
 				Query:        query,
 				ModifyPrompt: modifyPrompt,

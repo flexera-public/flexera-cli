@@ -84,11 +84,11 @@ func newAnomalyInvestigationCmd() *cobra.Command {
 				in.OrgID = cfg.OrgID
 			}
 
-			clients, err := deps.Factory().NewOptimaClients(ctx, cfg, deps.Getenv, optimaBaseURL)
+			client, err := deps.Factory().NewOptimaClient(cfg, deps.Getenv, optimaBaseURL)
 			if err != nil {
 				return err
 			}
-			resolver := flexera.NewBillingCenterResolver(clients.BillingCenterService)
+			resolver := flexera.NewBillingCenterResolver(client)
 
 			var dbg anomaly.DebugLogger
 			if debug, _ := cmd.Flags().GetBool(clipkg.FlagDebug); debug {
@@ -97,7 +97,7 @@ func newAnomalyInvestigationCmd() *cobra.Command {
 				}
 			}
 
-			inv := anomaly.New(clients.BillAnalysis, resolver, dbg)
+			inv := anomaly.New(client, resolver, dbg)
 			out, err := inv.Invoke(ctx, in)
 			if err != nil {
 				return fmt.Errorf("anomaly-investigation: %w", err)

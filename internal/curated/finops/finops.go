@@ -18,10 +18,7 @@ import (
 	"github.com/spf13/cobra"
 
 	clipkg "github.com/flexera-public/flexera-cli/internal/cli"
-	cliflexera "github.com/flexera-public/flexera-cli/internal/flexera"
 	flexera "github.com/flexera-public/unified-go-client"
-	ba "github.com/flexera-public/unified-go-client/rightscale/bill_analysis"
-	optrec "github.com/flexera-public/unified-go-client/rightscale/optima_recommendations"
 )
 
 const flagOptimaBaseURL = "optima-base-url"
@@ -60,15 +57,15 @@ func NewCmd() *cobra.Command {
 
 	c.AddCommand(
 		billingCenter, cost, recommendation, billMonth, adjustment,
-		newReportCmd("anomaly-report", "Run an anomaly report", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-			resp, err := clients.BillAnalysis.AnomaliesReportWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
+		newReportCmd("anomaly-report", "Run an anomaly report", func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error) {
+			resp, err := client.BillAnalysisAnomaliesReportWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return nil, nil, err
 			}
 			return resp.HTTPResponse, resp.Body, nil
 		}),
-		newReportCmd("forecast-report", "Run a forecast report", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-			resp, err := clients.BillAnalysis.ForecastsReportWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
+		newReportCmd("forecast-report", "Run a forecast report", func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error) {
+			resp, err := client.BillAnalysisForecastsReportWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return nil, nil, err
 			}
@@ -86,12 +83,21 @@ func parentRunE(cmd *cobra.Command, args []string) error {
 }
 
 // optimaClients builds the Optima multi-client bundle, requiring an org ID.
-func optimaClients(cmd *cobra.Command, deps *clipkg.Deps) (*cliflexera.OptimaClients, error) {
+func optimaClient(cmd *cobra.Command, deps *clipkg.Deps) (*flexera.ClientWithResponses, error) {
 	if err := deps.Config.RequireOrgID(); err != nil {
 		return nil, err
 	}
 	baseURL, _ := cmd.Flags().GetString(flagOptimaBaseURL)
-	return deps.Factory().NewOptimaClients(cmd.Context(), deps.Config, deps.Getenv, baseURL)
+	return deps.Factory().NewOptimaClient(deps.Config, deps.Getenv, baseURL)
+}
+
+func withDatasetQuery(dataset string) flexera.RequestEditorFn {
+	return func(_ context.Context, req *http.Request) error {
+		query := req.URL.Query()
+		query.Set("dataset", dataset)
+		req.URL.RawQuery = query.Encode()
+		return nil
+	}
 }
 
 // --- billing-center ---
@@ -101,11 +107,11 @@ func newBillingCenterListCmd() *cobra.Command {
 		Use: "list", Short: "List billing centers", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillingCenterService.BillingCentersIndexWithResponse(cmd.Context(), deps.Config.OrgID, nil)
+			resp, err := client.BillingCenterServiceBillingCentersIndexWithResponse(cmd.Context(), deps.Config.OrgID, nil)
 			if err != nil {
 				return err
 			}
@@ -123,11 +129,11 @@ func newBillingCenterGetCmd() *cobra.Command {
 			if strings.TrimSpace(bcID) == "" {
 				return errors.New("--id is required")
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillingCenterService.BillingCentersShowWithResponse(cmd.Context(), deps.Config.OrgID, bcID, nil)
+			resp, err := client.BillingCenterServiceBillingCentersShowWithResponse(cmd.Context(), deps.Config.OrgID, bcID, nil)
 			if err != nil {
 				return err
 			}
@@ -147,11 +153,11 @@ func newBillingCenterAllocationTableCmd() *cobra.Command {
 			if strings.TrimSpace(bcID) == "" {
 				return errors.New("--id is required")
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillingCenterService.BillingCentersShowAllocationTableWithResponse(cmd.Context(), deps.Config.OrgID, bcID, nil)
+			resp, err := client.BillingCenterServiceBillingCentersShowAllocationTableWithResponse(cmd.Context(), deps.Config.OrgID, bcID, nil)
 			if err != nil {
 				return err
 			}
@@ -174,12 +180,12 @@ func newCostGetCmd() *cobra.Command {
 			if strings.TrimSpace(startAt) == "" || strings.TrimSpace(endAt) == "" {
 				return errors.New("--start and --end are required")
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resolver := flexera.NewBillingCenterResolver(clients.BillingCenterService)
-			helper := flexera.New(clients.BillAnalysis, resolver)
+			resolver := flexera.NewBillingCenterResolver(client)
+			helper := flexera.New(client, resolver)
 			req := flexera.Request{
 				OrgID:            deps.Config.OrgID,
 				BillingCenterIDs: splitCSV(billingCenterIDs),
@@ -214,8 +220,8 @@ func newCostGetCmd() *cobra.Command {
 }
 
 func newCostAggregatedCmd() *cobra.Command {
-	return newPOSTBodyCmd("aggregated", "Raw POST /costs/aggregated", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsAggregatedWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
+	return newPOSTBodyCmd("aggregated", "Raw POST /costs/aggregated", func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error) {
+		resp, err := client.BillAnalysisCostsAggregatedWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -224,8 +230,8 @@ func newCostAggregatedCmd() *cobra.Command {
 }
 
 func newCostSelectCmd() *cobra.Command {
-	return newPOSTBodyCmd("select", "Raw POST /costs/select", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsSelectWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
+	return newPOSTBodyCmd("select", "Raw POST /costs/select", func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error) {
+		resp, err := client.BillAnalysisCostsSelectWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -234,8 +240,8 @@ func newCostSelectCmd() *cobra.Command {
 }
 
 func newCostExportSelectCmd() *cobra.Command {
-	return newPOSTBodyCmd("export-select", "Raw POST /costs/select/export", func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error) {
-		resp, err := clients.BillAnalysis.CostsExportSelectWithBodyWithResponse(ctx, int(orgID), nil, "application/json", strings.NewReader(string(body)))
+	return newPOSTBodyCmd("export-select", "Raw POST /costs/select/export", func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error) {
+		resp, err := client.BillAnalysisCostsExportSelectWithBodyWithResponse(ctx, int64(orgID), "application/json", strings.NewReader(string(body)))
 		if err != nil {
 			return nil, nil, err
 		}
@@ -249,16 +255,15 @@ func newCostDimensionsCmd() *cobra.Command {
 		Use: "dimensions", Short: "List available cost dimensions", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			params := &ba.CostsDimensionsParams{}
+			var reqEditors []flexera.RequestEditorFn
 			if d := strings.TrimSpace(dataset); d != "" {
-				v := ba.CostsDimensionsParamsDataset(d)
-				params.Dataset = &v
+				reqEditors = append(reqEditors, withDatasetQuery(d))
 			}
-			resp, err := clients.BillAnalysis.CostsDimensionsWithResponse(cmd.Context(), deps.Config.OrgID, params)
+			resp, err := client.BillAnalysisCostsDimensionsWithResponse(cmd.Context(), int64(deps.Config.OrgID), reqEditors...)
 			if err != nil {
 				return err
 			}
@@ -275,16 +280,15 @@ func newCostMetricsCmd() *cobra.Command {
 		Use: "metrics", Short: "List available cost metrics", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			params := &ba.CostsMetricsParams{}
+			var reqEditors []flexera.RequestEditorFn
 			if d := strings.TrimSpace(dataset); d != "" {
-				v := ba.CostsMetricsParamsDataset(d)
-				params.Dataset = &v
+				reqEditors = append(reqEditors, withDatasetQuery(d))
 			}
-			resp, err := clients.BillAnalysis.CostsMetricsWithResponse(cmd.Context(), deps.Config.OrgID, params)
+			resp, err := client.BillAnalysisCostsMetricsWithResponse(cmd.Context(), int64(deps.Config.OrgID), reqEditors...)
 			if err != nil {
 				return err
 			}
@@ -304,11 +308,11 @@ func newCostExportStatusCmd() *cobra.Command {
 			if strings.TrimSpace(exportID) == "" {
 				return errors.New("--export-id is required")
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillAnalysis.CostsExportSelectStatusWithResponse(cmd.Context(), deps.Config.OrgID, exportID, nil)
+			resp, err := client.BillAnalysisCostsExportSelectStatusWithResponse(cmd.Context(), int64(deps.Config.OrgID), exportID)
 			if err != nil {
 				return err
 			}
@@ -327,21 +331,21 @@ func newRecommendationListCmd(use, kind, short string) *cobra.Command {
 		Use: use, Short: short, Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
 			bcIDs := splitCSV(billingCenterIDs)
 			if len(bcIDs) == 0 {
-				resolver := flexera.NewBillingCenterResolver(clients.BillingCenterService)
+				resolver := flexera.NewBillingCenterResolver(client)
 				resolved, rerr := resolver.TopLevelIDs(cmd.Context(), deps.Config.OrgID)
 				if rerr != nil {
 					return fmt.Errorf("auto-resolve billing centers: %w", rerr)
 				}
 				bcIDs = resolved
 			}
-			params := &optrec.RecommendationsIndexParams{BillingCenterIDs: &bcIDs}
-			resp, err := clients.OptimaRecommendations.RecommendationsIndexWithResponse(cmd.Context(), deps.Config.OrgID, params)
+			params := &flexera.OptimaRecommendationsRecommendationsIndexParams{BillingCenterIDs: &bcIDs}
+			resp, err := client.OptimaRecommendationsRecommendationsIndexWithResponse(cmd.Context(), deps.Config.OrgID, params)
 			if err != nil {
 				return err
 			}
@@ -368,11 +372,11 @@ func newBillMonthListCmd() *cobra.Command {
 		Use: "list", Short: "List bill months", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			params := &ba.BillMonthsSearchParams{}
+			params := &flexera.BillAnalysisBillMonthsSearchParams{}
 			if limit > 0 {
 				params.Limit = &limit
 			}
@@ -383,7 +387,7 @@ func newBillMonthListCmd() *cobra.Command {
 				params.OrderBy = &v
 			}
 			// Raw client so empty-date fields don't trip the strict decoder.
-			httpResp, err := clients.BillAnalysis.BillMonthsSearch(cmd.Context(), deps.Config.OrgID, params)
+			httpResp, err := client.BillAnalysisBillMonthsSearch(cmd.Context(), int64(deps.Config.OrgID), params)
 			if err != nil {
 				return err
 			}
@@ -408,11 +412,11 @@ func newAdjustmentShowCmd() *cobra.Command {
 		Use: "show", Short: "Show the adjustment definition", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			httpResp, err := clients.BillAnalysis.AdjustmentDefinitionShow(cmd.Context(), deps.Config.OrgID, nil)
+			httpResp, err := client.BillAnalysisAdjustmentDefinitionShow(cmd.Context(), int64(deps.Config.OrgID))
 			if err != nil {
 				return err
 			}
@@ -450,11 +454,11 @@ func newAdjustmentUpdateCmd() *cobra.Command {
 			if done {
 				return nil
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			resp, err := clients.BillAnalysis.AdjustmentDefinitionUpdateWithBodyWithResponse(cmd.Context(), deps.Config.OrgID, nil, "application/json", strings.NewReader(string(body)))
+			resp, err := client.BillAnalysisAdjustmentDefinitionUpdateWithBodyWithResponse(cmd.Context(), int64(deps.Config.OrgID), "application/json", strings.NewReader(string(body)))
 			if err != nil {
 				return err
 			}
@@ -472,17 +476,17 @@ func newAdjustmentUpdateCmd() *cobra.Command {
 
 // --- report (anomaly/forecast) ---
 
-func newReportCmd(use, short string, call func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
+func newReportCmd(use, short string, call func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
 	return newPOSTBodyCmdWithUse(use, short, call)
 }
 
 // --- shared POST-body command ---
 
-func newPOSTBodyCmd(use, short string, call func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
+func newPOSTBodyCmd(use, short string, call func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
 	return newPOSTBodyCmdWithUse(use, short, call)
 }
 
-func newPOSTBodyCmdWithUse(use, short string, call func(ctx context.Context, clients *cliflexera.OptimaClients, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
+func newPOSTBodyCmdWithUse(use, short string, call func(ctx context.Context, client *flexera.ClientWithResponses, orgID int, body []byte) (*http.Response, []byte, error)) *cobra.Command {
 	var file string
 	c := &cobra.Command{
 		Use: use, Short: short, Args: cobra.NoArgs,
@@ -492,11 +496,11 @@ func newPOSTBodyCmdWithUse(use, short string, call func(ctx context.Context, cli
 			if err != nil {
 				return err
 			}
-			clients, err := optimaClients(cmd, deps)
+			client, err := optimaClient(cmd, deps)
 			if err != nil {
 				return err
 			}
-			httpResp, respBody, err := call(cmd.Context(), clients, deps.Config.OrgID, body)
+			httpResp, respBody, err := call(cmd.Context(), client, deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
