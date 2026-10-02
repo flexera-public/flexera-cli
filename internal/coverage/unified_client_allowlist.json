@@ -1035,101 +1035,6 @@
     "command": "curated anomaly-investigation"
   },
   {
-    "symbol": "rightscale/bill_analysis#AggregatedRequestBody",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#AggregatedRequestBodyGranularity",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#AnalyticsQueryResult",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1Type",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1TypeAnd",
-    "status": "excluded",
-    "reason": "filter operator constants used internally by cost.go/anomaly request construction, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1TypeEqual",
-    "status": "excluded",
-    "reason": "filter operator constants used internally by cost.go/anomaly request construction, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1TypeNot",
-    "status": "excluded",
-    "reason": "filter operator constants used internally by cost.go/anomaly request construction, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1TypeOr",
-    "status": "excluded",
-    "reason": "filter operator constants used internally by cost.go/anomaly request construction, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#FilterV1TypeSubstring",
-    "status": "excluded",
-    "reason": "filter operator constants used internally by cost.go/anomaly request construction, not standalone CLI capabilities"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#ParseAnalyticsQueryResult",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#ReportRequestBody",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#ReportRequestBodyDetectionMethod",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#ReportRequestBodyGranularity",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#Row",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#SelectRequestBody",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#SelectRequestBodyGranularity",
-    "status": "excluded",
-    "reason": "type aliases and response-parsing helper used internally by cost.go/anomaly, not a standalone capability"
-  },
-  {
-    "symbol": "rightscale/bill_analysis#WithHeaders",
-    "status": "excluded",
-    "reason": "ClientOption (custom headers), transport-level plumbing"
-  },
-  {
-    "symbol": "rightscale/billing_center_service#WithHeader",
-    "status": "excluded",
-    "reason": "ClientOption (custom headers), transport-level plumbing"
-  },
-  {
     "symbol": "service/billconnect#(Service).AWSCreateIAMRole",
     "status": "excluded",
     "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
@@ -1335,48 +1240,23 @@
     "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
   },
   {
-    "symbol": "service/graphql/v1#(Client).GenerateQuery",
+    "symbol": ".#(Client).GenerateQuery",
     "status": "covered",
     "command": "graphql generate"
   },
   {
-    "symbol": "service/graphql/v1#(ClientWithResponses).GenerateQuery",
+    "symbol": ".#(ClientWithResponses).GenerateQuery",
     "status": "covered",
     "command": "graphql generate"
   },
   {
-    "symbol": "service/graphql/v1#GenerateQueryRequestBody",
+    "symbol": ".#GenerateQueryRequestBody",
     "status": "covered",
     "command": "graphql generate"
   },
   {
-    "symbol": "service/graphql/v1#GenerateQueryResponse",
+    "symbol": ".#GenerateQueryResponse",
     "status": "covered",
     "command": "graphql generate"
-  },
-  {
-    "symbol": "service/optima#Clients",
-    "status": "excluded",
-    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
-  },
-  {
-    "symbol": "service/optima#Config",
-    "status": "excluded",
-    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
-  },
-  {
-    "symbol": "service/optima#HttpRequestDoer",
-    "status": "excluded",
-    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
-  },
-  {
-    "symbol": "service/optima#NewClients",
-    "status": "excluded",
-    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
-  },
-  {
-    "symbol": "service/optima#NewClientsForZone",
-    "status": "excluded",
-    "reason": "client-construction bundle (shared auth/HTTP doer across Optima sub-clients), not a capability; used internally by finops wiring"
   }
 ]

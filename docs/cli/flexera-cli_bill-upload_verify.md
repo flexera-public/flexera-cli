@@ -1,18 +1,16 @@
-## flexera-cli recommendations list
+## flexera-cli bill-upload verify
 
-List all recommendations
+Verify local CBI bill-upload CSV file(s) before uploading
 
 ```
-flexera-cli recommendations list [flags]
+flexera-cli bill-upload verify [flags]
 ```
 
 ### Options
 
 ```
-      --billing-center-i-ds strings   billingCenterIDs (query)
-  -h, --help                          help for list
-      --statuses strings              statuses (query)
-      --view string                   view (query)
+      --file strings   local CSV file to verify (repeatable, required)
+  -h, --help           help for verify
 ```
 
 ### Options inherited from parent commands
@@ -33,5 +31,5 @@ flexera-cli recommendations list [flags]
 
 ### SEE ALSO
 
-* [flexera-cli recommendations](flexera-cli_recommendations.md)	 - Recommendations operations (generated from the unified OpenAPI spec)
+* [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - BillUpload operations (generated from the unified OpenAPI spec)
 
