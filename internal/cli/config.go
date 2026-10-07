@@ -25,6 +25,11 @@ const (
 	FlagAPIBaseURL   = "api-base-url"
 	FlagLoginBaseURL = "login-base-url"
 	FlagOutput       = "output"
+	FlagJSONStyle    = "json-style"
+	FlagOutJQ        = "out-jq"
+	FlagOutFields    = "out-fields"
+	FlagRawOutput    = "raw-output"
+	FlagNoValidate   = "no-validate"
 	FlagAccessToken  = "access-token"
 	FlagClientID     = "client-id"
 	FlagClientSecret = "client-secret"
@@ -36,7 +41,7 @@ const (
 // persistentKeys are the config keys bound to viper (every persistent flag
 // except --config and --debug, which are handled out of band).
 var persistentKeys = []string{
-	FlagZone, FlagAPIBaseURL, FlagLoginBaseURL, FlagOutput,
+	FlagZone, FlagAPIBaseURL, FlagLoginBaseURL, FlagOutput, FlagJSONStyle,
 	FlagAccessToken, FlagClientID, FlagClientSecret, FlagRefreshToken, FlagOrgID,
 }
 
@@ -50,6 +55,11 @@ func RegisterPersistentFlags(pf *pflag.FlagSet) {
 	pf.String(FlagAPIBaseURL, "", "override API base URL")
 	pf.String(FlagLoginBaseURL, "", "override login base URL")
 	pf.StringP(FlagOutput, "o", "", "output format (json|table)")
+	pf.String(FlagJSONStyle, "auto", "JSON whitespace style (auto|pretty|compact)")
+	pf.String(FlagOutJQ, "", "shape JSON output with a jq expression")
+	pf.String(FlagOutFields, "", "project JSON output fields (comma-separated paths)")
+	pf.BoolP(FlagRawOutput, "r", false, "write jq string results without JSON quotes (requires --out-jq)")
+	pf.Bool(FlagNoValidate, false, "skip API schema constraints (never JSON syntax or request data-loss checks)")
 	pf.String(FlagAccessToken, "", "static bearer access token")
 	pf.String(FlagClientID, "", "OAuth client ID")
 	pf.String(FlagClientSecret, "", "OAuth client secret")
@@ -63,19 +73,29 @@ func RegisterPersistentFlags(pf *pflag.FlagSet) {
 // default ~/.flexera/config.yaml location. The persistent flag set is bound
 // so changed flags win over env and file.
 func NewViper(pf *pflag.FlagSet, cfgFile string) (*viper.Viper, error) {
+	return newViper(pf, cfgFile, true)
+}
+
+// Discovery ignores implicit configuration while honoring explicit --config.
+func newViper(pf *pflag.FlagSet, cfgFile string, implicit bool) (*viper.Viper, error) {
 	v := viper.New()
 	v.SetConfigType("yaml")
 
 	explicit := strings.TrimSpace(cfgFile) != ""
 	if explicit {
 		v.SetConfigFile(cfgFile)
-	} else {
+	} else if implicit {
 		if home, err := os.UserHomeDir(); err == nil {
 			v.AddConfigPath(filepath.Join(home, ".flexera"))
 			v.SetConfigName("config")
 		}
 	}
-	if err := v.ReadInConfig(); err != nil {
+	if err := func() error {
+		if explicit || implicit {
+			return v.ReadInConfig()
+		}
+		return nil
+	}(); err != nil {
 		var notFound viper.ConfigFileNotFoundError
 		if explicit {
 			// An explicitly requested config file must exist and parse.
@@ -114,6 +134,9 @@ func asConfigNotFound(err error, target *viper.ConfigFileNotFoundError) bool {
 // already merged env and config-file values into each key, a no-op getenv is
 // passed so ResolveCommon only supplies defaults.
 func Resolve(v *viper.Viper) (cliconfig.CommonConfig, error) {
+	if _, err := ResolveJSONStyle(v); err != nil {
+		return cliconfig.CommonConfig{}, err
+	}
 	opts := cliconfig.CommonOptions{
 		Zone:         v.GetString(FlagZone),
 		APIBaseURL:   v.GetString(FlagAPIBaseURL),
@@ -126,4 +149,10 @@ func Resolve(v *viper.Viper) (cliconfig.CommonConfig, error) {
 		OrgID:        v.GetInt(FlagOrgID),
 	}
 	return cliconfig.ResolveCommon(opts, func(string) string { return "" })
+}
+
+// ResolveJSONStyle reads flag > env > file > default without changing the
+// SDK's CommonConfig. Root initialization passes this style to Printer.
+func ResolveJSONStyle(v *viper.Viper) (JSONStyle, error) {
+	return ParseJSONStyle(v.GetString(FlagJSONStyle))
 }

@@ -44,15 +44,19 @@ func newUserInvitationGetCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an invitation",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an invitation",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-invitation get --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Invitation_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Invitation_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
@@ -61,14 +65,30 @@ func newUserInvitationGetCmd() *cobra.Command {
 				ev := flexera.IamUserInvitationShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamUserInvitationShowWithResponse(cmd.Context(), id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -83,15 +103,19 @@ func newUserInvitationListCmd() *cobra.Command {
 		view   string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index user invitations",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index user invitations",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-invitation list",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Invitation_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Invitation_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamUserInvitationIndexParams{}
 			if cmd.Flags().Changed("status") {
 				ev := flexera.IamUserInvitationIndexParamsStatus(status)
@@ -101,14 +125,30 @@ func newUserInvitationListCmd() *cobra.Command {
 				ev := flexera.IamUserInvitationIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamUserInvitationIndexWithResponse(cmd.Context(), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&status, "status", "", "status (query)")
@@ -124,33 +164,46 @@ func newUserInvitationAcceptCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "accept",
-		Short: "Accept an invitation",
-		Args:  cobra.NoArgs,
+		Use:         "accept",
+		Short:       "Accept an invitation",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-invitation accept --id ID\n  flexera-cli user-invitation accept --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Invitation_accept_invitation", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Invitation_accept_invitation")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			writePlan := map[string]any{"method": "PATCH /iam/v1/invitations/{id}/accept"}
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/iam/v1/invitations/{id}/accept", Params: planParams, Destructive: false}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamUserInvitationAcceptInvitationWithResponse(cmd.Context(), id)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -167,33 +220,46 @@ func newUserInvitationDeclineCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "decline",
-		Short: "Decline an invitation",
-		Args:  cobra.NoArgs,
+		Use:         "decline",
+		Short:       "Decline an invitation",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-invitation decline --id ID\n  flexera-cli user-invitation decline --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Invitation_decline_invitation", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Invitation_decline_invitation")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			writePlan := map[string]any{"method": "PATCH /iam/v1/invitations/{id}/decline"}
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/iam/v1/invitations/{id}/decline", Params: planParams, Destructive: false}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamUserInvitationDeclineInvitationWithResponse(cmd.Context(), id)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")

@@ -17,6 +17,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -63,56 +64,213 @@ type genTag struct {
 }
 
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, "regencli:", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	wd, err := os.Getwd()
-	check(err)
+	if err != nil {
+		return err
+	}
 	if filepath.Base(wd) != "flexera-cli" {
-		fmt.Fprintln(os.Stderr, "regencli must run from cli/flexera-cli (cwd:", wd, ")")
-		os.Exit(2)
+		return fmt.Errorf("regencli must run from cli/flexera-cli (cwd: %s)", wd)
 	}
 
-	tags := collectTags()
+	tags, err := collectTags()
+	if err != nil {
+		return err
+	}
 	fmt.Fprintf(os.Stderr, "regencli: %d tags discovered\n", len(tags))
+	return regenerate(commandsDir, tags, generationHooks{
+		generate: generateTag,
+		verify:   verifyGenerated,
+		rename:   os.Rename,
+		prepare:  preparePublication,
+	})
+}
 
-	// Remove the entire generated tree so dropped tags get pruned.
-	check(os.RemoveAll(commandsDir))
-	check(os.MkdirAll(commandsDir, 0o755))
+// Hooks keep failure tests independent of subprocesses and the real SDK.
+type generationHooks struct {
+	generate func(genTag, string) error
+	verify   func(string, []genTag) error
+	rename   func(string, string) error
+	prepare  func(string, []genTag) ([]publicationArtifact, error)
+}
 
-	// Remove any legacy package-main generated files from the prior
-	// switch-tree generator.
-	for _, glob := range []string{"cmd_*_gen.go", "cmd_*_gen.go.raw", "commands_gen.go"} {
-		matches, _ := filepath.Glob(glob)
-		for _, m := range matches {
-			_ = os.Remove(m)
-		}
+func generateTag(tag genTag, out string) error {
+	c := exec.Command("go", "run", "./cmd/gencli",
+		"-spec", specPath, "-tag", tag.Tag, "-pkg", tag.Pkg, "-cmd", tag.Cmd, "-out", out, "-metadata", filepath.Join(filepath.Dir(out), "metadata.json"))
+	c.Stderr = os.Stderr
+	return c.Run()
+}
+
+func regenerate(destination string, tags []string, hooks generationHooks) (err error) {
+	parent := filepath.Dir(destination)
+	if err := os.MkdirAll(parent, 0o755); err != nil {
+		return err
+	}
+	// A sibling staging directory ensures publication stays on one filesystem.
+	stage, err := os.MkdirTemp(parent, ".commands-stage-")
+	if err != nil {
+		return err
+	}
+	defer func() { err = errors.Join(err, os.RemoveAll(stage)) }()
+	// MkdirTemp defaults to 0700; published commands retain the usual mode.
+	if err := os.Chmod(stage, 0o755); err != nil {
+		return err
 	}
 
 	used := map[string]bool{}
 	var generated []genTag
 	for _, tag := range tags {
 		cmd := kebab(cleanIdent(tag)) + cmdSuffix
-		if curatedCanonical[cmd] {
+		if curatedCanonical[cmd] || tag == "Authentication" {
 			fmt.Fprintf(os.Stderr, "regencli: skip tag %q (curated command owns %q)\n", tag, cmd)
 			continue
 		}
 		pkg := uniquePkg(cleanIdent(tag), used)
-		out := filepath.Join(commandsDir, pkg, "cmd_gen.go")
-		c := exec.Command("go", "run", "./cmd/gencli",
-			"-spec", specPath, "-tag", tag, "-pkg", pkg, "-cmd", cmd, "-out", out)
-		c.Stderr = os.Stderr
-		if err := c.Run(); err != nil {
-			fmt.Fprintf(os.Stderr, "regencli: skip tag %q (%v)\n", tag, err)
-			// Drop the empty dir if gencli created none.
-			_ = os.Remove(filepath.Join(commandsDir, pkg))
-			delete(used, pkg)
-			continue
+		t := genTag{Tag: tag, Pkg: pkg, Cmd: cmd}
+		out := filepath.Join(stage, pkg, "cmd_gen.go")
+		if err := hooks.generate(t, out); err != nil {
+			return fmt.Errorf("generate tag %q: %w", tag, err)
 		}
-		generated = append(generated, genTag{Tag: tag, Pkg: pkg, Cmd: cmd})
+		generated = append(generated, t)
 	}
 
-	verifyGenerated(generated)
-
-	writeRegister(generated)
+	if err := hooks.verify(stage, generated); err != nil {
+		return err
+	}
+	if err := writeRegister(stage, generated); err != nil {
+		return fmt.Errorf("write staged registration: %w", err)
+	}
+	if err := rewriteStagedHelp(stage, generated); err != nil {
+		return err
+	}
+	if hooks.prepare != nil {
+		artifacts, err := hooks.prepare(stage, generated)
+		if err != nil {
+			return err
+		}
+		defer func() {
+			for _, artifact := range artifacts {
+				err = errors.Join(err, os.RemoveAll(artifact.Staged))
+			}
+		}()
+		artifacts = append([]publicationArtifact{{Staged: stage, Destination: destination}}, artifacts...)
+		return publishArtifacts(artifacts, hooks.rename)
+	}
+	if err := publish(stage, destination, hooks.rename); err != nil {
+		return err
+	}
 	fmt.Fprintf(os.Stderr, "regencli: wrote %d generated tag packages\n", len(generated))
+	return nil
+}
+
+func preparePublication(stage string, tags []genTag) (artifacts []publicationArtifact, err error) {
+	defer func() {
+		if err != nil {
+			for _, artifact := range artifacts {
+				_ = os.RemoveAll(artifact.Staged)
+			}
+		}
+	}()
+	specData, err := os.ReadFile(specPath)
+	if err != nil {
+		return nil, err
+	}
+	curated, err := curatedEntries(specData)
+	if err != nil {
+		return nil, err
+	}
+	data, err := buildCatalog(stage, tags, specData, curated...)
+	if err != nil {
+		return nil, err
+	}
+	if len(data) > 5*1024*1024 {
+		return nil, fmt.Errorf("catalog size %d exceeds the approved 5 MiB budget", len(data))
+	}
+	second, err := buildCatalog(stage, tags, specData, curated...)
+	if err != nil {
+		return nil, err
+	}
+	if string(data) != string(second) {
+		return nil, fmt.Errorf("catalog generation is nondeterministic")
+	}
+	report, err := verifyCoverage(specData, data)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Fprintf(os.Stderr, "regencli: catalog %d bytes, %d exact curated operations\n", len(data), len(curated))
+	if err := auditStagedTree(stage, data); err != nil {
+		return nil, err
+	}
+	for _, tag := range tags {
+		if err := os.Remove(filepath.Join(stage, tag.Pkg, "metadata.json")); err != nil {
+			return nil, err
+		}
+	}
+	for _, item := range []struct {
+		name, destination string
+		data              []byte
+	}{{"catalog_gen.json", "internal/catalog/catalog_gen.json", data}, {"coverage_gen.json", "internal/catalog/coverage_gen.json", report}} {
+		// Files are staged beside the commands tree; publication uses sibling
+		// backups and rollback for all destinations as one transaction.
+		path := filepath.Join(stage, item.name)
+		if err := os.WriteFile(path, item.data, 0o644); err != nil {
+			return nil, err
+		}
+		// Keep publication sources outside the directory renamed first.
+		file, err := os.CreateTemp(filepath.Dir(stage), ".catalog-stage-*")
+		if err != nil {
+			return nil, err
+		}
+		name := file.Name()
+		artifacts = append(artifacts, publicationArtifact{Staged: name, Destination: item.destination})
+		if err := file.Close(); err != nil {
+			return nil, err
+		}
+		if err := os.Rename(path, name); err != nil {
+			return nil, err
+		}
+	}
+	return artifacts, nil
+}
+
+// publish replaces the entire tree (including registration), pruning stale
+// packages only after generation and verification succeed. If restoration also
+// fails, preserve the backup and report its location for manual recovery.
+func publish(stage, destination string, rename func(string, string) error) (err error) {
+	if _, err := os.Lstat(destination); errors.Is(err, os.ErrNotExist) {
+		return rename(stage, destination)
+	} else if err != nil {
+		return err
+	}
+	backupDir, err := os.MkdirTemp(filepath.Dir(destination), ".commands-backup-")
+	if err != nil {
+		return err
+	}
+	backup := filepath.Join(backupDir, "commands")
+	keepBackup := false
+	defer func() {
+		if !keepBackup {
+			err = errors.Join(err, os.RemoveAll(backupDir))
+		}
+	}()
+	if err := rename(destination, backup); err != nil {
+		return fmt.Errorf("backup generated commands: %w", err)
+	}
+	if err := rename(stage, destination); err != nil {
+		if rollbackErr := rename(backup, destination); rollbackErr != nil {
+			keepBackup = true
+			return errors.Join(fmt.Errorf("publish generated commands: %w", err),
+				fmt.Errorf("rollback failed; old commands preserved at %s: %w", backup, rollbackErr))
+		}
+		return fmt.Errorf("publish generated commands (rolled back): %w", err)
+	}
+	return nil
 }
 
 // verifyGenerated type-checks every flexera.* / client.* symbol referenced
@@ -121,35 +279,43 @@ func main() {
 // naming drift (e.g. an operationId or generated type renamed upstream)
 // into a hard regen-time failure instead of a downstream `go build` error —
 // or worse, a silent mismatch that only trips at runtime.
-func verifyGenerated(tags []genTag) {
+func verifyGenerated(directory string, tags []genTag) error {
 	sv, err := newSymbolVerifier()
-	check(err)
+	if err != nil {
+		return err
+	}
+	return verifyFiles(sv, directory, tags)
+}
 
+func verifyFiles(sv *symbolVerifier, directory string, tags []genTag) error {
 	var issues []string
 	for _, t := range tags {
-		out := filepath.Join(commandsDir, t.Pkg, "cmd_gen.go")
+		out := filepath.Join(directory, t.Pkg, "cmd_gen.go")
 		issues = append(issues, sv.verifyFile(out)...)
 	}
 	if len(issues) > 0 {
-		fmt.Fprintln(os.Stderr, "regencli: symbol verification against unified-go-client failed:")
-		for _, msg := range issues {
-			fmt.Fprintln(os.Stderr, "  "+msg)
-		}
-		fmt.Fprintf(os.Stderr, "regencli: %d symbol mismatch(es); aborting before register_gen.go is written\n", len(issues))
-		os.Exit(1)
+		return fmt.Errorf("symbol verification against unified-go-client failed (%d mismatch(es)):\n%s", len(issues), strings.Join(issues, "\n"))
 	}
 	fmt.Fprintf(os.Stderr, "regencli: verified %d generated file(s) against unified-go-client symbols\n", len(tags))
+	return nil
 }
 
 type spec struct {
-	Paths map[string]map[string]json.RawMessage `json:"paths"`
+	Paths      map[string]map[string]json.RawMessage `json:"paths"`
+	Components struct {
+		Schemas map[string]json.RawMessage `json:"schemas"`
+	} `json:"components"`
 }
 
-func collectTags() []string {
+func collectTags() ([]string, error) {
 	data, err := os.ReadFile(specPath)
-	check(err)
+	if err != nil {
+		return nil, err
+	}
 	var s spec
-	check(json.Unmarshal(data, &s))
+	if err := json.Unmarshal(data, &s); err != nil {
+		return nil, err
+	}
 	seen := map[string]bool{}
 	for _, pi := range s.Paths {
 		for m, raw := range pi {
@@ -160,8 +326,7 @@ func collectTags() []string {
 			if err := json.Unmarshal(raw, &op); err != nil {
 				continue
 			}
-			action, _ := op["x-flexera-action"].(string)
-			if !supportedActions[action] {
+			if _, annotated := op["x-flexera-action"]; !annotated {
 				continue
 			}
 			tags, _ := op["tags"].([]interface{})
@@ -177,7 +342,7 @@ func collectTags() []string {
 		tags = append(tags, t)
 	}
 	sort.Strings(tags)
-	return tags
+	return tags, nil
 }
 
 // billConnectParent / billConnectChildren describe how the generated
@@ -196,7 +361,7 @@ var billConnectChildren = []struct{ Pkg, Use string }{
 	{"billconnectgcp", "gcp"},
 }
 
-func writeRegister(tags []genTag) {
+func writeRegister(directory string, tags []genTag) error {
 	sort.Slice(tags, func(i, j int) bool { return tags[i].Pkg < tags[j].Pkg })
 
 	present := map[string]bool{}
@@ -256,14 +421,7 @@ func writeRegister(tags []genTag) {
 		b.WriteString("}\n")
 	}
 
-	check(os.WriteFile(filepath.Join(commandsDir, "register_gen.go"), []byte(b.String()), 0o644))
-}
-
-func check(err error) {
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "regencli:", err)
-		os.Exit(1)
-	}
+	return os.WriteFile(filepath.Join(directory, "register_gen.go"), []byte(b.String()), 0o644)
 }
 
 // cleanIdent turns a tag into a PascalCase alphanumeric identifier

@@ -42,18 +42,19 @@ func newCapabilityGetCmd() *cobra.Command {
 		view           string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an org's capability",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an org's capability",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli capability get --org-id ORG_ID --capability-name CAPABILITY_NAME",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Capability_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Capability_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(capabilityName) == "" {
 				return fmt.Errorf("--capability-name is required")
 			}
@@ -62,14 +63,30 @@ func newCapabilityGetCmd() *cobra.Command {
 				ev := flexera.IamCapabilityShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamCapabilityShowWithResponse(cmd.Context(), deps.Config.OrgID, capabilityName, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&capabilityName, "capability-name", "", "capabilityName (path, required)")
@@ -83,31 +100,48 @@ func newCapabilityListCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index an org's capabilities",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index an org's capabilities",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli capability list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Capability_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Capability_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamCapabilityIndexParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.IamCapabilityIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamCapabilityIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&view, "view", "", "view (query)")

@@ -42,11 +42,19 @@ func newUserMembershipsOrgsCmd() *cobra.Command {
 		id int
 	)
 	c := &cobra.Command{
-		Use:   "orgs",
-		Short: "Index a user's organizations",
-		Args:  cobra.NoArgs,
+		Use:         "orgs",
+		Short:       "Index a user's organizations",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-memberships orgs --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Memberships_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Memberships_index")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -55,10 +63,22 @@ func newUserMembershipsOrgsCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&id, "id", 0, "id (path, required)")
@@ -74,15 +94,19 @@ func newUserMembershipsPrivilegesReportCmd() *cobra.Command {
 		view      string
 	)
 	c := &cobra.Command{
-		Use:   "privileges-report",
-		Short: "Show a user's privileges report",
-		Args:  cobra.NoArgs,
+		Use:         "privileges-report",
+		Short:       "Show a user's privileges report",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-memberships privileges-report --id ID --scope-refs SCOPE_REFS",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Memberships_showPrivilegesReport", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Memberships_showPrivilegesReport")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamUserMembershipsShowPrivilegesReportParams{}
 			if cmd.Flags().Changed("scope-refs") {
 				params.ScopeRefs = scopeRefs
@@ -95,14 +119,30 @@ func newUserMembershipsPrivilegesReportCmd() *cobra.Command {
 				ev := flexera.IamUserMembershipsShowPrivilegesReportParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamUserMembershipsShowPrivilegesReportWithResponse(cmd.Context(), id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&id, "id", 0, "id (path, required)")
@@ -119,28 +159,48 @@ func newUserMembershipsProjectsCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "projects",
-		Short: "Index a user's projects",
-		Args:  cobra.NoArgs,
+		Use:         "projects",
+		Short:       "Index a user's projects",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-memberships projects --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Memberships_indexProjects", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Memberships_indexProjects")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamUserMembershipsIndexProjectsParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.IamUserMembershipsIndexProjectsParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamUserMembershipsIndexProjectsWithResponse(cmd.Context(), id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&id, "id", 0, "id (path, required)")

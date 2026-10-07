@@ -46,21 +46,30 @@ func NewCmd() *cobra.Command {
 // newRegulatoryComplianceAssetStatisticsCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/asset-statistics (operationId: Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post)
 func newRegulatoryComplianceAssetStatisticsCmd() *cobra.Command {
 	var (
-		bodyRaw  string
-		fMetrics []string
-		dryRun   bool
-		yes      bool
+		bodyRaw     string
+		fMetrics    []string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "asset-statistics",
-		Short: "Regulatory Compliance Asset Statistics",
-		Args:  cobra.NoArgs,
+		Use:         "asset-statistics",
+		Short:       "Regulatory Compliance Asset Statistics",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance asset-statistics --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance asset-statistics --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance asset-statistics --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post")
 			if err != nil {
 				return err
 			}
@@ -77,34 +86,73 @@ func newRegulatoryComplianceAssetStatisticsCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetAssetStatisticsRiskV1OrgsOrgIdRegulatoryComplianceAssetStatisticsPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/asset-statistics"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/asset-statistics", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetAssetStatisticsRiskV1OrgsOrgIdRegulatoryComplianceAssetStatisticsPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fMetrics, "metrics", nil, "metrics (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -115,17 +163,26 @@ func newRegulatoryComplianceFilterCmd() *cobra.Command {
 		fDimensions []string
 		dryRun      bool
 		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "filter",
-		Short: "Regulatory Compliance Catalog Filter",
-		Args:  cobra.NoArgs,
+		Use:         "filter",
+		Short:       "Regulatory Compliance Catalog Filter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance filter --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance filter --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance filter --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post")
 			if err != nil {
 				return err
 			}
@@ -142,34 +199,73 @@ func newRegulatoryComplianceFilterCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetCatalogFilterRiskV1OrgsOrgIdRegulatoryComplianceCatalogFilterPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/catalog/filter"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/catalog/filter", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetCatalogFilterRiskV1OrgsOrgIdRegulatoryComplianceCatalogFilterPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -180,17 +276,26 @@ func newRegulatoryComplianceConformitySummaryCmd() *cobra.Command {
 		fFrameworks []string
 		dryRun      bool
 		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "conformity-summary",
-		Short: "Regulatory Compliance Conformity Summary",
-		Args:  cobra.NoArgs,
+		Use:         "conformity-summary",
+		Short:       "Regulatory Compliance Conformity Summary",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance conformity-summary --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance conformity-summary --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance conformity-summary --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post")
 			if err != nil {
 				return err
 			}
@@ -207,34 +312,73 @@ func newRegulatoryComplianceConformitySummaryCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetConformitySummaryRiskV1OrgsOrgIdRegulatoryComplianceConformitySummaryPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/conformity-summary"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/conformity-summary", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetConformitySummaryRiskV1OrgsOrgIdRegulatoryComplianceConformitySummaryPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fFrameworks, "frameworks", nil, "frameworks (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -246,24 +390,34 @@ func newRegulatoryComplianceFailedAssetCmd() *cobra.Command {
 		fPageSize       int
 		fRuleName       string
 		fShowSuppressed string
+		fSkipToken      string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "failed-asset",
-		Short: "Regulatory Compliance Failed Assets",
-		Args:  cobra.NoArgs,
+		Use:         "failed-asset",
+		Short:       "Regulatory Compliance Failed Assets",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance failed-asset --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance failed-asset --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance failed-asset --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post")
 			if err != nil {
 				return err
 			}
 			params := flexera.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostParams{}
-			if cmd.Flags().Changed("skip-token") {
+			if cmd.Flags().Changed("query-skip-token") {
 				v := skipToken
 				params.SkipToken = &v
 			}
@@ -277,6 +431,9 @@ func newRegulatoryComplianceFailedAssetCmd() *cobra.Command {
 			if cmd.Flags().Changed("show-suppressed") {
 				fields["showSuppressed"] = fShowSuppressed
 			}
+			if cmd.Flags().Changed("body-skip-token") {
+				fields["skipToken"] = fSkipToken
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -286,37 +443,77 @@ func newRegulatoryComplianceFailedAssetCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/failed-asset"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/failed-asset", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetFailedAssetRiskV1OrgsOrgIdRegulatoryComplianceFailedAssetPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().StringVar(&skipToken, "skip-token", "", "skipToken (query)")
+	c.Flags().StringVar(&skipToken, "query-skip-token", "", "skipToken (query)")
 	c.Flags().IntVar(&fPageSize, "page-size", 0, "pageSize (body)")
 	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
 	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&fSkipToken, "body-skip-token", "", "skipToken (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -327,17 +524,26 @@ func newRegulatoryComplianceLifecycleForecastCmd() *cobra.Command {
 		fIncludeStatuses []string
 		dryRun           bool
 		yes              bool
+		interactive      bool
 	)
 	c := &cobra.Command{
-		Use:   "lifecycle-forecast",
-		Short: "Regulatory Compliance Lifecycle Forecast",
-		Args:  cobra.NoArgs,
+		Use:         "lifecycle-forecast",
+		Short:       "Regulatory Compliance Lifecycle Forecast",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance lifecycle-forecast --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance lifecycle-forecast --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance lifecycle-forecast --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post")
 			if err != nil {
 				return err
 			}
@@ -354,54 +560,102 @@ func newRegulatoryComplianceLifecycleForecastCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetLifecycleForecastRiskV1OrgsOrgIdRegulatoryComplianceLifecycleForecastPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-forecast"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-forecast", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetLifecycleForecastRiskV1OrgsOrgIdRegulatoryComplianceLifecycleForecastPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fIncludeStatuses, "include-statuses", nil, "includeStatuses (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newRegulatoryComplianceLifecycleTrendCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-trend (operationId: Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post)
 func newRegulatoryComplianceLifecycleTrendCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "lifecycle-trend",
-		Short: "Regulatory Compliance Lifecycle Trend",
-		Args:  cobra.NoArgs,
+		Use:         "lifecycle-trend",
+		Short:       "Regulatory Compliance Lifecycle Trend",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance lifecycle-trend --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance lifecycle-trend --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance lifecycle-trend --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post")
 			if err != nil {
 				return err
 			}
@@ -415,33 +669,72 @@ func newRegulatoryComplianceLifecycleTrendCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetLifecycleTrendRiskV1OrgsOrgIdRegulatoryComplianceLifecycleTrendPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-trend"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/lifecycle-trend", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetLifecycleTrendRiskV1OrgsOrgIdRegulatoryComplianceLifecycleTrendPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -455,17 +748,26 @@ func newRegulatoryComplianceListCmd() *cobra.Command {
 		fFeatureType        string
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Regulatory Compliance BPC Rule List",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Regulatory Compliance BPC Rule List",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance list --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance list --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance list --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post")
 			if err != nil {
 				return err
 			}
@@ -491,28 +793,66 @@ func newRegulatoryComplianceListCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetBpcRuleListRiskV1OrgsOrgIdRegulatoryComplianceListPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/list"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/list", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetBpcRuleListRiskV1OrgsOrgIdRegulatoryComplianceListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fComplianceStandard, "compliance-standard", "", "complianceStandard (body)")
@@ -522,27 +862,37 @@ func newRegulatoryComplianceListCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newRegulatoryComplianceOverviewCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview (operationId: Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post)
 func newRegulatoryComplianceOverviewCmd() *cobra.Command {
 	var (
-		bodyRaw    string
-		fProviders []string
-		dryRun     bool
-		yes        bool
+		bodyRaw     string
+		fProviders  []string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "overview",
-		Short: "On-Prem BPC Misconfiguration Overview",
-		Args:  cobra.NoArgs,
+		Use:         "overview",
+		Short:       "On-Prem BPC Misconfiguration Overview",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance overview --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance overview --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance overview --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post")
 			if err != nil {
 				return err
 			}
@@ -559,55 +909,103 @@ func newRegulatoryComplianceOverviewCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetMisconfigOverviewRiskV1OrgsOrgIdRegulatoryComplianceMisconfigurationOverviewPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetMisconfigOverviewRiskV1OrgsOrgIdRegulatoryComplianceMisconfigurationOverviewPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fProviders, "providers", nil, "providers (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newRegulatoryComplianceSuppressCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress (operationId: Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post)
 func newRegulatoryComplianceSuppressCmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fUserName string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fUserName   string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "suppress",
-		Short: "Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)",
-		Args:  cobra.NoArgs,
+		Use:         "suppress",
+		Short:       "Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance suppress --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance suppress --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance suppress --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post")
 			if err != nil {
 				return err
 			}
@@ -624,57 +1022,105 @@ func newRegulatoryComplianceSuppressCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskSuppressRegulatoryComplianceRuleOrAssetRiskV1OrgsOrgIdRegulatoryComplianceRuleSuppressPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskSuppressRegulatoryComplianceRuleOrAssetRiskV1OrgsOrgIdRegulatoryComplianceRuleSuppressPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fUserName, "user-name", "", "userName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newRegulatoryComplianceYearWiseAssetListCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/year-wise-asset-list (operationId: Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post)
 func newRegulatoryComplianceYearWiseAssetListCmd() *cobra.Command {
 	var (
-		bodyRaw  string
-		fFields  []string
-		fFilter  string
-		fOrderBy string
-		dryRun   bool
-		yes      bool
+		bodyRaw     string
+		fFields     []string
+		fFilter     string
+		fOrderBy    string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "year-wise-asset-list",
-		Short: "Regulatory Compliance Year-Wise Asset List",
-		Args:  cobra.NoArgs,
+		Use:         "year-wise-asset-list",
+		Short:       "Regulatory Compliance Year-Wise Asset List",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli regulatory-compliance year-wise-asset-list --org-id ORG_ID --body @request.json\n  flexera-cli regulatory-compliance year-wise-asset-list --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema regulatory-compliance year-wise-asset-list --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post")
 			if err != nil {
 				return err
 			}
@@ -697,28 +1143,66 @@ func newRegulatoryComplianceYearWiseAssetListCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetYearWiseAssetListRiskV1OrgsOrgIdRegulatoryComplianceYearWiseAssetListPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/regulatory-compliance/year-wise-asset-list"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/regulatory-compliance/year-wise-asset-list", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetYearWiseAssetListRiskV1OrgsOrgIdRegulatoryComplianceYearWiseAssetListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fFields, "fields", nil, "fields (body)")
@@ -727,5 +1211,6 @@ func newRegulatoryComplianceYearWiseAssetListCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

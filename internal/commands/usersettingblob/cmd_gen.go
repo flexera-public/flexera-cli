@@ -40,47 +40,65 @@ func newUserSettingBlobListCmd() *cobra.Command {
 	var (
 		id     string
 		expiry int
-		orgID  int
 		type_  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-setting-blob list --id ID --expiry EXPIRY",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Setting_Blob_retrive_get_url", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Setting_Blob_retrive_get_url")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamUserSettingBlobRetriveGetUrlParams{}
+			if _, supplied := effectiveParams["org-id"]; supplied {
+				v := deps.Config.OrgID
+				params.OrgId = &v
+			}
 			if cmd.Flags().Changed("id") {
 				params.Id = id
 			}
 			if cmd.Flags().Changed("expiry") {
 				params.Expiry = expiry
 			}
-			if cmd.Flags().Changed("org-id") {
-				v := orgID
-				params.OrgId = &v
-			}
 			if cmd.Flags().Changed("type") {
 				ev := flexera.IamUserSettingBlobRetriveGetUrlParamsType(type_)
 				params.Type = &ev
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamUserSettingBlobRetriveGetUrlWithResponse(cmd.Context(), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (query)")
 	c.Flags().IntVar(&expiry, "expiry", 0, "expiry (query)")
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgId (query)")
 	c.Flags().StringVar(&type_, "type", "", "type (query)")
 	return c
 }
@@ -88,21 +106,33 @@ func newUserSettingBlobListCmd() *cobra.Command {
 // newUserSettingBlobReplaceCmd — PUT /iam/v1/users/me/settings/blob (operationId: Iam_User_Setting_Blob_retrive_put_url)
 func newUserSettingBlobReplaceCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		fExpiry int
-		fId     string
-		fOrgID  int
-		fType   string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		fExpiry     int
+		fId         string
+		fOrgID      int
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli user-setting-blob replace --body @request.json\n  flexera-cli user-setting-blob replace --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema user-setting-blob replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Setting_Blob_retrive_put_url", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Iam_User_Setting_Blob_retrive_put_url"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_User_Setting_Blob_retrive_put_url")
 			if err != nil {
 				return err
 			}
@@ -113,7 +143,7 @@ func newUserSettingBlobReplaceCmd() *cobra.Command {
 			if cmd.Flags().Changed("id") {
 				fields["id"] = fId
 			}
-			if cmd.Flags().Changed("org-id") {
+			if cmd.Flags().Changed("body-org-id") {
 				fields["orgId"] = fOrgID
 			}
 			if cmd.Flags().Changed("type") {
@@ -128,35 +158,73 @@ func newUserSettingBlobReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Iam_User_Setting_Blob_retrive_put_url", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.IamUserSettingBlobRetrivePutUrlJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /iam/v1/users/me/settings/blob"}
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Iam_User_Setting_Blob_retrive_put_url", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/iam/v1/users/me/settings/blob", Params: planParams, Destructive: false}
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamUserSettingBlobRetrivePutUrlWithResponse(cmd.Context(), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&fExpiry, "expiry", 0, "expiry (body)")
 	c.Flags().StringVar(&fId, "id", "", "id (body)")
-	c.Flags().IntVar(&fOrgID, "org-id", 0, "orgId (body)")
+	c.Flags().IntVar(&fOrgID, "body-org-id", 0, "orgId (body)")
 	c.Flags().StringVar(&fType, "type", "", "type (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

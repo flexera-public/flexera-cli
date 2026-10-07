@@ -53,17 +53,26 @@ func newAnomaliesReportCmd() *cobra.Command {
 		fWindowSize         int64
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "report",
-		Short: "report anomalies",
-		Args:  cobra.NoArgs,
+		Use:         "report",
+		Short:       "report anomalies",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli anomalies report --org-id ORG_ID --body @request.json\n  flexera-cli anomalies report --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema anomalies report --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_anomalies_report", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillAnalysis_anomalies_report"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_anomalies_report")
 			if err != nil {
 				return err
 			}
@@ -107,28 +116,66 @@ func newAnomaliesReportCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillAnalysis_anomalies_report", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillAnalysisAnomaliesReportJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/anomalies/report"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillAnalysis_anomalies_report", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/bill-analysis/orgs/{orgId}/anomalies/report", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillAnalysisAnomaliesReportWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fBillingCenterIDs, "billing-center-ids", nil, "billingCenterIds (body)")
@@ -144,6 +191,7 @@ func newAnomaliesReportCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -160,17 +208,26 @@ func newAnomaliesAnomaliesCmd() *cobra.Command {
 		fStartAt    string
 		dryRun      bool
 		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "anomalies",
-		Short: "index anomalies",
-		Args:  cobra.NoArgs,
+		Use:         "anomalies",
+		Short:       "index anomalies",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli anomalies anomalies --org-id ORG_ID --body @request.json\n  flexera-cli anomalies anomalies --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema anomalies anomalies --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_anomalies_index", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillAnalysis_anomalies_index"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_anomalies_index")
 			if err != nil {
 				return err
 			}
@@ -205,28 +262,66 @@ func newAnomaliesAnomaliesCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillAnalysis_anomalies_index", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillAnalysisAnomaliesIndexJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/v2/anomalies"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillAnalysis_anomalies_index", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/bill-analysis/orgs/{orgId}/v2/anomalies", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillAnalysisAnomaliesIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fEndAt, "end-at", "", "endAt (body)")
@@ -239,29 +334,39 @@ func newAnomaliesAnomaliesCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newAnomaliesAggregatedCmd — POST /bill-analysis/orgs/{orgId}/v2/anomalies/aggregated (operationId: BillAnalysis_anomalies_aggregated)
 func newAnomaliesAggregatedCmd() *cobra.Command {
 	var (
-		bodyRaw  string
-		fEndAt   string
-		fMetric  string
-		fStartAt string
-		dryRun   bool
-		yes      bool
+		bodyRaw     string
+		fEndAt      string
+		fMetric     string
+		fStartAt    string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "aggregated",
-		Short: "aggregated anomalies",
-		Args:  cobra.NoArgs,
+		Use:         "aggregated",
+		Short:       "aggregated anomalies",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli anomalies aggregated --org-id ORG_ID --body @request.json\n  flexera-cli anomalies aggregated --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema anomalies aggregated --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_anomalies_aggregated", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillAnalysis_anomalies_aggregated"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_anomalies_aggregated")
 			if err != nil {
 				return err
 			}
@@ -284,28 +389,66 @@ func newAnomaliesAggregatedCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillAnalysis_anomalies_aggregated", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillAnalysisAnomaliesAggregatedJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /bill-analysis/orgs/{orgId}/v2/anomalies/aggregated"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillAnalysis_anomalies_aggregated", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/bill-analysis/orgs/{orgId}/v2/anomalies/aggregated", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillAnalysisAnomaliesAggregatedWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fEndAt, "end-at", "", "endAt (body)")
@@ -314,6 +457,7 @@ func newAnomaliesAggregatedCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -323,29 +467,46 @@ func newAnomaliesGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "summary anomalies",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "summary anomalies",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli anomalies get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_anomalies_summary", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_anomalies_summary")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.BillAnalysisAnomaliesSummaryWithResponse(cmd.Context(), int64(deps.Config.OrgID), id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")

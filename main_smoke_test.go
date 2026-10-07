@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -21,22 +22,50 @@ func TestRootHelp(t *testing.T) {
 		t.Fatalf("--help exit=%d stderr=%s", exit, stderr.String())
 	}
 	out := stdout.String() + stderr.String()
-	for _, want := range []string{"budget", "policy", "finops", "user-orgs"} {
+	for _, want := range []string{"budget", "policy", "finops", "user-orgs", "Find commands for a task: flexera-cli cli search"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("--help output missing %q", want)
 		}
 	}
 }
 
+func TestOfflineSearchSmoke(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	exit := run(context.Background(), []string{"cli", "search", "delete budget", "--limit", "1", "--out-jq", ".[0].command", "-r"}, &stdout, &stderr, noEnv, &http.Client{})
+	if exit != 0 || strings.TrimSpace(stdout.String()) != "flexera-cli budget delete" {
+		t.Fatalf("offline search: %d %s %s", exit, stdout.String(), stderr.String())
+	}
+}
+
+func TestBinaryDownloadPreservesBytes(t *testing.T) {
+	body := []byte("id,name\n1,example\n\x00\xff")
+	doer := smokeDoer(func(r *http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"text/plain; charset=utf-8"}}, Body: io.NopCloser(bytes.NewReader(body)), Request: r}, nil
+	})
+	var out, stderr bytes.Buffer
+	args := []string{"bill-months", "download", "--download-token", "test-token", "--org-id", "123", "--access-token", "smoke-token", "--json-style", "pretty"}
+	if code := run(context.Background(), args, &out, &stderr, noEnv, doer); code != 0 || !bytes.Equal(out.Bytes(), body) {
+		t.Fatalf("download bytes changed: %d %q %s", code, out.Bytes(), stderr.String())
+	}
+}
+
+type smokeDoer func(*http.Request) (*http.Response, error)
+
+func (d smokeDoer) Do(r *http.Request) (*http.Response, error) { return d(r) }
+
 // TestUnknownCommand verifies a non-existent command is a non-zero exit.
 func TestUnknownCommand(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 	exit := run(context.Background(), []string{"definitely-not-a-command"}, &stdout, &stderr, noEnv, &http.Client{})
-	if exit == 0 {
-		t.Fatal("expected non-zero exit for unknown command")
+	if exit != 2 {
+		t.Fatalf("expected usage exit 2 for unknown command, got %d", exit)
 	}
-	if strings.Contains(stderr.String(), `"error"`) {
-		t.Fatalf("expected human-readable command error, got %s", stderr.String())
+	var value struct {
+		Error       string   `json:"error"`
+		Suggestions []string `json:"suggestions"`
+	}
+	if err := json.Unmarshal(stderr.Bytes(), &value); err != nil || value.Error == "" || value.Suggestions == nil {
+		t.Fatalf("expected JSON command error with suggestions, got %s", stderr.String())
 	}
 }
 
@@ -76,6 +105,16 @@ func TestGeneratedCommandSmoke(t *testing.T) {
 	}
 	if !strings.Contains(stdout.String(), "Smoke Budget") {
 		t.Fatalf("expected budget JSON, got %s", stdout.String())
+	}
+}
+
+func TestGeneratedTypedTableSmoke(t *testing.T) {
+	doer := smokeDoer(func(r *http.Request) (*http.Response, error) {
+		return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: io.NopCloser(strings.NewReader(`{"values":[{"id":"b-1","name":"Table Budget"}]}`)), Request: r}, nil
+	})
+	var out, stderr bytes.Buffer
+	if code := run(context.Background(), []string{"budget", "list", "--org-id", "123", "--access-token", "fixture-token", "-o", "table"}, &out, &stderr, noEnv, doer); code != 0 || !strings.Contains(out.String(), "Table Budget") {
+		t.Fatalf("typed table broke: %d %s %s", code, out.String(), stderr.String())
 	}
 }
 

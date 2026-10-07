@@ -42,29 +42,46 @@ func newCustomerGroupTypeGetCmd() *cobra.Command {
 		customerGroupTypeID string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show customer group type",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show customer group type",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customer-group-type get --org-id ORG_ID --customer-group-type-id CUSTOMER_GROUP_TYPE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Customer_Group_Type_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Customer_Group_Type_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(customerGroupTypeID) == "" {
+				return fmt.Errorf("--customer-group-type-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(customerGroupTypeID) == "" {
-				return fmt.Errorf("--customer-group-type-id is required")
-			}
 			resp, err := client.SaasCustomerGroupTypeShowWithResponse(cmd.Context(), deps.Config.OrgID, customerGroupTypeID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&customerGroupTypeID, "customer-group-type-id", "", "customerGroupTypeId (path, required)")
@@ -80,18 +97,19 @@ func newCustomerGroupTypeListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List customer group types",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List customer group types",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customer-group-type list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Customer_Group_Type_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Customer_Group_Type_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasCustomerGroupTypeIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -100,6 +118,10 @@ func newCustomerGroupTypeListCmd() *cobra.Command {
 			if cmd.Flags().Changed("order-by") {
 				v := orderBy
 				params.OrderBy = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -113,10 +135,16 @@ func newCustomerGroupTypeListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -142,18 +170,19 @@ func newCustomerGroupTypeSummaryCmd() *cobra.Command {
 		skipToken           string
 	)
 	c := &cobra.Command{
-		Use:   "summary",
-		Short: "Retrieve summary of customer groups for a given group type.",
-		Args:  cobra.NoArgs,
+		Use:         "summary",
+		Short:       "Retrieve summary of customer groups for a given group type.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customer-group-type summary --org-id ORG_ID --customer-group-type-id CUSTOMER_GROUP_TYPE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Customer_Group_Type_summary", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Customer_Group_Type_summary")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(customerGroupTypeID) == "" {
 				return fmt.Errorf("--customer-group-type-id is required")
 			}
@@ -170,6 +199,10 @@ func newCustomerGroupTypeSummaryCmd() *cobra.Command {
 				v := limit
 				params.Limit = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -182,10 +215,16 @@ func newCustomerGroupTypeSummaryCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err

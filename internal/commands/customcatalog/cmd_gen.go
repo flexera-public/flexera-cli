@@ -47,18 +47,19 @@ func newCustomCatalogListCmd() *cobra.Command {
 		skipToken     string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index published templates with applied custom catalog settings",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index published templates with applied custom catalog settings",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli custom-catalog list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_CustomCatalog_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_CustomCatalog_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.PolicyCustomCatalogIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -76,6 +77,10 @@ func newCustomCatalogListCmd() *cobra.Command {
 				ev := flexera.PolicyCustomCatalogIndexParamsCatalogSource(catalogSource)
 				params.CatalogSource = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -88,10 +93,16 @@ func newCustomCatalogListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -114,29 +125,46 @@ func newCustomCatalogTagCmd() *cobra.Command {
 		publishedTemplateID string
 	)
 	c := &cobra.Command{
-		Use:   "tag",
-		Short: "Retrieve custom catalog tags for a published template in an organization",
-		Args:  cobra.NoArgs,
+		Use:         "tag",
+		Short:       "Retrieve custom catalog tags for a published template in an organization",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli custom-catalog tag --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_CustomCatalog_showTag", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_CustomCatalog_showTag")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(publishedTemplateID) == "" {
+				return fmt.Errorf("--published-template-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(publishedTemplateID) == "" {
-				return fmt.Errorf("--published-template-id is required")
-			}
 			resp, err := client.PolicyCustomCatalogShowTagWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
@@ -151,17 +179,26 @@ func newCustomCatalogReplaceCmd() *cobra.Command {
 		fChildOrgsVisibility bool
 		dryRun               bool
 		yes                  bool
+		interactive          bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Create or update custom catalog tags for a published template under an MSP parent organization",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Create or update custom catalog tags for a published template under an MSP parent organization",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli custom-catalog replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json\n  flexera-cli custom-catalog replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema custom-catalog replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Policy_CustomCatalog_upsertTag", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Policy_CustomCatalog_upsertTag"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_CustomCatalog_upsertTag")
 			if err != nil {
 				return err
 			}
@@ -181,29 +218,57 @@ func newCustomCatalogReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Policy_CustomCatalog_upsertTag", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.PolicyCustomCatalogUpsertTagJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Policy_CustomCatalog_upsertTag", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyCustomCatalogUpsertTagWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
@@ -211,5 +276,6 @@ func newCustomCatalogReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

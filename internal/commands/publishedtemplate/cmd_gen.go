@@ -44,35 +44,57 @@ func NewCmd() *cobra.Command {
 func newPublishedTemplateHideCmd() *cobra.Command {
 	var (
 		publishedTemplateID string
+		dryRun              bool
+		yes                 bool
 	)
 	c := &cobra.Command{
-		Use:   "hide",
-		Short: "Hide a published template",
-		Args:  cobra.NoArgs,
+		Use:         "hide",
+		Short:       "Hide a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template hide --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID\n  flexera-cli published-template hide --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_hide", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_hide")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(publishedTemplateID) == "" {
 				return fmt.Errorf("--published-template-id is required")
 			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}/hide", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.PolicyPublishedTemplateHideWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -80,35 +102,57 @@ func newPublishedTemplateHideCmd() *cobra.Command {
 func newPublishedTemplateUnhideCmd() *cobra.Command {
 	var (
 		publishedTemplateID string
+		dryRun              bool
+		yes                 bool
 	)
 	c := &cobra.Command{
-		Use:   "unhide",
-		Short: "Unhide a published template",
-		Args:  cobra.NoArgs,
+		Use:         "unhide",
+		Short:       "Unhide a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template unhide --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID\n  flexera-cli published-template unhide --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_unhide", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_unhide")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(publishedTemplateID) == "" {
 				return fmt.Errorf("--published-template-id is required")
 			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}/unhide", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.PolicyPublishedTemplateUnhideWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -119,17 +163,26 @@ func newPublishedTemplateCreateCmd() *cobra.Command {
 		fTemplateRef string
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "Creates a published template",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "Creates a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template create --org-id ORG_ID --body @request.json\n  flexera-cli published-template create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema published-template create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_create", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Policy_Published_Template_create"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_create")
 			if err != nil {
 				return err
 			}
@@ -146,34 +199,73 @@ func newPublishedTemplateCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Policy_Published_Template_create", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.PolicyPublishedTemplateCreateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /policy/v1/orgs/{orgId}/published-templates"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Policy_Published_Template_create", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/policy/v1/orgs/{orgId}/published-templates", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyPublishedTemplateCreateWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&fTemplateRef, "template-ref", "", "templateRef (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -185,37 +277,48 @@ func newPublishedTemplateDeleteCmd() *cobra.Command {
 		yes                 bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a published template",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template delete --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID\n  flexera-cli published-template delete --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_delete")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(publishedTemplateID) == "" {
 				return fmt.Errorf("--published-template-id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyPublishedTemplateDeleteWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
@@ -231,18 +334,19 @@ func newPublishedTemplateGetCmd() *cobra.Command {
 		view                string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show a published template",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template get --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(publishedTemplateID) == "" {
 				return fmt.Errorf("--published-template-id is required")
 			}
@@ -251,14 +355,30 @@ func newPublishedTemplateGetCmd() *cobra.Command {
 				ev := flexera.PolicyPublishedTemplateShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.PolicyPublishedTemplateShowWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
@@ -277,18 +397,19 @@ func newPublishedTemplateListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index published templates",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index published templates",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.PolicyPublishedTemplateIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -306,6 +427,10 @@ func newPublishedTemplateListCmd() *cobra.Command {
 				ev := flexera.PolicyPublishedTemplateIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -318,10 +443,16 @@ func newPublishedTemplateListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -346,17 +477,26 @@ func newPublishedTemplateReplaceCmd() *cobra.Command {
 		fTemplateRef        string
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Update a published template",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Update a published template",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli published-template replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json\n  flexera-cli published-template replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema published-template replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Published_Template_update", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Policy_Published_Template_update"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Published_Template_update")
 			if err != nil {
 				return err
 			}
@@ -376,29 +516,57 @@ func newPublishedTemplateReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Policy_Published_Template_update", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.PolicyPublishedTemplateUpdateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Policy_Published_Template_update", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/policy/v1/orgs/{orgId}/published-templates/{publishedTemplateId}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyPublishedTemplateUpdateWithResponse(cmd.Context(), int64(deps.Config.OrgID), publishedTemplateID, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&publishedTemplateID, "published-template-id", "", "publishedTemplateId (path, required)")
@@ -406,5 +574,6 @@ func newPublishedTemplateReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

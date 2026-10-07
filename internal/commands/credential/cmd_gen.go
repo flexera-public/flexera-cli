@@ -46,15 +46,15 @@ func newCredentialDeleteCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential delete --org-id ORG_ID --scheme SCHEME --id ID\n  flexera-cli credential delete --org-id ORG_ID --scheme SCHEME --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_delete_org", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_Credential_delete_org")
 			if err != nil {
 				return err
 			}
@@ -64,22 +64,33 @@ func newCredentialDeleteCmd() *cobra.Command {
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /cred/v2/orgs/{orgId}/credentials/{scheme}/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/cred/v2/orgs/{orgId}/credentials/{scheme}/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredCredentialDeleteOrgWithResponse(cmd.Context(), int64(deps.Config.OrgID), flexera.CredCredentialDeleteOrgParamsScheme(scheme), id)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&scheme, "scheme", "", "scheme (path, required)")
@@ -99,12 +110,15 @@ func newCredentialDeleteProjectCmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:   "delete-project",
-		Short: "Delete a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "delete-project",
+		Short:       "Delete a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential delete-project --project-id PROJECT_ID --scheme SCHEME --id ID\n  flexera-cli credential delete-project --project-id PROJECT_ID --scheme SCHEME --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_delete_project", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_Credential_delete_project")
 			if err != nil {
 				return err
 			}
@@ -114,21 +128,31 @@ func newCredentialDeleteProjectCmd() *cobra.Command {
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /cred/v2/projects/{projectId}/credentials/{scheme}/{id}"}
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/cred/v2/projects/{projectId}/credentials/{scheme}/{id}", Params: planParams, Destructive: true}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredCredentialDeleteProjectWithResponse(cmd.Context(), projectID, flexera.CredCredentialDeleteProjectParamsScheme(scheme), id)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().Int64Var(&projectID, "project-id", 0, "projectId (path, required)")
@@ -145,31 +169,48 @@ func newCredentialListCmd() *cobra.Command {
 		filter string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index a list of Credentials",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index a list of Credentials",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_index_org", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_Credential_index_org")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.CredCredentialIndexOrgParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.CredCredentialIndexOrgWithResponse(cmd.Context(), int64(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
@@ -183,28 +224,48 @@ func newCredentialListProjectCmd() *cobra.Command {
 		filter    string
 	)
 	c := &cobra.Command{
-		Use:   "list-project",
-		Short: "Index a list of Credentials",
-		Args:  cobra.NoArgs,
+		Use:         "list-project",
+		Short:       "Index a list of Credentials",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential list-project --project-id PROJECT_ID",
+		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_index_project", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_Credential_index_project")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.CredCredentialIndexProjectParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.CredCredentialIndexProjectWithResponse(cmd.Context(), projectID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().Int64Var(&projectID, "project-id", 0, "projectId (path, required)")

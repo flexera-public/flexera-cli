@@ -40,19 +40,30 @@ func NewCmd() *cobra.Command {
 // newMSPCustomerTagTagsCmd — POST /msp/v1/orgs/{orgId}/customers/{customerId}/tags (operationId: Iam_MSP_Customer_Tag_Create)
 func newMSPCustomerTagTagsCmd() *cobra.Command {
 	var (
-		customerID int
-		bodyRaw    string
+		customerID  int
+		bodyRaw     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "tags",
-		Short: "Sets a tag on an MSP's customer",
-		Args:  cobra.NoArgs,
+		Use:         "tags",
+		Short:       "Sets a tag on an MSP's customer",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json\n  flexera-cli msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema msp-customer-tag tags --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Create", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Iam_MSP_Customer_Tag_Create"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_MSP_Customer_Tag_Create")
 			if err != nil {
 				return err
 			}
@@ -66,24 +77,73 @@ func newMSPCustomerTagTagsCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Iam_MSP_Customer_Tag_Create", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.IamMSPCustomerTagCreateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Iam_MSP_Customer_Tag_Create", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/msp/v1/orgs/{orgId}/customers/{customerId}/tags", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamMSPCustomerTagCreateWithResponse(cmd.Context(), deps.Config.OrgID, customerID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (path, required)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -96,37 +156,48 @@ func newMSPCustomerTagDeleteCmd() *cobra.Command {
 		yes        bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a tag for an MSP's customer",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a tag for an MSP's customer",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli msp-customer-tag delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG\n  flexera-cli msp-customer-tag delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_MSP_Customer_Tag_Delete")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(tag) == "" {
 				return fmt.Errorf("--tag is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /msp/v1/orgs/{orgId}/customers/{customerId}/tags/{tag}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/msp/v1/orgs/{orgId}/customers/{customerId}/tags/{tag}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamMSPCustomerTagDeleteWithResponse(cmd.Context(), deps.Config.OrgID, customerID, tag)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (path, required)")
@@ -144,22 +215,27 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list-all",
-		Short: "Index an MSP's customers based on tag filter",
-		Args:  cobra.NoArgs,
+		Use:         "list-all",
+		Short:       "Index an MSP's customers based on tag filter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli msp-customer-tag list-all --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Index_Customers", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_MSP_Customer_Tag_Index_Customers")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamMSPCustomerTagIndexCustomersParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -173,10 +249,16 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -196,14 +278,19 @@ func newMSPCustomerTagListCmd() *cobra.Command {
 		customerID int
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Show the tags for an MSP's customer",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Show the tags for an MSP's customer",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli msp-customer-tag list --org-id ORG_ID --customer-id CUSTOMER_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_MSP_Customer_Tag_Show")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -212,10 +299,22 @@ func newMSPCustomerTagListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (path, required)")

@@ -56,9 +56,10 @@ func NewPushCmd() *cobra.Command {
 func NewVerifyCmd() *cobra.Command {
 	var files []string
 	c := &cobra.Command{
-		Use:   "verify",
-		Short: "Verify local CBI bill-upload CSV file(s) before uploading",
-		Args:  cobra.NoArgs,
+		Use:         "verify",
+		Short:       "Verify local CBI bill-upload CSV file(s) before uploading",
+		Annotations: map[string]string{"flexera.readOnly": "true"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if len(files) == 0 {
 				return errors.New("at least one --file is required")

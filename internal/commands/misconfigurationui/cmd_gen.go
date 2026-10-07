@@ -58,19 +58,29 @@ func newMisconfigurationUiCreateAllCmd() *cobra.Command {
 		fRegions        []string
 		fRuleName       string
 		fShowSuppressed string
+		fSkipToken      string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all",
-		Short: "Failed Assets List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all",
+		Short:       "Failed Assets List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post")
 			if err != nil {
 				return err
 			}
@@ -96,6 +106,9 @@ func newMisconfigurationUiCreateAllCmd() *cobra.Command {
 			if cmd.Flags().Changed("show-suppressed") {
 				fields["showSuppressed"] = fShowSuppressed
 			}
+			if cmd.Flags().Changed("body-skip-token") {
+				fields["skipToken"] = fSkipToken
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -105,28 +118,66 @@ func newMisconfigurationUiCreateAllCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetFailedAssetsRecommendationV1OrgsOrgIdMisconfigurationFailedAssetPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /recommendation/v1/orgs/{orgId}/misconfiguration/failed-asset"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/recommendation/v1/orgs/{orgId}/misconfiguration/failed-asset", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetFailedAssetsRecommendationV1OrgsOrgIdMisconfigurationFailedAssetPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -136,9 +187,11 @@ func newMisconfigurationUiCreateAllCmd() *cobra.Command {
 	c.Flags().StringSliceVar(&fRegions, "regions", nil, "regions (body)")
 	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
 	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&fSkipToken, "body-skip-token", "", "skipToken (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -153,19 +206,29 @@ func newMisconfigurationUiCreateAll2Cmd() *cobra.Command {
 		fRegions        []string
 		fRuleName       string
 		fShowSuppressed string
+		fSkipToken      string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-2",
-		Short: "Export Failed Assets List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-2",
+		Short:       "Export Failed Assets List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-2 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-2 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-2 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post")
 			if err != nil {
 				return err
 			}
@@ -191,6 +254,9 @@ func newMisconfigurationUiCreateAll2Cmd() *cobra.Command {
 			if cmd.Flags().Changed("show-suppressed") {
 				fields["showSuppressed"] = fShowSuppressed
 			}
+			if cmd.Flags().Changed("body-skip-token") {
+				fields["skipToken"] = fSkipToken
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -200,28 +266,66 @@ func newMisconfigurationUiCreateAll2Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskExportFailedAssetsRecommendationV1OrgsOrgIdMisconfigurationFailedAssetExportPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /recommendation/v1/orgs/{orgId}/misconfiguration/failed-asset/export"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/recommendation/v1/orgs/{orgId}/misconfiguration/failed-asset/export", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskExportFailedAssetsRecommendationV1OrgsOrgIdMisconfigurationFailedAssetExportPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -231,9 +335,11 @@ func newMisconfigurationUiCreateAll2Cmd() *cobra.Command {
 	c.Flags().StringSliceVar(&fRegions, "regions", nil, "regions (body)")
 	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
 	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&fSkipToken, "body-skip-token", "", "skipToken (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -253,17 +359,26 @@ func newMisconfigurationUiCreateAll3Cmd() *cobra.Command {
 		fServices           []string
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-3",
-		Short: "Risk Misconfiguration Rules List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-3",
+		Short:       "Risk Misconfiguration Rules List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-3 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-3 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-3 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post")
 			if err != nil {
 				return err
 			}
@@ -307,28 +422,66 @@ func newMisconfigurationUiCreateAll3Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetMisconfigRulesRecommendationV1OrgsOrgIdMisconfigurationListPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /recommendation/v1/orgs/{orgId}/misconfiguration/list"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/recommendation/v1/orgs/{orgId}/misconfiguration/list", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetMisconfigRulesRecommendationV1OrgsOrgIdMisconfigurationListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -344,30 +497,40 @@ func newMisconfigurationUiCreateAll3Cmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newMisconfigurationUiCreateAll4Cmd — POST /recommendation/v1/orgs/{orgId}/misconfiguration/overview (operationId: Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post)
 func newMisconfigurationUiCreateAll4Cmd() *cobra.Command {
 	var (
-		bodyRaw    string
-		fAccounts  []string
-		fProviders []string
-		fRegions   []string
-		fServices  []string
-		dryRun     bool
-		yes        bool
+		bodyRaw     string
+		fAccounts   []string
+		fProviders  []string
+		fRegions    []string
+		fServices   []string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-4",
-		Short: "Risk Misconfiguration Overview.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-4",
+		Short:       "Risk Misconfiguration Overview.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-4 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-4 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-4 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post")
 			if err != nil {
 				return err
 			}
@@ -393,28 +556,66 @@ func newMisconfigurationUiCreateAll4Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetMisconfigOverviewRecommendationV1OrgsOrgIdMisconfigurationOverviewPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /recommendation/v1/orgs/{orgId}/misconfiguration/overview"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/recommendation/v1/orgs/{orgId}/misconfiguration/overview", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetMisconfigOverviewRecommendationV1OrgsOrgIdMisconfigurationOverviewPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -424,27 +625,37 @@ func newMisconfigurationUiCreateAll4Cmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newMisconfigurationUiCreateAll5Cmd — POST /recommendation/v1/orgs/{orgId}/misconfiguration/rule/suppress (operationId: Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post)
 func newMisconfigurationUiCreateAll5Cmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fUserName string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fUserName   string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-5",
-		Short: "Suppress API for Rule and Failed Asset",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-5",
+		Short:       "Suppress API for Rule and Failed Asset",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-5 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-5 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-5 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post")
 			if err != nil {
 				return err
 			}
@@ -461,34 +672,73 @@ func newMisconfigurationUiCreateAll5Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskSuppressRuleOrAssetRecommendationV1OrgsOrgIdMisconfigurationRuleSuppressPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /recommendation/v1/orgs/{orgId}/misconfiguration/rule/suppress"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/recommendation/v1/orgs/{orgId}/misconfiguration/rule/suppress", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskSuppressRuleOrAssetRecommendationV1OrgsOrgIdMisconfigurationRuleSuppressPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fUserName, "user-name", "", "userName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -503,19 +753,29 @@ func newMisconfigurationUiCreateAll6Cmd() *cobra.Command {
 		fRegions        []string
 		fRuleName       string
 		fShowSuppressed string
+		fSkipToken      string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-6",
-		Short: "Failed Assets List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-6",
+		Short:       "Failed Assets List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-6 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-6 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-6 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post")
 			if err != nil {
 				return err
 			}
@@ -541,6 +801,9 @@ func newMisconfigurationUiCreateAll6Cmd() *cobra.Command {
 			if cmd.Flags().Changed("show-suppressed") {
 				fields["showSuppressed"] = fShowSuppressed
 			}
+			if cmd.Flags().Changed("body-skip-token") {
+				fields["skipToken"] = fSkipToken
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -550,28 +813,66 @@ func newMisconfigurationUiCreateAll6Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetFailedAssetsRiskV1OrgsOrgIdMisconfigurationFailedAssetPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/misconfiguration/failed-asset"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/misconfiguration/failed-asset", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetFailedAssetsRiskV1OrgsOrgIdMisconfigurationFailedAssetPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -581,9 +882,11 @@ func newMisconfigurationUiCreateAll6Cmd() *cobra.Command {
 	c.Flags().StringSliceVar(&fRegions, "regions", nil, "regions (body)")
 	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
 	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&fSkipToken, "body-skip-token", "", "skipToken (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -598,19 +901,29 @@ func newMisconfigurationUiCreateAll7Cmd() *cobra.Command {
 		fRegions        []string
 		fRuleName       string
 		fShowSuppressed string
+		fSkipToken      string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-7",
-		Short: "Export Failed Assets List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-7",
+		Short:       "Export Failed Assets List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-7 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-7 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-7 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post")
 			if err != nil {
 				return err
 			}
@@ -636,6 +949,9 @@ func newMisconfigurationUiCreateAll7Cmd() *cobra.Command {
 			if cmd.Flags().Changed("show-suppressed") {
 				fields["showSuppressed"] = fShowSuppressed
 			}
+			if cmd.Flags().Changed("body-skip-token") {
+				fields["skipToken"] = fSkipToken
+			}
 			var typed any
 			if len(fields) > 0 {
 				typed = fields
@@ -645,28 +961,66 @@ func newMisconfigurationUiCreateAll7Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskExportFailedAssetsRiskV1OrgsOrgIdMisconfigurationFailedAssetExportPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/misconfiguration/failed-asset/export"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/misconfiguration/failed-asset/export", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskExportFailedAssetsRiskV1OrgsOrgIdMisconfigurationFailedAssetExportPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -676,9 +1030,11 @@ func newMisconfigurationUiCreateAll7Cmd() *cobra.Command {
 	c.Flags().StringSliceVar(&fRegions, "regions", nil, "regions (body)")
 	c.Flags().StringVar(&fRuleName, "rule-name", "", "ruleName (body)")
 	c.Flags().StringVar(&fShowSuppressed, "show-suppressed", "", "showSuppressed (body)")
+	c.Flags().StringVar(&fSkipToken, "body-skip-token", "", "skipToken (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -698,17 +1054,26 @@ func newMisconfigurationUiCreateAll8Cmd() *cobra.Command {
 		fServices           []string
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-8",
-		Short: "Risk Misconfiguration Rules List.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-8",
+		Short:       "Risk Misconfiguration Rules List.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-8 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-8 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-8 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post")
 			if err != nil {
 				return err
 			}
@@ -752,28 +1117,66 @@ func newMisconfigurationUiCreateAll8Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetMisconfigRulesRiskV1OrgsOrgIdMisconfigurationListPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/misconfiguration/list"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/misconfiguration/list", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetMisconfigRulesRiskV1OrgsOrgIdMisconfigurationListPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -789,30 +1192,40 @@ func newMisconfigurationUiCreateAll8Cmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newMisconfigurationUiCreateAll9Cmd — POST /risk/v1/orgs/{orgId}/misconfiguration/overview (operationId: Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post)
 func newMisconfigurationUiCreateAll9Cmd() *cobra.Command {
 	var (
-		bodyRaw    string
-		fAccounts  []string
-		fProviders []string
-		fRegions   []string
-		fServices  []string
-		dryRun     bool
-		yes        bool
+		bodyRaw     string
+		fAccounts   []string
+		fProviders  []string
+		fRegions    []string
+		fServices   []string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "create-all-9",
-		Short: "Risk Misconfiguration Overview.",
-		Args:  cobra.NoArgs,
+		Use:         "create-all-9",
+		Short:       "Risk Misconfiguration Overview.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create-all-9 --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create-all-9 --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create-all-9 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post")
 			if err != nil {
 				return err
 			}
@@ -838,28 +1251,66 @@ func newMisconfigurationUiCreateAll9Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskGetMisconfigOverviewRiskV1OrgsOrgIdMisconfigurationOverviewPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/misconfiguration/overview"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/misconfiguration/overview", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskGetMisconfigOverviewRiskV1OrgsOrgIdMisconfigurationOverviewPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringSliceVar(&fAccounts, "accounts", nil, "accounts (body)")
@@ -869,27 +1320,37 @@ func newMisconfigurationUiCreateAll9Cmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newMisconfigurationUiCreateCmd — POST /risk/v1/orgs/{orgId}/misconfiguration/rule/suppress (operationId: Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post)
 func newMisconfigurationUiCreateCmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fUserName string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fUserName   string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "Suppress API for Rule and Failed Asset",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "Suppress API for Rule and Failed Asset",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui create --org-id ORG_ID --body @request.json\n  flexera-cli misconfiguration-ui create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema misconfiguration-ui create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post")
 			if err != nil {
 				return err
 			}
@@ -906,34 +1367,73 @@ func newMisconfigurationUiCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.RiskSuppressRuleOrAssetRiskV1OrgsOrgIdMisconfigurationRuleSuppressPostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /risk/v1/orgs/{orgId}/misconfiguration/rule/suppress"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/risk/v1/orgs/{orgId}/misconfiguration/rule/suppress", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.RiskSuppressRuleOrAssetRiskV1OrgsOrgIdMisconfigurationRuleSuppressPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fUserName, "user-name", "", "userName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -944,32 +1444,49 @@ func newMisconfigurationUiGetRecommendationCmd() *cobra.Command {
 		remediationMethod string
 	)
 	c := &cobra.Command{
-		Use:   "get-recommendation",
-		Short: "Remediation Steps for Risk.",
-		Args:  cobra.NoArgs,
+		Use:         "get-recommendation",
+		Short:       "Remediation Steps for Risk.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui get-recommendation --org-id ORG_ID --risk-id RISK_ID --remediation-method REMEDIATION_METHOD",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_remediation_steps_recommendation_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_remediation_steps_recommendation_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(riskID) == "" {
 				return fmt.Errorf("--risk-id is required")
 			}
 			if strings.TrimSpace(remediationMethod) == "" {
 				return fmt.Errorf("--remediation-method is required")
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.RiskGetRemediationStepsRecommendationV1OrgsOrgIdMisconfigurationRemediationStepsRiskIdRemediationMethodGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), riskID, remediationMethod)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&riskID, "risk-id", "", "riskId (path, required)")
@@ -984,32 +1501,49 @@ func newMisconfigurationUiGetRiskCmd() *cobra.Command {
 		remediationMethod string
 	)
 	c := &cobra.Command{
-		Use:   "get-risk",
-		Short: "Remediation Steps for Risk.",
-		Args:  cobra.NoArgs,
+		Use:         "get-risk",
+		Short:       "Remediation Steps for Risk.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui get-risk --org-id ORG_ID --risk-id RISK_ID --remediation-method REMEDIATION_METHOD",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(riskID) == "" {
 				return fmt.Errorf("--risk-id is required")
 			}
 			if strings.TrimSpace(remediationMethod) == "" {
 				return fmt.Errorf("--remediation-method is required")
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.RiskGetRemediationStepsRiskV1OrgsOrgIdMisconfigurationRemediationStepsRiskIdRemediationMethodGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), riskID, remediationMethod)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&riskID, "risk-id", "", "riskId (path, required)")
@@ -1024,18 +1558,19 @@ func newMisconfigurationUiListRecommendationCmd() *cobra.Command {
 		provider string
 	)
 	c := &cobra.Command{
-		Use:   "list-recommendation",
-		Short: "Risk Details",
-		Args:  cobra.NoArgs,
+		Use:         "list-recommendation",
+		Short:       "Risk Details",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui list-recommendation --org-id ORG_ID --risk-id RISK_ID",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_risk_details_recommendation_v1_orgs_orgId_misconfiguration_risk_riskId_details_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_risk_details_recommendation_v1_orgs_orgId_misconfiguration_risk_riskId_details_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(riskID) == "" {
 				return fmt.Errorf("--risk-id is required")
 			}
@@ -1044,14 +1579,30 @@ func newMisconfigurationUiListRecommendationCmd() *cobra.Command {
 				v := provider
 				params.Provider = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.RiskGetRiskDetailsRecommendationV1OrgsOrgIdMisconfigurationRiskRiskIdDetailsGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), riskID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&riskID, "risk-id", "", "riskId (path, required)")
@@ -1066,18 +1617,19 @@ func newMisconfigurationUiListRiskCmd() *cobra.Command {
 		provider string
 	)
 	c := &cobra.Command{
-		Use:   "list-risk",
-		Short: "Risk Details",
-		Args:  cobra.NoArgs,
+		Use:         "list-risk",
+		Short:       "Risk Details",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli misconfiguration-ui list-risk --org-id ORG_ID --risk-id RISK_ID",
+		Annotations: map[string]string{"flexera.operationId": "Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(riskID) == "" {
 				return fmt.Errorf("--risk-id is required")
 			}
@@ -1086,14 +1638,30 @@ func newMisconfigurationUiListRiskCmd() *cobra.Command {
 				v := provider
 				params.Provider = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.RiskGetRiskDetailsRiskV1OrgsOrgIdMisconfigurationRiskRiskIdDetailsGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), riskID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&riskID, "risk-id", "", "riskId (path, required)")

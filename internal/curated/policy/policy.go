@@ -49,7 +49,54 @@ func NewCmd() *cobra.Command {
 			newMetaDiscoverCmd(), newMetaAuditCmd(), newMetaTerminateChildrenCmd(),
 			newMetaTerminateOrphanedCmd()),
 	)
+	annotateDirectOperations(c)
 	return c
+}
+
+// annotateDirectOperations adds catalog identities only to direct API leaves,
+// not to grouping commands or relationship-aware meta workflows.
+func annotateDirectOperations(c *cobra.Command) {
+	operations := map[string]map[string]string{
+		"applied-policy": {
+			"list":     "Policy_Applied_Policy_index",
+			"get":      "Policy_Applied_Policy_show",
+			"create":   "Policy_Applied_Policy_create",
+			"update":   "Policy_Applied_Policy_update",
+			"delete":   "Policy_Applied_Policy_delete",
+			"evaluate": "Policy_Applied_Policy_evaluate",
+			"log":      "Policy_Applied_Policy_showLog",
+			"status":   "Policy_Applied_Policy_showStatus",
+		},
+		"action-status": {
+			"list": "Policy_Action_Status_index",
+			"get":  "Policy_Action_Status_show",
+		},
+		"archived-incident": {
+			"list": "Policy_Archived_Incident_index",
+			"get":  "Policy_Archived_Incident_show",
+		},
+		"policy-template": {
+			"list":     "Policy_Policy_Template_index",
+			"get":      "Policy_Policy_Template_show",
+			"create":   "Policy_Policy_Template_create",
+			"validate": "Policy_Policy_Template_validate",
+			"update":   "Policy_Policy_Template_update",
+			"delete":   "Policy_Policy_Template_delete",
+			"evaluate": "Policy_Policy_Template_evaluate",
+		},
+	}
+	for _, resource := range c.Commands() {
+		for _, leaf := range resource.Commands() {
+			operationID, ok := operations[resource.Name()][leaf.Name()]
+			if !ok || leaf.HasSubCommands() {
+				continue
+			}
+			if leaf.Annotations == nil {
+				leaf.Annotations = make(map[string]string)
+			}
+			leaf.Annotations["flexera.operationId"] = operationID
+		}
+	}
 }
 
 func group(use, short string, children ...*cobra.Command) *cobra.Command {
@@ -156,11 +203,33 @@ func render(deps *clipkg.Deps, v any) error {
 	return deps.Printer.Render(deps.Stdout, deps.Config.Output, v)
 }
 
+func collectPolicyPages[T any](ctx context.Context, noPaginate bool, initial *string, table bool, fetch flexera.PageFetcher) (any, error) {
+	result, err := flexera.CollectPages(ctx, noPaginate, initial, fetch)
+	if err != nil {
+		return nil, err
+	}
+	if table {
+		if merged, ok := result.(map[string]any); ok {
+			data, err := json.Marshal(merged)
+			if err != nil {
+				return nil, err
+			}
+			var typed T
+			if err := json.Unmarshal(data, &typed); err != nil {
+				return nil, fmt.Errorf("decoding merged policy page: %w", err)
+			}
+			return &typed, nil
+		}
+	}
+	return result, nil
+}
+
 // ===================== applied-policy (project-scoped) =====================
 
 func newAppliedPolicyListCmd() *cobra.Command {
 	var projectID, limit int
 	var filter, orderBy, skipToken string
+	var noPaginate bool
 	c := &cobra.Command{Use: "list", Short: "List applied policies", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
@@ -192,17 +261,33 @@ func newAppliedPolicyListCmd() *cobra.Command {
 					params.Limit = &lv
 				}
 			}
-			resp, err := client.PolicyAppliedPolicyIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), int64(pid), params)
+			var initialSkipToken *string
+			if token := strings.TrimSpace(skipToken); token != "" {
+				initialSkipToken = &token
+			}
+			result, err := collectPolicyPages[flexera.PolicyAppliedPolicyList](cmd.Context(), noPaginate, initialSkipToken, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+				pageParams := flexera.PolicyAppliedPolicyIndexParams{}
+				if params != nil {
+					pageParams = *params
+				}
+				pageParams.SkipToken = token
+				response, callErr := client.PolicyAppliedPolicyIndexWithResponse(ctx, int64(deps.Config.OrgID), int64(pid), &pageParams)
+				if callErr != nil {
+					return nil, callErr
+				}
+				if response.JSON200 == nil {
+					return nil, flexera.ResponseError(response.StatusCode(), response.Body)
+				}
+				return response.JSON200, nil
+			})
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
-				return flexera.ResponseError(resp.StatusCode(), resp.Body)
-			}
-			return render(deps, resp.JSON200)
+			return render(deps, result)
 		}}
 	addProjectFlag(c, &projectID)
 	addListFlags(c, &filter, &orderBy, &skipToken, &limit)
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the requested page (do not follow nextPage)")
 	return c
 }
 
@@ -415,12 +500,16 @@ func newAppliedPolicyEvaluateCmd() *cobra.Command {
 func newAppliedPolicyLogCmd() *cobra.Command {
 	var projectID int
 	var id string
-	c := &cobra.Command{Use: "log", Short: "Show an applied policy's log", Args: cobra.NoArgs,
+	c := &cobra.Command{Use: "log", Short: "Show an applied policy's log", Args: cobra.NoArgs, Annotations: map[string]string{"flexera.output": "text"},
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			if err := requireFlag(id, "applied policy ID is required; use --id"); err != nil {
 				return err
 			}
 			deps := clipkg.DepsFrom(cmd.Context())
+			// The API contract is text/markdown, even if a log looks like JSON.
+			if err := tableUnsupported(deps, "policy applied-policy log"); err != nil {
+				return err
+			}
 			if err := deps.Config.RequireOrgID(); err != nil {
 				return err
 			}
@@ -443,7 +532,8 @@ func newAppliedPolicyLogCmd() *cobra.Command {
 				return err
 			}
 			if len(resp.Body) == 0 || resp.Body[len(resp.Body)-1] != '\n' {
-				_, _ = fmt.Fprintln(deps.Stdout)
+				_, err := fmt.Fprintln(deps.Stdout)
+				return err
 			}
 			return nil
 		}}
@@ -491,6 +581,7 @@ func newAppliedPolicyStatusCmd() *cobra.Command {
 func newActionStatusListCmd() *cobra.Command {
 	var projectID, limit int
 	var filter, orderBy, skipToken, view string
+	var noPaginate bool
 	c := &cobra.Command{Use: "list", Short: "List action statuses", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
@@ -526,18 +617,34 @@ func newActionStatusListCmd() *cobra.Command {
 					params.Limit = &lv
 				}
 			}
-			resp, err := client.PolicyActionStatusIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), int64(pid), params)
+			var initial *string
+			if token := strings.TrimSpace(skipToken); token != "" {
+				initial = &token
+			}
+			result, err := collectPolicyPages[flexera.PolicyActionStatusList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+				page := flexera.PolicyActionStatusIndexParams{}
+				if params != nil {
+					page = *params
+				}
+				page.SkipToken = token
+				resp, err := client.PolicyActionStatusIndexWithResponse(ctx, int64(deps.Config.OrgID), int64(pid), &page)
+				if err != nil {
+					return nil, err
+				}
+				if resp.JSON200 == nil {
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				return resp.JSON200, nil
+			})
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
-				return flexera.ResponseError(resp.StatusCode(), resp.Body)
-			}
-			return render(deps, resp.JSON200)
+			return render(deps, result)
 		}}
 	addProjectFlag(c, &projectID)
 	addListFlags(c, &filter, &orderBy, &skipToken, &limit)
 	c.Flags().StringVar(&view, "view", "", "Optional Policy action-status view")
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the requested page (do not follow nextPage)")
 	return c
 }
 
@@ -587,6 +694,7 @@ func newActionStatusGetCmd() *cobra.Command {
 func newArchivedIncidentListCmd() *cobra.Command {
 	var projectID, limit int
 	var filter, orderBy, skipToken, view string
+	var noPaginate bool
 	c := &cobra.Command{Use: "list", Short: "List archived incidents", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
@@ -622,18 +730,34 @@ func newArchivedIncidentListCmd() *cobra.Command {
 					params.Limit = &lv
 				}
 			}
-			resp, err := client.PolicyArchivedIncidentIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), int64(pid), params)
+			var initial *string
+			if token := strings.TrimSpace(skipToken); token != "" {
+				initial = &token
+			}
+			result, err := collectPolicyPages[flexera.PolicyArchivedIncidentList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+				page := flexera.PolicyArchivedIncidentIndexParams{}
+				if params != nil {
+					page = *params
+				}
+				page.SkipToken = token
+				resp, err := client.PolicyArchivedIncidentIndexWithResponse(ctx, int64(deps.Config.OrgID), int64(pid), &page)
+				if err != nil {
+					return nil, err
+				}
+				if resp.JSON200 == nil {
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				return resp.JSON200, nil
+			})
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
-				return flexera.ResponseError(resp.StatusCode(), resp.Body)
-			}
-			return render(deps, resp.JSON200)
+			return render(deps, result)
 		}}
 	addProjectFlag(c, &projectID)
 	addListFlags(c, &filter, &orderBy, &skipToken, &limit)
 	c.Flags().StringVar(&view, "view", "", "Optional Policy archived-incident view")
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the requested page (do not follow nextPage)")
 	return c
 }
 
@@ -683,6 +807,7 @@ func newArchivedIncidentGetCmd() *cobra.Command {
 func newPolicyTemplateListCmd() *cobra.Command {
 	var projectID, limit int
 	var filter, orderBy, skipToken, view string
+	var noPaginate bool
 	c := &cobra.Command{Use: "list", Short: "List policy templates", Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
@@ -718,18 +843,34 @@ func newPolicyTemplateListCmd() *cobra.Command {
 					params.Limit = &lv
 				}
 			}
-			resp, err := client.PolicyPolicyTemplateIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), int64(pid), params)
+			var initial *string
+			if token := strings.TrimSpace(skipToken); token != "" {
+				initial = &token
+			}
+			result, err := collectPolicyPages[flexera.PolicyPolicyTemplateList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+				page := flexera.PolicyPolicyTemplateIndexParams{}
+				if params != nil {
+					page = *params
+				}
+				page.SkipToken = token
+				resp, err := client.PolicyPolicyTemplateIndexWithResponse(ctx, int64(deps.Config.OrgID), int64(pid), &page)
+				if err != nil {
+					return nil, err
+				}
+				if resp.JSON200 == nil {
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				return resp.JSON200, nil
+			})
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
-				return flexera.ResponseError(resp.StatusCode(), resp.Body)
-			}
-			return render(deps, resp.JSON200)
+			return render(deps, result)
 		}}
 	addProjectFlag(c, &projectID)
 	addListFlags(c, &filter, &orderBy, &skipToken, &limit)
 	c.Flags().StringVar(&view, "view", "", "Optional Policy template view")
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the requested page (do not follow nextPage)")
 	return c
 }
 

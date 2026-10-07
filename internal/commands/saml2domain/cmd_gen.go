@@ -43,17 +43,19 @@ func newSAML2DomainVerifyCmd() *cobra.Command {
 	var (
 		identityProviderID string
 		name               string
+		dryRun             bool
+		yes                bool
 	)
 	c := &cobra.Command{
-		Use:   "verify",
-		Short: "Verify an IdP's domain",
-		Args:  cobra.NoArgs,
+		Use:         "verify",
+		Short:       "Verify an IdP's domain",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saml2-domain verify --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME\n  flexera-cli saml2-domain verify --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_verify", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_SAML2_Domain_verify")
 			if err != nil {
 				return err
 			}
@@ -63,18 +65,48 @@ func newSAML2DomainVerifyCmd() *cobra.Command {
 			if strings.TrimSpace(name) == "" {
 				return fmt.Errorf("--name is required")
 			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/{name}/verify", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamSAML2DomainVerifyWithResponse(cmd.Context(), deps.Config.OrgID, identityProviderID, name)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")
 	c.Flags().StringVar(&name, "name", "", "name (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -86,17 +118,26 @@ func newSAML2DomainCreateCmd() *cobra.Command {
 		fName              string
 		dryRun             bool
 		yes                bool
+		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "Register a new IdP domain",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "Register a new IdP domain",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saml2-domain create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json\n  flexera-cli saml2-domain create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saml2-domain create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_register", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Iam_SAML2_Domain_register"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_SAML2_Domain_register")
 			if err != nil {
 				return err
 			}
@@ -116,28 +157,66 @@ func newSAML2DomainCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Iam_SAML2_Domain_register", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.IamSAML2DomainRegisterJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/register"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Iam_SAML2_Domain_register", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/register", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamSAML2DomainRegisterWithResponse(cmd.Context(), deps.Config.OrgID, identityProviderID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")
@@ -145,6 +224,7 @@ func newSAML2DomainCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -157,15 +237,15 @@ func newSAML2DomainDeleteCmd() *cobra.Command {
 		yes                bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete an IdP's domain",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete an IdP's domain",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saml2-domain delete --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME\n  flexera-cli saml2-domain delete --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_SAML2_Domain_delete")
 			if err != nil {
 				return err
 			}
@@ -175,22 +255,33 @@ func newSAML2DomainDeleteCmd() *cobra.Command {
 			if strings.TrimSpace(name) == "" {
 				return fmt.Errorf("--name is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/{name}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/{name}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamSAML2DomainDeleteWithResponse(cmd.Context(), deps.Config.OrgID, identityProviderID, name)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")
@@ -207,32 +298,49 @@ func newSAML2DomainGetCmd() *cobra.Command {
 		name               string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an IdP's domain",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an IdP's domain",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saml2-domain get --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME",
+		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_SAML2_Domain_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(identityProviderID) == "" {
 				return fmt.Errorf("--identity-provider-id is required")
 			}
 			if strings.TrimSpace(name) == "" {
 				return fmt.Errorf("--name is required")
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamSAML2DomainShowWithResponse(cmd.Context(), deps.Config.OrgID, identityProviderID, name)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")
@@ -246,29 +354,46 @@ func newSAML2DomainListCmd() *cobra.Command {
 		identityProviderID string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index an IdP's domains",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index an IdP's domains",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saml2-domain list --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_SAML2_Domain_index")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(identityProviderID) == "" {
+				return fmt.Errorf("--identity-provider-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(identityProviderID) == "" {
-				return fmt.Errorf("--identity-provider-id is required")
-			}
 			resp, err := client.IamSAML2DomainIndexWithResponse(cmd.Context(), deps.Config.OrgID, identityProviderID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")

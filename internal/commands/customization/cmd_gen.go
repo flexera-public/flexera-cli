@@ -43,18 +43,19 @@ func newCustomizationGetCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an org's customization",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an org's customization",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Customization_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Customization_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
@@ -63,14 +64,30 @@ func newCustomizationGetCmd() *cobra.Command {
 				ev := flexera.IamCustomizationShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamCustomizationShowWithResponse(cmd.Context(), deps.Config.OrgID, id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -87,18 +104,19 @@ func newCustomizationListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index customizations which have been applied to an org",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index customizations which have been applied to an org",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Customization_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Customization_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamCustomizationIndexParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.IamCustomizationIndexParamsView(view)
@@ -107,6 +125,10 @@ func newCustomizationListCmd() *cobra.Command {
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -120,10 +142,16 @@ func newCustomizationListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -141,20 +169,29 @@ func newCustomizationListCmd() *cobra.Command {
 // newCustomizationUpdateCmd — PATCH /iam/v1/orgs/{orgId}/customizations (operationId: Iam_Customization_update)
 func newCustomizationUpdateCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "Creates, updates, or removes a number of customizations",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "Creates, updates, or removes a number of customizations",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization update --org-id ORG_ID --body @request.json\n  flexera-cli customization update --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema customization update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Customization_update", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Iam_Customization_update"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Customization_update")
 			if err != nil {
 				return err
 			}
@@ -168,32 +205,71 @@ func newCustomizationUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Iam_Customization_update", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.IamCustomizationUpdateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /iam/v1/orgs/{orgId}/customizations"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Iam_Customization_update", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/iam/v1/orgs/{orgId}/customizations", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamCustomizationUpdateWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

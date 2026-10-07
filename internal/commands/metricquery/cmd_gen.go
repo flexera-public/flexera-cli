@@ -47,17 +47,28 @@ func newMetricQueryStoredMetricQueriesCmd() *cobra.Command {
 		fGranularity string
 		fLimit       int
 		fMetrics     []string
+		dryRun       bool
+		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "stored-metric-queries",
-		Short: "Query metrics service",
-		Args:  cobra.NoArgs,
+		Use:         "stored-metric-queries",
+		Short:       "Query metrics service",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli metric-query stored-metric-queries --org-id ORG_ID --query-name QUERY_NAME --body @request.json\n  flexera-cli metric-query stored-metric-queries --org-id ORG_ID --query-name QUERY_NAME --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema metric-query stored-metric-queries --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Metric_Query_query", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Saas_Metric_Query_query"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Metric_Query_query")
 			if err != nil {
 				return err
 			}
@@ -89,20 +100,66 @@ func newMetricQueryStoredMetricQueriesCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Saas_Metric_Query_query", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.SaasMetricQueryQueryJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Saas_Metric_Query_query", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/saas/v1/orgs/{orgId}/stored-metric-queries/{queryName}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.SaasMetricQueryQueryWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), flexera.SaasMetricQueryQueryParamsQueryName(queryName), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&queryName, "query-name", "", "queryName (path, required)")
@@ -112,6 +169,9 @@ func newMetricQueryStoredMetricQueriesCmd() *cobra.Command {
 	c.Flags().IntVar(&fLimit, "limit", 0, "limit (body)")
 	c.Flags().StringSliceVar(&fMetrics, "metrics", nil, "metrics (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -124,18 +184,19 @@ func newMetricQueryEventCountsByTypeCmd() *cobra.Command {
 		resolution   string
 	)
 	c := &cobra.Command{
-		Use:   "event-counts-by-type",
-		Short: "Event counts by type",
-		Args:  cobra.NoArgs,
+		Use:         "event-counts-by-type",
+		Short:       "Event counts by type",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli metric-query event-counts-by-type --org-id ORG_ID --managed-app-id MANAGED_APP_ID --days-since DAYS_SINCE --sub-app-id SUB_APP_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Metric_Query_eventCountsByType", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Metric_Query_eventCountsByType")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasMetricQueryEventCountsByTypeParams{}
 			if cmd.Flags().Changed("managed-app-id") {
 				params.ManagedAppId = managedAppID
@@ -150,14 +211,30 @@ func newMetricQueryEventCountsByTypeCmd() *cobra.Command {
 				ev := flexera.SaasMetricQueryEventCountsByTypeParamsResolution(resolution)
 				params.Resolution = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasMetricQueryEventCountsByTypeWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (query)")
@@ -174,18 +251,19 @@ func newMetricQueryTotalEventCountsCmd() *cobra.Command {
 		daysSince    int
 	)
 	c := &cobra.Command{
-		Use:   "total-event-counts",
-		Short: "Total event counts",
-		Args:  cobra.NoArgs,
+		Use:         "total-event-counts",
+		Short:       "Total event counts",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli metric-query total-event-counts --org-id ORG_ID --managed-app-id MANAGED_APP_ID --days-since DAYS_SINCE",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Metric_Query_totalEventCounts", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Metric_Query_totalEventCounts")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasMetricQueryTotalEventCountsParams{}
 			if cmd.Flags().Changed("managed-app-id") {
 				params.ManagedAppId = managedAppID
@@ -193,14 +271,30 @@ func newMetricQueryTotalEventCountsCmd() *cobra.Command {
 			if cmd.Flags().Changed("days-since") {
 				params.DaysSince = flexera.SaasMetricQueryTotalEventCountsParamsDaysSince(daysSince)
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasMetricQueryTotalEventCountsWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (query)")
@@ -216,18 +310,19 @@ func newMetricQueryUserCountsByEventsPerformedCmd() *cobra.Command {
 		subAppID     string
 	)
 	c := &cobra.Command{
-		Use:   "user-counts-by-events-performed",
-		Short: "User counts by events performed",
-		Args:  cobra.NoArgs,
+		Use:         "user-counts-by-events-performed",
+		Short:       "User counts by events performed",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli metric-query user-counts-by-events-performed --org-id ORG_ID --managed-app-id MANAGED_APP_ID --days-since DAYS_SINCE --sub-app-id SUB_APP_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Metric_Query_userCountsByEventsPerformed", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Metric_Query_userCountsByEventsPerformed")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasMetricQueryUserCountsByEventsPerformedParams{}
 			if cmd.Flags().Changed("managed-app-id") {
 				params.ManagedAppId = managedAppID
@@ -238,14 +333,30 @@ func newMetricQueryUserCountsByEventsPerformedCmd() *cobra.Command {
 			if cmd.Flags().Changed("sub-app-id") {
 				params.SubAppId = subAppID
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasMetricQueryUserCountsByEventsPerformedWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (query)")

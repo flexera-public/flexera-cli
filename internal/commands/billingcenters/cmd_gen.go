@@ -49,17 +49,26 @@ func newBillingCentersCreateCmd() *cobra.Command {
 		fParentHref  string
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "Create a new BillingCenter",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "Create a new BillingCenter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers create --org-id ORG_ID --body @request.json\n  flexera-cli billing-centers create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing-centers create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_create", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillingCenterService_BillingCenters_create"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_create")
 			if err != nil {
 				return err
 			}
@@ -83,28 +92,66 @@ func newBillingCentersCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillingCenterService_BillingCenters_create", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillingCenterServiceBillingCentersCreateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /analytics/orgs/{org_id}/billing_centers"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillingCenterService_BillingCenters_create", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/analytics/orgs/{org_id}/billing_centers", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillingCenterServiceBillingCentersCreateWithResponse(cmd.Context(), deps.Config.OrgID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&fDescription, "description", "", "description (body)")
@@ -113,6 +160,7 @@ func newBillingCentersCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -124,15 +172,15 @@ func newBillingCentersDeleteCmd() *cobra.Command {
 		yes           bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a BillingCenter",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a BillingCenter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers delete --org-id ORG_ID --billing-center BILLING_CENTER\n  flexera-cli billing-centers delete --org-id ORG_ID --billing-center BILLING_CENTER --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_delete")
 			if err != nil {
 				return err
 			}
@@ -140,22 +188,33 @@ func newBillingCentersDeleteCmd() *cobra.Command {
 				return fmt.Errorf("--billing-center is required")
 			}
 			params := flexera.BillingCenterServiceBillingCentersDeleteParams{}
-			writePlan := map[string]any{"method": "DELETE /analytics/orgs/{org_id}/billing_centers/{billing_center}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/analytics/orgs/{org_id}/billing_centers/{billing_center}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillingCenterServiceBillingCentersDeleteWithResponse(cmd.Context(), deps.Config.OrgID, billingCenter, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&billingCenter, "billing-center", "", "billing_center (path, required)")
@@ -170,30 +229,47 @@ func newBillingCentersGetCmd() *cobra.Command {
 		billingCenter string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show a single BillingCenter",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show a single BillingCenter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers get --org-id ORG_ID --billing-center BILLING_CENTER",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(billingCenter) == "" {
 				return fmt.Errorf("--billing-center is required")
 			}
 			params := flexera.BillingCenterServiceBillingCentersShowParams{}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillingCenterServiceBillingCentersShowWithResponse(cmd.Context(), deps.Config.OrgID, billingCenter, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billingCenter, "billing-center", "", "billing_center (path, required)")
@@ -206,31 +282,48 @@ func newBillingCentersListCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List all BillingCenters in a given Org.",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List all BillingCenters in a given Org.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.BillingCenterServiceBillingCentersIndexParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.BillingCenterServiceBillingCentersIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillingCenterServiceBillingCentersIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&view, "view", "", "view (query)")
@@ -243,30 +336,47 @@ func newBillingCentersAllocationTableAllCmd() *cobra.Command {
 		billingCenter string
 	)
 	c := &cobra.Command{
-		Use:   "allocation-table-all",
-		Short: "List the AllocationTable rules for a given BC",
-		Args:  cobra.NoArgs,
+		Use:         "allocation-table-all",
+		Short:       "List the AllocationTable rules for a given BC",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers allocation-table-all --org-id ORG_ID --billing-center BILLING_CENTER",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_show_allocation_table", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_show_allocation_table")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(billingCenter) == "" {
 				return fmt.Errorf("--billing-center is required")
 			}
 			params := flexera.BillingCenterServiceBillingCentersShowAllocationTableParams{}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillingCenterServiceBillingCentersShowAllocationTableWithResponse(cmd.Context(), deps.Config.OrgID, billingCenter, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billingCenter, "billing-center", "", "billing_center (path, required)")
@@ -282,17 +392,26 @@ func newBillingCentersReplaceCmd() *cobra.Command {
 		fName         string
 		dryRun        bool
 		yes           bool
+		interactive   bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Update a BillingCenter",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Update a BillingCenter",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers replace --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json\n  flexera-cli billing-centers replace --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing-centers replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_update", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillingCenterService_BillingCenters_update"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_update")
 			if err != nil {
 				return err
 			}
@@ -316,29 +435,57 @@ func newBillingCentersReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillingCenterService_BillingCenters_update", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillingCenterServiceBillingCentersUpdateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /analytics/orgs/{org_id}/billing_centers/{billing_center}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillingCenterService_BillingCenters_update", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/analytics/orgs/{org_id}/billing_centers/{billing_center}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillingCenterServiceBillingCentersUpdateWithResponse(cmd.Context(), deps.Config.OrgID, billingCenter, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&billingCenter, "billing-center", "", "billing_center (path, required)")
@@ -347,6 +494,7 @@ func newBillingCentersReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -358,17 +506,26 @@ func newBillingCentersAllocationTableCmd() *cobra.Command {
 		bodyRaw        string
 		dryRun         bool
 		yes            bool
+		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:   "allocation-table",
-		Short: "Update a BC AllocationTable or create it if it doesn't exist",
-		Args:  cobra.NoArgs,
+		Use:         "allocation-table",
+		Short:       "Update a BC AllocationTable or create it if it doesn't exist",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-centers allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json\n  flexera-cli billing-centers allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing-centers allocation-table --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_upsert_allocation_table", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillingCenterService_BillingCenters_upsert_allocation_table"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_BillingCenters_upsert_allocation_table")
 			if err != nil {
 				return err
 			}
@@ -390,29 +547,57 @@ func newBillingCentersAllocationTableCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillingCenterService_BillingCenters_upsert_allocation_table", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillingCenterServiceBillingCentersUpsertAllocationTableJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillingCenterService_BillingCenters_upsert_allocation_table", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillingCenterServiceBillingCentersUpsertAllocationTableWithResponse(cmd.Context(), deps.Config.OrgID, billingCenter, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&billingCenter, "billing-center", "", "billing_center (path, required)")
@@ -420,5 +605,6 @@ func newBillingCentersAllocationTableCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

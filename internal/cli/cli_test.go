@@ -1,11 +1,14 @@
 package cli
 
 import (
+	"bytes"
+	"context"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
 
@@ -122,5 +125,59 @@ func TestResolveBodyStdin(t *testing.T) {
 func TestResolveBodyInvalidJSON(t *testing.T) {
 	if _, err := ResolveBody("not json", nil, nil); err == nil {
 		t.Fatal("expected invalid JSON error for raw --body")
+	}
+}
+
+func TestRootConfiguresOutputShaping(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		args []string
+		want string
+		code int
+	}{
+		{name: "combined", args: []string{"--out-fields", "id,name", "--out-jq", ".name"}, want: `"sample"` + "\n"},
+		{name: "raw", args: []string{"--out-jq", ".name", "--raw-output"}, want: "sample\n"},
+		{name: "raw-without-jq", args: []string{"--raw-output"}, code: 2},
+		{name: "empty-jq", args: []string{"--out-jq", ""}, code: 2},
+		{name: "invalid-jq", args: []string{"--out-jq", "["}, code: 2},
+		{name: "empty-fields", args: []string{"--out-fields", ""}, code: 2},
+		{name: "invalid-fields", args: []string{"--out-fields", "id,,name"}, code: 2},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			config := filepath.Join(t.TempDir(), "config.yaml")
+			if err := os.WriteFile(config, []byte("zone: nam\n"), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			var stdout, stderr bytes.Buffer
+			root, deps := NewRootCmd(RootOptions{})
+			root.SetOut(&stdout)
+			root.SetErr(&stderr)
+			root.AddCommand(&cobra.Command{
+				Use: "shape",
+				RunE: func(cmd *cobra.Command, _ []string) error {
+					return DepsFrom(cmd.Context()).Printer.Render(cmd.OutOrStdout(), "json", map[string]any{"id": 4, "name": "sample", "ignored": true})
+				},
+			})
+			args := append([]string{"--config", config}, tc.args...)
+			args = append(args, "shape")
+			root.SetArgs(args)
+			code := Execute(context.Background(), root, deps)
+			if code != tc.code {
+				t.Fatalf("exit code %d, want %d; stderr=%s", code, tc.code, stderr.String())
+			}
+			if tc.code == 0 && stdout.String() != tc.want {
+				t.Fatalf("stdout %q, want %q", stdout.String(), tc.want)
+			}
+		})
+	}
+}
+
+func TestOutputShapingFlagsAreCLIOnly(t *testing.T) {
+	for _, key := range []string{FlagOutJQ, FlagOutFields, FlagRawOutput} {
+		for _, bound := range persistentKeys {
+			if key == bound {
+				t.Fatalf("--%s must not be bound as configuration", key)
+			}
+		}
 	}
 }

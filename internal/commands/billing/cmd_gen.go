@@ -60,24 +60,35 @@ func NewCmd() *cobra.Command {
 // newBillingRulesPlansCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules (operationId: FinopsBilling_Billing_createRule)
 func newBillingRulesPlansCmd() *cobra.Command {
 	var (
-		planID    string
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
+		planID      string
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "rules-plans",
-		Short: "Create an adjustment plan rule",
-		Args:  cobra.NoArgs,
+		Use:         "rules-plans",
+		Short:       "Create an adjustment plan rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing rules-plans --org-id ORG_ID --plan-id PLAN_ID --body @request.json\n  flexera-cli billing rules-plans --org-id ORG_ID --plan-id PLAN_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing rules-plans --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createRule", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_createRule"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_createRule")
 			if err != nil {
 				return err
 			}
@@ -113,20 +124,66 @@ func newBillingRulesPlansCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_createRule", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingCreateRuleJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_createRule", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingCreateRuleWithResponse(cmd.Context(), deps.Config.OrgID, planIDUUID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&planID, "plan-id", "", "planId (path, required)")
@@ -136,6 +193,9 @@ func newBillingRulesPlansCmd() *cobra.Command {
 	c.Flags().StringVar(&fStartOn, "start-on", "", "startOn (body)")
 	c.Flags().StringVar(&fType, "type", "", "type (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -147,17 +207,26 @@ func newBillingPlansAllCmd() *cobra.Command {
 		fName        string
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "plans-all",
-		Short: "Create an adjustment plan",
-		Args:  cobra.NoArgs,
+		Use:         "plans-all",
+		Short:       "Create an adjustment plan",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing plans-all --org-id ORG_ID --body @request.json\n  flexera-cli billing plans-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing plans-all --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPlan", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_createPlan"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_createPlan")
 			if err != nil {
 				return err
 			}
@@ -177,28 +246,66 @@ func newBillingPlansAllCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_createPlan", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingCreatePlanJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /finops-billing/v1/orgs/{orgId}/adjustment/plans"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_createPlan", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingCreatePlanWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fDescription, "description", "", "description (body)")
@@ -206,31 +313,41 @@ func newBillingPlansAllCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingPostPlanRulesAllCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules (operationId: FinopsBilling_Billing_createPostAdjustment)
 func newBillingPostPlanRulesAllCmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "post-plan-rules-all",
-		Short: "Create an adjustment rule that runs after all plans",
-		Args:  cobra.NoArgs,
+		Use:         "post-plan-rules-all",
+		Short:       "Create an adjustment rule that runs after all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing post-plan-rules-all --org-id ORG_ID --body @request.json\n  flexera-cli billing post-plan-rules-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing post-plan-rules-all --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPostAdjustment", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_createPostAdjustment"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_createPostAdjustment")
 			if err != nil {
 				return err
 			}
@@ -259,28 +376,66 @@ func newBillingPostPlanRulesAllCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_createPostAdjustment", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingCreatePostAdjustmentJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_createPostAdjustment", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingCreatePostAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().BoolVar(&fEnabled, "enabled", false, "enabled (body)")
@@ -291,31 +446,41 @@ func newBillingPostPlanRulesAllCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingPrePlanRulesAllCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules (operationId: FinopsBilling_Billing_createPreAdjustment)
 func newBillingPrePlanRulesAllCmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "pre-plan-rules-all",
-		Short: "Create an adjustment rule that runs before all plans",
-		Args:  cobra.NoArgs,
+		Use:         "pre-plan-rules-all",
+		Short:       "Create an adjustment rule that runs before all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing pre-plan-rules-all --org-id ORG_ID --body @request.json\n  flexera-cli billing pre-plan-rules-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing pre-plan-rules-all --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPreAdjustment", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_createPreAdjustment"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_createPreAdjustment")
 			if err != nil {
 				return err
 			}
@@ -344,28 +509,66 @@ func newBillingPrePlanRulesAllCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_createPreAdjustment", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingCreatePreAdjustmentJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_createPreAdjustment", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingCreatePreAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().BoolVar(&fEnabled, "enabled", false, "enabled (body)")
@@ -376,31 +579,41 @@ func newBillingPrePlanRulesAllCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingRulesRulesCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_createEnterpriseRule)
 func newBillingRulesRulesCmd() *cobra.Command {
 	var (
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "rules-rules",
-		Short: "Create an enterprise adjustment rule",
-		Args:  cobra.NoArgs,
+		Use:         "rules-rules",
+		Short:       "Create an enterprise adjustment rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing rules-rules --org-id ORG_ID --body @request.json\n  flexera-cli billing rules-rules --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing rules-rules --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createEnterpriseRule", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_createEnterpriseRule"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_createEnterpriseRule")
 			if err != nil {
 				return err
 			}
@@ -429,28 +642,66 @@ func newBillingRulesRulesCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_createEnterpriseRule", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingCreateEnterpriseRuleJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /finops-billing/v1/orgs/{orgId}/adjustment/rules"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_createEnterpriseRule", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/rules", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingCreateEnterpriseRuleWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().BoolVar(&fEnabled, "enabled", false, "enabled (body)")
@@ -461,6 +712,7 @@ func newBillingRulesRulesCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -472,15 +724,15 @@ func newBillingPlansAll2Cmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "plans-all-2",
-		Short: "Remove an adjustment plan",
-		Args:  cobra.NoArgs,
+		Use:         "plans-all-2",
+		Short:       "Remove an adjustment plan",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing plans-all-2 --org-id ORG_ID --id ID\n  flexera-cli billing plans-all-2 --org-id ORG_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePlan", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_deletePlan")
 			if err != nil {
 				return err
 			}
@@ -492,22 +744,33 @@ func newBillingPlansAll2Cmd() *cobra.Command {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
 			params := flexera.FinopsBillingBillingDeletePlanParams{}
-			writePlan := map[string]any{"method": "DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingDeletePlanWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -525,15 +788,15 @@ func newBillingDeletePlansCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete-plans",
-		Short: "Remove an adjustment plan rule",
-		Args:  cobra.NoArgs,
+		Use:         "delete-plans",
+		Short:       "Remove an adjustment plan rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing delete-plans --org-id ORG_ID --plan-id PLAN_ID --id ID\n  flexera-cli billing delete-plans --org-id ORG_ID --plan-id PLAN_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deleteRule", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_deleteRule")
 			if err != nil {
 				return err
 			}
@@ -552,22 +815,33 @@ func newBillingDeletePlansCmd() *cobra.Command {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
 			params := flexera.FinopsBillingBillingDeleteRuleParams{}
-			writePlan := map[string]any{"method": "DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingDeleteRuleWithResponse(cmd.Context(), deps.Config.OrgID, planIDUUID, idUUID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&planID, "plan-id", "", "planId (path, required)")
@@ -585,15 +859,15 @@ func newBillingPostPlanRulesAll2Cmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "post-plan-rules-all-2",
-		Short: "Remove an adjustment rule that runs after all plans",
-		Args:  cobra.NoArgs,
+		Use:         "post-plan-rules-all-2",
+		Short:       "Remove an adjustment rule that runs after all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing post-plan-rules-all-2 --org-id ORG_ID --id ID\n  flexera-cli billing post-plan-rules-all-2 --org-id ORG_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePostAdjustment", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_deletePostAdjustment")
 			if err != nil {
 				return err
 			}
@@ -605,22 +879,33 @@ func newBillingPostPlanRulesAll2Cmd() *cobra.Command {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
 			params := flexera.FinopsBillingBillingDeletePostAdjustmentParams{}
-			writePlan := map[string]any{"method": "DELETE /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingDeletePostAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -637,15 +922,15 @@ func newBillingPrePlanRulesAll2Cmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "pre-plan-rules-all-2",
-		Short: "Remove an adjustment rule that runs before all plans",
-		Args:  cobra.NoArgs,
+		Use:         "pre-plan-rules-all-2",
+		Short:       "Remove an adjustment rule that runs before all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing pre-plan-rules-all-2 --org-id ORG_ID --id ID\n  flexera-cli billing pre-plan-rules-all-2 --org-id ORG_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePreAdjustment", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_deletePreAdjustment")
 			if err != nil {
 				return err
 			}
@@ -657,22 +942,33 @@ func newBillingPrePlanRulesAll2Cmd() *cobra.Command {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
 			params := flexera.FinopsBillingBillingDeletePreAdjustmentParams{}
-			writePlan := map[string]any{"method": "DELETE /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingDeletePreAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -689,15 +985,15 @@ func newBillingDeleteRulesCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete-rules",
-		Short: "Remove an enterprise adjustment rule",
-		Args:  cobra.NoArgs,
+		Use:         "delete-rules",
+		Short:       "Remove an enterprise adjustment rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing delete-rules --org-id ORG_ID --id ID\n  flexera-cli billing delete-rules --org-id ORG_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deleteEnterpriseRule", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_deleteEnterpriseRule")
 			if err != nil {
 				return err
 			}
@@ -709,22 +1005,33 @@ func newBillingDeleteRulesCmd() *cobra.Command {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
 			params := flexera.FinopsBillingBillingDeleteEnterpriseRuleParams{}
-			writePlan := map[string]any{"method": "DELETE /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingDeleteEnterpriseRuleWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -739,18 +1046,19 @@ func newBillingGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an adjustment plan",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an adjustment plan",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_showPlan", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_showPlan")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
@@ -758,14 +1066,30 @@ func newBillingGetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("--id: invalid UUID: %w", err)
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.FinopsBillingBillingShowPlanWithResponse(cmd.Context(), deps.Config.OrgID, idUUID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -775,14 +1099,19 @@ func newBillingGetCmd() *cobra.Command {
 // newBillingCustomerStatusCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/customer-status (operationId: FinopsBilling_Billing_showCustomerStatus)
 func newBillingCustomerStatusCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "customer-status",
-		Short: "Show billing customer status",
-		Args:  cobra.NoArgs,
+		Use:         "customer-status",
+		Short:       "Show billing customer status",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing customer-status --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_showCustomerStatus", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_showCustomerStatus")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -791,10 +1120,22 @@ func newBillingCustomerStatusCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	return c
@@ -809,18 +1150,19 @@ func newBillingPlansAll3Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "plans-all-3",
-		Short: "Index adjustment plans",
-		Args:  cobra.NoArgs,
+		Use:         "plans-all-3",
+		Short:       "Index adjustment plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing plans-all-3 --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPlans", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_indexPlans")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsBillingBillingIndexPlansParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -829,6 +1171,10 @@ func newBillingPlansAll3Cmd() *cobra.Command {
 			if cmd.Flags().Changed("limit") {
 				v := limit
 				params.Limit = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -842,10 +1188,16 @@ func newBillingPlansAll3Cmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -870,18 +1222,19 @@ func newBillingListPlansCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list-plans",
-		Short: "Index adjustment plan rules",
-		Args:  cobra.NoArgs,
+		Use:         "list-plans",
+		Short:       "Index adjustment plan rules",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing list-plans --org-id ORG_ID --plan-id PLAN_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexRules", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_indexRules")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(planID) == "" {
 				return fmt.Errorf("--plan-id is required")
 			}
@@ -898,6 +1251,10 @@ func newBillingListPlansCmd() *cobra.Command {
 				v := limit
 				params.Limit = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -910,10 +1267,16 @@ func newBillingListPlansCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -938,18 +1301,19 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "post-plan-rules-all-3",
-		Short: "Index adjustment rules that run after all plans",
-		Args:  cobra.NoArgs,
+		Use:         "post-plan-rules-all-3",
+		Short:       "Index adjustment rules that run after all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing post-plan-rules-all-3 --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPostAdjustments", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_indexPostAdjustments")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsBillingBillingIndexPostAdjustmentsParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -958,6 +1322,10 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 			if cmd.Flags().Changed("limit") {
 				v := limit
 				params.Limit = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -971,10 +1339,16 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -998,18 +1372,19 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "pre-plan-rules-all-3",
-		Short: "Index adjustment rules that run before all plans",
-		Args:  cobra.NoArgs,
+		Use:         "pre-plan-rules-all-3",
+		Short:       "Index adjustment rules that run before all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing pre-plan-rules-all-3 --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPreAdjustments", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_indexPreAdjustments")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsBillingBillingIndexPreAdjustmentsParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -1018,6 +1393,10 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 			if cmd.Flags().Changed("limit") {
 				v := limit
 				params.Limit = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -1031,10 +1410,16 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -1058,18 +1443,19 @@ func newBillingListRulesCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list-rules",
-		Short: "Index enterprise adjustment rules",
-		Args:  cobra.NoArgs,
+		Use:         "list-rules",
+		Short:       "Index enterprise adjustment rules",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing list-rules --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexEnterpriseRules", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_indexEnterpriseRules")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsBillingBillingIndexEnterpriseRulesParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -1078,6 +1464,10 @@ func newBillingListRulesCmd() *cobra.Command {
 			if cmd.Flags().Changed("limit") {
 				v := limit
 				params.Limit = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -1091,10 +1481,16 @@ func newBillingListRulesCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -1118,17 +1514,26 @@ func newBillingPlansCmd() *cobra.Command {
 		fName        string
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "plans",
-		Short: "Overwrite an adjustment plan",
-		Args:  cobra.NoArgs,
+		Use:         "plans",
+		Short:       "Overwrite an adjustment plan",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing plans --org-id ORG_ID --id ID --body @request.json\n  flexera-cli billing plans --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing plans --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePlan", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replacePlan"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replacePlan")
 			if err != nil {
 				return err
 			}
@@ -1156,29 +1561,57 @@ func newBillingPlansCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replacePlan", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplacePlanJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replacePlan", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplacePlanWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -1187,33 +1620,43 @@ func newBillingPlansCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id} (operationId: FinopsBilling_Billing_replaceRule)
 func newBillingReplaceCmd() *cobra.Command {
 	var (
-		planID    string
-		id        string
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		planID      string
+		id          string
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Overwrite an adjustment plan rule",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Overwrite an adjustment plan rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json\n  flexera-cli billing replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceRule", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replaceRule"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replaceRule")
 			if err != nil {
 				return err
 			}
@@ -1257,29 +1700,57 @@ func newBillingReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replaceRule", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplaceRuleJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replaceRule", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplaceRuleWithResponse(cmd.Context(), deps.Config.OrgID, planIDUUID, idUUID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&planID, "plan-id", "", "planId (path, required)")
@@ -1292,32 +1763,42 @@ func newBillingReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingPostPlanRulesCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePostAdjustment)
 func newBillingPostPlanRulesCmd() *cobra.Command {
 	var (
-		id        string
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		id          string
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "post-plan-rules",
-		Short: "Overwrite an adjustment rule that runs after all plans",
-		Args:  cobra.NoArgs,
+		Use:         "post-plan-rules",
+		Short:       "Overwrite an adjustment rule that runs after all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing post-plan-rules --org-id ORG_ID --id ID --body @request.json\n  flexera-cli billing post-plan-rules --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing post-plan-rules --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePostAdjustment", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replacePostAdjustment"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replacePostAdjustment")
 			if err != nil {
 				return err
 			}
@@ -1354,29 +1835,57 @@ func newBillingPostPlanRulesCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replacePostAdjustment", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplacePostAdjustmentJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replacePostAdjustment", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplacePostAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -1388,32 +1897,42 @@ func newBillingPostPlanRulesCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingPrePlanRulesCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePreAdjustment)
 func newBillingPrePlanRulesCmd() *cobra.Command {
 	var (
-		id        string
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		id          string
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "pre-plan-rules",
-		Short: "Overwrite an adjustment rule that runs before all plans",
-		Args:  cobra.NoArgs,
+		Use:         "pre-plan-rules",
+		Short:       "Overwrite an adjustment rule that runs before all plans",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing pre-plan-rules --org-id ORG_ID --id ID --body @request.json\n  flexera-cli billing pre-plan-rules --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing pre-plan-rules --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePreAdjustment", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replacePreAdjustment"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replacePreAdjustment")
 			if err != nil {
 				return err
 			}
@@ -1450,29 +1969,57 @@ func newBillingPrePlanRulesCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replacePreAdjustment", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplacePreAdjustmentJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replacePreAdjustment", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplacePreAdjustmentWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -1484,26 +2031,36 @@ func newBillingPrePlanRulesCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingReplaceAllCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_replaceEnterpriseRuleset)
 func newBillingReplaceAllCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "replace-all",
-		Short: "Overwrite enterprise adjustment rules",
-		Args:  cobra.NoArgs,
+		Use:         "replace-all",
+		Short:       "Overwrite enterprise adjustment rules",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing replace-all --org-id ORG_ID --body @request.json\n  flexera-cli billing replace-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing replace-all --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceEnterpriseRuleset", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replaceEnterpriseRuleset"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replaceEnterpriseRuleset")
 			if err != nil {
 				return err
 			}
@@ -1518,60 +2075,98 @@ func newBillingReplaceAllCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replaceEnterpriseRuleset", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplaceEnterpriseRulesetJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replaceEnterpriseRuleset", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/rules", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplaceEnterpriseRulesetWithResponse(cmd.Context(), deps.Config.OrgID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
 // newBillingReplaceAll2Cmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id} (operationId: FinopsBilling_Billing_replaceEnterpriseRule)
 func newBillingReplaceAll2Cmd() *cobra.Command {
 	var (
-		id        string
-		bodyRaw   string
-		fEnabled  bool
-		fEndAfter string
-		fName     string
-		fStartOn  string
-		fType     string
-		dryRun    bool
-		yes       bool
+		id          string
+		bodyRaw     string
+		fEnabled    bool
+		fEndAfter   string
+		fName       string
+		fStartOn    string
+		fType       string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "replace-all-2",
-		Short: "Overwrite an enterprise adjustment rule",
-		Args:  cobra.NoArgs,
+		Use:         "replace-all-2",
+		Short:       "Overwrite an enterprise adjustment rule",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing replace-all-2 --org-id ORG_ID --id ID --body @request.json\n  flexera-cli billing replace-all-2 --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing replace-all-2 --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceEnterpriseRule", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsBilling_Billing_replaceEnterpriseRule"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Billing_replaceEnterpriseRule")
 			if err != nil {
 				return err
 			}
@@ -1608,29 +2203,57 @@ func newBillingReplaceAll2Cmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsBilling_Billing_replaceEnterpriseRule", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsBillingBillingReplaceEnterpriseRuleJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsBilling_Billing_replaceEnterpriseRule", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsBillingBillingReplaceEnterpriseRuleWithResponse(cmd.Context(), deps.Config.OrgID, idUUID, &params, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -1642,5 +2265,6 @@ func newBillingReplaceAll2Cmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

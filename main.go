@@ -10,6 +10,8 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/flexera-public/flexera-cli/internal/app"
 	clipkg "github.com/flexera-public/flexera-cli/internal/cli"
@@ -24,7 +26,13 @@ var (
 )
 
 func main() {
-	os.Exit(run(context.Background(), os.Args[1:], os.Stdout, os.Stderr, os.Getenv, &http.Client{}))
+	// Return from the signal scope before os.Exit, which does not run defers.
+	code := func() int {
+		ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+		defer cancel()
+		return run(ctx, os.Args[1:], os.Stdout, os.Stderr, os.Getenv, &http.Client{})
+	}()
+	os.Exit(code)
 }
 
 // run builds the cobra root and executes it. It is the testable entrypoint:
@@ -32,7 +40,7 @@ func main() {
 func run(ctx context.Context, args []string, stdout, stderr io.Writer, getenv func(string) string, httpClient flexera.HttpRequestDoer) int {
 	root, deps := app.NewRootCmd(stdout, stderr, getenv, httpClient, versionString())
 	root.SetArgs(args)
-	return clipkg.Execute(ctx, root, deps)
+	return clipkg.Execute(ctx, root, deps, args)
 }
 
 // versionString composes the --version output from the ldflag-stamped vars.

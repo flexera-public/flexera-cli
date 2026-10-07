@@ -41,29 +41,46 @@ func newObjectDefinitionGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an object definition",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an object definition",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli object-definition get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Object_Definition_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Object_Definition_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.SaasObjectDefinitionShowWithResponse(cmd.Context(), deps.Config.OrgID, id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -77,18 +94,19 @@ func newObjectDefinitionListCmd() *cobra.Command {
 		orderBy string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List Object Definitions",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List Object Definitions",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli object-definition list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Object_Definition_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Object_Definition_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasObjectDefinitionIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -98,14 +116,30 @@ func newObjectDefinitionListCmd() *cobra.Command {
 				v := orderBy
 				params.OrderBy = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasObjectDefinitionIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&filter, "filter", "", "filter (query)")

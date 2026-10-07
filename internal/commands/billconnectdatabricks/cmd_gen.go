@@ -49,17 +49,26 @@ func newBillConnectDatabricksCreateCmd() *cobra.Command {
 		fWorkspaceURL   string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "Create a Databricks bill connect",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "Create a Databricks bill connect",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-connect databricks create --org-id ORG_ID --body @request.json\n  flexera-cli bill-connect databricks create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-connect databricks create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_create", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_create"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_create")
 			if err != nil {
 				return err
 			}
@@ -67,10 +76,10 @@ func newBillConnectDatabricksCreateCmd() *cobra.Command {
 			if cmd.Flags().Changed("account-id") {
 				fields["accountId"] = fAccountID
 			}
-			if cmd.Flags().Changed("client-id") {
+			if cmd.Flags().Changed("body-client-id") {
 				fields["clientId"] = fClientID
 			}
-			if cmd.Flags().Changed("client-secret") {
+			if cmd.Flags().Changed("body-client-secret") {
 				fields["clientSecret"] = fClientSecret
 			}
 			if cmd.Flags().Changed("sql-warehouse-id") {
@@ -88,38 +97,77 @@ func newBillConnectDatabricksCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsOnboarding_Bill_Connect_Databricks_create", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsOnboardingBillConnectDatabricksCreateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsOnboarding_Bill_Connect_Databricks_create", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsOnboardingBillConnectDatabricksCreateWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&fAccountID, "account-id", "", "accountId (body)")
-	c.Flags().StringVar(&fClientID, "client-id", "", "clientId (body)")
-	c.Flags().StringVar(&fClientSecret, "client-secret", "", "clientSecret (body)")
+	c.Flags().StringVar(&fClientID, "body-client-id", "", "clientId (body)")
+	c.Flags().StringVar(&fClientSecret, "body-client-secret", "", "clientSecret (body)")
 	c.Flags().StringVar(&fSqlWarehouseID, "sql-warehouse-id", "", "sqlWarehouseId (body)")
 	c.Flags().StringVar(&fWorkspaceURL, "workspace-url", "", "workspaceUrl (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -131,37 +179,48 @@ func newBillConnectDatabricksDeleteCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a Databricks bill connect",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a Databricks bill connect",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-connect databricks delete --org-id ORG_ID --id ID\n  flexera-cli bill-connect databricks delete --org-id ORG_ID --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_delete")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsOnboardingBillConnectDatabricksDeleteWithResponse(cmd.Context(), deps.Config.OrgID, id)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -176,29 +235,46 @@ func newBillConnectDatabricksGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show a Databricks bill connect",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show a Databricks bill connect",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-connect databricks get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.FinopsOnboardingBillConnectDatabricksShowWithResponse(cmd.Context(), deps.Config.OrgID, id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -211,29 +287,46 @@ func newBillConnectDatabricksListCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Validate a Databricks bill connect",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Validate a Databricks bill connect",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-connect databricks list --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_validate", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_validate")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.FinopsOnboardingBillConnectDatabricksValidateWithResponse(cmd.Context(), deps.Config.OrgID, id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -251,17 +344,26 @@ func newBillConnectDatabricksUpdateCmd() *cobra.Command {
 		fWorkspaceURL   string
 		dryRun          bool
 		yes             bool
+		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "Update a Databricks bill connect",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "Update a Databricks bill connect",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-connect databricks update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli bill-connect databricks update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-connect databricks update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_update", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_update"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Bill_Connect_Databricks_update")
 			if err != nil {
 				return err
 			}
@@ -269,10 +371,10 @@ func newBillConnectDatabricksUpdateCmd() *cobra.Command {
 				return fmt.Errorf("--id is required")
 			}
 			fields := map[string]any{}
-			if cmd.Flags().Changed("client-id") {
+			if cmd.Flags().Changed("body-client-id") {
 				fields["clientId"] = fClientID
 			}
-			if cmd.Flags().Changed("client-secret") {
+			if cmd.Flags().Changed("body-client-secret") {
 				fields["clientSecret"] = fClientSecret
 			}
 			if cmd.Flags().Changed("sql-warehouse-id") {
@@ -290,38 +392,67 @@ func newBillConnectDatabricksUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsOnboarding_Bill_Connect_Databricks_update", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsOnboardingBillConnectDatabricksUpdateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsOnboarding_Bill_Connect_Databricks_update", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsOnboardingBillConnectDatabricksUpdateWithResponse(cmd.Context(), deps.Config.OrgID, id, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
-	c.Flags().StringVar(&fClientID, "client-id", "", "clientId (body)")
-	c.Flags().StringVar(&fClientSecret, "client-secret", "", "clientSecret (body)")
+	c.Flags().StringVar(&fClientID, "body-client-id", "", "clientId (body)")
+	c.Flags().StringVar(&fClientSecret, "body-client-secret", "", "clientSecret (body)")
 	c.Flags().StringVar(&fSqlWarehouseID, "sql-warehouse-id", "", "sqlWarehouseId (body)")
 	c.Flags().StringVar(&fWorkspaceURL, "workspace-url", "", "workspaceUrl (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

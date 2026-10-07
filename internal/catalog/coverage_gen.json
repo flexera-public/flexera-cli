@@ -1,0 +1,4619 @@
+[
+  {
+    "operationId": "Auth_Token_token",
+    "command": [
+      "auth",
+      "token",
+      "create"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "BillAnalysis_CustomDimension_create",
+    "command": [
+      "custom-dimension",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_CustomDimension_delete",
+    "command": [
+      "custom-dimension",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_CustomDimension_index",
+    "command": [
+      "custom-dimension",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_CustomDimension_show",
+    "command": [
+      "custom-dimension",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_CustomDimension_update",
+    "command": [
+      "custom-dimension",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_adjustment_definition_show",
+    "command": [
+      "adjustment-definition",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_adjustment_definition_update",
+    "command": [
+      "adjustment-definition",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_anomalies_aggregated",
+    "command": [
+      "anomalies",
+      "aggregated"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_anomalies_index",
+    "command": [
+      "anomalies",
+      "anomalies"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_anomalies_report",
+    "command": [
+      "anomalies",
+      "report"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_anomalies_summary",
+    "command": [
+      "anomalies",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_bill_months_download",
+    "command": [
+      "bill-months",
+      "download"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_bill_months_reprocess",
+    "command": [
+      "bill-months",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_bill_months_search",
+    "command": [
+      "bill-months",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_billing_settings_show",
+    "command": [
+      "billing-settings",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_billing_settings_update",
+    "command": [
+      "billing-settings",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_cloud_vendor_accounts_index",
+    "command": [
+      "cloud-vendor-accounts",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_commitment_reallocation_setting_show",
+    "command": [
+      "commitment-reallocation-setting",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_commitment_reallocation_setting_upsert",
+    "command": [
+      "commitment-reallocation-setting",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_aggregated",
+    "command": [
+      "costs",
+      "aggregated"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_dimensions",
+    "command": [
+      "costs",
+      "dimensions"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_exportSelect",
+    "command": [
+      "costs",
+      "create-export"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_exportSelectStatus",
+    "command": [
+      "costs",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_metrics",
+    "command": [
+      "costs",
+      "metrics"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_costs_select",
+    "command": [
+      "costs",
+      "create-select"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_currency_setting_show",
+    "command": [
+      "currency-setting",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_currency_setting_update",
+    "command": [
+      "currency-setting",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dashboards_create",
+    "command": [
+      "custom-dashboards",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dashboards_destroy",
+    "command": [
+      "custom-dashboards",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dashboards_index",
+    "command": [
+      "custom-dashboards",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dashboards_replace",
+    "command": [
+      "custom-dashboards",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dashboards_show",
+    "command": [
+      "custom-dashboards",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dimensions_create",
+    "command": [
+      "custom-dimensions",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dimensions_destroy",
+    "command": [
+      "custom-dimensions",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dimensions_index",
+    "command": [
+      "custom-dimensions",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dimensions_replace",
+    "command": [
+      "custom-dimensions",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_custom_dimensions_show",
+    "command": [
+      "custom-dimensions",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_forecasts_report",
+    "command": [
+      "forecasts",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_org_dashboards_create",
+    "command": [
+      "org-dashboards",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_org_dashboards_destroy",
+    "command": [
+      "org-dashboards",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_org_dashboards_index",
+    "command": [
+      "org-dashboards",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_org_dashboards_replace",
+    "command": [
+      "org-dashboards",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillAnalysis_org_dashboards_show",
+    "command": [
+      "org-dashboards",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_create",
+    "command": [
+      "bill-upload",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_createFile",
+    "command": [
+      "bill-upload",
+      "files"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_createOperation",
+    "command": [
+      "bill-upload",
+      "operations"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_delete",
+    "command": [
+      "bill-upload",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_index",
+    "command": [
+      "bill-upload",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillUpload_BillUpload_show",
+    "command": [
+      "bill-upload",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_AccessRules_group_report",
+    "command": [
+      "access-rules",
+      "list-groups"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_AccessRules_user_report",
+    "command": [
+      "access-rules",
+      "list-users"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_AllocationTable_show",
+    "command": [
+      "allocation-table",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_AllocationTable_upsert",
+    "command": [
+      "allocation-table",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenterAccessRules_grant",
+    "command": [
+      "billing-center-access-rules",
+      "grant"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenterAccessRules_report",
+    "command": [
+      "billing-center-access-rules",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenterAccessRules_revoke",
+    "command": [
+      "billing-center-access-rules",
+      "revoke"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_create",
+    "command": [
+      "billing-centers",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_delete",
+    "command": [
+      "billing-centers",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_index",
+    "command": [
+      "billing-centers",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_show",
+    "command": [
+      "billing-centers",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_show_allocation_table",
+    "command": [
+      "billing-centers",
+      "allocation-table-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_update",
+    "command": [
+      "billing-centers",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_BillingCenters_upsert_allocation_table",
+    "command": [
+      "billing-centers",
+      "allocation-table"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_UserBillingCenters_index",
+    "command": [
+      "user-billing-centers",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "BillingCenterService_UserBillingCenters_show",
+    "command": [
+      "user-billing-centers",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_create",
+    "command": [
+      "budget",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_delete",
+    "command": [
+      "budget",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_index",
+    "command": [
+      "budget",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_report",
+    "command": [
+      "budget",
+      "report"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_show",
+    "command": [
+      "budget",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Budget_update",
+    "command": [
+      "budget",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Budget_Cloud_Vendor_Account_index",
+    "command": [
+      "cloud-vendor-account",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_create_org",
+    "command": [
+      "api-key-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_create_project",
+    "command": [
+      "api-key-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_show_org",
+    "command": [
+      "api-key-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_show_project",
+    "command": [
+      "api-key-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_update_org",
+    "command": [
+      "api-key-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_API_Key_Credential_update_project",
+    "command": [
+      "api-key-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_create_org",
+    "command": [
+      "aws-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_create_project",
+    "command": [
+      "aws-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_show_org",
+    "command": [
+      "aws-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_show_project",
+    "command": [
+      "aws-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_update_org",
+    "command": [
+      "aws-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_Credential_update_project",
+    "command": [
+      "aws-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_create_org",
+    "command": [
+      "awssts-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_create_project",
+    "command": [
+      "awssts-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_show_org",
+    "command": [
+      "awssts-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_show_project",
+    "command": [
+      "awssts-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_update_org",
+    "command": [
+      "awssts-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_AWS_STS_Credential_update_project",
+    "command": [
+      "awssts-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_create_org",
+    "command": [
+      "basic-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_create_project",
+    "command": [
+      "basic-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_show_org",
+    "command": [
+      "basic-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_show_project",
+    "command": [
+      "basic-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_update_org",
+    "command": [
+      "basic-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Basic_Credential_update_project",
+    "command": [
+      "basic-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Credential_delete_org",
+    "command": [
+      "credential",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Credential_delete_project",
+    "command": [
+      "credential",
+      "delete-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Credential_index_org",
+    "command": [
+      "credential",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Credential_index_project",
+    "command": [
+      "credential",
+      "list-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_create_org",
+    "command": [
+      "digest-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_create_project",
+    "command": [
+      "digest-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_show_org",
+    "command": [
+      "digest-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_show_project",
+    "command": [
+      "digest-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_update_org",
+    "command": [
+      "digest-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Digest_Credential_update_project",
+    "command": [
+      "digest-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_create_org",
+    "command": [
+      "ntlm-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_create_project",
+    "command": [
+      "ntlm-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_show_org",
+    "command": [
+      "ntlm-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_show_project",
+    "command": [
+      "ntlm-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_update_org",
+    "command": [
+      "ntlm-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_NTLM_Credential_update_project",
+    "command": [
+      "ntlm-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_create_org",
+    "command": [
+      "o-auth2-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_create_project",
+    "command": [
+      "o-auth2-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_show_org",
+    "command": [
+      "o-auth2-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_show_project",
+    "command": [
+      "o-auth2-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_update_org",
+    "command": [
+      "o-auth2-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_OAuth2_Credential_update_project",
+    "command": [
+      "o-auth2-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_create_org",
+    "command": [
+      "oracle-credential",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_create_project",
+    "command": [
+      "oracle-credential",
+      "replace-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_show_org",
+    "command": [
+      "oracle-credential",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_show_project",
+    "command": [
+      "oracle-credential",
+      "get-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_update_org",
+    "command": [
+      "oracle-credential",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Cred_Oracle_Credential_update_project",
+    "command": [
+      "oracle-credential",
+      "update-project"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Divnt_trigger_onboarding_delete_data_inventory_v1_orgs_org_id_onboarding_connector_id_delete",
+    "command": [
+      "onboarding",
+      "delete-data-inventory"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Divnt_trigger_onboarding_post_data_inventory_v1_orgs_org_id_onboarding_post",
+    "command": [
+      "onboarding",
+      "onboarding-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Divnt_trigger_onboarding_put_data_inventory_v1_orgs_org_id_onboarding_connector_id_put",
+    "command": [
+      "onboarding",
+      "onboarding"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Audit_indexAuditResults",
+    "command": [
+      "billing-audit",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_createCreditAssignment",
+    "command": [
+      "billing-credits",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_deleteCreditAssignment",
+    "command": [
+      "billing-credits",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_indexCreditAssignments",
+    "command": [
+      "billing-credits",
+      "assignments"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_indexVendorCredits",
+    "command": [
+      "billing-credits",
+      "vendor-credits"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_replaceCreditAssignment",
+    "command": [
+      "billing-credits",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Credits_showCreditAssignment",
+    "command": [
+      "billing-credits",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_createEnterpriseRule",
+    "command": [
+      "billing",
+      "rules-rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_createPlan",
+    "command": [
+      "billing",
+      "plans-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_createPostAdjustment",
+    "command": [
+      "billing",
+      "post-plan-rules-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_createPreAdjustment",
+    "command": [
+      "billing",
+      "pre-plan-rules-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_createRule",
+    "command": [
+      "billing",
+      "rules-plans"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_deleteEnterpriseRule",
+    "command": [
+      "billing",
+      "delete-rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_deletePlan",
+    "command": [
+      "billing",
+      "plans-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_deletePostAdjustment",
+    "command": [
+      "billing",
+      "post-plan-rules-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_deletePreAdjustment",
+    "command": [
+      "billing",
+      "pre-plan-rules-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_deleteRule",
+    "command": [
+      "billing",
+      "delete-plans"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_indexEnterpriseRules",
+    "command": [
+      "billing",
+      "list-rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_indexPlans",
+    "command": [
+      "billing",
+      "plans-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_indexPostAdjustments",
+    "command": [
+      "billing",
+      "post-plan-rules-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_indexPreAdjustments",
+    "command": [
+      "billing",
+      "pre-plan-rules-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_indexRules",
+    "command": [
+      "billing",
+      "list-plans"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replaceEnterpriseRule",
+    "command": [
+      "billing",
+      "replace-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replaceEnterpriseRuleset",
+    "command": [
+      "billing",
+      "replace-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replacePlan",
+    "command": [
+      "billing",
+      "plans"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replacePostAdjustment",
+    "command": [
+      "billing",
+      "post-plan-rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replacePreAdjustment",
+    "command": [
+      "billing",
+      "pre-plan-rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_replaceRule",
+    "command": [
+      "billing",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_showCustomerStatus",
+    "command": [
+      "billing",
+      "customer-status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_showPlan",
+    "command": [
+      "billing",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Settings_replaceSettings",
+    "command": [
+      "settings",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Settings_showSettings",
+    "command": [
+      "settings",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_create",
+    "command": [
+      "shared-cost-rules",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_delete",
+    "command": [
+      "shared-cost-rules",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_index",
+    "command": [
+      "shared-cost-rules",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_reorder",
+    "command": [
+      "shared-cost-rules",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_show",
+    "command": [
+      "shared-cost-rules",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_update",
+    "command": [
+      "shared-cost-rules",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Report_Subscriptions_create",
+    "command": [
+      "report-subscriptions",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Report_Subscriptions_delete",
+    "command": [
+      "report-subscriptions",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Report_Subscriptions_index",
+    "command": [
+      "report-subscriptions",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Report_Subscriptions_show",
+    "command": [
+      "report-subscriptions",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Report_Subscriptions_update",
+    "command": [
+      "report-subscriptions",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_index",
+    "command": [
+      "rule-based-dimension",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create",
+    "command": [
+      "rule-based-dimension",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_delete",
+    "command": [
+      "rule-based-dimension",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_show",
+    "command": [
+      "rule-based-dimension",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_summary_show",
+    "command": [
+      "rule-based-dimension",
+      "summary"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_update",
+    "command": [
+      "rule-based-dimension",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_delete",
+    "command": [
+      "rule-based-dimension",
+      "rules-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_replace",
+    "command": [
+      "rule-based-dimension",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_show",
+    "command": [
+      "rule-based-dimension",
+      "rules"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_create",
+    "command": [
+      "saved-filters",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_delete",
+    "command": [
+      "saved-filters",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_index",
+    "command": [
+      "saved-filters",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_patch",
+    "command": [
+      "saved-filters",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_show",
+    "command": [
+      "saved-filters",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Saved_Filters_update",
+    "command": [
+      "saved-filters",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Tag_Dimension_create",
+    "command": [
+      "tag-dimension",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Tag_Dimension_delete",
+    "command": [
+      "tag-dimension",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Tag_Dimension_index",
+    "command": [
+      "tag-dimension",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Tag_Dimension_show",
+    "command": [
+      "tag-dimension",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Tag_Dimension_update",
+    "command": [
+      "tag-dimension",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMRole",
+    "command": [
+      "bill-connect",
+      "aws",
+      "iam-role-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMUser",
+    "command": [
+      "bill-connect",
+      "aws",
+      "iam-user-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_delete",
+    "command": [
+      "bill-connect",
+      "aws",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_show",
+    "command": [
+      "bill-connect",
+      "aws",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMRole",
+    "command": [
+      "bill-connect",
+      "aws",
+      "iam-role"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMUser",
+    "command": [
+      "bill-connect",
+      "aws",
+      "iam-user"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_AWS_validate",
+    "command": [
+      "bill-connect",
+      "aws",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_create",
+    "command": [
+      "bill-connect",
+      "azure-csp",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_delete",
+    "command": [
+      "bill-connect",
+      "azure-csp",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_show",
+    "command": [
+      "bill-connect",
+      "azure-csp",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_update",
+    "command": [
+      "bill-connect",
+      "azure-csp",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_validate",
+    "command": [
+      "bill-connect",
+      "azure-csp",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_create",
+    "command": [
+      "bill-connect",
+      "azure-ea-management",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_delete",
+    "command": [
+      "bill-connect",
+      "azure-ea-management",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_show",
+    "command": [
+      "bill-connect",
+      "azure-ea-management",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_update",
+    "command": [
+      "bill-connect",
+      "azure-ea-management",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_validate",
+    "command": [
+      "bill-connect",
+      "azure-ea-management",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_createMcaBillConnect",
+    "command": [
+      "bill-connect",
+      "azure-mca",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_delete",
+    "command": [
+      "bill-connect",
+      "azure-mca",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_show",
+    "command": [
+      "bill-connect",
+      "azure-mca",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_updateMcaBillConnect",
+    "command": [
+      "bill-connect",
+      "azure-mca",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_validate",
+    "command": [
+      "bill-connect",
+      "azure-mca",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_create",
+    "command": [
+      "bill-connect",
+      "common-bill-ingestion",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_delete",
+    "command": [
+      "bill-connect",
+      "common-bill-ingestion",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_show",
+    "command": [
+      "bill-connect",
+      "common-bill-ingestion",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_update",
+    "command": [
+      "bill-connect",
+      "common-bill-ingestion",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_validate",
+    "command": [
+      "bill-connect",
+      "common-bill-ingestion",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Databricks_create",
+    "command": [
+      "bill-connect",
+      "databricks",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Databricks_delete",
+    "command": [
+      "bill-connect",
+      "databricks",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Databricks_show",
+    "command": [
+      "bill-connect",
+      "databricks",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Databricks_update",
+    "command": [
+      "bill-connect",
+      "databricks",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Databricks_validate",
+    "command": [
+      "bill-connect",
+      "databricks",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_GCP_create",
+    "command": [
+      "bill-connect",
+      "gcp",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_GCP_delete",
+    "command": [
+      "bill-connect",
+      "gcp",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_GCP_show",
+    "command": [
+      "bill-connect",
+      "gcp",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_GCP_update",
+    "command": [
+      "bill-connect",
+      "gcp",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_GCP_validate",
+    "command": [
+      "bill-connect",
+      "gcp",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_create",
+    "command": [
+      "bill-connect-snowflake",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_delete",
+    "command": [
+      "bill-connect-snowflake",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_show",
+    "command": [
+      "bill-connect-snowflake",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_update",
+    "command": [
+      "bill-connect-snowflake",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_validate",
+    "command": [
+      "bill-connect-snowflake",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_index",
+    "command": [
+      "bill-connect",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Bill_Connect_validate",
+    "command": [
+      "bill-connect",
+      "validations"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Processing_History_download",
+    "command": [
+      "processing-history",
+      "download"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Processing_History_index",
+    "command": [
+      "processing-history",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Processing_History_reprocess",
+    "command": [
+      "processing-history",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Graphql_graphql_query",
+    "command": [
+      "graphql",
+      "graphql"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Graphql_graphql_tableSchema",
+    "command": [
+      "graphql",
+      "table-schema"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Grs_Project_indexForOrg",
+    "command": [
+      "project",
+      "list-grs"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Grs_User_orgIndex",
+    "command": [
+      "user",
+      "orgs"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_API_Event_index",
+    "command": [
+      "api-event",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_create",
+    "command": [
+      "access-policy",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_delete",
+    "command": [
+      "access-policy",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_getUserAccessPolicies",
+    "command": [
+      "access-policy",
+      "users"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_index",
+    "command": [
+      "access-policy",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_show",
+    "command": [
+      "access-policy",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Policy_update",
+    "command": [
+      "access-policy",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Rule_grant",
+    "command": [
+      "access-rule",
+      "grant"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Rule_index",
+    "command": [
+      "access-rule",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Access_Rule_revoke",
+    "command": [
+      "access-rule",
+      "revoke"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Capability_index",
+    "command": [
+      "capability",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Capability_show",
+    "command": [
+      "capability",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_activation",
+    "command": [
+      "contracts",
+      "activation"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_create",
+    "command": [
+      "contracts",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_delete",
+    "command": [
+      "contracts",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_index",
+    "command": [
+      "contracts",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_show",
+    "command": [
+      "contracts",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Contracts_update",
+    "command": [
+      "contracts",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Customization_Type_index",
+    "command": [
+      "customization-type",
+      "list-iam"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Customization_Type_show",
+    "command": [
+      "customization-type",
+      "get-iam"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Customization_index",
+    "command": [
+      "customization",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Customization_show",
+    "command": [
+      "customization",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Customization_update",
+    "command": [
+      "customization",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Event_index",
+    "command": [
+      "event",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_Delete",
+    "command": [
+      "group",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_Membership_create",
+    "command": [
+      "group-membership",
+      "memberships"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_Membership_delete",
+    "command": [
+      "group-membership",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_Membership_index",
+    "command": [
+      "group-membership",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_Membership_replace",
+    "command": [
+      "group-membership",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_create",
+    "command": [
+      "group",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_index",
+    "command": [
+      "group",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_show",
+    "command": [
+      "group",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Group_update",
+    "command": [
+      "group",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_IP_Access_Control_index_rules",
+    "command": [
+      "ip-access-control",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_IP_Access_Control_replace_rules",
+    "command": [
+      "ip-access-control",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Create",
+    "command": [
+      "msp-customer",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Delete",
+    "command": [
+      "msp-customer",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Domain_Verify",
+    "command": [
+      "msp-customer-domain",
+      "verify"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Index",
+    "command": [
+      "msp-customer",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Show",
+    "command": [
+      "msp-customer",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Tag_Create",
+    "command": [
+      "msp-customer-tag",
+      "tags"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Tag_Delete",
+    "command": [
+      "msp-customer-tag",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Tag_Index_Customers",
+    "command": [
+      "msp-customer-tag",
+      "list-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Tag_Show",
+    "command": [
+      "msp-customer-tag",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_Update",
+    "command": [
+      "msp-customer",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_BulkCreateV2",
+    "command": [
+      "msp-customer-v2",
+      "bulk"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_BulkDeleteV2",
+    "command": [
+      "msp-customer-v2",
+      "bulk-delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_CreateV2",
+    "command": [
+      "msp-customer-v2",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_DeleteV2",
+    "command": [
+      "msp-customer-v2",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_IndexV2",
+    "command": [
+      "msp-customer-v2",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_ShowV2",
+    "command": [
+      "msp-customer-v2",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_MSP_Customer_V2_UpdateV2",
+    "command": [
+      "msp-customer-v2",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Org_Login_Policy_show",
+    "command": [
+      "org-login-policy",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Org_Login_Policy_update",
+    "command": [
+      "org-login-policy",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_Invitation_create",
+    "command": [
+      "organization-invitation",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_Invitation_delete",
+    "command": [
+      "organization-invitation",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_Invitation_index",
+    "command": [
+      "organization-invitation",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_Invitation_resend",
+    "command": [
+      "organization-invitation",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_Invitation_show",
+    "command": [
+      "organization-invitation",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_show",
+    "command": [
+      "organization",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Organization_show_msp",
+    "command": [
+      "organization",
+      "msp"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Project_Index",
+    "command": [
+      "project",
+      "list-iam"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Refresh_Token_Index",
+    "command": [
+      "refresh-token",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Refresh_Token_Revoke",
+    "command": [
+      "refresh-token",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Refresh_Token_RevokeAll",
+    "command": [
+      "refresh-token",
+      "delete-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Refresh_Token_Show",
+    "command": [
+      "refresh-token",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Role_index",
+    "command": [
+      "role",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Role_show",
+    "command": [
+      "role",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Domain_delete",
+    "command": [
+      "saml2-domain",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Domain_index",
+    "command": [
+      "saml2-domain",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Domain_register",
+    "command": [
+      "saml2-domain",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Domain_show",
+    "command": [
+      "saml2-domain",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Domain_verify",
+    "command": [
+      "saml2-domain",
+      "verify"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_generate",
+    "command": [
+      "saml2-identity-provider-signing-key",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_index",
+    "command": [
+      "saml2-identity-provider-signing-key",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_show",
+    "command": [
+      "saml2-identity-provider-signing-key",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_create",
+    "command": [
+      "saml2-identity-provider",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_delete",
+    "command": [
+      "saml2-identity-provider",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_index",
+    "command": [
+      "saml2-identity-provider",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_metadata",
+    "command": [
+      "saml2-identity-provider",
+      "metadata-xml"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_show",
+    "command": [
+      "saml2-identity-provider",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Identity_Provider_update",
+    "command": [
+      "saml2-identity-provider",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SAML2_Single_Identity_Provider_show",
+    "command": [
+      "saml2-single-identity-provider",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Config_index_resource_types",
+    "command": [
+      "scim-config",
+      "resource-types-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Config_index_schemas",
+    "command": [
+      "scim-config",
+      "schemas-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Config_index_service_provider_config",
+    "command": [
+      "scim-config",
+      "service-provider-config"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Config_show_resource_type",
+    "command": [
+      "scim-config",
+      "resource-types"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Config_show_schema",
+    "command": [
+      "scim-config",
+      "schemas"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_create",
+    "command": [
+      "scim-group",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_delete",
+    "command": [
+      "scim-group",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_index",
+    "command": [
+      "scim-group",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_replace",
+    "command": [
+      "scim-group",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_show",
+    "command": [
+      "scim-group",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_Group_update",
+    "command": [
+      "scim-group",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_create",
+    "command": [
+      "scim-user",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_delete",
+    "command": [
+      "scim-user",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_index",
+    "command": [
+      "scim-user",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_replace",
+    "command": [
+      "scim-user",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_show",
+    "command": [
+      "scim-user",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_SCIM_User_update",
+    "command": [
+      "scim-user",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_Create",
+    "command": [
+      "service-account-client",
+      "clients"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_Delete",
+    "command": [
+      "service-account-client",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_DeleteOldSecret",
+    "command": [
+      "service-account-client",
+      "client-secret"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_Index",
+    "command": [
+      "service-account-client",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_IndexClientSecrets",
+    "command": [
+      "service-account-client",
+      "client-secrets"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_Rotate",
+    "command": [
+      "service-account-client",
+      "client-secret-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Client_Show",
+    "command": [
+      "service-account-client",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Create",
+    "command": [
+      "service-account",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Delete",
+    "command": [
+      "service-account",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Index",
+    "command": [
+      "service-account",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Show",
+    "command": [
+      "service-account",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_Service_Account_Update",
+    "command": [
+      "service-account",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Delete",
+    "command": [
+      "user",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Invitation_accept_invitation",
+    "command": [
+      "user-invitation",
+      "accept"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Invitation_decline_invitation",
+    "command": [
+      "user-invitation",
+      "decline"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Invitation_index",
+    "command": [
+      "user-invitation",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Invitation_show",
+    "command": [
+      "user-invitation",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Memberships_index",
+    "command": [
+      "user-memberships",
+      "orgs"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Memberships_indexProjects",
+    "command": [
+      "user-memberships",
+      "projects"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Memberships_showPrivilegesReport",
+    "command": [
+      "user-memberships",
+      "privileges-report"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Profile_show",
+    "command": [
+      "user-profile",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Profile_update",
+    "command": [
+      "user-profile",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Setting_Blob_retrive_get_url",
+    "command": [
+      "user-setting-blob",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Setting_Blob_retrive_put_url",
+    "command": [
+      "user-setting-blob",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_Update",
+    "command": [
+      "user",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_create",
+    "command": [
+      "user",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_index",
+    "command": [
+      "user",
+      "users"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_show",
+    "command": [
+      "user",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Iam_User_user_groups",
+    "command": [
+      "user",
+      "groups"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "OptimaRecommendations_Recommendations_index",
+    "command": [
+      "recommendations",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "OptimaRecommendations_Recommendations_updateStatus",
+    "command": [
+      "recommendations",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Action_Status_index",
+    "command": [
+      "policy",
+      "action-status",
+      "list"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Action_Status_show",
+    "command": [
+      "policy",
+      "action-status",
+      "get"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_create",
+    "command": [
+      "policy",
+      "applied-policy",
+      "create"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_delete",
+    "command": [
+      "policy",
+      "applied-policy",
+      "delete"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_evaluate",
+    "command": [
+      "policy",
+      "applied-policy",
+      "evaluate"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_index",
+    "command": [
+      "policy",
+      "applied-policy",
+      "list"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_show",
+    "command": [
+      "policy",
+      "applied-policy",
+      "get"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_showLog",
+    "command": [
+      "policy",
+      "applied-policy",
+      "log"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_showStatus",
+    "command": [
+      "policy",
+      "applied-policy",
+      "status"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Applied_Policy_update",
+    "command": [
+      "policy",
+      "applied-policy",
+      "update"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Archived_Incident_index",
+    "command": [
+      "policy",
+      "archived-incident",
+      "list"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Archived_Incident_show",
+    "command": [
+      "policy",
+      "archived-incident",
+      "get"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_CustomCatalog_index",
+    "command": [
+      "custom-catalog",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_CustomCatalog_showTag",
+    "command": [
+      "custom-catalog",
+      "tag"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_CustomCatalog_upsertTag",
+    "command": [
+      "custom-catalog",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Type_index",
+    "command": [
+      "customization-type",
+      "list-policy"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Type_show",
+    "command": [
+      "customization-type",
+      "get-policy"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Value_delete",
+    "command": [
+      "customization-value",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Value_index",
+    "command": [
+      "customization-value",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Value_show",
+    "command": [
+      "customization-value",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Customization_Value_upsert",
+    "command": [
+      "customization-value",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Incident_Aggregate_index",
+    "command": [
+      "incident-aggregate",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Incident_Aggregate_show",
+    "command": [
+      "incident-aggregate",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Aggregate_create",
+    "command": [
+      "policy-aggregate",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Aggregate_delete",
+    "command": [
+      "policy-aggregate",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Aggregate_index",
+    "command": [
+      "policy-aggregate",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Aggregate_show",
+    "command": [
+      "policy-aggregate",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Aggregate_update",
+    "command": [
+      "policy-aggregate",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_create",
+    "command": [
+      "policy-manager",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_delete",
+    "command": [
+      "policy-manager",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_index",
+    "command": [
+      "policy-manager",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_show",
+    "command": [
+      "policy-manager",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_summary",
+    "command": [
+      "policy-manager",
+      "summary"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_update",
+    "command": [
+      "policy-manager",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Manager_updateTemplate",
+    "command": [
+      "policy-manager",
+      "update-template"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_create",
+    "command": [
+      "policy",
+      "policy-template",
+      "create"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_delete",
+    "command": [
+      "policy",
+      "policy-template",
+      "delete"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_evaluate",
+    "command": [
+      "policy",
+      "policy-template",
+      "evaluate"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_index",
+    "command": [
+      "policy",
+      "policy-template",
+      "list"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_show",
+    "command": [
+      "policy",
+      "policy-template",
+      "get"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_update",
+    "command": [
+      "policy",
+      "policy-template",
+      "update"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Policy_Template_validate",
+    "command": [
+      "policy",
+      "policy-template",
+      "validate"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Policy_Published_Template_create",
+    "command": [
+      "published-template",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_delete",
+    "command": [
+      "published-template",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_hide",
+    "command": [
+      "published-template",
+      "hide"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_index",
+    "command": [
+      "published-template",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_show",
+    "command": [
+      "published-template",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_unhide",
+    "command": [
+      "published-template",
+      "unhide"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Published_Template_update",
+    "command": [
+      "published-template",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Unmanaged_Applied_Policies_index",
+    "command": [
+      "unmanaged-applied-policies",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Policy_Unmanaged_Incidents_index",
+    "command": [
+      "unmanaged-incidents",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_create_notification_risk_v1_orgs_orgId_notifications_create_post",
+    "command": [
+      "notifications",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_enumerate_filter_values_risk_v1_orgs_orgId_vulnerability_enumerate_post",
+    "command": [
+      "vulnerability",
+      "enumerate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_enumerate_filter_values_vulnerability_enumerate_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "enumerate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_compliance_data_risk_v1_orgs_orgId_compliance_export_post",
+    "command": [
+      "compliance",
+      "export"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-7"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_findings_distribution_risk_v1_orgs_orgId_vulnerability_findings_distribution_export_post",
+    "command": [
+      "vulnerability",
+      "create-findings-distribution"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_individual_cves_risk_v1_orgs_orgId_vulnerability_failed_assets_export_post",
+    "command": [
+      "vulnerability",
+      "create-failed-assets"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_export_list_findings_distribution_risk_v1_orgs_orgId_vulnerability_list_export_post",
+    "command": [
+      "vulnerability",
+      "create-list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_agent_onboarding_status_risk_v1_orgs_orgId_vulnerability_oneagent_onboarding_status_get",
+    "command": [
+      "vulnerability",
+      "oneagent-onboarding-status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_agent_onboarding_status_vulnerability_oneagent_onboarding_status_orgId_get",
+    "command": [
+      "vulnerability-local",
+      "oneagent-onboarding-status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post",
+    "command": [
+      "regulatory-compliance",
+      "asset-statistics"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post",
+    "command": [
+      "regulatory-compliance",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post",
+    "command": [
+      "regulatory-compliance",
+      "filter"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_cis_benchmark_details_risk_v1_orgs_orgId_compliance_cis_post",
+    "command": [
+      "compliance",
+      "cis"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_compliance_favorites_risk_v1_orgs_orgId_compliance_trend_post",
+    "command": [
+      "compliance",
+      "trend"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_compliance_standards_risk_v1_orgs_orgId_compliance_standard_post",
+    "command": [
+      "compliance",
+      "standard"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post",
+    "command": [
+      "regulatory-compliance",
+      "conformity-summary"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_cve_details_risk_v1_orgs_orgId_vulnerability_cve_get",
+    "command": [
+      "vulnerability",
+      "cve"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_cve_details_vulnerability_cve_orgId_get",
+    "command": [
+      "vulnerability-local",
+      "cve"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post",
+    "command": [
+      "regulatory-compliance",
+      "failed-asset"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-6"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_failed_assets_risk_v1_orgs_orgId_vulnerability_failed_assets_post",
+    "command": [
+      "vulnerability",
+      "failed-assets"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_failed_assets_vulnerability_failed_assets_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "failed-assets"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_distribution_risk_v1_orgs_orgId_vulnerability_findings_distribution_post",
+    "command": [
+      "vulnerability",
+      "findings-distribution"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_distribution_vulnerability_findings_distribution_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "findings-distribution"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_summary_risk_v1_orgs_orgId_vulnerability_total_findings_post",
+    "command": [
+      "vulnerability",
+      "total-findings"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_summary_vulnerability_total_findings_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "total-findings"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_trend_risk_v1_orgs_orgId_vulnerability_findings_trend_post",
+    "command": [
+      "vulnerability",
+      "findings-trend"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_findings_trend_vulnerability_findings_trend_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "findings-trend"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post",
+    "command": [
+      "regulatory-compliance",
+      "lifecycle-forecast"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post",
+    "command": [
+      "regulatory-compliance",
+      "lifecycle-trend"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_list_findings_distribution_risk_v1_orgs_orgId_vulnerability_list_post",
+    "command": [
+      "vulnerability",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_list_findings_distribution_vulnerability_list_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-4"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-9"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post",
+    "command": [
+      "regulatory-compliance",
+      "overview"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-8"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_open_cve_counts_risk_v1_orgs_orgId_vulnerability_open_cve_post",
+    "command": [
+      "vulnerability",
+      "open-cve"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_open_cve_counts_vulnerability_open_cve_orgId_post",
+    "command": [
+      "vulnerability-local",
+      "open-cve"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_remediation_steps_recommendation_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get",
+    "command": [
+      "misconfiguration-ui",
+      "get-recommendation"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get",
+    "command": [
+      "misconfiguration-ui",
+      "get-risk"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_risk_details_recommendation_v1_orgs_orgId_misconfiguration_risk_riskId_details_get",
+    "command": [
+      "misconfiguration-ui",
+      "list-recommendation"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get",
+    "command": [
+      "misconfiguration-ui",
+      "list-risk"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_standard_control_details_risk_v1_orgs_orgId_compliance_standard_name_control_post",
+    "command": [
+      "compliance",
+      "control"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post",
+    "command": [
+      "regulatory-compliance",
+      "year-wise-asset-list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_list_compliances_risk_v1_orgs_orgId_compliances_get",
+    "command": [
+      "compliance",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post",
+    "command": [
+      "regulatory-compliance",
+      "suppress"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post",
+    "command": [
+      "misconfiguration-ui",
+      "create-all-5"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post",
+    "command": [
+      "misconfiguration-ui",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Risk_toggle_compliance_favorite_risk_v1_orgs_orgId_compliance_favorite_patch",
+    "command": [
+      "compliance",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Application_User_Activity_Count_indexActivityCountByRanges",
+    "command": [
+      "application-user-activity-count",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Customer_Group_Type_index",
+    "command": [
+      "customer-group-type",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Customer_Group_Type_show",
+    "command": [
+      "customer-group-type",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Customer_Group_Type_summary",
+    "command": [
+      "customer-group-type",
+      "summary"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Customer_Group_index",
+    "command": [
+      "customer-group",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Customer_Group_show",
+    "command": [
+      "customer-group",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Discovered_Application_usage",
+    "command": [
+      "discovered-application",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Import_Job_createManagedAppImportJob",
+    "command": [
+      "import-job",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Import_Job_index",
+    "command": [
+      "import-job",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Import_Job_show",
+    "command": [
+      "import-job",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_allocation_create",
+    "command": [
+      "license",
+      "allocations-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_allocation_delete",
+    "command": [
+      "license",
+      "allocations-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_allocation_index",
+    "command": [
+      "license",
+      "allocations-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_allocation_update",
+    "command": [
+      "license",
+      "allocations"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_create",
+    "command": [
+      "license",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_delete",
+    "command": [
+      "license",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_fee_create",
+    "command": [
+      "license",
+      "fees-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_fee_delete",
+    "command": [
+      "license",
+      "fees-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_fee_index",
+    "command": [
+      "license",
+      "fees-all-4"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_fee_show",
+    "command": [
+      "license",
+      "fees-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_fee_update",
+    "command": [
+      "license",
+      "fees"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_index",
+    "command": [
+      "license",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_note_create",
+    "command": [
+      "license",
+      "notes-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_note_delete",
+    "command": [
+      "license",
+      "notes-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_note_index",
+    "command": [
+      "license",
+      "notes-all-4"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_note_show",
+    "command": [
+      "license",
+      "notes-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_note_update",
+    "command": [
+      "license",
+      "notes"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_purchase_create",
+    "command": [
+      "license",
+      "purchases-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_purchase_delete",
+    "command": [
+      "license",
+      "purchases-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_purchase_index",
+    "command": [
+      "license",
+      "purchases-all-4"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_purchase_show",
+    "command": [
+      "license",
+      "purchases-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_purchase_update",
+    "command": [
+      "license",
+      "purchases"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_show",
+    "command": [
+      "license",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_term_create",
+    "command": [
+      "license",
+      "terms-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_term_delete",
+    "command": [
+      "license",
+      "terms-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_term_index",
+    "command": [
+      "license",
+      "terms-all-4"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_term_show",
+    "command": [
+      "license",
+      "terms-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_term_update",
+    "command": [
+      "license",
+      "terms"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_License_update",
+    "command": [
+      "license",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_Event_index",
+    "command": [
+      "managed-application-event",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_Event_show",
+    "command": [
+      "managed-application-event",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_User_index",
+    "command": [
+      "managed-application-user",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_User_indexHistory",
+    "command": [
+      "managed-application-user",
+      "history"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_User_show",
+    "command": [
+      "managed-application-user",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_delete",
+    "command": [
+      "managed-application",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_index",
+    "command": [
+      "managed-application",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_indexEvents",
+    "command": [
+      "managed-application",
+      "app-events"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_indexUsers",
+    "command": [
+      "managed-application",
+      "app-users"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_show",
+    "command": [
+      "managed-application",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Managed_Application_update",
+    "command": [
+      "managed-application",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Metric_Query_eventCountsByType",
+    "command": [
+      "metric-query",
+      "event-counts-by-type"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Metric_Query_query",
+    "command": [
+      "metric-query",
+      "stored-metric-queries"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Metric_Query_totalEventCounts",
+    "command": [
+      "metric-query",
+      "total-event-counts"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Metric_Query_userCountsByEventsPerformed",
+    "command": [
+      "metric-query",
+      "user-counts-by-events-performed"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Object_Definition_index",
+    "command": [
+      "object-definition",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Object_Definition_show",
+    "command": [
+      "object-definition",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_SaaS_Data_create",
+    "command": [
+      "saa-s-data",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_SaaS_Data_index",
+    "command": [
+      "saa-s-data",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_SaaS_Data_show",
+    "command": [
+      "saa-s-data",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_SaaS_Data_upload",
+    "command": [
+      "saa-s-data",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_create",
+    "command": [
+      "usage-group",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_createCost",
+    "command": [
+      "usage-group",
+      "costs-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_delete",
+    "command": [
+      "usage-group",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_deleteCost",
+    "command": [
+      "usage-group",
+      "costs-all-2"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_index",
+    "command": [
+      "usage-group",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_show",
+    "command": [
+      "usage-group",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_showCost",
+    "command": [
+      "usage-group",
+      "costs-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_update",
+    "command": [
+      "usage-group",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Group_updateCost",
+    "command": [
+      "usage-group",
+      "costs"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Saas_Usage_Message_Query_index",
+    "command": [
+      "usage-message-query",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post",
+    "command": [
+      "saa-s-onboarding",
+      "collect"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post",
+    "command": [
+      "saa-s-onboarding",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete",
+    "command": [
+      "saa-s-onboarding",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_cloud_connectors_status_get",
+    "command": [
+      "connector",
+      "status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_saas_connectors_status_get",
+    "command": [
+      "saa-s-connector",
+      "status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_cloud_connectors_identifier_get",
+    "command": [
+      "connector",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_saas_connectors_identifier_get",
+    "command": [
+      "saa-s-connector",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get",
+    "command": [
+      "connector",
+      "count"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_saas_connectors_count_get",
+    "command": [
+      "saa-s-connector",
+      "count"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_cloud_connectors_get",
+    "command": [
+      "connector",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_saas_connectors_get",
+    "command": [
+      "saa-s-connector",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_trigger_onboarding_delete_uobs_v1_orgs_org_id_cloud_onboarding_delete",
+    "command": [
+      "onboarding",
+      "delete-uobs"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_trigger_onboarding_post_gcp_uobs_v1_orgs_org_id_cloud_onboarding_gcp_post",
+    "command": [
+      "onboarding",
+      "gcp-all"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_trigger_onboarding_put_gcp_uobs_v1_orgs_org_id_cloud_onboarding_gcp_connector_id_put",
+    "command": [
+      "onboarding",
+      "gcp"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put",
+    "command": [
+      "saa-s-onboarding",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post",
+    "command": [
+      "saa-s-onboarding",
+      "validate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_Device_delete",
+    "command": [
+      "device",
+      "submit"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_Device_estimateDelete",
+    "command": [
+      "device",
+      "estimate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_ExportDownload",
+    "command": [
+      "export-retired",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_ExportIndex",
+    "command": [
+      "export-retired",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_Query_create",
+    "command": [
+      "query",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_Query_download",
+    "command": [
+      "query",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Vis_Query_show",
+    "command": [
+      "query",
+      "get"
+    ],
+    "ownership": "generated"
+  }
+]

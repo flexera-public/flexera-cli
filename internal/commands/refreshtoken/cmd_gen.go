@@ -40,48 +40,59 @@ func NewCmd() *cobra.Command {
 // newRefreshTokenDeleteAllCmd — DELETE /iam/v1/refresh-tokens (operationId: Iam_Refresh_Token_RevokeAll)
 func newRefreshTokenDeleteAllCmd() *cobra.Command {
 	var (
-		orgID  int
 		userID int
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete-all",
-		Short: "Revoke all user refresh tokens",
-		Args:  cobra.NoArgs,
+		Use:         "delete-all",
+		Short:       "Revoke all user refresh tokens",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli refresh-token delete-all\n  flexera-cli refresh-token delete-all --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Refresh_Token_RevokeAll", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Refresh_Token_RevokeAll")
 			if err != nil {
 				return err
 			}
 			params := flexera.IamRefreshTokenRevokeAllParams{}
-			if cmd.Flags().Changed("org-id") {
-				v := orgID
+			if _, supplied := effectiveParams["org-id"]; supplied {
+				v := deps.Config.OrgID
 				params.OrgId = &v
 			}
 			if cmd.Flags().Changed("user-id") {
 				v := userID
 				params.UserId = &v
 			}
-			writePlan := map[string]any{"method": "DELETE /iam/v1/refresh-tokens"}
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/iam/v1/refresh-tokens", Params: planParams, Destructive: true}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamRefreshTokenRevokeAllWithResponse(cmd.Context(), &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgId (query)")
 	c.Flags().IntVar(&userID, "user-id", 0, "userId (query)")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
@@ -92,18 +103,20 @@ func newRefreshTokenDeleteAllCmd() *cobra.Command {
 func newRefreshTokenDeleteCmd() *cobra.Command {
 	var (
 		id     string
-		orgID  int
 		userID int
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Revoke a refresh token",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Revoke a refresh token",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli refresh-token delete --id ID\n  flexera-cli refresh-token delete --id ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Refresh_Token_Revoke", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Refresh_Token_Revoke")
 			if err != nil {
 				return err
 			}
@@ -111,33 +124,42 @@ func newRefreshTokenDeleteCmd() *cobra.Command {
 				return fmt.Errorf("--id is required")
 			}
 			params := flexera.IamRefreshTokenRevokeParams{}
-			if cmd.Flags().Changed("org-id") {
-				v := orgID
+			if _, supplied := effectiveParams["org-id"]; supplied {
+				v := deps.Config.OrgID
 				params.OrgId = &v
 			}
 			if cmd.Flags().Changed("user-id") {
 				v := userID
 				params.UserId = &v
 			}
-			writePlan := map[string]any{"method": "DELETE /iam/v1/refresh-tokens/{id}"}
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/iam/v1/refresh-tokens/{id}", Params: planParams, Destructive: true}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamRefreshTokenRevokeWithResponse(cmd.Context(), id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgId (query)")
 	c.Flags().IntVar(&userID, "user-id", 0, "userId (query)")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
@@ -150,26 +172,46 @@ func newRefreshTokenGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show a refresh token",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show a refresh token",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli refresh-token get --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Refresh_Token_Show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Refresh_Token_Show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.IamRefreshTokenShowWithResponse(cmd.Context(), id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -179,39 +221,57 @@ func newRefreshTokenGetCmd() *cobra.Command {
 // newRefreshTokenListCmd — GET /iam/v1/refresh-tokens (operationId: Iam_Refresh_Token_Index)
 func newRefreshTokenListCmd() *cobra.Command {
 	var (
-		orgID  int
 		userID int
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index a user's refresh tokens",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index a user's refresh tokens",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli refresh-token list",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Refresh_Token_Index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Refresh_Token_Index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamRefreshTokenIndexParams{}
-			if cmd.Flags().Changed("org-id") {
-				v := orgID
+			if _, supplied := effectiveParams["org-id"]; supplied {
+				v := deps.Config.OrgID
 				params.OrgId = &v
 			}
 			if cmd.Flags().Changed("user-id") {
 				v := userID
 				params.UserId = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamRefreshTokenIndexWithResponse(cmd.Context(), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
-	c.Flags().IntVar(&orgID, "org-id", 0, "orgId (query)")
 	c.Flags().IntVar(&userID, "user-id", 0, "userId (query)")
 	return c
 }

@@ -47,37 +47,48 @@ func newManagedApplicationDeleteCmd() *cobra.Command {
 		yes          bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete managed application",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete managed application",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application delete --org-id ORG_ID --managed-app-id MANAGED_APP_ID\n  flexera-cli managed-application delete --org-id ORG_ID --managed-app-id MANAGED_APP_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_delete")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(managedAppID) == "" {
 				return fmt.Errorf("--managed-app-id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /saas/v1/orgs/{orgId}/managed-apps/{managedAppId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/saas/v1/orgs/{orgId}/managed-apps/{managedAppId}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.SaasManagedApplicationDeleteWithResponse(cmd.Context(), deps.Config.OrgID, managedAppID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (path, required)")
@@ -93,18 +104,19 @@ func newManagedApplicationGetCmd() *cobra.Command {
 		view         string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show managed application",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show managed application",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application get --org-id ORG_ID --managed-app-id MANAGED_APP_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(managedAppID) == "" {
 				return fmt.Errorf("--managed-app-id is required")
 			}
@@ -113,14 +125,30 @@ func newManagedApplicationGetCmd() *cobra.Command {
 				ev := flexera.SaasManagedApplicationShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasManagedApplicationShowWithResponse(cmd.Context(), deps.Config.OrgID, managedAppID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (path, required)")
@@ -138,18 +166,19 @@ func newManagedApplicationListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List managed applications",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List managed applications",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasManagedApplicationIndexParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.SaasManagedApplicationIndexParamsView(view)
@@ -163,6 +192,10 @@ func newManagedApplicationListCmd() *cobra.Command {
 				v := orderBy
 				params.OrderBy = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -175,10 +208,16 @@ func newManagedApplicationListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -203,18 +242,19 @@ func newManagedApplicationAppEventsCmd() *cobra.Command {
 		skipToken            string
 	)
 	c := &cobra.Command{
-		Use:   "app-events",
-		Short: "List managed application's events",
-		Args:  cobra.NoArgs,
+		Use:         "app-events",
+		Short:       "List managed application's events",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application app-events --org-id ORG_ID --managed-app-id MANAGED_APP_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_indexEvents", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_indexEvents")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(managedAppID) == "" {
 				return fmt.Errorf("--managed-app-id is required")
 			}
@@ -222,6 +262,10 @@ func newManagedApplicationAppEventsCmd() *cobra.Command {
 			if cmd.Flags().Changed("most-recent-events-only") {
 				v := mostRecentEventsOnly
 				params.MostRecentEventsOnly = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -235,10 +279,16 @@ func newManagedApplicationAppEventsCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -263,18 +313,19 @@ func newManagedApplicationAppUsersCmd() *cobra.Command {
 		skipToken    string
 	)
 	c := &cobra.Command{
-		Use:   "app-users",
-		Short: "List managed application's users",
-		Args:  cobra.NoArgs,
+		Use:         "app-users",
+		Short:       "List managed application's users",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application app-users --org-id ORG_ID --managed-app-id MANAGED_APP_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_indexUsers", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_indexUsers")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(managedAppID) == "" {
 				return fmt.Errorf("--managed-app-id is required")
 			}
@@ -286,6 +337,10 @@ func newManagedApplicationAppUsersCmd() *cobra.Command {
 			if cmd.Flags().Changed("include-all") {
 				v := includeAll
 				params.IncludeAll = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -299,10 +354,16 @@ func newManagedApplicationAppUsersCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -330,17 +391,26 @@ func newManagedApplicationUpdateCmd() *cobra.Command {
 		fPointOfContact    string
 		dryRun             bool
 		yes                bool
+		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "Update managed application",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "Update managed application",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application update --org-id ORG_ID --managed-app-id MANAGED_APP_ID --body @request.json\n  flexera-cli managed-application update --org-id ORG_ID --managed-app-id MANAGED_APP_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema managed-application update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_update", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Saas_Managed_Application_update"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_update")
 			if err != nil {
 				return err
 			}
@@ -372,29 +442,57 @@ func newManagedApplicationUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Saas_Managed_Application_update", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.SaasManagedApplicationUpdateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /saas/v1/orgs/{orgId}/managed-apps/{managedAppId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Saas_Managed_Application_update", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/saas/v1/orgs/{orgId}/managed-apps/{managedAppId}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.SaasManagedApplicationUpdateWithResponse(cmd.Context(), deps.Config.OrgID, managedAppID, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&managedAppID, "managed-app-id", "", "managedAppId (path, required)")
@@ -406,5 +504,6 @@ func newManagedApplicationUpdateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

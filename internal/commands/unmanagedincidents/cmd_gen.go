@@ -45,18 +45,19 @@ func newUnmanagedIncidentsListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index unmanaged incidents.",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index unmanaged incidents.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unmanaged-incidents list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Unmanaged_Incidents_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Unmanaged_Incidents_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.PolicyUnmanagedIncidentsIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -74,6 +75,10 @@ func newUnmanagedIncidentsListCmd() *cobra.Command {
 				ev := flexera.PolicyUnmanagedIncidentsIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -86,10 +91,16 @@ func newUnmanagedIncidentsListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err

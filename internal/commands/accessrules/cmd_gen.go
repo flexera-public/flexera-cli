@@ -41,27 +41,44 @@ func newAccessRulesListGroupsCmd() *cobra.Command {
 		group int
 	)
 	c := &cobra.Command{
-		Use:   "list-groups",
-		Short: "List group's roles in every BillingCenter.",
-		Args:  cobra.NoArgs,
+		Use:         "list-groups",
+		Short:       "List group's roles in every BillingCenter.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli access-rules list-groups --org-id ORG_ID --group GROUP",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_AccessRules_group_report", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_AccessRules_group_report")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
+			params := flexera.BillingCenterServiceAccessRulesGroupReportParams{}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.BillingCenterServiceAccessRulesGroupReportParams{}
 			resp, err := client.BillingCenterServiceAccessRulesGroupReportWithResponse(cmd.Context(), deps.Config.OrgID, group, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&group, "group", 0, "group (path, required)")
@@ -74,27 +91,44 @@ func newAccessRulesListUsersCmd() *cobra.Command {
 		user int
 	)
 	c := &cobra.Command{
-		Use:   "list-users",
-		Short: "List user's roles in every BillingCenter.",
-		Args:  cobra.NoArgs,
+		Use:         "list-users",
+		Short:       "List user's roles in every BillingCenter.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli access-rules list-users --org-id ORG_ID --user USER",
+		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_AccessRules_user_report", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillingCenterService_AccessRules_user_report")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
+			params := flexera.BillingCenterServiceAccessRulesUserReportParams{}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.BillingCenterServiceAccessRulesUserReportParams{}
 			resp, err := client.BillingCenterServiceAccessRulesUserReportWithResponse(cmd.Context(), deps.Config.OrgID, user, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&user, "user", 0, "user (path, required)")

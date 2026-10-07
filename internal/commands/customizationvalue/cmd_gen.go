@@ -45,37 +45,48 @@ func newCustomizationValueDeleteCmd() *cobra.Command {
 		yes                 bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Deletes a customization value",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Deletes a customization value",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-value delete --org-id ORG_ID --customization-type-id CUSTOMIZATION_TYPE_ID\n  flexera-cli customization-value delete --org-id ORG_ID --customization-type-id CUSTOMIZATION_TYPE_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Value_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Value_delete")
 			if err != nil {
 				return err
 			}
 			if strings.TrimSpace(customizationTypeID) == "" {
 				return fmt.Errorf("--customization-type-id is required")
 			}
-			writePlan := map[string]any{"method": "DELETE /policy/v1/orgs/{orgId}/customization-values/{customizationTypeId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/policy/v1/orgs/{orgId}/customization-values/{customizationTypeId}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyCustomizationValueDeleteWithResponse(cmd.Context(), int64(deps.Config.OrgID), customizationTypeID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&customizationTypeID, "customization-type-id", "", "customizationTypeId (path, required)")
@@ -90,29 +101,46 @@ func newCustomizationValueGetCmd() *cobra.Command {
 		customizationTypeID string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Retrieves a customization value",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Retrieves a customization value",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-value get --org-id ORG_ID --customization-type-id CUSTOMIZATION_TYPE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Value_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Value_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(customizationTypeID) == "" {
+				return fmt.Errorf("--customization-type-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(customizationTypeID) == "" {
-				return fmt.Errorf("--customization-type-id is required")
-			}
 			resp, err := client.PolicyCustomizationValueShowWithResponse(cmd.Context(), int64(deps.Config.OrgID), customizationTypeID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&customizationTypeID, "customization-type-id", "", "customizationTypeId (path, required)")
@@ -122,27 +150,44 @@ func newCustomizationValueGetCmd() *cobra.Command {
 // newCustomizationValueListCmd — GET /policy/v1/orgs/{orgId}/customization-values (operationId: Policy_Customization_Value_index)
 func newCustomizationValueListCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Retrieves a collection of customization values",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Retrieves a collection of customization values",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-value list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Value_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Value_index")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
+			params := flexera.PolicyCustomizationValueIndexParams{}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.PolicyCustomizationValueIndexParams{}
 			resp, err := client.PolicyCustomizationValueIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	return c
@@ -156,17 +201,26 @@ func newCustomizationValueReplaceCmd() *cobra.Command {
 		fValue              string
 		dryRun              bool
 		yes                 bool
+		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Creates or updates a customization value",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Creates or updates a customization value",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-value replace --org-id ORG_ID --customization-type-id CUSTOMIZATION_TYPE_ID --body @request.json\n  flexera-cli customization-value replace --org-id ORG_ID --customization-type-id CUSTOMIZATION_TYPE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema customization-value replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Value_upsert", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Policy_Customization_Value_upsert"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Value_upsert")
 			if err != nil {
 				return err
 			}
@@ -186,29 +240,57 @@ func newCustomizationValueReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Policy_Customization_Value_upsert", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.PolicyCustomizationValueUpsertJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /policy/v1/orgs/{orgId}/customization-values/{customizationTypeId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Policy_Customization_Value_upsert", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/policy/v1/orgs/{orgId}/customization-values/{customizationTypeId}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.PolicyCustomizationValueUpsertWithResponse(cmd.Context(), int64(deps.Config.OrgID), customizationTypeID, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&customizationTypeID, "customization-type-id", "", "customizationTypeId (path, required)")
@@ -216,5 +298,6 @@ func newCustomizationValueReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

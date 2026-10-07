@@ -33,6 +33,7 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 	root, deps := clipkg.NewRootCmd(clipkg.RootOptions{
 		Use:      "flexera-cli",
 		Short:    "Flexera One unified API command-line client",
+		Long:     "Flexera One unified API command-line client.\n\nFind commands for a task: flexera-cli cli search \"<what you want to do>\"",
 		BaseHTTP: base,
 		Version:  version,
 		Getenv:   getenv,
@@ -61,6 +62,7 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 	} {
 		root.AddCommand(c)
 	}
+	root.AddCommand(clipkg.NewDiscoveryCmd(root))
 
 	return root, deps
 }

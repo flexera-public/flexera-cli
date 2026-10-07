@@ -43,29 +43,46 @@ func newConnectorGetCmd() *cobra.Command {
 		identifier string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Get information about a onboarded connector",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Get information about a onboarded connector",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli connector get --org-id ORG_ID --identifier IDENTIFIER",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_cloud_connectors_identifier_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_get_connector_uobs_v1_orgs_org_id_cloud_connectors_identifier_get")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(identifier) == "" {
+				return fmt.Errorf("--identifier is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(identifier) == "" {
-				return fmt.Errorf("--identifier is required")
-			}
 			resp, err := client.UobsGetConnectorUobsV1OrgsOrgIdCloudConnectorsIdentifierGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), identifier)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&identifier, "identifier", "", "identifier (path, required)")
@@ -80,18 +97,19 @@ func newConnectorListCmd() *cobra.Command {
 		filter string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List connectors for cloud Accounts in the Organization",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List connectors for cloud Accounts in the Organization",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli connector list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_cloud_connectors_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_list_connectors_uobs_v1_orgs_org_id_cloud_connectors_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.UobsListConnectorsUobsV1OrgsOrgIdCloudConnectorsGetParams{}
 			if cmd.Flags().Changed("limit") {
 				v := limit
@@ -105,14 +123,30 @@ func newConnectorListCmd() *cobra.Command {
 				v := filter
 				params.Filter = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.UobsListConnectorsUobsV1OrgsOrgIdCloudConnectorsGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&limit, "limit", 0, "limit (query)")
@@ -124,14 +158,19 @@ func newConnectorListCmd() *cobra.Command {
 // newConnectorCountCmd — GET /uobs/v1/orgs/{org_id}/cloud/connectors/count (operationId: Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get)
 func newConnectorCountCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "count",
-		Short: "Get connectors count by provider",
-		Args:  cobra.NoArgs,
+		Use:         "count",
+		Short:       "Get connectors count by provider",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli connector count --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -140,10 +179,22 @@ func newConnectorCountCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	return c
@@ -156,18 +207,19 @@ func newConnectorStatusCmd() *cobra.Command {
 		accountID   string
 	)
 	c := &cobra.Command{
-		Use:   "status",
-		Short: "Get status for all enabled products for a given connector",
-		Args:  cobra.NoArgs,
+		Use:         "status",
+		Short:       "Get status for all enabled products for a given connector",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli connector status --org-id ORG_ID --connector-id CONNECTOR_ID",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_cloud_connectors_status_get", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_get_connector_status_uobs_v1_orgs_org_id_cloud_connectors_status_get")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.UobsGetConnectorStatusUobsV1OrgsOrgIdCloudConnectorsStatusGetParams{}
 			if cmd.Flags().Changed("connector-id") {
 				params.ConnectorId = connectorID
@@ -176,14 +228,30 @@ func newConnectorStatusCmd() *cobra.Command {
 				v := accountID
 				params.AccountId = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.UobsGetConnectorStatusUobsV1OrgsOrgIdCloudConnectorsStatusGetWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (query)")

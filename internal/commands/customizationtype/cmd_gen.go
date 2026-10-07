@@ -44,18 +44,19 @@ func newCustomizationTypeGetIamCmd() *cobra.Command {
 		view string
 	)
 	c := &cobra.Command{
-		Use:   "get-iam",
-		Short: "Returns a specific customization type",
-		Args:  cobra.NoArgs,
+		Use:         "get-iam",
+		Short:       "Returns a specific customization type",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-type get-iam --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Customization_Type_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Customization_Type_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
 			}
@@ -64,14 +65,30 @@ func newCustomizationTypeGetIamCmd() *cobra.Command {
 				ev := flexera.IamCustomizationTypeShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamCustomizationTypeShowWithResponse(cmd.Context(), deps.Config.OrgID, id, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -85,29 +102,46 @@ func newCustomizationTypeGetPolicyCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get-policy",
-		Short: "Retrieves a customization type",
-		Args:  cobra.NoArgs,
+		Use:         "get-policy",
+		Short:       "Retrieves a customization type",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-type get-policy --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Type_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Type_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.PolicyCustomizationTypeShowWithResponse(cmd.Context(), int64(deps.Config.OrgID), id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -123,18 +157,19 @@ func newCustomizationTypeListIamCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list-iam",
-		Short: "Returns types of customizations that are available to an org",
-		Args:  cobra.NoArgs,
+		Use:         "list-iam",
+		Short:       "Returns types of customizations that are available to an org",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-type list-iam --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Customization_Type_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Customization_Type_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.IamCustomizationTypeIndexParams{}
 			if cmd.Flags().Changed("view") {
 				ev := flexera.IamCustomizationTypeIndexParamsView(view)
@@ -143,6 +178,10 @@ func newCustomizationTypeListIamCmd() *cobra.Command {
 			if cmd.Flags().Changed("filter") {
 				v := filter
 				params.Filter = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -156,10 +195,16 @@ func newCustomizationTypeListIamCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -177,27 +222,44 @@ func newCustomizationTypeListIamCmd() *cobra.Command {
 // newCustomizationTypeListPolicyCmd — GET /policy/v1/orgs/{orgId}/customization-types (operationId: Policy_Customization_Type_index)
 func newCustomizationTypeListPolicyCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "list-policy",
-		Short: "Retrieves a collection of customization types",
-		Args:  cobra.NoArgs,
+		Use:         "list-policy",
+		Short:       "Retrieves a collection of customization types",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli customization-type list-policy --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Customization_Type_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Customization_Type_index")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
+			params := flexera.PolicyCustomizationTypeIndexParams{}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.PolicyCustomizationTypeIndexParams{}
 			resp, err := client.PolicyCustomizationTypeIndexWithResponse(cmd.Context(), int64(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	return c

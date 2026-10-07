@@ -42,18 +42,19 @@ func newIncidentAggregateGetCmd() *cobra.Command {
 		view                string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show an incident aggregate.",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show an incident aggregate.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli incident-aggregate get --org-id ORG_ID --incident-aggregate-id INCIDENT_AGGREGATE_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Incident_Aggregate_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Incident_Aggregate_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(incidentAggregateID) == "" {
 				return fmt.Errorf("--incident-aggregate-id is required")
 			}
@@ -62,14 +63,30 @@ func newIncidentAggregateGetCmd() *cobra.Command {
 				ev := flexera.PolicyIncidentAggregateShowParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.PolicyIncidentAggregateShowWithResponse(cmd.Context(), int64(deps.Config.OrgID), incidentAggregateID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&incidentAggregateID, "incident-aggregate-id", "", "incidentAggregateId (path, required)")
@@ -88,18 +105,19 @@ func newIncidentAggregateListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index incident aggregates.",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index incident aggregates.",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli incident-aggregate list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Policy_Incident_Aggregate_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Policy_Incident_Aggregate_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.PolicyIncidentAggregateIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -117,6 +135,10 @@ func newIncidentAggregateListCmd() *cobra.Command {
 				ev := flexera.PolicyIncidentAggregateIndexParamsView(view)
 				params.View = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -129,10 +151,16 @@ func newIncidentAggregateListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err

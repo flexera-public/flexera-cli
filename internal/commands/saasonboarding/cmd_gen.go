@@ -29,12 +29,83 @@ func NewCmd() *cobra.Command {
 		Short: "SaaS Onboarding operations (generated from the unified OpenAPI spec)",
 	}
 	c.AddCommand(
+		newSaaSOnboardingCollectCmd(),
 		newSaaSOnboardingCreateCmd(),
+		newSaaSOnboardingValidateCmd(),
+		newSaaSOnboardingDeleteCmd(),
+		newSaaSOnboardingReplaceCmd(),
 	)
 	return c
 }
 
-// newSaaSOnboardingCreateCmd — POST /uobs/v1/orgs/{org_id}/saas/onboarding/validate (operationId: Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post)
+// newSaaSOnboardingCollectCmd — POST /uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id}/collect (operationId: Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post)
+func newSaaSOnboardingCollectCmd() *cobra.Command {
+	var (
+		connectorID string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:         "collect",
+		Short:       "SaaS Onboarding: Collect now",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saa-s-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli saa-s-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id}/collect", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsCollectSaasConnectorUobsV1OrgsOrgIdSaasOnboardingConnectorIdCollectPostWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID))
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newSaaSOnboardingCreateCmd — POST /uobs/v1/orgs/{org_id}/saas/onboarding (operationId: Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post)
 func newSaaSOnboardingCreateCmd() *cobra.Command {
 	var (
 		bodyRaw        string
@@ -42,17 +113,26 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 		fProvider      string
 		dryRun         bool
 		yes            bool
+		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "SaaS Onboarding: Validate connection",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "SaaS Onboarding: Create",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saa-s-onboarding create --org-id ORG_ID --body @request.json\n  flexera-cli saa-s-onboarding create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saa-s-onboarding create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post")
 			if err != nil {
 				return err
 			}
@@ -72,28 +152,66 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
 			}
-			var body flexera.UobsValidateSaasConnectionUobsV1OrgsOrgIdSaasOnboardingValidatePostJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post", raw)
+				if err != nil {
+					return err
+				}
 			}
-			writePlan := map[string]any{"method": "POST /uobs/v1/orgs/{org_id}/saas/onboarding/validate"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			var body flexera.UobsCreateSaasOnboardingUobsV1OrgsOrgIdSaasOnboardingPostJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/saas/onboarding", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
 			}
-			resp, err := client.UobsValidateSaasConnectionUobsV1OrgsOrgIdSaasOnboardingValidatePostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			resp, err := client.UobsCreateSaasOnboardingUobsV1OrgsOrgIdSaasOnboardingPostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fConnectorName, "connector-name", "", "connectorName (body)")
@@ -101,5 +219,314 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newSaaSOnboardingValidateCmd — POST /uobs/v1/orgs/{org_id}/saas/onboarding/validate (operationId: Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post)
+func newSaaSOnboardingValidateCmd() *cobra.Command {
+	var (
+		bodyRaw        string
+		fConnectorName string
+		fProvider      string
+		dryRun         bool
+		yes            bool
+		interactive    bool
+	)
+	c := &cobra.Command{
+		Use:         "validate",
+		Short:       "SaaS Onboarding: Validate connection",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saa-s-onboarding validate --org-id ORG_ID --body @request.json\n  flexera-cli saa-s-onboarding validate --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saa-s-onboarding validate --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post")
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["connectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("provider") {
+				fields["provider"] = fProvider
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post", raw)
+				if err != nil {
+					return err
+				}
+			}
+			var body flexera.UobsValidateSaasConnectionUobsV1OrgsOrgIdSaasOnboardingValidatePostJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/saas/onboarding/validate", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsValidateSaasConnectionUobsV1OrgsOrgIdSaasOnboardingValidatePostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "connectorName (body)")
+	c.Flags().StringVar(&fProvider, "provider", "", "provider (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newSaaSOnboardingDeleteCmd — DELETE /uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id} (operationId: Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete)
+func newSaaSOnboardingDeleteCmd() *cobra.Command {
+	var (
+		connectorID string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:         "delete",
+		Short:       "SaaS Onboarding: Delete",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saa-s-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli saa-s-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsDeleteSaasOnboardingUobsV1OrgsOrgIdSaasOnboardingConnectorIdDeleteWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID))
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newSaaSOnboardingReplaceCmd — PUT /uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id} (operationId: Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put)
+func newSaaSOnboardingReplaceCmd() *cobra.Command {
+	var (
+		connectorID    string
+		bodyRaw        string
+		fConnectorName string
+		fProvider      string
+		dryRun         bool
+		yes            bool
+		interactive    bool
+	)
+	c := &cobra.Command{
+		Use:         "replace",
+		Short:       "SaaS Onboarding: Update",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saa-s-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json\n  flexera-cli saa-s-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saa-s-onboarding replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["connectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("provider") {
+				fields["provider"] = fProvider
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put", raw)
+				if err != nil {
+					return err
+				}
+			}
+			var body flexera.UobsUpdateSaasOnboardingUobsV1OrgsOrgIdSaasOnboardingConnectorIdPutJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/uobs/v1/orgs/{org_id}/saas/onboarding/{connector_id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsUpdateSaasOnboardingUobsV1OrgsOrgIdSaasOnboardingConnectorIdPutWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "connectorName (body)")
+	c.Flags().StringVar(&fProvider, "provider", "", "provider (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

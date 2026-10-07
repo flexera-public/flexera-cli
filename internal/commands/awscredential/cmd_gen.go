@@ -45,29 +45,46 @@ func newAWSCredentialGetCmd() *cobra.Command {
 		id string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential get --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_show_org", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_show_org")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(id) == "" {
-				return fmt.Errorf("--id is required")
-			}
 			resp, err := client.CredAWSCredentialShowOrgWithResponse(cmd.Context(), int64(deps.Config.OrgID), id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -81,26 +98,46 @@ func newAWSCredentialGetProjectCmd() *cobra.Command {
 		id        string
 	)
 	c := &cobra.Command{
-		Use:   "get-project",
-		Short: "Show a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "get-project",
+		Short:       "Show a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential get-project --project-id PROJECT_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_show_project", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_show_project")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(id) == "" {
 				return fmt.Errorf("--id is required")
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredAWSCredentialShowProjectWithResponse(cmd.Context(), projectID, id)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().Int64Var(&projectID, "project-id", 0, "projectId (path, required)")
@@ -122,17 +159,26 @@ func newAWSCredentialReplaceCmd() *cobra.Command {
 		fVersion     int64
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "replace",
-		Short: "Create a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "replace",
+		Short:       "Create a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli aws-credential replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema aws-credential replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_create_org", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Cred_AWS_Credential_create_org"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_create_org")
 			if err != nil {
 				return err
 			}
@@ -158,7 +204,7 @@ func newAWSCredentialReplaceCmd() *cobra.Command {
 			if cmd.Flags().Changed("service") {
 				fields["service"] = fService
 			}
-			if cmd.Flags().Changed("version") {
+			if cmd.Flags().Changed("body-version") {
 				fields["version"] = fVersion
 			}
 			var typed any
@@ -170,29 +216,57 @@ func newAWSCredentialReplaceCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Cred_AWS_Credential_create_org", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.CredAWSCredentialCreateOrgJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /cred/v2/orgs/{orgId}/credentials/aws/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Cred_AWS_Credential_create_org", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/cred/v2/orgs/{orgId}/credentials/aws/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredAWSCredentialCreateOrgWithResponse(cmd.Context(), int64(deps.Config.OrgID), id, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 201:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -202,10 +276,11 @@ func newAWSCredentialReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&fRegion, "region", "", "region (body)")
 	c.Flags().StringVar(&fSecretKey, "secret-key", "", "secretKey (body)")
 	c.Flags().StringVar(&fService, "service", "", "service (body)")
-	c.Flags().Int64Var(&fVersion, "version", 0, "version (body)")
+	c.Flags().Int64Var(&fVersion, "body-version", 0, "version (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -224,14 +299,26 @@ func newAWSCredentialReplaceProjectCmd() *cobra.Command {
 		fVersion     int64
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "replace-project",
-		Short: "Create a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "replace-project",
+		Short:       "Create a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential replace-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli aws-credential replace-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema aws-credential replace-project --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_create_project", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Cred_AWS_Credential_create_project"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_create_project")
 			if err != nil {
 				return err
 			}
@@ -257,7 +344,7 @@ func newAWSCredentialReplaceProjectCmd() *cobra.Command {
 			if cmd.Flags().Changed("service") {
 				fields["service"] = fService
 			}
-			if cmd.Flags().Changed("version") {
+			if cmd.Flags().Changed("body-version") {
 				fields["version"] = fVersion
 			}
 			var typed any
@@ -269,28 +356,55 @@ func newAWSCredentialReplaceProjectCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Cred_AWS_Credential_create_project", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.CredAWSCredentialCreateProjectJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PUT /cred/v2/projects/{projectId}/credentials/aws/{id}"}
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Cred_AWS_Credential_create_project", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/cred/v2/projects/{projectId}/credentials/aws/{id}", Params: planParams, Destructive: false}
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredAWSCredentialCreateProjectWithResponse(cmd.Context(), projectID, id, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 201:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().Int64Var(&projectID, "project-id", 0, "projectId (path, required)")
@@ -301,10 +415,11 @@ func newAWSCredentialReplaceProjectCmd() *cobra.Command {
 	c.Flags().StringVar(&fRegion, "region", "", "region (body)")
 	c.Flags().StringVar(&fSecretKey, "secret-key", "", "secretKey (body)")
 	c.Flags().StringVar(&fService, "service", "", "service (body)")
-	c.Flags().Int64Var(&fVersion, "version", 0, "version (body)")
+	c.Flags().Int64Var(&fVersion, "body-version", 0, "version (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -322,17 +437,26 @@ func newAWSCredentialUpdateCmd() *cobra.Command {
 		fVersion     int64
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "Update a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "Update a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli aws-credential update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema aws-credential update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_update_org", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Cred_AWS_Credential_update_org"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_update_org")
 			if err != nil {
 				return err
 			}
@@ -358,7 +482,7 @@ func newAWSCredentialUpdateCmd() *cobra.Command {
 			if cmd.Flags().Changed("service") {
 				fields["service"] = fService
 			}
-			if cmd.Flags().Changed("version") {
+			if cmd.Flags().Changed("body-version") {
 				fields["version"] = fVersion
 			}
 			var typed any
@@ -370,29 +494,57 @@ func newAWSCredentialUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Cred_AWS_Credential_update_org", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.CredAWSCredentialUpdateOrgJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /cred/v2/orgs/{orgId}/credentials/aws/{id}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Cred_AWS_Credential_update_org", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/cred/v2/orgs/{orgId}/credentials/aws/{id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredAWSCredentialUpdateOrgWithResponse(cmd.Context(), int64(deps.Config.OrgID), id, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
@@ -402,10 +554,11 @@ func newAWSCredentialUpdateCmd() *cobra.Command {
 	c.Flags().StringVar(&fRegion, "region", "", "region (body)")
 	c.Flags().StringVar(&fSecretKey, "secret-key", "", "secretKey (body)")
 	c.Flags().StringVar(&fService, "service", "", "service (body)")
-	c.Flags().Int64Var(&fVersion, "version", 0, "version (body)")
+	c.Flags().Int64Var(&fVersion, "body-version", 0, "version (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -424,14 +577,26 @@ func newAWSCredentialUpdateProjectCmd() *cobra.Command {
 		fVersion     int64
 		dryRun       bool
 		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "update-project",
-		Short: "Update a Credential",
-		Args:  cobra.NoArgs,
+		Use:         "update-project",
+		Short:       "Update a Credential",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli aws-credential update-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli aws-credential update-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema aws-credential update-project --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_Credential_update_project", "flexera.output": "text", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Cred_AWS_Credential_update_project"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Cred_AWS_Credential_update_project")
 			if err != nil {
 				return err
 			}
@@ -457,7 +622,7 @@ func newAWSCredentialUpdateProjectCmd() *cobra.Command {
 			if cmd.Flags().Changed("service") {
 				fields["service"] = fService
 			}
-			if cmd.Flags().Changed("version") {
+			if cmd.Flags().Changed("body-version") {
 				fields["version"] = fVersion
 			}
 			var typed any
@@ -469,28 +634,55 @@ func newAWSCredentialUpdateProjectCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Cred_AWS_Credential_update_project", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.CredAWSCredentialUpdateProjectJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /cred/v2/projects/{projectId}/credentials/aws/{id}"}
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Cred_AWS_Credential_update_project", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/cred/v2/projects/{projectId}/credentials/aws/{id}", Params: planParams, Destructive: false}
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.CredAWSCredentialUpdateProjectWithResponse(cmd.Context(), projectID, id, body)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().Int64Var(&projectID, "project-id", 0, "projectId (path, required)")
@@ -501,9 +693,10 @@ func newAWSCredentialUpdateProjectCmd() *cobra.Command {
 	c.Flags().StringVar(&fRegion, "region", "", "region (body)")
 	c.Flags().StringVar(&fSecretKey, "secret-key", "", "secretKey (body)")
 	c.Flags().StringVar(&fService, "service", "", "service (body)")
-	c.Flags().Int64Var(&fVersion, "version", 0, "version (body)")
+	c.Flags().Int64Var(&fVersion, "body-version", 0, "version (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

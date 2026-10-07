@@ -6,6 +6,7 @@
 package finops
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -354,9 +355,9 @@ func newRecommendationListCmd(use, kind, short string) *cobra.Command {
 			}
 			filtered, ferr := flexera.FilterRecommendationsByCategory(resp.Body, kind)
 			if ferr != nil {
-				return writeRaw(deps.Stdout, resp.Body)
+				return renderJSONBody(deps, resp.Body)
 			}
-			return writeRaw(deps.Stdout, filtered)
+			return renderJSONBody(deps, filtered)
 		},
 	}
 	c.Flags().StringVar(&billingCenterIDs, "billing-center-ids", "", "Comma-separated BC IDs (default: all top-level BCs)")
@@ -396,7 +397,7 @@ func newBillMonthListCmd() *cobra.Command {
 			if !statusOK(httpResp.StatusCode) {
 				return optimaResponseError(httpResp, body)
 			}
-			return writeRaw(deps.Stdout, body)
+			return renderJSONBody(deps, body)
 		},
 	}
 	c.Flags().Int64Var(&limit, "limit", 0, "Maximum number of records (0 = API default)")
@@ -425,7 +426,7 @@ func newAdjustmentShowCmd() *cobra.Command {
 			if !statusOK(httpResp.StatusCode) {
 				return optimaResponseError(httpResp, body)
 			}
-			return writeRaw(deps.Stdout, body)
+			return renderJSONBody(deps, body)
 		},
 	}
 }
@@ -447,7 +448,7 @@ func newAdjustmentUpdateCmd() *cobra.Command {
 				"body":   json.RawMessage(body),
 				"method": "PUT /orgs/{org}/adjustments/definition",
 			}
-			done, err := resolveWriteOp(dryRun, yes, true, deps.Stdout, plan)
+			done, err := resolveWriteOp(dryRun, yes, true, deps, plan)
 			if err != nil {
 				return err
 			}
@@ -465,7 +466,7 @@ func newAdjustmentUpdateCmd() *cobra.Command {
 			if resp.HTTPResponse == nil || !statusOK(resp.HTTPResponse.StatusCode) {
 				return optimaResponseError(resp.HTTPResponse, resp.Body)
 			}
-			return writeRaw(deps.Stdout, resp.Body)
+			return renderJSONBody(deps, resp.Body)
 		},
 	}
 	c.Flags().StringVar(&file, "file", "", "Path to JSON request body, or - for stdin (required)")
@@ -507,7 +508,7 @@ func newPOSTBodyCmdWithUse(use, short string, call func(ctx context.Context, cli
 			if httpResp == nil || !statusOK(httpResp.StatusCode) {
 				return optimaResponseError(httpResp, respBody)
 			}
-			return writeRaw(deps.Stdout, respBody)
+			return renderJSONBody(deps, respBody)
 		},
 	}
 	c.Flags().StringVar(&file, "file", "", "Path to JSON request body, or - for stdin (required)")
@@ -540,26 +541,34 @@ func optimaResponseError(httpResp *http.Response, body []byte) error {
 	return fmt.Errorf("Optima API returned status %d: %s", status, string(body))
 }
 
-// emitOptima validates a 200 response and writes the raw body.
+// emitOptima validates a 200 response and renders its JSON body.
 func emitOptima(deps *clipkg.Deps, httpResp *http.Response, body []byte) error {
 	if httpResp == nil || httpResp.StatusCode != http.StatusOK {
 		return optimaResponseError(httpResp, body)
 	}
-	return writeRaw(deps.Stdout, body)
+	return renderJSONBody(deps, body)
 }
 
-// writeRaw emits a raw JSON byte slice with a trailing newline.
-func writeRaw(stdout io.Writer, body []byte) error {
+// renderJSONBody decodes confirmed JSON endpoints without the SDK's strict
+// date decoding or float64 conversion. Empty success bodies stay empty.
+func renderJSONBody(deps *clipkg.Deps, body []byte) error {
 	if len(body) == 0 {
 		return nil
 	}
-	if _, err := stdout.Write(body); err != nil {
-		return err
+	decoder := json.NewDecoder(bytes.NewReader(body))
+	decoder.UseNumber()
+	var value any
+	if err := decoder.Decode(&value); err != nil {
+		return fmt.Errorf("decoding Optima JSON response: %w", err)
 	}
-	if body[len(body)-1] != '\n' {
-		_, _ = stdout.Write([]byte("\n"))
+	var extra any
+	if err := decoder.Decode(&extra); err != io.EOF {
+		if err == nil {
+			return errors.New("Optima response must contain exactly one JSON value")
+		}
+		return fmt.Errorf("decoding Optima JSON response: %w", err)
 	}
-	return nil
+	return deps.Printer.Render(deps.Stdout, deps.Config.Output, value)
 }
 
 func readBodyFile(path string, stdin io.Reader) ([]byte, error) {
@@ -578,13 +587,10 @@ func readBodyFile(path string, stdin io.Reader) ([]byte, error) {
 // resolveWriteOp mirrors the package-main write-op confirmation flow: on
 // --dry-run it prints a plan summary and returns done=true; destructive ops
 // require --yes. Returns done=true when the caller should stop (dry-run).
-func resolveWriteOp(dryRun, yes, destructive bool, stdout io.Writer, plan map[string]any) (bool, error) {
+func resolveWriteOp(dryRun, yes, destructive bool, deps *clipkg.Deps, plan map[string]any) (bool, error) {
 	if dryRun {
 		summary := map[string]any{"dryRun": true, "destructive": destructive, "plan": plan}
-		enc := json.NewEncoder(stdout)
-		enc.SetIndent("", "  ")
-		_ = enc.Encode(summary)
-		return true, nil
+		return true, clipkg.WriteJSON(deps.Stdout, summary, deps.Printer.Style, deps.Printer.IsTTY)
 	}
 	if destructive && !yes {
 		return false, errors.New("destructive operation requires --yes (or use --dry-run to preview)")

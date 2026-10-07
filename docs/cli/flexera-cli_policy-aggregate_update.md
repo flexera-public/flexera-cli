@@ -6,13 +6,25 @@ Update a policy aggregate
 flexera-cli policy-aggregate update [flags]
 ```
 
+### Examples
+
+```
+Illustrative only: replace uppercase tokens; provide your own request.json for body input.
+  flexera-cli policy-aggregate update --org-id ORG_ID --policy-aggregate-id POLICY_AGGREGATE_ID --body @request.json
+  flexera-cli policy-aggregate update --org-id ORG_ID --policy-aggregate-id POLICY_AGGREGATE_ID --body @request.json --dry-run
+Validated illustrative body, when available (review before use):
+  flexera-cli cli schema policy-aggregate update --example > request.json
+```
+
 ### Options
 
 ```
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
+      --body-dry-run                 dryRun (body)
       --description string           description (body)
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for update
+  -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
       --log-level string             logLevel (body)
       --name string                  name (body)
       --policy-aggregate-id string   policyAggregateId (path, required)
@@ -30,9 +42,14 @@ flexera-cli policy-aggregate update [flags]
       --client-secret string    OAuth client secret
       --config string           config file (default $HOME/.flexera/config.yaml)
   -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
       --login-base-url string   override login base URL
+      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
       --org-id int              organization ID
+      --out-fields string       project JSON output fields (comma-separated paths)
+      --out-jq string           shape JSON output with a jq expression
   -o, --output string           output format (json|table)
+  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
       --refresh-token string    OAuth refresh token
       --zone string             API zone (nam|eu|apac|test)
 ```

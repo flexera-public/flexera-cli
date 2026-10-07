@@ -1,5 +1,5 @@
 // Package auth provides the hand-written "auth" command tree: OAuth token
-// acquisition flows that are not modeled in the unified OpenAPI spec.
+// acquisition flows, including the spec-backed token creation operation.
 package auth
 
 import (
@@ -19,7 +19,7 @@ func NewCmd() *cobra.Command {
 		Use:   "token",
 		Short: "Mint an access token",
 	}
-	token.AddCommand(newClientCredentialsCmd(), newRefreshCmd())
+	token.AddCommand(newCreateCmd(), newClientCredentialsCmd(), newRefreshCmd())
 	c.AddCommand(token)
 	return c
 }

@@ -46,18 +46,19 @@ func newProcessingHistoryListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List enterprise bill months",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List enterprise bill months",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli processing-history list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Processing_History_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsOnboardingProcessingHistoryIndexParams{}
 			if cmd.Flags().Changed("limit") {
 				v := limit
@@ -71,6 +72,10 @@ func newProcessingHistoryListCmd() *cobra.Command {
 				v := filter
 				params.Filter = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -83,10 +88,16 @@ func newProcessingHistoryListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -109,18 +120,19 @@ func newProcessingHistoryDownloadCmd() *cobra.Command {
 		format        string
 	)
 	c := &cobra.Command{
-		Use:   "download",
-		Short: "Download enterprise bill months in CSV",
-		Args:  cobra.NoArgs,
+		Use:         "download",
+		Short:       "Download enterprise bill months in CSV",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli processing-history download --org-id ORG_ID --download-token DOWNLOAD_TOKEN",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_download", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Processing_History_download")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.FinopsOnboardingProcessingHistoryDownloadParams{}
 			if cmd.Flags().Changed("download-token") {
 				params.DownloadToken = downloadToken
@@ -129,15 +141,21 @@ func newProcessingHistoryDownloadCmd() *cobra.Command {
 				ev := flexera.FinopsOnboardingProcessingHistoryDownloadParamsFormat(format)
 				params.Format = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.FinopsOnboardingProcessingHistoryDownloadWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&downloadToken, "download-token", "", "downloadToken (query)")
@@ -148,21 +166,30 @@ func newProcessingHistoryDownloadCmd() *cobra.Command {
 // newProcessingHistoryUpdateCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/processing/bill-months (operationId: FinopsOnboarding_Processing_History_reprocess)
 func newProcessingHistoryUpdateCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		fAction string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		fAction     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "Reprocess one or more enterprise bill months",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "Reprocess one or more enterprise bill months",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli processing-history update --org-id ORG_ID --body @request.json\n  flexera-cli processing-history update --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema processing-history update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_reprocess", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "FinopsOnboarding_Processing_History_reprocess"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Processing_History_reprocess")
 			if err != nil {
 				return err
 			}
@@ -179,33 +206,72 @@ func newProcessingHistoryUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "FinopsOnboarding_Processing_History_reprocess", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.FinopsOnboardingProcessingHistoryReprocessJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /finops-onboarding/v1/orgs/{orgId}/processing/bill-months"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("FinopsOnboarding_Processing_History_reprocess", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/finops-onboarding/v1/orgs/{orgId}/processing/bill-months", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.FinopsOnboardingProcessingHistoryReprocessWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fAction, "action", "", "action (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

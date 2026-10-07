@@ -22,7 +22,7 @@ func ResolveBody(raw string, typed any, stdin io.Reader) (json.RawMessage, error
 			return nil, err
 		}
 		if !json.Valid(b) {
-			return nil, fmt.Errorf("--body is not valid JSON")
+			return nil, Exit(2, fmt.Errorf("--body is not valid JSON"))
 		}
 		return json.RawMessage(b), nil
 	}
@@ -49,12 +49,13 @@ func ResolveRawBody(raw string, stdin io.Reader) ([]byte, error) {
 // generated mutating commands. On --dry-run it prints a plan summary to w and
 // returns done=true (the caller should stop without calling the API).
 // Destructive ops require --yes. done=true means the dry-run early-exit fired.
-func ConfirmWrite(dryRun, yes, destructive bool, w io.Writer, plan map[string]any) (bool, error) {
+func ConfirmWrite(dryRun, yes, destructive bool, w io.Writer, plan map[string]any, printers ...Printer) (bool, error) {
 	if dryRun {
-		enc := json.NewEncoder(w)
-		enc.SetIndent("", "  ")
-		_ = enc.Encode(map[string]any{"dryRun": true, "destructive": destructive, "plan": plan})
-		return true, nil
+		printer := Printer{}
+		if len(printers) != 0 {
+			printer = printers[0]
+		}
+		return true, WriteJSON(w, map[string]any{"dryRun": true, "destructive": destructive, "plan": plan}, printer.Style, printer.IsTTY)
 	}
 	if destructive && !yes {
 		return false, fmt.Errorf("destructive operation requires --yes (or use --dry-run to preview)")

@@ -44,18 +44,19 @@ func newManagedApplicationUserGetCmd() *cobra.Command {
 		includeAll bool
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show managed application user",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show managed application user",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application-user get --org-id ORG_ID --user-id USER_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_User_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_User_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(userID) == "" {
 				return fmt.Errorf("--user-id is required")
 			}
@@ -68,14 +69,30 @@ func newManagedApplicationUserGetCmd() *cobra.Command {
 				v := includeAll
 				params.IncludeAll = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.SaasManagedApplicationUserShowWithResponse(cmd.Context(), deps.Config.OrgID, userID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&userID, "user-id", "", "userId (path, required)")
@@ -94,18 +111,19 @@ func newManagedApplicationUserListCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List managed application users",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List managed application users",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application-user list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_User_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_User_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasManagedApplicationUserIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -119,6 +137,10 @@ func newManagedApplicationUserListCmd() *cobra.Command {
 				v := includeAll
 				params.IncludeAll = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
@@ -131,10 +153,16 @@ func newManagedApplicationUserListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err
@@ -156,29 +184,46 @@ func newManagedApplicationUserHistoryCmd() *cobra.Command {
 		userID string
 	)
 	c := &cobra.Command{
-		Use:   "history",
-		Short: "List user's history",
-		Args:  cobra.NoArgs,
+		Use:         "history",
+		Short:       "List user's history",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application-user history --org-id ORG_ID --user-id USER_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_User_indexHistory", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_User_indexHistory")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(userID) == "" {
+				return fmt.Errorf("--user-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(userID) == "" {
-				return fmt.Errorf("--user-id is required")
-			}
 			resp, err := client.SaasManagedApplicationUserIndexHistoryWithResponse(cmd.Context(), deps.Config.OrgID, userID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&userID, "user-id", "", "userId (path, required)")

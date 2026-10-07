@@ -54,6 +54,7 @@ import (
 	customization "github.com/flexera-public/flexera-cli/internal/commands/customization"
 	customizationtype "github.com/flexera-public/flexera-cli/internal/commands/customizationtype"
 	customizationvalue "github.com/flexera-public/flexera-cli/internal/commands/customizationvalue"
+	device "github.com/flexera-public/flexera-cli/internal/commands/device"
 	digestcredential "github.com/flexera-public/flexera-cli/internal/commands/digestcredential"
 	discoveredapplication "github.com/flexera-public/flexera-cli/internal/commands/discoveredapplication"
 	event "github.com/flexera-public/flexera-cli/internal/commands/event"
@@ -79,6 +80,7 @@ import (
 	ntlmcredential "github.com/flexera-public/flexera-cli/internal/commands/ntlmcredential"
 	oauth2credential "github.com/flexera-public/flexera-cli/internal/commands/oauth2credential"
 	objectdefinition "github.com/flexera-public/flexera-cli/internal/commands/objectdefinition"
+	onboarding "github.com/flexera-public/flexera-cli/internal/commands/onboarding"
 	oraclecredential "github.com/flexera-public/flexera-cli/internal/commands/oraclecredential"
 	organization "github.com/flexera-public/flexera-cli/internal/commands/organization"
 	organizationinvitation "github.com/flexera-public/flexera-cli/internal/commands/organizationinvitation"
@@ -98,6 +100,7 @@ import (
 	rulebaseddimension "github.com/flexera-public/flexera-cli/internal/commands/rulebaseddimension"
 	saasconnector "github.com/flexera-public/flexera-cli/internal/commands/saasconnector"
 	saasdata "github.com/flexera-public/flexera-cli/internal/commands/saasdata"
+	saasonboarding "github.com/flexera-public/flexera-cli/internal/commands/saasonboarding"
 	saml2domain "github.com/flexera-public/flexera-cli/internal/commands/saml2domain"
 	saml2identityprovider "github.com/flexera-public/flexera-cli/internal/commands/saml2identityprovider"
 	saml2identityprovidersigningkey "github.com/flexera-public/flexera-cli/internal/commands/saml2identityprovidersigningkey"
@@ -114,6 +117,7 @@ import (
 	unmanagedappliedpolicies "github.com/flexera-public/flexera-cli/internal/commands/unmanagedappliedpolicies"
 	unmanagedincidents "github.com/flexera-public/flexera-cli/internal/commands/unmanagedincidents"
 	usagegroup "github.com/flexera-public/flexera-cli/internal/commands/usagegroup"
+	usagemessagequery "github.com/flexera-public/flexera-cli/internal/commands/usagemessagequery"
 	user "github.com/flexera-public/flexera-cli/internal/commands/user"
 	userbillingcenters "github.com/flexera-public/flexera-cli/internal/commands/userbillingcenters"
 	userinvitation "github.com/flexera-public/flexera-cli/internal/commands/userinvitation"
@@ -168,6 +172,7 @@ func RegisterAll(root *cobra.Command) {
 		customization.NewCmd(),
 		customizationtype.NewCmd(),
 		customizationvalue.NewCmd(),
+		device.NewCmd(),
 		digestcredential.NewCmd(),
 		discoveredapplication.NewCmd(),
 		event.NewCmd(),
@@ -193,6 +198,7 @@ func RegisterAll(root *cobra.Command) {
 		ntlmcredential.NewCmd(),
 		oauth2credential.NewCmd(),
 		objectdefinition.NewCmd(),
+		onboarding.NewCmd(),
 		oraclecredential.NewCmd(),
 		organization.NewCmd(),
 		organizationinvitation.NewCmd(),
@@ -212,6 +218,7 @@ func RegisterAll(root *cobra.Command) {
 		rulebaseddimension.NewCmd(),
 		saasconnector.NewCmd(),
 		saasdata.NewCmd(),
+		saasonboarding.NewCmd(),
 		saml2domain.NewCmd(),
 		saml2identityprovider.NewCmd(),
 		saml2identityprovidersigningkey.NewCmd(),
@@ -228,6 +235,7 @@ func RegisterAll(root *cobra.Command) {
 		unmanagedappliedpolicies.NewCmd(),
 		unmanagedincidents.NewCmd(),
 		usagegroup.NewCmd(),
+		usagemessagequery.NewCmd(),
 		user.NewCmd(),
 		userbillingcenters.NewCmd(),
 		userinvitation.NewCmd(),

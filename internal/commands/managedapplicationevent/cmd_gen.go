@@ -41,29 +41,46 @@ func newManagedApplicationEventGetCmd() *cobra.Command {
 		eventID string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show managed application event",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show managed application event",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application-event get --org-id ORG_ID --event-id EVENT_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_Event_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_Event_show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(eventID) == "" {
+				return fmt.Errorf("--event-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(eventID) == "" {
-				return fmt.Errorf("--event-id is required")
-			}
 			resp, err := client.SaasManagedApplicationEventShowWithResponse(cmd.Context(), deps.Config.OrgID, eventID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&eventID, "event-id", "", "eventId (path, required)")
@@ -79,18 +96,19 @@ func newManagedApplicationEventListCmd() *cobra.Command {
 		skipToken            string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List managed application events",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List managed application events",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli managed-application-event list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "Saas_Managed_Application_Event_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Saas_Managed_Application_Event_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.SaasManagedApplicationEventIndexParams{}
 			if cmd.Flags().Changed("filter") {
 				v := filter
@@ -99,6 +117,10 @@ func newManagedApplicationEventListCmd() *cobra.Command {
 			if cmd.Flags().Changed("most-recent-events-only") {
 				v := mostRecentEventsOnly
 				params.MostRecentEventsOnly = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			var initialSkipToken *string
 			if t := strings.TrimSpace(skipToken); t != "" {
@@ -112,10 +134,16 @@ func newManagedApplicationEventListCmd() *cobra.Command {
 					if callErr != nil {
 						return nil, callErr
 					}
-					if resp.JSON200 == nil {
-						return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
 					}
-					return resp.JSON200, nil
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
 				})
 			if err != nil {
 				return err

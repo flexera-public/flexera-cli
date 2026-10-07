@@ -40,17 +40,19 @@ func newMSPCustomerDomainVerifyCmd() *cobra.Command {
 		customerID         int
 		identityProviderID string
 		name               string
+		dryRun             bool
+		yes                bool
 	)
 	c := &cobra.Command{
-		Use:   "verify",
-		Short: "Verify an MSP's customer's IdP's domain",
-		Args:  cobra.NoArgs,
+		Use:         "verify",
+		Short:       "Verify an MSP's customer's IdP's domain",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli msp-customer-domain verify --org-id ORG_ID --customer-id CUSTOMER_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME\n  flexera-cli msp-customer-domain verify --org-id ORG_ID --customer-id CUSTOMER_ID --identity-provider-id IDENTITY_PROVIDER_ID --name NAME --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Domain_Verify", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_MSP_Customer_Domain_Verify")
 			if err != nil {
 				return err
 			}
@@ -60,18 +62,48 @@ func newMSPCustomerDomainVerifyCmd() *cobra.Command {
 			if strings.TrimSpace(name) == "" {
 				return fmt.Errorf("--name is required")
 			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/msp/v1/orgs/{orgId}/customers/{customerId}/idps/{identityProviderId}/domains/{name}/verify", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.IamMSPCustomerDomainVerifyWithResponse(cmd.Context(), deps.Config.OrgID, customerID, identityProviderID, name)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (path, required)")
 	c.Flags().StringVar(&identityProviderID, "identity-provider-id", "", "identityProviderId (path, required)")
 	c.Flags().StringVar(&name, "name", "", "name (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }

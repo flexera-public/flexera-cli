@@ -44,32 +44,64 @@ func NewCmd() *cobra.Command {
 func newServiceAccountClientClientsCmd() *cobra.Command {
 	var (
 		serviceAccountID int
+		dryRun           bool
+		yes              bool
 	)
 	c := &cobra.Command{
-		Use:   "clients",
-		Short: "Create a service account client",
-		Args:  cobra.NoArgs,
+		Use:         "clients",
+		Short:       "Create a service account client",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client clients --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID\n  flexera-cli service-account-client clients --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Create", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_Create")
+			if err != nil {
 				return err
+			}
+			params := flexera.IamServiceAccountClientCreateParams{}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			params := flexera.IamServiceAccountClientCreateParams{}
 			resp, err := client.IamServiceAccountClientCreateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -78,36 +110,68 @@ func newServiceAccountClientClientSecretAllCmd() *cobra.Command {
 	var (
 		serviceAccountID int
 		clientID         string
+		dryRun           bool
+		yes              bool
 	)
 	c := &cobra.Command{
-		Use:   "client-secret-all",
-		Short: "Rotate a service account client secret",
-		Args:  cobra.NoArgs,
+		Use:         "client-secret-all",
+		Short:       "Rotate a service account client secret",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client client-secret-all --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli service-account-client client-secret-all --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Rotate", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_Rotate")
+			if err != nil {
 				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--target-client-id is required")
+			}
+			params := flexera.IamServiceAccountClientRotateParams{}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(clientID) == "" {
-				return fmt.Errorf("--client-id is required")
-			}
-			params := flexera.IamServiceAccountClientRotateParams{}
 			resp, err := client.IamServiceAccountClientRotateWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
-	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().StringVar(&clientID, "target-client-id", "", "clientId (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -120,41 +184,52 @@ func newServiceAccountClientDeleteCmd() *cobra.Command {
 		yes              bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "Delete a service account client",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "Delete a service account client",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client delete --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli service-account-client delete --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_Delete")
+			if err != nil {
 				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--target-client-id is required")
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(clientID) == "" {
-				return fmt.Errorf("--client-id is required")
-			}
-			writePlan := map[string]any{"method": "DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
-				return werr
-			} else if writeDone {
-				return nil
-			}
 			resp, err := client.IamServiceAccountClientDeleteWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
-	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().StringVar(&clientID, "target-client-id", "", "clientId (path, required)")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
@@ -169,41 +244,52 @@ func newServiceAccountClientClientSecretCmd() *cobra.Command {
 		yes              bool
 	)
 	c := &cobra.Command{
-		Use:   "client-secret",
-		Short: "Delete old service account client secret",
-		Args:  cobra.NoArgs,
+		Use:         "client-secret",
+		Short:       "Delete old service account client secret",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_DeleteOldSecret", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_DeleteOldSecret")
+			if err != nil {
 				return err
+			}
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--target-client-id is required")
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(clientID) == "" {
-				return fmt.Errorf("--client-id is required")
-			}
-			writePlan := map[string]any{"method": "DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
-				return werr
-			} else if writeDone {
-				return nil
-			}
 			resp, err := client.IamServiceAccountClientDeleteOldSecretWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
-	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().StringVar(&clientID, "target-client-id", "", "clientId (path, required)")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
@@ -216,33 +302,50 @@ func newServiceAccountClientGetCmd() *cobra.Command {
 		clientID         string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "Show service account client details",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "Show service account client details",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client get --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_Show")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--target-client-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(clientID) == "" {
-				return fmt.Errorf("--client-id is required")
-			}
 			resp, err := client.IamServiceAccountClientShowWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
-	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().StringVar(&clientID, "target-client-id", "", "clientId (path, required)")
 	return c
 }
 
@@ -252,14 +355,19 @@ func newServiceAccountClientListCmd() *cobra.Command {
 		serviceAccountID int
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "Index a service account's clients",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "Index a service account's clients",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client list --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_Index")
+			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
@@ -268,10 +376,22 @@ func newServiceAccountClientListCmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
@@ -285,32 +405,49 @@ func newServiceAccountClientClientSecretsCmd() *cobra.Command {
 		clientID         string
 	)
 	c := &cobra.Command{
-		Use:   "client-secrets",
-		Short: "Index a service account client's secrets",
-		Args:  cobra.NoArgs,
+		Use:         "client-secrets",
+		Short:       "Index a service account client's secrets",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli service-account-client client-secrets --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID",
+		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_IndexClientSecrets", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Iam_Service_Account_Client_IndexClientSecrets")
+			if err != nil {
 				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(clientID) == "" {
+				return fmt.Errorf("--target-client-id is required")
 			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			if strings.TrimSpace(clientID) == "" {
-				return fmt.Errorf("--client-id is required")
-			}
 			resp, err := client.IamServiceAccountClientIndexClientSecretsWithResponse(cmd.Context(), deps.Config.OrgID, serviceAccountID, clientID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().IntVar(&serviceAccountID, "service-account-id", 0, "serviceAccountId (path, required)")
-	c.Flags().StringVar(&clientID, "client-id", "", "clientId (path, required)")
+	c.Flags().StringVar(&clientID, "target-client-id", "", "clientId (path, required)")
 	return c
 }

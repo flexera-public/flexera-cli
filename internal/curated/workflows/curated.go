@@ -41,9 +41,10 @@ func NewCmd() *cobra.Command {
 
 func newListCmd() *cobra.Command {
 	return &cobra.Command{
-		Use:   "list",
-		Short: "List available curated tools",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "List available curated tools",
+		Annotations: map[string]string{"flexera.readOnly": "true", "flexera.output": "text"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			out := cmd.OutOrStdout()
 			fmt.Fprintln(out, "Available tools:")
@@ -102,7 +103,7 @@ func newAnomalyInvestigationCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("anomaly-investigation: %w", err)
 			}
-			return deps.Printer.Render(deps.Stdout, "json", out)
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, out)
 		},
 	}
 	c.Flags().StringVar(&optimaBaseURL, "optima-base-url", "", "Override the Optima base URL")

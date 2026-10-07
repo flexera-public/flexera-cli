@@ -46,18 +46,19 @@ func newBillMonthsListCmd() *cobra.Command {
 		skipToken string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "search bill-months",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "search bill-months",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-months list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_bill_months_search", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_bill_months_search")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.BillAnalysisBillMonthsSearchParams{}
 			if cmd.Flags().Changed("limit") {
 				v := limit
@@ -75,25 +76,41 @@ func newBillMonthsListCmd() *cobra.Command {
 				v := filter
 				params.Filter = &v
 			}
-			if cmd.Flags().Changed("skip-token") {
+			if cmd.Flags().Changed("query-skip-token") {
 				v := skipToken
 				params.SkipToken = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillAnalysisBillMonthsSearchWithResponse(cmd.Context(), int64(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().Int64Var(&limit, "limit", 0, "limit (query)")
 	c.Flags().Int64Var(&offset, "offset", 0, "offset (query)")
 	c.Flags().StringVar(&orderBy, "order-by", "", "orderBy (query)")
 	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
-	c.Flags().StringVar(&skipToken, "skip-token", "", "skip_token (query)")
+	c.Flags().StringVar(&skipToken, "query-skip-token", "", "skip_token (query)")
 	return c
 }
 
@@ -104,18 +121,19 @@ func newBillMonthsDownloadCmd() *cobra.Command {
 		format        string
 	)
 	c := &cobra.Command{
-		Use:   "download",
-		Short: "download bill-months",
-		Args:  cobra.NoArgs,
+		Use:         "download",
+		Short:       "download bill-months",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-months download --org-id ORG_ID --download-token DOWNLOAD_TOKEN",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_bill_months_download", "flexera.output": "binary", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_bill_months_download")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.BillAnalysisBillMonthsDownloadParams{}
 			if cmd.Flags().Changed("download-token") {
 				params.DownloadToken = downloadToken
@@ -124,15 +142,21 @@ func newBillMonthsDownloadCmd() *cobra.Command {
 				ev := flexera.BillAnalysisBillMonthsDownloadParamsFormat(format)
 				params.Format = &ev
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillAnalysisBillMonthsDownloadWithResponse(cmd.Context(), int64(deps.Config.OrgID), &params)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() >= 300 {
+			switch resp.StatusCode() {
+			case 200:
+				_, err := deps.Stdout.Write(resp.Body)
+				return err
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&downloadToken, "download-token", "", "download_token (query)")
@@ -143,21 +167,30 @@ func newBillMonthsDownloadCmd() *cobra.Command {
 // newBillMonthsUpdateCmd — PATCH /bill-analysis/orgs/{orgId}/bill-months (operationId: BillAnalysis_bill_months_reprocess)
 func newBillMonthsUpdateCmd() *cobra.Command {
 	var (
-		bodyRaw string
-		fAction string
-		dryRun  bool
-		yes     bool
+		bodyRaw     string
+		fAction     string
+		dryRun      bool
+		yes         bool
+		interactive bool
 	)
 	c := &cobra.Command{
-		Use:   "update",
-		Short: "reprocess bill-months",
-		Args:  cobra.NoArgs,
+		Use:         "update",
+		Short:       "reprocess bill-months",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-months update --org-id ORG_ID --body @request.json\n  flexera-cli bill-months update --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-months update --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_bill_months_reprocess", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillAnalysis_bill_months_reprocess"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillAnalysis_bill_months_reprocess")
 			if err != nil {
 				return err
 			}
@@ -174,33 +207,72 @@ func newBillMonthsUpdateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillAnalysis_bill_months_reprocess", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillAnalysisBillMonthsReprocessJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "PATCH /bill-analysis/orgs/{orgId}/bill-months"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillAnalysis_bill_months_reprocess", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PATCH", Path: "/bill-analysis/orgs/{orgId}/bill-months", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillAnalysisBillMonthsReprocessWithResponse(cmd.Context(), int64(deps.Config.OrgID), body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&fAction, "action", "", "action (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }

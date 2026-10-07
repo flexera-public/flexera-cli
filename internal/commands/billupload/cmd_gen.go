@@ -47,17 +47,19 @@ func newBillUploadFilesCmd() *cobra.Command {
 		billUploadID string
 		fileID       string
 		bodyRaw      string
+		dryRun       bool
+		yes          bool
 	)
 	c := &cobra.Command{
-		Use:   "files",
-		Short: "POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}",
-		Args:  cobra.NoArgs,
+		Use:         "files",
+		Short:       "POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json\n  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_createFile", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_createFile")
 			if err != nil {
 				return err
 			}
@@ -78,19 +80,52 @@ func newBillUploadFilesCmd() *cobra.Command {
 			if len(raw) == 0 {
 				return fmt.Errorf("a request body is required: pass --body @file or --body @-")
 			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body = raw
+			writePlan.RawUpload = true
+			writePlan.Validation = &clipkg.ValidationResult{Status: "unsupported"}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillUploadBillUploadCreateFileWithBodyWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID, fileID, "application/octet-stream", bytes.NewReader(raw))
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
 	c.Flags().StringVar(&fileID, "file-id", "", "fileId (path, required)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw request body (@file | @-)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -100,17 +135,28 @@ func newBillUploadOperationsCmd() *cobra.Command {
 		billUploadID string
 		bodyRaw      string
 		fOperation   string
+		dryRun       bool
+		yes          bool
+		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:   "operations",
-		Short: "POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations",
-		Args:  cobra.NoArgs,
+		Use:         "operations",
+		Short:       "POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload operations --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --body @request.json\n  flexera-cli bill-upload operations --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-upload operations --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_createOperation", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillUpload_BillUpload_createOperation"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_createOperation")
 			if err != nil {
 				return err
 			}
@@ -134,25 +180,74 @@ func newBillUploadOperationsCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillUpload_BillUpload_createOperation", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillUploadBillUploadCreateOperationJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillUpload_BillUpload_createOperation", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/optima/orgs/{orgId}/billUploads/{billUploadId}/operations", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillUploadBillUploadCreateOperationWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
 	c.Flags().StringVar(&fOperation, "operation", "", "operation (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -164,17 +259,26 @@ func newBillUploadCreateCmd() *cobra.Command {
 		fBillingPeriod string
 		dryRun         bool
 		yes            bool
+		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:   "create",
-		Short: "POST /optima/orgs/{orgId}/billUploads",
-		Args:  cobra.NoArgs,
+		Use:         "create",
+		Short:       "POST /optima/orgs/{orgId}/billUploads",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload create --org-id ORG_ID --body @request.json\n  flexera-cli bill-upload create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-upload create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_create", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "BillUpload_BillUpload_create"); err != nil {
+					return err
+				}
 			}
-			client, err := deps.APIClient()
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_create")
 			if err != nil {
 				return err
 			}
@@ -194,28 +298,66 @@ func newBillUploadCreateCmd() *cobra.Command {
 				return err
 			}
 			if len(raw) == 0 {
-				return fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags")
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "BillUpload_BillUpload_create", raw)
+				if err != nil {
+					return err
+				}
 			}
 			var body flexera.BillUploadBillUploadCreateJSONRequestBody
-			if err := json.Unmarshal(raw, &body); err != nil {
-				return fmt.Errorf("decoding request body: %w", err)
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
 			}
-			writePlan := map[string]any{"method": "POST /optima/orgs/{orgId}/billUploads"}
-			writePlan["orgId"] = deps.Config.OrgID
-			writePlan["body"] = json.RawMessage(raw)
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, false, deps.Stdout, writePlan); werr != nil {
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("BillUpload_BillUpload_create", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/optima/orgs/{orgId}/billUploads", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillUploadBillUploadCreateWithResponse(cmd.Context(), deps.Config.OrgID, body)
 			if err != nil {
 				return err
 			}
-			if resp.JSON201 == nil {
+			switch resp.StatusCode() {
+			case 201:
+				if resp.JSON201 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 		},
 	}
 	c.Flags().StringVar(&fBillConnectID, "bill-connect-id", "", "billConnectId (body)")
@@ -223,6 +365,7 @@ func newBillUploadCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
 	return c
 }
 
@@ -234,15 +377,15 @@ func newBillUploadDeleteCmd() *cobra.Command {
 		yes          bool
 	)
 	c := &cobra.Command{
-		Use:   "delete",
-		Short: "DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}",
-		Args:  cobra.NoArgs,
+		Use:         "delete",
+		Short:       "DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload delete --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID\n  flexera-cli bill-upload delete --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_delete", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_delete")
 			if err != nil {
 				return err
 			}
@@ -253,22 +396,33 @@ func newBillUploadDeleteCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("--bill-upload-id: invalid UUID: %w", err)
 			}
-			writePlan := map[string]any{"method": "DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}"}
-			writePlan["orgId"] = deps.Config.OrgID
-			if writeDone, werr := clipkg.ConfirmWrite(dryRun, yes, true, deps.Stdout, writePlan); werr != nil {
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "DELETE", Path: "/optima/orgs/{orgId}/billUploads/{billUploadId}", Params: planParams, Destructive: true}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
 				return werr
 			} else if writeDone {
 				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
 			}
 			resp, err := client.BillUploadBillUploadDeleteWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID)
 			if err != nil {
 				return err
 			}
-			if resp.StatusCode() != 204 {
+			switch resp.StatusCode() {
+			case 204:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			fmt.Fprintln(deps.Stdout, "OK")
-			return nil
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
@@ -283,18 +437,19 @@ func newBillUploadGetCmd() *cobra.Command {
 		billUploadID string
 	)
 	c := &cobra.Command{
-		Use:   "get",
-		Short: "GET /optima/orgs/{orgId}/billUploads/{billUploadId}",
-		Args:  cobra.NoArgs,
+		Use:         "get",
+		Short:       "GET /optima/orgs/{orgId}/billUploads/{billUploadId}",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload get --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_show")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			if strings.TrimSpace(billUploadID) == "" {
 				return fmt.Errorf("--bill-upload-id is required")
 			}
@@ -302,14 +457,30 @@ func newBillUploadGetCmd() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("--bill-upload-id: invalid UUID: %w", err)
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillUploadBillUploadShowWithResponse(cmd.Context(), deps.Config.OrgID, billUploadIDUUID)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billUploadID, "bill-upload-id", "", "billUploadId (path, required)")
@@ -323,18 +494,19 @@ func newBillUploadListCmd() *cobra.Command {
 		billConnectID string
 	)
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "GET /optima/orgs/{orgId}/billUploads",
-		Args:  cobra.NoArgs,
+		Use:         "list",
+		Short:       "GET /optima/orgs/{orgId}/billUploads",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload list --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_index", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
 			deps := clipkg.DepsFrom(cmd.Context())
-			if err := deps.Config.RequireOrgID(); err != nil {
-				return err
-			}
-			client, err := deps.APIClient()
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "BillUpload_BillUpload_index")
 			if err != nil {
 				return err
 			}
+			_ = effectiveParams
 			params := flexera.BillUploadBillUploadIndexParams{}
 			if cmd.Flags().Changed("billing-period") {
 				v := billingPeriod
@@ -344,14 +516,30 @@ func newBillUploadListCmd() *cobra.Command {
 				v := billConnectID
 				params.BillConnectId = &v
 			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
 			resp, err := client.BillUploadBillUploadIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
 			if err != nil {
 				return err
 			}
-			if resp.JSON200 == nil {
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
 				return flexera.ResponseError(resp.StatusCode(), resp.Body)
 			}
-			return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 		},
 	}
 	c.Flags().StringVar(&billingPeriod, "billing-period", "", "billingPeriod (query)")

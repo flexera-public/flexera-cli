@@ -83,9 +83,10 @@ func (f csvFlags) generate() ([]flexera.RuleBasedDimensionSpec, error) {
 func newGenerateCmd() *cobra.Command {
 	var flags csvFlags
 	c := &cobra.Command{
-		Use:   "generate",
-		Short: "Generate rule-based-dimension specs from CSV",
-		Args:  cobra.NoArgs,
+		Use:         "generate",
+		Short:       "Generate rule-based-dimension specs from CSV",
+		Annotations: map[string]string{"flexera.readOnly": "true"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			specs, err := generateFromFlags(cmd, flags)
 			if err != nil {

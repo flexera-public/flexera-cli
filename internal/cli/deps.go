@@ -23,6 +23,8 @@ import (
 type Deps struct {
 	// Config is the resolved common configuration (zone, auth, output, …).
 	Config cliconfig.CommonConfig
+	// OrgIDPresent records flag/env/file presence independently of its value.
+	OrgIDPresent bool
 	// HTTP is the (optionally debug-wrapped) low-level request doer.
 	HTTP flexera.HttpRequestDoer
 	// Stdout/Stderr are the command's output streams (cobra-injected so
@@ -35,7 +37,9 @@ type Deps struct {
 	// through this rather than os.Getenv directly.
 	Getenv func(string) string
 	// Printer renders API responses in the configured output format.
-	Printer Printer
+	Printer    Printer
+	Prompter   Prompter
+	IsTerminal func(any) bool
 }
 
 // APIClient builds an authenticated unified client from the resolved config.

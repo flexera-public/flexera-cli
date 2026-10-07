@@ -2,6 +2,12 @@
 
 Flexera One unified API command-line client
 
+### Synopsis
+
+Flexera One unified API command-line client.
+
+Find commands for a task: flexera-cli cli search "<what you want to do>"
+
 ### Options
 
 ```
@@ -12,9 +18,14 @@ Flexera One unified API command-line client
       --config string           config file (default $HOME/.flexera/config.yaml)
   -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
   -h, --help                    help for flexera-cli
+      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
       --login-base-url string   override login base URL
+      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
       --org-id int              organization ID
+      --out-fields string       project JSON output fields (comma-separated paths)
+      --out-jq string           shape JSON output with a jq expression
   -o, --output string           output format (json|table)
+  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
       --refresh-token string    OAuth refresh token
       --zone string             API zone (nam|eu|apac|test)
 ```
@@ -46,6 +57,7 @@ Flexera One unified API command-line client
 * [flexera-cli billing-settings](flexera-cli_billing-settings.md)	 - billing-settings operations (generated from the unified OpenAPI spec)
 * [flexera-cli budget](flexera-cli_budget.md)	 - Budget operations (generated from the unified OpenAPI spec)
 * [flexera-cli capability](flexera-cli_capability.md)	 - Capability operations (generated from the unified OpenAPI spec)
+* [flexera-cli cli](flexera-cli_cli.md)	 - Discover CLI commands and API schemas
 * [flexera-cli cloud-vendor-account](flexera-cli_cloud-vendor-account.md)	 - Cloud Vendor Account operations (generated from the unified OpenAPI spec)
 * [flexera-cli cloud-vendor-accounts](flexera-cli_cloud-vendor-accounts.md)	 - cloud_vendor_accounts operations (generated from the unified OpenAPI spec)
 * [flexera-cli commitment-reallocation-setting](flexera-cli_commitment-reallocation-setting.md)	 - commitment_reallocation_setting operations (generated from the unified OpenAPI spec)
@@ -65,6 +77,7 @@ Flexera One unified API command-line client
 * [flexera-cli customization](flexera-cli_customization.md)	 - Customization operations (generated from the unified OpenAPI spec)
 * [flexera-cli customization-type](flexera-cli_customization-type.md)	 - Customization Type operations (generated from the unified OpenAPI spec)
 * [flexera-cli customization-value](flexera-cli_customization-value.md)	 - Customization Value operations (generated from the unified OpenAPI spec)
+* [flexera-cli device](flexera-cli_device.md)	 - Device operations (generated from the unified OpenAPI spec)
 * [flexera-cli digest-credential](flexera-cli_digest-credential.md)	 - Digest Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli discovered-application](flexera-cli_discovered-application.md)	 - Discovered Application operations (generated from the unified OpenAPI spec)
 * [flexera-cli event](flexera-cli_event.md)	 - Event operations (generated from the unified OpenAPI spec)
@@ -92,6 +105,7 @@ Flexera One unified API command-line client
 * [flexera-cli ntlm-credential](flexera-cli_ntlm-credential.md)	 - NTLM Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli o-auth2-credential](flexera-cli_o-auth2-credential.md)	 - OAuth2 Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli object-definition](flexera-cli_object-definition.md)	 - Object Definition operations (generated from the unified OpenAPI spec)
+* [flexera-cli onboarding](flexera-cli_onboarding.md)	 - Onboarding operations (generated from the unified OpenAPI spec)
 * [flexera-cli oracle-credential](flexera-cli_oracle-credential.md)	 - Oracle Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli org-dashboards](flexera-cli_org-dashboards.md)	 - org_dashboards operations (generated from the unified OpenAPI spec)
 * [flexera-cli org-login-policy](flexera-cli_org-login-policy.md)	 - Org Login Policy operations (generated from the unified OpenAPI spec)
@@ -112,6 +126,7 @@ Flexera One unified API command-line client
 * [flexera-cli rule-based-dimension](flexera-cli_rule-based-dimension.md)	 - Rule-Based Dimension operations (generated from the unified OpenAPI spec)
 * [flexera-cli saa-s-connector](flexera-cli_saa-s-connector.md)	 - SaaS Connector operations (generated from the unified OpenAPI spec)
 * [flexera-cli saa-s-data](flexera-cli_saa-s-data.md)	 - SaaS Data operations (generated from the unified OpenAPI spec)
+* [flexera-cli saa-s-onboarding](flexera-cli_saa-s-onboarding.md)	 - SaaS Onboarding operations (generated from the unified OpenAPI spec)
 * [flexera-cli saml2-domain](flexera-cli_saml2-domain.md)	 - SAML2 Domain operations (generated from the unified OpenAPI spec)
 * [flexera-cli saml2-identity-provider](flexera-cli_saml2-identity-provider.md)	 - SAML2 Identity Provider operations (generated from the unified OpenAPI spec)
 * [flexera-cli saml2-identity-provider-signing-key](flexera-cli_saml2-identity-provider-signing-key.md)	 - SAML2 Identity Provider Signing Key operations (generated from the unified OpenAPI spec)
@@ -128,6 +143,7 @@ Flexera One unified API command-line client
 * [flexera-cli unmanaged-applied-policies](flexera-cli_unmanaged-applied-policies.md)	 - Unmanaged Applied Policies operations (generated from the unified OpenAPI spec)
 * [flexera-cli unmanaged-incidents](flexera-cli_unmanaged-incidents.md)	 - Unmanaged Incidents operations (generated from the unified OpenAPI spec)
 * [flexera-cli usage-group](flexera-cli_usage-group.md)	 - Usage Group operations (generated from the unified OpenAPI spec)
+* [flexera-cli usage-message-query](flexera-cli_usage-message-query.md)	 - Usage Message Query operations (generated from the unified OpenAPI spec)
 * [flexera-cli user](flexera-cli_user.md)	 - User operations (generated from the unified OpenAPI spec)
 * [flexera-cli user-billing-centers](flexera-cli_user-billing-centers.md)	 - UserBillingCenters operations (generated from the unified OpenAPI spec)
 * [flexera-cli user-invitation](flexera-cli_user-invitation.md)	 - User Invitation operations (generated from the unified OpenAPI spec)
