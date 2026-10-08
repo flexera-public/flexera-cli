@@ -110,6 +110,11 @@
     "command": "finops cost get"
   },
   {
+    "symbol": ".#LookupService",
+    "status": "excluded",
+    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
+  },
+  {
     "symbol": ".#(OAuth2Doer).AccessToken",
     "status": "excluded",
     "reason": "OAuth doer plumbing used internally by the client factory"
@@ -223,6 +228,26 @@
     "symbol": ".#(Registry).Register",
     "status": "excluded",
     "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
+  },
+  {
+    "symbol": ".#Service",
+    "status": "excluded",
+    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
+  },
+  {
+    "symbol": ".#ServiceInfo",
+    "status": "excluded",
+    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
+  },
+  {
+    "symbol": ".#ServiceOf",
+    "status": "excluded",
+    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
+  },
+  {
+    "symbol": ".#Services",
+    "status": "excluded",
+    "reason": "service registry metadata listing for client tooling; it does not perform a standalone API operation"
   },
   {
     "symbol": ".#(RuleBasedDimensionBulkTool).Description",

@@ -1,6 +1,12 @@
 ## flexera-cli graphql
 
-graphql operations (generated from the unified OpenAPI spec)
+GraphQL API
+
+### Synopsis
+
+Commands for the GraphQL API (Flexera GraphQL API, v1).
+
+Service id: graphql
 
 ### Options
 

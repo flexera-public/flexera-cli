@@ -1,16 +1,12 @@
 ## flexera-cli grs
 
-Governance / Resource Service (legacy; projects only)
+Global Resource Service API
 
-```
-flexera-cli grs [flags]
-```
+### Synopsis
 
-### Examples
+Commands for the Global Resource Service API (Flexera Global Resource Service API, v2).
 
-```
-flexera-cli grs project list --org-id 123
-```
+Service id: grs
 
 ### Options
 
@@ -42,5 +38,6 @@ flexera-cli grs project list --org-id 123
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli grs project](flexera-cli_grs_project.md)	 - GRS projects
+* [flexera-cli grs project](flexera-cli_grs_project.md)	 - Project operations (generated from the unified OpenAPI spec)
+* [flexera-cli grs user](flexera-cli_grs_user.md)	 - User operations (generated from the unified OpenAPI spec)
 

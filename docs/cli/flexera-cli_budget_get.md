@@ -43,5 +43,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ### SEE ALSO
 
-* [flexera-cli budget](flexera-cli_budget.md)	 - Budget operations (generated from the unified OpenAPI spec)
+* [flexera-cli budget](flexera-cli_budget.md)	 - Budget API
 

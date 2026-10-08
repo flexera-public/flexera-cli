@@ -51,12 +51,6 @@ func buildCatalog(stage string, tags []genTag, specData []byte, curated ...catal
 	// Copy before sorting: callers may reuse their generation order.
 	tags = append([]genTag(nil), tags...)
 	sort.Slice(tags, func(i, j int) bool { return tags[i].Pkg < tags[j].Pkg })
-	parentCommand := ""
-	for _, tag := range tags {
-		if tag.Pkg == billConnectParent {
-			parentCommand = tag.Cmd
-		}
-	}
 	doc := catalog.Document{Entries: append([]catalog.Entry{}, curated...), Schemas: map[string]json.RawMessage{}}
 	seen := map[string]bool{}
 	for _, e := range curated {
@@ -66,7 +60,7 @@ func buildCatalog(stage string, tags []genTag, specData []byte, curated ...catal
 		seen[e.OperationID] = true
 	}
 	for _, tag := range tags {
-		path := filepath.Join(stage, tag.Pkg, "metadata.json")
+		path := filepath.Join(stage, filepath.FromSlash(tag.Pkg), "metadata.json")
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return nil, fmt.Errorf("catalog metadata %s: %w", path, err)
@@ -102,14 +96,8 @@ func buildCatalog(stage string, tags []genTag, specData []byte, curated ...catal
 			if len(e.Command) == 0 || e.Command[0] != tag.Cmd {
 				return nil, fmt.Errorf("catalog metadata %s: missing or mismatched provisional command", id)
 			}
-			if parentCommand != "" {
-				for _, child := range billConnectChildren {
-					if tag.Pkg == child.Pkg {
-						e.Command = append([]string{parentCommand, child.Use}, e.Command[1:]...)
-						break
-					}
-				}
-			}
+			e.Command = append(append([]string(nil), tag.finalPath()...), e.Command[1:]...)
+			e.Service = tag.Service
 			doc.Entries = append(doc.Entries, e)
 		}
 	}

@@ -62,7 +62,7 @@ func TestPrecisionGeneratedPagination(t *testing.T) {
 				}
 				return precisionResponse(r, body), nil
 			})
-			args := append([]string{"published-template", "list", "--org-id", "123", "--access-token", "precision-token", "--json-style", "compact"}, tc.flags...)
+			args := append([]string{"policy", "published-template", "list", "--org-id", "123", "--access-token", "precision-token", "--json-style", "compact"}, tc.flags...)
 			var out, stderr bytes.Buffer
 			code := run(context.Background(), args, &out, &stderr, func(string) string { return "" }, doer)
 			if calls != tc.pages {
@@ -135,7 +135,7 @@ func TestPrecisionGeneratedUntypedResponse(t *testing.T) {
 				}
 				return precisionResponse(r, tc.body), nil
 			})
-			args := append([]string{"regulatory-compliance", "asset-statistics", "--body", `{"metrics":[]}`, "--org-id", "123", "--access-token", "precision-token", "--json-style", "compact"}, tc.flags...)
+			args := append([]string{"risk", "regulatory-compliance", "asset-statistics", "--body", `{"metrics":[]}`, "--org-id", "123", "--access-token", "precision-token", "--json-style", "compact"}, tc.flags...)
 			var out, stderr bytes.Buffer
 			code := run(context.Background(), args, &out, &stderr, func(string) string { return "" }, doer)
 			if calls != 1 {

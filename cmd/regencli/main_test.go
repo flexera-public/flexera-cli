@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io/fs"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"strings"
@@ -60,11 +61,21 @@ func assertNoTemporaryTrees(t *testing.T, parent string) {
 	}
 }
 
+// flatTags plans root-level tag commands without service groups.
+func flatTags(names ...string) []genTag {
+	used := map[string]bool{}
+	tags := make([]genTag, 0, len(names))
+	for _, name := range names {
+		tags = append(tags, genTag{Tag: name, Pkg: uniquePkg(cleanIdent(name), used), Cmd: kebab(cleanIdent(name))})
+	}
+	return tags
+}
+
 func testHooks(t *testing.T) generationHooks {
 	t.Helper()
 	return generationHooks{
 		generate: func(tag genTag, out string) error {
-			writeTestFile(t, out, "package "+tag.Pkg+"\n")
+			writeTestFile(t, out, "package "+path.Base(tag.Pkg)+"\n")
 			return nil
 		},
 		verify: func(stage string, tags []genTag) error {
@@ -99,7 +110,7 @@ func TestRegenerateFailuresLeaveOldTreeUntouched(t *testing.T) {
 					return injected // A partial file and earlier tag are already staged.
 				}
 				if failure == "symbol verification" {
-					writeTestFile(t, out, "package "+tag.Pkg+"\nvar _ = flexera.MissingSymbol\n")
+					writeTestFile(t, out, "package "+path.Base(tag.Pkg)+"\nvar _ = flexera.MissingSymbol\n")
 				}
 				return nil
 			}
@@ -120,7 +131,7 @@ func TestRegenerateFailuresLeaveOldTreeUntouched(t *testing.T) {
 				}
 				return os.Rename(from, to)
 			}
-			err := regenerate(destination, []string{"Alpha", "Beta", "Gamma"}, hooks)
+			err := regenerate(destination, flatTags("Alpha", "Beta", "Gamma"), hooks)
 			if err == nil {
 				t.Fatal("expected failure")
 			}
@@ -148,7 +159,7 @@ func TestCatalogPreparationFailureLeavesTreeUntouched(t *testing.T) {
 	hooks := testHooks(t)
 	injected := errors.New("injected coverage failure")
 	hooks.prepare = func(stage string, tags []genTag) ([]publicationArtifact, error) { return nil, injected }
-	if err := regenerate(destination, []string{"Budget"}, hooks); !errors.Is(err, injected) {
+	if err := regenerate(destination, flatTags("Budget"), hooks); !errors.Is(err, injected) {
 		t.Fatalf("lost preparation error: %v", err)
 	}
 	if !reflect.DeepEqual(before, treeContents(t, destination)) {
@@ -180,19 +191,22 @@ func TestRegeneratePublishesCompleteTree(t *testing.T) {
 				}
 				return verify(stage, tags)
 			}
-			if err := regenerate(destination, []string{"Bill Connect", "Bill Connect AWS", "Budget", "User Orgs"}, hooks); err != nil {
+			tags := fixtureTags(t)
+			if err := regenerate(destination, tags, hooks); err != nil {
 				t.Fatal(err)
 			}
 			files := treeContents(t, destination)
-			if len(files) != 4 {
-				t.Fatalf("expected three packages and registry, got %v", files)
+			if len(files) != len(tags)+1 {
+				t.Fatalf("expected %d packages and registry, got %v", len(tags), files)
 			}
 			registry := files["register_gen.go"]
 			for _, expected := range []string{
-				modulePath + "/internal/commands/billconnect",
-				modulePath + "/internal/commands/billconnectaws",
-				modulePath + "/internal/commands/budget",
-				`nest(billconnectaws.NewCmd(), "aws")`,
+				`finopsonboardingbillconnect "` + modulePath + `/internal/commands/finopsonboarding/billconnect"`,
+				`finopsonboardingbillconnectaws "` + modulePath + `/internal/commands/finopsonboarding/billconnectaws"`,
+				`budgetbudget "` + modulePath + `/internal/commands/budget/budget"`,
+				`nest(finopsonboardingbillconnectaws.NewCmd(), "aws")`,
+				`service(&cobra.Command{Use: "finops-onboarding"}, "finops-onboarding"`,
+				`service(budgetbudget.NewCmd(), "budget"`,
 			} {
 				if !strings.Contains(registry, expected) {
 					t.Errorf("registry missing %q", expected)

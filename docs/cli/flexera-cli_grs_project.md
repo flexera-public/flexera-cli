@@ -1,10 +1,6 @@
 ## flexera-cli grs project
 
-GRS projects
-
-```
-flexera-cli grs project [flags]
-```
+Project operations (generated from the unified OpenAPI spec)
 
 ### Options
 
@@ -35,6 +31,7 @@ flexera-cli grs project [flags]
 
 ### SEE ALSO
 
-* [flexera-cli grs](flexera-cli_grs.md)	 - Governance / Resource Service (legacy; projects only)
-* [flexera-cli grs project list](flexera-cli_grs_project_list.md)	 - List GRS projects for the org
+* [flexera-cli grs](flexera-cli_grs.md)	 - Global Resource Service API
+* [flexera-cli grs project list](flexera-cli_grs_project_list.md)	 - List projects accessible by the authenticated user
+* [flexera-cli grs project list-for-org](flexera-cli_grs_project_list-for-org.md)	 - List the org's projects for the authenticated user (policy-ready project IDs)
 

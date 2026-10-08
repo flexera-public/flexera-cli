@@ -35,7 +35,7 @@ flexera-cli policy meta [flags]
 
 ### SEE ALSO
 
-* [flexera-cli policy](flexera-cli_policy.md)	 - Project-scoped policy operations with GRS project auto-resolution
+* [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy meta audit](flexera-cli_policy_meta_audit.md)	 - Audit status of every applied policy in a project
 * [flexera-cli policy meta discover](flexera-cli_policy_meta_discover.md)	 - Discover applied-policy parent/child relationships
 * [flexera-cli policy meta terminate-children](flexera-cli_policy_meta_terminate-children.md)	 - Delete all unambiguous children of a parent applied policy

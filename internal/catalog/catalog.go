@@ -29,6 +29,7 @@ type Entry struct {
 	Method           string          `json:"method"`
 	Path             string          `json:"path"`
 	Tag              string          `json:"tag"`
+	Service          string          `json:"service,omitempty"`
 	Resource         string          `json:"resource"`
 	Action           string          `json:"action"`
 	Summary          string          `json:"summary"`

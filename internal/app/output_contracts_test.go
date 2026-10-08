@@ -22,7 +22,7 @@ func TestRealTreeUnsupportedShapingBeforeSideEffects(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(os.Getenv("HOME"), ".flexera", "config.yaml"), []byte("broken: ["), 0600); err != nil {
 		t.Fatal(err)
 	}
-	for _, path := range [][]string{{"curated", "list"}, {"policy", "applied-policy", "log"}, {"budget", "delete"}, {"bill-months", "download"}, {"completion", "fish"}} {
+	for _, path := range [][]string{{"policy", "applied-policy", "log"}, {"budget", "delete"}, {"bill-analysis", "bill-months", "download"}, {"completion", "fish"}} {
 		args := append(append([]string{}, path...), "--out-jq", ".")
 		code, out, stderr := schemaRun(t, args...)
 		if code != 2 || out != "" || !json.Valid([]byte(stderr)) || !strings.Contains(stderr, "does not support") {

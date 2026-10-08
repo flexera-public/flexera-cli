@@ -533,3 +533,28 @@ func TestRender_ListsUntypedJSONResponses(t *testing.T) {
 		}
 	}
 }
+
+func TestCollectOpsFilteredByServiceAndExclusions(t *testing.T) {
+	op := func(id, service string) json.RawMessage {
+		return json.RawMessage(fmt.Sprintf(`{"get":{"tags":["Project"],"operationId":%q,"x-flexera-action":"list","x-flexera-service":%q,"responses":{"200":{}}}}`, id, service))
+	}
+	s := &spec{Paths: map[string]json.RawMessage{
+		"/iam/projects":        op("Iam_Project_Index", "iam"),
+		"/grs/projects":        op("Grs_Project_indexForOrg", "grs"),
+		"/iam/projects/hidden": op("Iam_Project_Hidden", "iam"),
+	}}
+	ids := func(ops []operation) []string {
+		var out []string
+		for _, o := range ops {
+			out = append(out, o.OperationID)
+		}
+		return out
+	}
+	if all, _ := collectOps(s, "Project"); len(all) != 3 {
+		t.Fatalf("unfiltered ops = %v", ids(all))
+	}
+	got, _ := collectOpsFiltered(s, "Project", opFilter{Service: "iam", Exclude: map[string]bool{"Iam_Project_Hidden": true}})
+	if strings.Join(ids(got), ",") != "Iam_Project_Index" {
+		t.Fatalf("filtered ops = %v", ids(got))
+	}
+}

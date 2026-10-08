@@ -35,7 +35,7 @@ flexera-cli policy policy-template [flags]
 
 ### SEE ALSO
 
-* [flexera-cli policy](flexera-cli_policy.md)	 - Project-scoped policy operations with GRS project auto-resolution
+* [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy policy-template create](flexera-cli_policy_policy-template_create.md)	 - Create a policy template
 * [flexera-cli policy policy-template delete](flexera-cli_policy_policy-template_delete.md)	 - Delete a policy template
 * [flexera-cli policy policy-template evaluate](flexera-cli_policy_policy-template_evaluate.md)	 - Evaluate a policy template

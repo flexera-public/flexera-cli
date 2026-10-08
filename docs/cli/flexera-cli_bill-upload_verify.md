@@ -36,5 +36,5 @@ flexera-cli bill-upload verify [flags]
 
 ### SEE ALSO
 
-* [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - BillUpload operations (generated from the unified OpenAPI spec)
+* [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - Bill Upload API
 

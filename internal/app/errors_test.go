@@ -27,7 +27,7 @@ func TestUnknownCommandSuggestionsAreOffline(t *testing.T) {
 	}{
 		{[]string{"delete", "budget"}, "flexera-cli", "delete", "flexera-cli budget delete"},
 		{[]string{"policy", "applied-policy", "run"}, "flexera-cli policy applied-policy", "run", "flexera-cli policy applied-policy evaluate"},
-		{[]string{"finops", "cost", `unknown"quoted`}, "flexera-cli finops cost", `unknown"quoted`, ""},
+		{[]string{"bill-analysis", "costs", `unknown"quoted`}, "flexera-cli bill-analysis costs", `unknown"quoted`, ""},
 		{[]string{"zzzznonexistenttoken"}, "flexera-cli", "zzzznonexistenttoken", ""},
 	} {
 		t.Run(strings.Join(tc.args, "/"), func(t *testing.T) {

@@ -1,50 +1,33 @@
-// Package grs provides the hand-written "grs project" command for the Flexera
-// Governance / Resource Service.
-//
-// GRS is a legacy API: IAM endpoints are preferred wherever they exist. The
-// only GRS capability retained here is listing an org's projects, which has no
-// IAM equivalent. The project-listing logic lives in the library
-// (flexera.ProjectResolver); this command is thin cobra wiring over it. The
-// former `grs user orgs list` was replaced by the IAM-backed `user-orgs`
-// command.
+// Package grs provides `grs project list-for-org`, a workflow over
+// flexera.ProjectResolver: it derives the user from the access token, calls
+// the zone-specific GRS host, filters projects to the org, and reports legacy
+// account IDs (the project IDs Policy APIs expect). The generated
+// `grs project list` exposes the raw endpoint.
 package grs
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	clipkg "github.com/flexera-public/flexera-cli/internal/cli"
 	flexera "github.com/flexera-public/unified-go-client"
 )
 
-// NewCmd builds the "grs" command tree.
-func NewCmd() *cobra.Command {
-	c := &cobra.Command{
-		Use:     "grs",
-		Short:   "Governance / Resource Service (legacy; projects only)",
-		Example: "flexera-cli grs project list --org-id 123",
-		RunE:    parentRunE,
-	}
-	project := &cobra.Command{Use: "project", Short: "GRS projects", RunE: parentRunE}
-	project.AddCommand(newProjectListCmd())
-	c.AddCommand(project)
-	return c
-}
-
-func parentRunE(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return cmd.Help()
-	}
-	return fmt.Errorf("unknown command %q for %q", args[0], cmd.CommandPath())
+// Attach adds the curated project workflow beneath the generated
+// `grs project` command.
+func Attach(root *cobra.Command) error {
+	return clipkg.AttachCommands(root, []string{"grs", "project"}, newProjectListCmd())
 }
 
 func newProjectListCmd() *cobra.Command {
 	var grsBaseURL, apiVersion string
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List GRS projects for the org",
-		Args:  cobra.NoArgs,
+		Use:   "list-for-org",
+		Short: "List the org's projects for the authenticated user (policy-ready project IDs)",
+		Long: "List the projects the authenticated user can access in --org-id. The user is derived " +
+			"from the access token, results are filtered to the org, and each project ID is the " +
+			"legacy account ID that the Policy APIs accept as --project-id.",
+		Example: "flexera-cli grs project list-for-org --org-id 123",
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
 			if err := deps.Config.RequireOrgID(); err != nil {

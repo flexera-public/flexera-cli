@@ -1,7 +1,6 @@
-// Package workflows provides the hand-written "curated" command tree:
-// opinionated, multi-step workflows that compose several API calls. The CLI
-// surface is intentionally small and hand-maintained (these are not
-// spec-generated CRUD).
+// Package workflows provides opinionated, multi-step workflows that compose
+// several API calls (e.g. `bill-analysis anomalies investigate`). They are
+// hand-maintained and attached beneath the generated service commands.
 package workflows
 
 import (
@@ -18,50 +17,19 @@ import (
 	"github.com/flexera-public/unified-go-client/anomaly"
 )
 
-type tool struct {
-	name        string
-	description string
-}
-
-// tools is the curated catalogue surfaced by `curated list`.
-var tools = []tool{
-	{"anomaly-investigation", "AI-powered cost anomaly investigation across service/usage/region/compute dimensions"},
-}
-
-// NewCmd builds the "curated" command tree.
-func NewCmd() *cobra.Command {
-	c := &cobra.Command{
-		Use:     "curated",
-		Short:   "Run curated multi-step workflows (e.g. anomaly-investigation)",
-		Example: "flexera-cli curated list",
-	}
-	c.AddCommand(newListCmd(), newAnomalyInvestigationCmd())
-	return c
-}
-
-func newListCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:         "list",
-		Short:       "List available curated tools",
-		Annotations: map[string]string{"flexera.readOnly": "true", "flexera.output": "text"},
-		Args:        cobra.NoArgs,
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			out := cmd.OutOrStdout()
-			fmt.Fprintln(out, "Available tools:")
-			for _, t := range tools {
-				fmt.Fprintf(out, "  %-28s %s\n", t.name, t.description)
-			}
-			return nil
-		},
-	}
+// Attach adds the multi-step workflows beneath their generated service
+// commands.
+func Attach(root *cobra.Command) error {
+	return clipkg.AttachCommands(root, []string{"bill-analysis", "anomalies"}, newAnomalyInvestigationCmd())
 }
 
 func newAnomalyInvestigationCmd() *cobra.Command {
 	var optimaBaseURL, input, file string
 	c := &cobra.Command{
-		Use:   "anomaly-investigation",
-		Short: "AI-powered cost anomaly investigation",
-		Args:  cobra.NoArgs,
+		Use:     "investigate",
+		Short:   "AI-powered cost anomaly investigation (multi-step workflow)",
+		Example: "flexera-cli bill-analysis anomalies investigate --org-id 123 --input '{\"granularity\":\"day\",\"recency\":\"P7D\",\"increase_only\":true}'",
+		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
 			ctx := cmd.Context()
@@ -101,7 +69,7 @@ func newAnomalyInvestigationCmd() *cobra.Command {
 			inv := anomaly.New(client, resolver, dbg)
 			out, err := inv.Invoke(ctx, in)
 			if err != nil {
-				return fmt.Errorf("anomaly-investigation: %w", err)
+				return fmt.Errorf("anomaly investigation: %w", err)
 			}
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, out)
 		},

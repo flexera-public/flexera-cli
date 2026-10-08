@@ -9,7 +9,8 @@ description: 'Use when querying or automating Flexera One with flexera-cli: disc
 
 1. Check `flexera-cli --version` and `--help`; confirm task, organization, and zone.
    Do not install or upgrade without approval.
-2. Discover with `flexera-cli cli search "<task>"`; add `--read-only` for reads.
+2. Discover with `flexera-cli cli search "<task>"`; add `--read-only` for reads
+   and `--service <name>` to narrow. Paths are `<service> <resource> <action>`.
 3. Inspect `flexera-cli <path> --help` and `flexera-cli cli schema <path>`.
    `<path>` excludes the binary name. Use help if discovery/schema is unavailable.
    Resolve required inputs; replace synopsis placeholders and example IDs.

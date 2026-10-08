@@ -11,6 +11,7 @@
   {
     "operationId": "BillAnalysis_CustomDimension_create",
     "command": [
+      "bill-analysis",
       "custom-dimension",
       "create"
     ],
@@ -19,6 +20,7 @@
   {
     "operationId": "BillAnalysis_CustomDimension_delete",
     "command": [
+      "bill-analysis",
       "custom-dimension",
       "delete"
     ],
@@ -27,6 +29,7 @@
   {
     "operationId": "BillAnalysis_CustomDimension_index",
     "command": [
+      "bill-analysis",
       "custom-dimension",
       "list"
     ],
@@ -35,6 +38,7 @@
   {
     "operationId": "BillAnalysis_CustomDimension_show",
     "command": [
+      "bill-analysis",
       "custom-dimension",
       "get"
     ],
@@ -43,6 +47,7 @@
   {
     "operationId": "BillAnalysis_CustomDimension_update",
     "command": [
+      "bill-analysis",
       "custom-dimension",
       "replace"
     ],
@@ -51,6 +56,7 @@
   {
     "operationId": "BillAnalysis_adjustment_definition_show",
     "command": [
+      "bill-analysis",
       "adjustment-definition",
       "list"
     ],
@@ -59,6 +65,7 @@
   {
     "operationId": "BillAnalysis_adjustment_definition_update",
     "command": [
+      "bill-analysis",
       "adjustment-definition",
       "replace"
     ],
@@ -67,6 +74,7 @@
   {
     "operationId": "BillAnalysis_anomalies_aggregated",
     "command": [
+      "bill-analysis",
       "anomalies",
       "aggregated"
     ],
@@ -75,14 +83,16 @@
   {
     "operationId": "BillAnalysis_anomalies_index",
     "command": [
+      "bill-analysis",
       "anomalies",
-      "anomalies"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_anomalies_report",
     "command": [
+      "bill-analysis",
       "anomalies",
       "report"
     ],
@@ -91,14 +101,16 @@
   {
     "operationId": "BillAnalysis_anomalies_summary",
     "command": [
+      "bill-analysis",
       "anomalies",
-      "get"
+      "anomalies"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_bill_months_download",
     "command": [
+      "bill-analysis",
       "bill-months",
       "download"
     ],
@@ -107,6 +119,7 @@
   {
     "operationId": "BillAnalysis_bill_months_reprocess",
     "command": [
+      "bill-analysis",
       "bill-months",
       "update"
     ],
@@ -115,6 +128,7 @@
   {
     "operationId": "BillAnalysis_bill_months_search",
     "command": [
+      "bill-analysis",
       "bill-months",
       "list"
     ],
@@ -123,6 +137,7 @@
   {
     "operationId": "BillAnalysis_billing_settings_show",
     "command": [
+      "bill-analysis",
       "billing-settings",
       "list"
     ],
@@ -131,6 +146,7 @@
   {
     "operationId": "BillAnalysis_billing_settings_update",
     "command": [
+      "bill-analysis",
       "billing-settings",
       "update"
     ],
@@ -139,6 +155,7 @@
   {
     "operationId": "BillAnalysis_cloud_vendor_accounts_index",
     "command": [
+      "bill-analysis",
       "cloud-vendor-accounts",
       "list"
     ],
@@ -147,6 +164,7 @@
   {
     "operationId": "BillAnalysis_commitment_reallocation_setting_show",
     "command": [
+      "bill-analysis",
       "commitment-reallocation-setting",
       "list"
     ],
@@ -155,6 +173,7 @@
   {
     "operationId": "BillAnalysis_commitment_reallocation_setting_upsert",
     "command": [
+      "bill-analysis",
       "commitment-reallocation-setting",
       "replace"
     ],
@@ -163,6 +182,7 @@
   {
     "operationId": "BillAnalysis_costs_aggregated",
     "command": [
+      "bill-analysis",
       "costs",
       "aggregated"
     ],
@@ -171,6 +191,7 @@
   {
     "operationId": "BillAnalysis_costs_dimensions",
     "command": [
+      "bill-analysis",
       "costs",
       "dimensions"
     ],
@@ -179,22 +200,25 @@
   {
     "operationId": "BillAnalysis_costs_exportSelect",
     "command": [
+      "bill-analysis",
       "costs",
-      "create-export"
+      "create"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_costs_exportSelectStatus",
     "command": [
+      "bill-analysis",
       "costs",
-      "get"
+      "get-export"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_costs_metrics",
     "command": [
+      "bill-analysis",
       "costs",
       "metrics"
     ],
@@ -203,14 +227,16 @@
   {
     "operationId": "BillAnalysis_costs_select",
     "command": [
+      "bill-analysis",
       "costs",
-      "create-select"
+      "get-select"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_currency_setting_show",
     "command": [
+      "bill-analysis",
       "currency-setting",
       "list"
     ],
@@ -219,6 +245,7 @@
   {
     "operationId": "BillAnalysis_currency_setting_update",
     "command": [
+      "bill-analysis",
       "currency-setting",
       "replace"
     ],
@@ -227,6 +254,7 @@
   {
     "operationId": "BillAnalysis_custom_dashboards_create",
     "command": [
+      "bill-analysis",
       "custom-dashboards",
       "create"
     ],
@@ -235,6 +263,7 @@
   {
     "operationId": "BillAnalysis_custom_dashboards_destroy",
     "command": [
+      "bill-analysis",
       "custom-dashboards",
       "delete"
     ],
@@ -243,6 +272,7 @@
   {
     "operationId": "BillAnalysis_custom_dashboards_index",
     "command": [
+      "bill-analysis",
       "custom-dashboards",
       "list"
     ],
@@ -251,6 +281,7 @@
   {
     "operationId": "BillAnalysis_custom_dashboards_replace",
     "command": [
+      "bill-analysis",
       "custom-dashboards",
       "replace"
     ],
@@ -259,6 +290,7 @@
   {
     "operationId": "BillAnalysis_custom_dashboards_show",
     "command": [
+      "bill-analysis",
       "custom-dashboards",
       "get"
     ],
@@ -267,6 +299,7 @@
   {
     "operationId": "BillAnalysis_custom_dimensions_create",
     "command": [
+      "bill-analysis",
       "custom-dimensions",
       "create"
     ],
@@ -275,6 +308,7 @@
   {
     "operationId": "BillAnalysis_custom_dimensions_destroy",
     "command": [
+      "bill-analysis",
       "custom-dimensions",
       "delete"
     ],
@@ -283,6 +317,7 @@
   {
     "operationId": "BillAnalysis_custom_dimensions_index",
     "command": [
+      "bill-analysis",
       "custom-dimensions",
       "list"
     ],
@@ -291,6 +326,7 @@
   {
     "operationId": "BillAnalysis_custom_dimensions_replace",
     "command": [
+      "bill-analysis",
       "custom-dimensions",
       "replace"
     ],
@@ -299,6 +335,7 @@
   {
     "operationId": "BillAnalysis_custom_dimensions_show",
     "command": [
+      "bill-analysis",
       "custom-dimensions",
       "get"
     ],
@@ -307,14 +344,16 @@
   {
     "operationId": "BillAnalysis_forecasts_report",
     "command": [
+      "bill-analysis",
       "forecasts",
-      "create"
+      "get"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "BillAnalysis_org_dashboards_create",
     "command": [
+      "bill-analysis",
       "org-dashboards",
       "create"
     ],
@@ -323,6 +362,7 @@
   {
     "operationId": "BillAnalysis_org_dashboards_destroy",
     "command": [
+      "bill-analysis",
       "org-dashboards",
       "delete"
     ],
@@ -331,6 +371,7 @@
   {
     "operationId": "BillAnalysis_org_dashboards_index",
     "command": [
+      "bill-analysis",
       "org-dashboards",
       "list"
     ],
@@ -339,6 +380,7 @@
   {
     "operationId": "BillAnalysis_org_dashboards_replace",
     "command": [
+      "bill-analysis",
       "org-dashboards",
       "replace"
     ],
@@ -347,6 +389,7 @@
   {
     "operationId": "BillAnalysis_org_dashboards_show",
     "command": [
+      "bill-analysis",
       "org-dashboards",
       "get"
     ],
@@ -403,6 +446,7 @@
   {
     "operationId": "BillingCenterService_AccessRules_group_report",
     "command": [
+      "billing-center",
       "access-rules",
       "list-groups"
     ],
@@ -411,6 +455,7 @@
   {
     "operationId": "BillingCenterService_AccessRules_user_report",
     "command": [
+      "billing-center",
       "access-rules",
       "list-users"
     ],
@@ -419,7 +464,8 @@
   {
     "operationId": "BillingCenterService_AllocationTable_show",
     "command": [
-      "allocation-table",
+      "billing-center",
+      "org-allocation-table",
       "list"
     ],
     "ownership": "generated"
@@ -427,7 +473,8 @@
   {
     "operationId": "BillingCenterService_AllocationTable_upsert",
     "command": [
-      "allocation-table",
+      "billing-center",
+      "org-allocation-table",
       "replace"
     ],
     "ownership": "generated"
@@ -435,6 +482,7 @@
   {
     "operationId": "BillingCenterService_BillingCenterAccessRules_grant",
     "command": [
+      "billing-center",
       "billing-center-access-rules",
       "grant"
     ],
@@ -443,6 +491,7 @@
   {
     "operationId": "BillingCenterService_BillingCenterAccessRules_report",
     "command": [
+      "billing-center",
       "billing-center-access-rules",
       "list"
     ],
@@ -451,6 +500,7 @@
   {
     "operationId": "BillingCenterService_BillingCenterAccessRules_revoke",
     "command": [
+      "billing-center",
       "billing-center-access-rules",
       "revoke"
     ],
@@ -459,7 +509,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_create",
     "command": [
-      "billing-centers",
+      "billing-center",
       "create"
     ],
     "ownership": "generated"
@@ -467,7 +517,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_delete",
     "command": [
-      "billing-centers",
+      "billing-center",
       "delete"
     ],
     "ownership": "generated"
@@ -475,7 +525,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_index",
     "command": [
-      "billing-centers",
+      "billing-center",
       "list"
     ],
     "ownership": "generated"
@@ -483,7 +533,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_show",
     "command": [
-      "billing-centers",
+      "billing-center",
       "get"
     ],
     "ownership": "generated"
@@ -491,7 +541,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_show_allocation_table",
     "command": [
-      "billing-centers",
+      "billing-center",
       "allocation-table-all"
     ],
     "ownership": "generated"
@@ -499,7 +549,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_update",
     "command": [
-      "billing-centers",
+      "billing-center",
       "replace"
     ],
     "ownership": "generated"
@@ -507,7 +557,7 @@
   {
     "operationId": "BillingCenterService_BillingCenters_upsert_allocation_table",
     "command": [
-      "billing-centers",
+      "billing-center",
       "allocation-table"
     ],
     "ownership": "generated"
@@ -515,6 +565,7 @@
   {
     "operationId": "BillingCenterService_UserBillingCenters_index",
     "command": [
+      "billing-center",
       "user-billing-centers",
       "list"
     ],
@@ -523,6 +574,7 @@
   {
     "operationId": "BillingCenterService_UserBillingCenters_show",
     "command": [
+      "billing-center",
       "user-billing-centers",
       "get"
     ],
@@ -579,6 +631,7 @@
   {
     "operationId": "Budget_Cloud_Vendor_Account_index",
     "command": [
+      "budget",
       "cloud-vendor-account",
       "list"
     ],
@@ -587,6 +640,7 @@
   {
     "operationId": "Cred_API_Key_Credential_create_org",
     "command": [
+      "credential",
       "api-key-credential",
       "replace"
     ],
@@ -595,6 +649,7 @@
   {
     "operationId": "Cred_API_Key_Credential_create_project",
     "command": [
+      "credential",
       "api-key-credential",
       "replace-project"
     ],
@@ -603,6 +658,7 @@
   {
     "operationId": "Cred_API_Key_Credential_show_org",
     "command": [
+      "credential",
       "api-key-credential",
       "get"
     ],
@@ -611,6 +667,7 @@
   {
     "operationId": "Cred_API_Key_Credential_show_project",
     "command": [
+      "credential",
       "api-key-credential",
       "get-project"
     ],
@@ -619,6 +676,7 @@
   {
     "operationId": "Cred_API_Key_Credential_update_org",
     "command": [
+      "credential",
       "api-key-credential",
       "update"
     ],
@@ -627,6 +685,7 @@
   {
     "operationId": "Cred_API_Key_Credential_update_project",
     "command": [
+      "credential",
       "api-key-credential",
       "update-project"
     ],
@@ -635,6 +694,7 @@
   {
     "operationId": "Cred_AWS_Credential_create_org",
     "command": [
+      "credential",
       "aws-credential",
       "replace"
     ],
@@ -643,6 +703,7 @@
   {
     "operationId": "Cred_AWS_Credential_create_project",
     "command": [
+      "credential",
       "aws-credential",
       "replace-project"
     ],
@@ -651,6 +712,7 @@
   {
     "operationId": "Cred_AWS_Credential_show_org",
     "command": [
+      "credential",
       "aws-credential",
       "get"
     ],
@@ -659,6 +721,7 @@
   {
     "operationId": "Cred_AWS_Credential_show_project",
     "command": [
+      "credential",
       "aws-credential",
       "get-project"
     ],
@@ -667,6 +730,7 @@
   {
     "operationId": "Cred_AWS_Credential_update_org",
     "command": [
+      "credential",
       "aws-credential",
       "update"
     ],
@@ -675,6 +739,7 @@
   {
     "operationId": "Cred_AWS_Credential_update_project",
     "command": [
+      "credential",
       "aws-credential",
       "update-project"
     ],
@@ -683,6 +748,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_create_org",
     "command": [
+      "credential",
       "awssts-credential",
       "replace"
     ],
@@ -691,6 +757,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_create_project",
     "command": [
+      "credential",
       "awssts-credential",
       "replace-project"
     ],
@@ -699,6 +766,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_show_org",
     "command": [
+      "credential",
       "awssts-credential",
       "get"
     ],
@@ -707,6 +775,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_show_project",
     "command": [
+      "credential",
       "awssts-credential",
       "get-project"
     ],
@@ -715,6 +784,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_update_org",
     "command": [
+      "credential",
       "awssts-credential",
       "update"
     ],
@@ -723,6 +793,7 @@
   {
     "operationId": "Cred_AWS_STS_Credential_update_project",
     "command": [
+      "credential",
       "awssts-credential",
       "update-project"
     ],
@@ -731,6 +802,7 @@
   {
     "operationId": "Cred_Basic_Credential_create_org",
     "command": [
+      "credential",
       "basic-credential",
       "replace"
     ],
@@ -739,6 +811,7 @@
   {
     "operationId": "Cred_Basic_Credential_create_project",
     "command": [
+      "credential",
       "basic-credential",
       "replace-project"
     ],
@@ -747,6 +820,7 @@
   {
     "operationId": "Cred_Basic_Credential_show_org",
     "command": [
+      "credential",
       "basic-credential",
       "get"
     ],
@@ -755,6 +829,7 @@
   {
     "operationId": "Cred_Basic_Credential_show_project",
     "command": [
+      "credential",
       "basic-credential",
       "get-project"
     ],
@@ -763,6 +838,7 @@
   {
     "operationId": "Cred_Basic_Credential_update_org",
     "command": [
+      "credential",
       "basic-credential",
       "update"
     ],
@@ -771,6 +847,7 @@
   {
     "operationId": "Cred_Basic_Credential_update_project",
     "command": [
+      "credential",
       "basic-credential",
       "update-project"
     ],
@@ -811,6 +888,7 @@
   {
     "operationId": "Cred_Digest_Credential_create_org",
     "command": [
+      "credential",
       "digest-credential",
       "replace"
     ],
@@ -819,6 +897,7 @@
   {
     "operationId": "Cred_Digest_Credential_create_project",
     "command": [
+      "credential",
       "digest-credential",
       "replace-project"
     ],
@@ -827,6 +906,7 @@
   {
     "operationId": "Cred_Digest_Credential_show_org",
     "command": [
+      "credential",
       "digest-credential",
       "get"
     ],
@@ -835,6 +915,7 @@
   {
     "operationId": "Cred_Digest_Credential_show_project",
     "command": [
+      "credential",
       "digest-credential",
       "get-project"
     ],
@@ -843,6 +924,7 @@
   {
     "operationId": "Cred_Digest_Credential_update_org",
     "command": [
+      "credential",
       "digest-credential",
       "update"
     ],
@@ -851,6 +933,7 @@
   {
     "operationId": "Cred_Digest_Credential_update_project",
     "command": [
+      "credential",
       "digest-credential",
       "update-project"
     ],
@@ -859,6 +942,7 @@
   {
     "operationId": "Cred_NTLM_Credential_create_org",
     "command": [
+      "credential",
       "ntlm-credential",
       "replace"
     ],
@@ -867,6 +951,7 @@
   {
     "operationId": "Cred_NTLM_Credential_create_project",
     "command": [
+      "credential",
       "ntlm-credential",
       "replace-project"
     ],
@@ -875,6 +960,7 @@
   {
     "operationId": "Cred_NTLM_Credential_show_org",
     "command": [
+      "credential",
       "ntlm-credential",
       "get"
     ],
@@ -883,6 +969,7 @@
   {
     "operationId": "Cred_NTLM_Credential_show_project",
     "command": [
+      "credential",
       "ntlm-credential",
       "get-project"
     ],
@@ -891,6 +978,7 @@
   {
     "operationId": "Cred_NTLM_Credential_update_org",
     "command": [
+      "credential",
       "ntlm-credential",
       "update"
     ],
@@ -899,6 +987,7 @@
   {
     "operationId": "Cred_NTLM_Credential_update_project",
     "command": [
+      "credential",
       "ntlm-credential",
       "update-project"
     ],
@@ -907,6 +996,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_create_org",
     "command": [
+      "credential",
       "o-auth2-credential",
       "replace"
     ],
@@ -915,6 +1005,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_create_project",
     "command": [
+      "credential",
       "o-auth2-credential",
       "replace-project"
     ],
@@ -923,6 +1014,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_show_org",
     "command": [
+      "credential",
       "o-auth2-credential",
       "get"
     ],
@@ -931,6 +1023,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_show_project",
     "command": [
+      "credential",
       "o-auth2-credential",
       "get-project"
     ],
@@ -939,6 +1032,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_update_org",
     "command": [
+      "credential",
       "o-auth2-credential",
       "update"
     ],
@@ -947,6 +1041,7 @@
   {
     "operationId": "Cred_OAuth2_Credential_update_project",
     "command": [
+      "credential",
       "o-auth2-credential",
       "update-project"
     ],
@@ -955,6 +1050,7 @@
   {
     "operationId": "Cred_Oracle_Credential_create_org",
     "command": [
+      "credential",
       "oracle-credential",
       "replace"
     ],
@@ -963,6 +1059,7 @@
   {
     "operationId": "Cred_Oracle_Credential_create_project",
     "command": [
+      "credential",
       "oracle-credential",
       "replace-project"
     ],
@@ -971,6 +1068,7 @@
   {
     "operationId": "Cred_Oracle_Credential_show_org",
     "command": [
+      "credential",
       "oracle-credential",
       "get"
     ],
@@ -979,6 +1077,7 @@
   {
     "operationId": "Cred_Oracle_Credential_show_project",
     "command": [
+      "credential",
       "oracle-credential",
       "get-project"
     ],
@@ -987,6 +1086,7 @@
   {
     "operationId": "Cred_Oracle_Credential_update_org",
     "command": [
+      "credential",
       "oracle-credential",
       "update"
     ],
@@ -995,6 +1095,7 @@
   {
     "operationId": "Cred_Oracle_Credential_update_project",
     "command": [
+      "credential",
       "oracle-credential",
       "update-project"
     ],
@@ -1003,30 +1104,34 @@
   {
     "operationId": "Divnt_trigger_onboarding_delete_data_inventory_v1_orgs_org_id_onboarding_connector_id_delete",
     "command": [
+      "data-inventory",
       "onboarding",
-      "delete-data-inventory"
+      "delete"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Divnt_trigger_onboarding_post_data_inventory_v1_orgs_org_id_onboarding_post",
     "command": [
+      "data-inventory",
       "onboarding",
-      "onboarding-all"
+      "create"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Divnt_trigger_onboarding_put_data_inventory_v1_orgs_org_id_onboarding_connector_id_put",
     "command": [
+      "data-inventory",
       "onboarding",
-      "onboarding"
+      "replace"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "FinopsBilling_Billing_Audit_indexAuditResults",
     "command": [
+      "finops-billing",
       "billing-audit",
       "create"
     ],
@@ -1035,6 +1140,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_createCreditAssignment",
     "command": [
+      "finops-billing",
       "billing-credits",
       "create"
     ],
@@ -1043,6 +1149,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_deleteCreditAssignment",
     "command": [
+      "finops-billing",
       "billing-credits",
       "delete"
     ],
@@ -1051,6 +1158,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_indexCreditAssignments",
     "command": [
+      "finops-billing",
       "billing-credits",
       "assignments"
     ],
@@ -1059,6 +1167,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_indexVendorCredits",
     "command": [
+      "finops-billing",
       "billing-credits",
       "vendor-credits"
     ],
@@ -1067,6 +1176,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_replaceCreditAssignment",
     "command": [
+      "finops-billing",
       "billing-credits",
       "replace"
     ],
@@ -1075,6 +1185,7 @@
   {
     "operationId": "FinopsBilling_Billing_Credits_showCreditAssignment",
     "command": [
+      "finops-billing",
       "billing-credits",
       "get"
     ],
@@ -1083,14 +1194,16 @@
   {
     "operationId": "FinopsBilling_Billing_createEnterpriseRule",
     "command": [
+      "finops-billing",
       "billing",
-      "rules-rules"
+      "create-rules"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "FinopsBilling_Billing_createPlan",
     "command": [
+      "finops-billing",
       "billing",
       "plans-all"
     ],
@@ -1099,6 +1212,7 @@
   {
     "operationId": "FinopsBilling_Billing_createPostAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "post-plan-rules-all"
     ],
@@ -1107,6 +1221,7 @@
   {
     "operationId": "FinopsBilling_Billing_createPreAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "pre-plan-rules-all"
     ],
@@ -1115,14 +1230,16 @@
   {
     "operationId": "FinopsBilling_Billing_createRule",
     "command": [
+      "finops-billing",
       "billing",
-      "rules-plans"
+      "create-plans"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "FinopsBilling_Billing_deleteEnterpriseRule",
     "command": [
+      "finops-billing",
       "billing",
       "delete-rules"
     ],
@@ -1131,6 +1248,7 @@
   {
     "operationId": "FinopsBilling_Billing_deletePlan",
     "command": [
+      "finops-billing",
       "billing",
       "plans-all-2"
     ],
@@ -1139,6 +1257,7 @@
   {
     "operationId": "FinopsBilling_Billing_deletePostAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "post-plan-rules-all-2"
     ],
@@ -1147,6 +1266,7 @@
   {
     "operationId": "FinopsBilling_Billing_deletePreAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "pre-plan-rules-all-2"
     ],
@@ -1155,6 +1275,7 @@
   {
     "operationId": "FinopsBilling_Billing_deleteRule",
     "command": [
+      "finops-billing",
       "billing",
       "delete-plans"
     ],
@@ -1163,6 +1284,7 @@
   {
     "operationId": "FinopsBilling_Billing_indexEnterpriseRules",
     "command": [
+      "finops-billing",
       "billing",
       "list-rules"
     ],
@@ -1171,14 +1293,16 @@
   {
     "operationId": "FinopsBilling_Billing_indexPlans",
     "command": [
+      "finops-billing",
       "billing",
-      "plans-all-3"
+      "plans-all-4"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "FinopsBilling_Billing_indexPostAdjustments",
     "command": [
+      "finops-billing",
       "billing",
       "post-plan-rules-all-3"
     ],
@@ -1187,6 +1311,7 @@
   {
     "operationId": "FinopsBilling_Billing_indexPreAdjustments",
     "command": [
+      "finops-billing",
       "billing",
       "pre-plan-rules-all-3"
     ],
@@ -1195,6 +1320,7 @@
   {
     "operationId": "FinopsBilling_Billing_indexRules",
     "command": [
+      "finops-billing",
       "billing",
       "list-plans"
     ],
@@ -1203,6 +1329,7 @@
   {
     "operationId": "FinopsBilling_Billing_replaceEnterpriseRule",
     "command": [
+      "finops-billing",
       "billing",
       "replace-all-2"
     ],
@@ -1211,6 +1338,7 @@
   {
     "operationId": "FinopsBilling_Billing_replaceEnterpriseRuleset",
     "command": [
+      "finops-billing",
       "billing",
       "replace-all"
     ],
@@ -1219,6 +1347,7 @@
   {
     "operationId": "FinopsBilling_Billing_replacePlan",
     "command": [
+      "finops-billing",
       "billing",
       "plans"
     ],
@@ -1227,6 +1356,7 @@
   {
     "operationId": "FinopsBilling_Billing_replacePostAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "post-plan-rules"
     ],
@@ -1235,6 +1365,7 @@
   {
     "operationId": "FinopsBilling_Billing_replacePreAdjustment",
     "command": [
+      "finops-billing",
       "billing",
       "pre-plan-rules"
     ],
@@ -1243,6 +1374,7 @@
   {
     "operationId": "FinopsBilling_Billing_replaceRule",
     "command": [
+      "finops-billing",
       "billing",
       "replace"
     ],
@@ -1251,6 +1383,7 @@
   {
     "operationId": "FinopsBilling_Billing_showCustomerStatus",
     "command": [
+      "finops-billing",
       "billing",
       "customer-status"
     ],
@@ -1259,7 +1392,152 @@
   {
     "operationId": "FinopsBilling_Billing_showPlan",
     "command": [
+      "finops-billing",
       "billing",
+      "plans-all-3"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedule_Invoices_index",
+    "command": [
+      "finops-billing",
+      "invoice-schedule-invoices",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedule_Invoices_show",
+    "command": [
+      "finops-billing",
+      "invoice-schedule-invoices",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_activate",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "activate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_create",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_deactivate",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "deactivate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_index",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_show",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Schedules_update",
+    "command": [
+      "finops-billing",
+      "invoice-schedules",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Templates_create",
+    "command": [
+      "finops-billing",
+      "invoice-templates",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Templates_index",
+    "command": [
+      "finops-billing",
+      "invoice-templates",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Templates_show",
+    "command": [
+      "finops-billing",
+      "invoice-templates",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoice_Templates_update",
+    "command": [
+      "finops-billing",
+      "invoice-templates",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoices_create",
+    "command": [
+      "finops-billing",
+      "invoices",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoices_index",
+    "command": [
+      "finops-billing",
+      "invoices",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoices_retry",
+    "command": [
+      "finops-billing",
+      "invoices",
+      "retry"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Invoices_show",
+    "command": [
+      "finops-billing",
+      "invoices",
       "get"
     ],
     "ownership": "generated"
@@ -1267,6 +1545,7 @@
   {
     "operationId": "FinopsBilling_Settings_replaceSettings",
     "command": [
+      "finops-billing",
       "settings",
       "replace"
     ],
@@ -1275,6 +1554,7 @@
   {
     "operationId": "FinopsBilling_Settings_showSettings",
     "command": [
+      "finops-billing",
       "settings",
       "list"
     ],
@@ -1283,6 +1563,7 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_create",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
       "create"
     ],
@@ -1291,6 +1572,7 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_delete",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
       "delete"
     ],
@@ -1299,6 +1581,7 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_index",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
       "list"
     ],
@@ -1307,6 +1590,7 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_reorder",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
       "replace"
     ],
@@ -1315,6 +1599,7 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_show",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
       "get"
     ],
@@ -1323,7 +1608,26 @@
   {
     "operationId": "FinopsBilling_Shared_Cost_Rules_update",
     "command": [
+      "finops-billing",
       "shared-cost-rules",
+      "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Currency_show",
+    "command": [
+      "finops-customizations",
+      "currency",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsCustomizations_Currency_update",
+    "command": [
+      "finops-customizations",
+      "currency",
       "update"
     ],
     "ownership": "generated"
@@ -1331,6 +1635,7 @@
   {
     "operationId": "FinopsCustomizations_Report_Subscriptions_create",
     "command": [
+      "finops-customizations",
       "report-subscriptions",
       "create"
     ],
@@ -1339,6 +1644,7 @@
   {
     "operationId": "FinopsCustomizations_Report_Subscriptions_delete",
     "command": [
+      "finops-customizations",
       "report-subscriptions",
       "delete"
     ],
@@ -1347,6 +1653,7 @@
   {
     "operationId": "FinopsCustomizations_Report_Subscriptions_index",
     "command": [
+      "finops-customizations",
       "report-subscriptions",
       "list"
     ],
@@ -1355,6 +1662,7 @@
   {
     "operationId": "FinopsCustomizations_Report_Subscriptions_show",
     "command": [
+      "finops-customizations",
       "report-subscriptions",
       "get"
     ],
@@ -1363,6 +1671,7 @@
   {
     "operationId": "FinopsCustomizations_Report_Subscriptions_update",
     "command": [
+      "finops-customizations",
       "report-subscriptions",
       "update"
     ],
@@ -1371,6 +1680,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_index",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "list"
     ],
@@ -1379,6 +1689,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_create",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "create"
     ],
@@ -1387,6 +1698,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_delete",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "delete"
     ],
@@ -1395,6 +1707,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_show",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "get"
     ],
@@ -1403,6 +1716,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_summary_show",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "summary"
     ],
@@ -1411,6 +1725,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rule_based_dimension_update",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "update"
     ],
@@ -1419,6 +1734,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_delete",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "rules-all"
     ],
@@ -1427,6 +1743,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_replace",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "replace"
     ],
@@ -1435,6 +1752,7 @@
   {
     "operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_show",
     "command": [
+      "finops-customizations",
       "rule-based-dimension",
       "rules"
     ],
@@ -1443,6 +1761,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_create",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "create"
     ],
@@ -1451,6 +1770,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_delete",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "delete"
     ],
@@ -1459,6 +1779,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_index",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "list"
     ],
@@ -1467,6 +1788,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_patch",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "update"
     ],
@@ -1475,6 +1797,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_show",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "get"
     ],
@@ -1483,6 +1806,7 @@
   {
     "operationId": "FinopsCustomizations_Saved_Filters_update",
     "command": [
+      "finops-customizations",
       "saved-filters",
       "replace"
     ],
@@ -1491,6 +1815,7 @@
   {
     "operationId": "FinopsCustomizations_Tag_Dimension_create",
     "command": [
+      "finops-customizations",
       "tag-dimension",
       "create"
     ],
@@ -1499,6 +1824,7 @@
   {
     "operationId": "FinopsCustomizations_Tag_Dimension_delete",
     "command": [
+      "finops-customizations",
       "tag-dimension",
       "delete"
     ],
@@ -1507,6 +1833,7 @@
   {
     "operationId": "FinopsCustomizations_Tag_Dimension_index",
     "command": [
+      "finops-customizations",
       "tag-dimension",
       "list"
     ],
@@ -1515,6 +1842,7 @@
   {
     "operationId": "FinopsCustomizations_Tag_Dimension_show",
     "command": [
+      "finops-customizations",
       "tag-dimension",
       "get"
     ],
@@ -1523,14 +1851,25 @@
   {
     "operationId": "FinopsCustomizations_Tag_Dimension_update",
     "command": [
+      "finops-customizations",
       "tag-dimension",
       "replace"
     ],
     "ownership": "generated"
   },
   {
+    "operationId": "FinopsCustomizations_Tag_Observation_index",
+    "command": [
+      "finops-customizations",
+      "tag-observation",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMRole",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "iam-role-all"
@@ -1540,6 +1879,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMUser",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "iam-user-all"
@@ -1549,6 +1889,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "delete"
@@ -1558,6 +1899,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "get"
@@ -1567,6 +1909,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMRole",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "iam-role"
@@ -1576,6 +1919,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMUser",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "iam-user"
@@ -1585,6 +1929,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_AWS_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "aws",
       "list"
@@ -1594,6 +1939,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_create",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-csp",
       "create"
@@ -1603,6 +1949,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-csp",
       "delete"
@@ -1612,6 +1959,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-csp",
       "get"
@@ -1621,6 +1969,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_update",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-csp",
       "update"
@@ -1630,6 +1979,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-csp",
       "list"
@@ -1639,6 +1989,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_create",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
       "create"
@@ -1648,6 +1999,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
       "delete"
@@ -1657,6 +2009,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
       "get"
@@ -1666,6 +2019,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_update",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
       "update"
@@ -1675,6 +2029,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_EA_Management_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
       "list"
@@ -1684,6 +2039,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_createMcaBillConnect",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-mca",
       "create"
@@ -1693,6 +2049,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-mca",
       "delete"
@@ -1702,6 +2059,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-mca",
       "get"
@@ -1711,6 +2069,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_updateMcaBillConnect",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-mca",
       "update"
@@ -1720,6 +2079,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "azure-mca",
       "list"
@@ -1729,6 +2089,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_create",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
       "create"
@@ -1738,6 +2099,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
       "delete"
@@ -1747,6 +2109,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
       "get"
@@ -1756,6 +2119,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_update",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
       "update"
@@ -1765,6 +2129,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
       "list"
@@ -1774,6 +2139,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Databricks_create",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "databricks",
       "create"
@@ -1783,6 +2149,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Databricks_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "databricks",
       "delete"
@@ -1792,6 +2159,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Databricks_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "databricks",
       "get"
@@ -1801,6 +2169,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Databricks_update",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "databricks",
       "update"
@@ -1810,6 +2179,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Databricks_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "databricks",
       "list"
@@ -1819,6 +2189,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_GCP_create",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "gcp",
       "create"
@@ -1828,6 +2199,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_GCP_delete",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "gcp",
       "delete"
@@ -1837,6 +2209,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_GCP_show",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "gcp",
       "get"
@@ -1846,6 +2219,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_GCP_update",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "gcp",
       "update"
@@ -1855,6 +2229,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_GCP_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "gcp",
       "list"
@@ -1864,7 +2239,9 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_create",
     "command": [
-      "bill-connect-snowflake",
+      "finops-onboarding",
+      "bill-connect",
+      "snowflake",
       "create"
     ],
     "ownership": "generated"
@@ -1872,7 +2249,9 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_delete",
     "command": [
-      "bill-connect-snowflake",
+      "finops-onboarding",
+      "bill-connect",
+      "snowflake",
       "delete"
     ],
     "ownership": "generated"
@@ -1880,7 +2259,9 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_show",
     "command": [
-      "bill-connect-snowflake",
+      "finops-onboarding",
+      "bill-connect",
+      "snowflake",
       "get"
     ],
     "ownership": "generated"
@@ -1888,7 +2269,9 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_update",
     "command": [
-      "bill-connect-snowflake",
+      "finops-onboarding",
+      "bill-connect",
+      "snowflake",
       "update"
     ],
     "ownership": "generated"
@@ -1896,7 +2279,9 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_Snowflake_validate",
     "command": [
-      "bill-connect-snowflake",
+      "finops-onboarding",
+      "bill-connect",
+      "snowflake",
       "list"
     ],
     "ownership": "generated"
@@ -1904,6 +2289,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_index",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "list"
     ],
@@ -1912,6 +2298,7 @@
   {
     "operationId": "FinopsOnboarding_Bill_Connect_validate",
     "command": [
+      "finops-onboarding",
       "bill-connect",
       "validations"
     ],
@@ -1920,6 +2307,7 @@
   {
     "operationId": "FinopsOnboarding_Processing_History_download",
     "command": [
+      "finops-onboarding",
       "processing-history",
       "download"
     ],
@@ -1928,6 +2316,7 @@
   {
     "operationId": "FinopsOnboarding_Processing_History_index",
     "command": [
+      "finops-onboarding",
       "processing-history",
       "list"
     ],
@@ -1936,6 +2325,7 @@
   {
     "operationId": "FinopsOnboarding_Processing_History_reprocess",
     "command": [
+      "finops-onboarding",
       "processing-history",
       "update"
     ],
@@ -1960,22 +2350,25 @@
   {
     "operationId": "Grs_Project_indexForOrg",
     "command": [
+      "grs",
       "project",
-      "list-grs"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Grs_User_orgIndex",
     "command": [
+      "grs",
       "user",
-      "orgs"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Iam_API_Event_index",
     "command": [
+      "iam",
       "api-event",
       "list"
     ],
@@ -1984,6 +2377,7 @@
   {
     "operationId": "Iam_Access_Policy_create",
     "command": [
+      "iam",
       "access-policy",
       "create"
     ],
@@ -1992,6 +2386,7 @@
   {
     "operationId": "Iam_Access_Policy_delete",
     "command": [
+      "iam",
       "access-policy",
       "delete"
     ],
@@ -2000,6 +2395,7 @@
   {
     "operationId": "Iam_Access_Policy_getUserAccessPolicies",
     "command": [
+      "iam",
       "access-policy",
       "users"
     ],
@@ -2008,6 +2404,7 @@
   {
     "operationId": "Iam_Access_Policy_index",
     "command": [
+      "iam",
       "access-policy",
       "list"
     ],
@@ -2016,6 +2413,7 @@
   {
     "operationId": "Iam_Access_Policy_show",
     "command": [
+      "iam",
       "access-policy",
       "get"
     ],
@@ -2024,6 +2422,7 @@
   {
     "operationId": "Iam_Access_Policy_update",
     "command": [
+      "iam",
       "access-policy",
       "replace"
     ],
@@ -2032,6 +2431,7 @@
   {
     "operationId": "Iam_Access_Rule_grant",
     "command": [
+      "iam",
       "access-rule",
       "grant"
     ],
@@ -2040,6 +2440,7 @@
   {
     "operationId": "Iam_Access_Rule_index",
     "command": [
+      "iam",
       "access-rule",
       "list"
     ],
@@ -2048,6 +2449,7 @@
   {
     "operationId": "Iam_Access_Rule_revoke",
     "command": [
+      "iam",
       "access-rule",
       "revoke"
     ],
@@ -2056,6 +2458,7 @@
   {
     "operationId": "Iam_Capability_index",
     "command": [
+      "iam",
       "capability",
       "list"
     ],
@@ -2064,6 +2467,7 @@
   {
     "operationId": "Iam_Capability_show",
     "command": [
+      "iam",
       "capability",
       "get"
     ],
@@ -2072,6 +2476,7 @@
   {
     "operationId": "Iam_Contracts_activation",
     "command": [
+      "iam",
       "contracts",
       "activation"
     ],
@@ -2080,6 +2485,7 @@
   {
     "operationId": "Iam_Contracts_create",
     "command": [
+      "iam",
       "contracts",
       "create"
     ],
@@ -2088,6 +2494,7 @@
   {
     "operationId": "Iam_Contracts_delete",
     "command": [
+      "iam",
       "contracts",
       "delete"
     ],
@@ -2096,6 +2503,7 @@
   {
     "operationId": "Iam_Contracts_index",
     "command": [
+      "iam",
       "contracts",
       "list"
     ],
@@ -2104,6 +2512,7 @@
   {
     "operationId": "Iam_Contracts_show",
     "command": [
+      "iam",
       "contracts",
       "get"
     ],
@@ -2112,6 +2521,7 @@
   {
     "operationId": "Iam_Contracts_update",
     "command": [
+      "iam",
       "contracts",
       "update"
     ],
@@ -2120,22 +2530,25 @@
   {
     "operationId": "Iam_Customization_Type_index",
     "command": [
+      "iam",
       "customization-type",
-      "list-iam"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Iam_Customization_Type_show",
     "command": [
+      "iam",
       "customization-type",
-      "get-iam"
+      "get"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Iam_Customization_index",
     "command": [
+      "iam",
       "customization",
       "list"
     ],
@@ -2144,6 +2557,7 @@
   {
     "operationId": "Iam_Customization_show",
     "command": [
+      "iam",
       "customization",
       "get"
     ],
@@ -2152,6 +2566,7 @@
   {
     "operationId": "Iam_Customization_update",
     "command": [
+      "iam",
       "customization",
       "update"
     ],
@@ -2160,6 +2575,7 @@
   {
     "operationId": "Iam_Event_index",
     "command": [
+      "iam",
       "event",
       "list"
     ],
@@ -2168,6 +2584,7 @@
   {
     "operationId": "Iam_Group_Delete",
     "command": [
+      "iam",
       "group",
       "delete"
     ],
@@ -2176,6 +2593,7 @@
   {
     "operationId": "Iam_Group_Membership_create",
     "command": [
+      "iam",
       "group-membership",
       "memberships"
     ],
@@ -2184,6 +2602,7 @@
   {
     "operationId": "Iam_Group_Membership_delete",
     "command": [
+      "iam",
       "group-membership",
       "delete"
     ],
@@ -2192,6 +2611,7 @@
   {
     "operationId": "Iam_Group_Membership_index",
     "command": [
+      "iam",
       "group-membership",
       "list"
     ],
@@ -2200,6 +2620,7 @@
   {
     "operationId": "Iam_Group_Membership_replace",
     "command": [
+      "iam",
       "group-membership",
       "replace"
     ],
@@ -2208,6 +2629,7 @@
   {
     "operationId": "Iam_Group_create",
     "command": [
+      "iam",
       "group",
       "create"
     ],
@@ -2216,6 +2638,7 @@
   {
     "operationId": "Iam_Group_index",
     "command": [
+      "iam",
       "group",
       "list"
     ],
@@ -2224,6 +2647,7 @@
   {
     "operationId": "Iam_Group_show",
     "command": [
+      "iam",
       "group",
       "get"
     ],
@@ -2232,6 +2656,7 @@
   {
     "operationId": "Iam_Group_update",
     "command": [
+      "iam",
       "group",
       "update"
     ],
@@ -2240,6 +2665,7 @@
   {
     "operationId": "Iam_IP_Access_Control_index_rules",
     "command": [
+      "iam",
       "ip-access-control",
       "list"
     ],
@@ -2248,6 +2674,7 @@
   {
     "operationId": "Iam_IP_Access_Control_replace_rules",
     "command": [
+      "iam",
       "ip-access-control",
       "replace"
     ],
@@ -2256,6 +2683,7 @@
   {
     "operationId": "Iam_MSP_Customer_Create",
     "command": [
+      "iam",
       "msp-customer",
       "create"
     ],
@@ -2264,6 +2692,7 @@
   {
     "operationId": "Iam_MSP_Customer_Delete",
     "command": [
+      "iam",
       "msp-customer",
       "delete"
     ],
@@ -2272,6 +2701,7 @@
   {
     "operationId": "Iam_MSP_Customer_Domain_Verify",
     "command": [
+      "iam",
       "msp-customer-domain",
       "verify"
     ],
@@ -2280,6 +2710,7 @@
   {
     "operationId": "Iam_MSP_Customer_Index",
     "command": [
+      "iam",
       "msp-customer",
       "list"
     ],
@@ -2288,6 +2719,7 @@
   {
     "operationId": "Iam_MSP_Customer_Show",
     "command": [
+      "iam",
       "msp-customer",
       "get"
     ],
@@ -2296,6 +2728,7 @@
   {
     "operationId": "Iam_MSP_Customer_Tag_Create",
     "command": [
+      "iam",
       "msp-customer-tag",
       "tags"
     ],
@@ -2304,6 +2737,7 @@
   {
     "operationId": "Iam_MSP_Customer_Tag_Delete",
     "command": [
+      "iam",
       "msp-customer-tag",
       "delete"
     ],
@@ -2312,6 +2746,7 @@
   {
     "operationId": "Iam_MSP_Customer_Tag_Index_Customers",
     "command": [
+      "iam",
       "msp-customer-tag",
       "list-all"
     ],
@@ -2320,6 +2755,7 @@
   {
     "operationId": "Iam_MSP_Customer_Tag_Show",
     "command": [
+      "iam",
       "msp-customer-tag",
       "list"
     ],
@@ -2328,6 +2764,7 @@
   {
     "operationId": "Iam_MSP_Customer_Update",
     "command": [
+      "iam",
       "msp-customer",
       "update"
     ],
@@ -2336,6 +2773,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_BulkCreateV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "bulk"
     ],
@@ -2344,6 +2782,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_BulkDeleteV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "bulk-delete"
     ],
@@ -2352,6 +2791,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_CreateV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "create"
     ],
@@ -2360,6 +2800,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_DeleteV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "delete"
     ],
@@ -2368,6 +2809,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_IndexV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "list"
     ],
@@ -2376,6 +2818,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_ShowV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "get"
     ],
@@ -2384,6 +2827,7 @@
   {
     "operationId": "Iam_MSP_Customer_V2_UpdateV2",
     "command": [
+      "iam",
       "msp-customer-v2",
       "update"
     ],
@@ -2392,6 +2836,7 @@
   {
     "operationId": "Iam_Org_Login_Policy_show",
     "command": [
+      "iam",
       "org-login-policy",
       "list"
     ],
@@ -2400,6 +2845,7 @@
   {
     "operationId": "Iam_Org_Login_Policy_update",
     "command": [
+      "iam",
       "org-login-policy",
       "update"
     ],
@@ -2408,6 +2854,7 @@
   {
     "operationId": "Iam_Organization_Invitation_create",
     "command": [
+      "iam",
       "organization-invitation",
       "create"
     ],
@@ -2416,6 +2863,7 @@
   {
     "operationId": "Iam_Organization_Invitation_delete",
     "command": [
+      "iam",
       "organization-invitation",
       "delete"
     ],
@@ -2424,6 +2872,7 @@
   {
     "operationId": "Iam_Organization_Invitation_index",
     "command": [
+      "iam",
       "organization-invitation",
       "list"
     ],
@@ -2432,6 +2881,7 @@
   {
     "operationId": "Iam_Organization_Invitation_resend",
     "command": [
+      "iam",
       "organization-invitation",
       "update"
     ],
@@ -2440,6 +2890,7 @@
   {
     "operationId": "Iam_Organization_Invitation_show",
     "command": [
+      "iam",
       "organization-invitation",
       "get"
     ],
@@ -2448,6 +2899,7 @@
   {
     "operationId": "Iam_Organization_show",
     "command": [
+      "iam",
       "organization",
       "get"
     ],
@@ -2456,6 +2908,7 @@
   {
     "operationId": "Iam_Organization_show_msp",
     "command": [
+      "iam",
       "organization",
       "msp"
     ],
@@ -2464,14 +2917,16 @@
   {
     "operationId": "Iam_Project_Index",
     "command": [
+      "iam",
       "project",
-      "list-iam"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Iam_Refresh_Token_Index",
     "command": [
+      "iam",
       "refresh-token",
       "list"
     ],
@@ -2480,6 +2935,7 @@
   {
     "operationId": "Iam_Refresh_Token_Revoke",
     "command": [
+      "iam",
       "refresh-token",
       "delete"
     ],
@@ -2488,6 +2944,7 @@
   {
     "operationId": "Iam_Refresh_Token_RevokeAll",
     "command": [
+      "iam",
       "refresh-token",
       "delete-all"
     ],
@@ -2496,6 +2953,7 @@
   {
     "operationId": "Iam_Refresh_Token_Show",
     "command": [
+      "iam",
       "refresh-token",
       "get"
     ],
@@ -2504,6 +2962,7 @@
   {
     "operationId": "Iam_Role_index",
     "command": [
+      "iam",
       "role",
       "list"
     ],
@@ -2512,6 +2971,7 @@
   {
     "operationId": "Iam_Role_show",
     "command": [
+      "iam",
       "role",
       "get"
     ],
@@ -2520,6 +2980,7 @@
   {
     "operationId": "Iam_SAML2_Domain_delete",
     "command": [
+      "iam",
       "saml2-domain",
       "delete"
     ],
@@ -2528,6 +2989,7 @@
   {
     "operationId": "Iam_SAML2_Domain_index",
     "command": [
+      "iam",
       "saml2-domain",
       "list"
     ],
@@ -2536,6 +2998,7 @@
   {
     "operationId": "Iam_SAML2_Domain_register",
     "command": [
+      "iam",
       "saml2-domain",
       "create"
     ],
@@ -2544,6 +3007,7 @@
   {
     "operationId": "Iam_SAML2_Domain_show",
     "command": [
+      "iam",
       "saml2-domain",
       "get"
     ],
@@ -2552,6 +3016,7 @@
   {
     "operationId": "Iam_SAML2_Domain_verify",
     "command": [
+      "iam",
       "saml2-domain",
       "verify"
     ],
@@ -2560,6 +3025,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_generate",
     "command": [
+      "iam",
       "saml2-identity-provider-signing-key",
       "create"
     ],
@@ -2568,6 +3034,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_index",
     "command": [
+      "iam",
       "saml2-identity-provider-signing-key",
       "list"
     ],
@@ -2576,6 +3043,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_Signing_Key_show",
     "command": [
+      "iam",
       "saml2-identity-provider-signing-key",
       "get"
     ],
@@ -2584,6 +3052,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_create",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "create"
     ],
@@ -2592,6 +3061,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_delete",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "delete"
     ],
@@ -2600,6 +3070,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_index",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "list"
     ],
@@ -2608,6 +3079,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_metadata",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "metadata-xml"
     ],
@@ -2616,6 +3088,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_show",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "get"
     ],
@@ -2624,6 +3097,7 @@
   {
     "operationId": "Iam_SAML2_Identity_Provider_update",
     "command": [
+      "iam",
       "saml2-identity-provider",
       "update"
     ],
@@ -2632,6 +3106,7 @@
   {
     "operationId": "Iam_SAML2_Single_Identity_Provider_show",
     "command": [
+      "iam",
       "saml2-single-identity-provider",
       "list"
     ],
@@ -2640,6 +3115,7 @@
   {
     "operationId": "Iam_SCIM_Config_index_resource_types",
     "command": [
+      "iam",
       "scim-config",
       "resource-types-all"
     ],
@@ -2648,6 +3124,7 @@
   {
     "operationId": "Iam_SCIM_Config_index_schemas",
     "command": [
+      "iam",
       "scim-config",
       "schemas-all"
     ],
@@ -2656,6 +3133,7 @@
   {
     "operationId": "Iam_SCIM_Config_index_service_provider_config",
     "command": [
+      "iam",
       "scim-config",
       "service-provider-config"
     ],
@@ -2664,6 +3142,7 @@
   {
     "operationId": "Iam_SCIM_Config_show_resource_type",
     "command": [
+      "iam",
       "scim-config",
       "resource-types"
     ],
@@ -2672,6 +3151,7 @@
   {
     "operationId": "Iam_SCIM_Config_show_schema",
     "command": [
+      "iam",
       "scim-config",
       "schemas"
     ],
@@ -2680,6 +3160,7 @@
   {
     "operationId": "Iam_SCIM_Group_create",
     "command": [
+      "iam",
       "scim-group",
       "create"
     ],
@@ -2688,6 +3169,7 @@
   {
     "operationId": "Iam_SCIM_Group_delete",
     "command": [
+      "iam",
       "scim-group",
       "delete"
     ],
@@ -2696,6 +3178,7 @@
   {
     "operationId": "Iam_SCIM_Group_index",
     "command": [
+      "iam",
       "scim-group",
       "list"
     ],
@@ -2704,6 +3187,7 @@
   {
     "operationId": "Iam_SCIM_Group_replace",
     "command": [
+      "iam",
       "scim-group",
       "replace"
     ],
@@ -2712,6 +3196,7 @@
   {
     "operationId": "Iam_SCIM_Group_show",
     "command": [
+      "iam",
       "scim-group",
       "get"
     ],
@@ -2720,6 +3205,7 @@
   {
     "operationId": "Iam_SCIM_Group_update",
     "command": [
+      "iam",
       "scim-group",
       "update"
     ],
@@ -2728,6 +3214,7 @@
   {
     "operationId": "Iam_SCIM_User_create",
     "command": [
+      "iam",
       "scim-user",
       "create"
     ],
@@ -2736,6 +3223,7 @@
   {
     "operationId": "Iam_SCIM_User_delete",
     "command": [
+      "iam",
       "scim-user",
       "delete"
     ],
@@ -2744,6 +3232,7 @@
   {
     "operationId": "Iam_SCIM_User_index",
     "command": [
+      "iam",
       "scim-user",
       "list"
     ],
@@ -2752,6 +3241,7 @@
   {
     "operationId": "Iam_SCIM_User_replace",
     "command": [
+      "iam",
       "scim-user",
       "replace"
     ],
@@ -2760,6 +3250,7 @@
   {
     "operationId": "Iam_SCIM_User_show",
     "command": [
+      "iam",
       "scim-user",
       "get"
     ],
@@ -2768,6 +3259,7 @@
   {
     "operationId": "Iam_SCIM_User_update",
     "command": [
+      "iam",
       "scim-user",
       "update"
     ],
@@ -2776,6 +3268,7 @@
   {
     "operationId": "Iam_Service_Account_Client_Create",
     "command": [
+      "iam",
       "service-account-client",
       "clients"
     ],
@@ -2784,6 +3277,7 @@
   {
     "operationId": "Iam_Service_Account_Client_Delete",
     "command": [
+      "iam",
       "service-account-client",
       "delete"
     ],
@@ -2792,6 +3286,7 @@
   {
     "operationId": "Iam_Service_Account_Client_DeleteOldSecret",
     "command": [
+      "iam",
       "service-account-client",
       "client-secret"
     ],
@@ -2800,6 +3295,7 @@
   {
     "operationId": "Iam_Service_Account_Client_Index",
     "command": [
+      "iam",
       "service-account-client",
       "list"
     ],
@@ -2808,6 +3304,7 @@
   {
     "operationId": "Iam_Service_Account_Client_IndexClientSecrets",
     "command": [
+      "iam",
       "service-account-client",
       "client-secrets"
     ],
@@ -2816,6 +3313,7 @@
   {
     "operationId": "Iam_Service_Account_Client_Rotate",
     "command": [
+      "iam",
       "service-account-client",
       "client-secret-all"
     ],
@@ -2824,6 +3322,7 @@
   {
     "operationId": "Iam_Service_Account_Client_Show",
     "command": [
+      "iam",
       "service-account-client",
       "get"
     ],
@@ -2832,6 +3331,7 @@
   {
     "operationId": "Iam_Service_Account_Create",
     "command": [
+      "iam",
       "service-account",
       "create"
     ],
@@ -2840,6 +3340,7 @@
   {
     "operationId": "Iam_Service_Account_Delete",
     "command": [
+      "iam",
       "service-account",
       "delete"
     ],
@@ -2848,6 +3349,7 @@
   {
     "operationId": "Iam_Service_Account_Index",
     "command": [
+      "iam",
       "service-account",
       "list"
     ],
@@ -2856,6 +3358,7 @@
   {
     "operationId": "Iam_Service_Account_Show",
     "command": [
+      "iam",
       "service-account",
       "get"
     ],
@@ -2864,6 +3367,7 @@
   {
     "operationId": "Iam_Service_Account_Update",
     "command": [
+      "iam",
       "service-account",
       "update"
     ],
@@ -2872,6 +3376,7 @@
   {
     "operationId": "Iam_User_Delete",
     "command": [
+      "iam",
       "user",
       "delete"
     ],
@@ -2880,6 +3385,7 @@
   {
     "operationId": "Iam_User_Invitation_accept_invitation",
     "command": [
+      "iam",
       "user-invitation",
       "accept"
     ],
@@ -2888,6 +3394,7 @@
   {
     "operationId": "Iam_User_Invitation_decline_invitation",
     "command": [
+      "iam",
       "user-invitation",
       "decline"
     ],
@@ -2896,6 +3403,7 @@
   {
     "operationId": "Iam_User_Invitation_index",
     "command": [
+      "iam",
       "user-invitation",
       "list"
     ],
@@ -2904,6 +3412,7 @@
   {
     "operationId": "Iam_User_Invitation_show",
     "command": [
+      "iam",
       "user-invitation",
       "get"
     ],
@@ -2912,14 +3421,16 @@
   {
     "operationId": "Iam_User_Memberships_index",
     "command": [
+      "iam",
       "user-memberships",
       "orgs"
     ],
-    "ownership": "generated"
+    "ownership": "exact-curated"
   },
   {
     "operationId": "Iam_User_Memberships_indexProjects",
     "command": [
+      "iam",
       "user-memberships",
       "projects"
     ],
@@ -2928,6 +3439,7 @@
   {
     "operationId": "Iam_User_Memberships_showPrivilegesReport",
     "command": [
+      "iam",
       "user-memberships",
       "privileges-report"
     ],
@@ -2936,6 +3448,7 @@
   {
     "operationId": "Iam_User_Profile_show",
     "command": [
+      "iam",
       "user-profile",
       "list"
     ],
@@ -2944,6 +3457,7 @@
   {
     "operationId": "Iam_User_Profile_update",
     "command": [
+      "iam",
       "user-profile",
       "update"
     ],
@@ -2952,6 +3466,7 @@
   {
     "operationId": "Iam_User_Setting_Blob_retrive_get_url",
     "command": [
+      "iam",
       "user-setting-blob",
       "list"
     ],
@@ -2960,6 +3475,7 @@
   {
     "operationId": "Iam_User_Setting_Blob_retrive_put_url",
     "command": [
+      "iam",
       "user-setting-blob",
       "replace"
     ],
@@ -2968,6 +3484,7 @@
   {
     "operationId": "Iam_User_Update",
     "command": [
+      "iam",
       "user",
       "update"
     ],
@@ -2976,6 +3493,7 @@
   {
     "operationId": "Iam_User_create",
     "command": [
+      "iam",
       "user",
       "create"
     ],
@@ -2984,14 +3502,16 @@
   {
     "operationId": "Iam_User_index",
     "command": [
+      "iam",
       "user",
-      "users"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Iam_User_show",
     "command": [
+      "iam",
       "user",
       "get"
     ],
@@ -3000,6 +3520,7 @@
   {
     "operationId": "Iam_User_user_groups",
     "command": [
+      "iam",
       "user",
       "groups"
     ],
@@ -3132,6 +3653,7 @@
   {
     "operationId": "Policy_CustomCatalog_index",
     "command": [
+      "policy",
       "custom-catalog",
       "list"
     ],
@@ -3140,6 +3662,7 @@
   {
     "operationId": "Policy_CustomCatalog_showTag",
     "command": [
+      "policy",
       "custom-catalog",
       "tag"
     ],
@@ -3148,6 +3671,7 @@
   {
     "operationId": "Policy_CustomCatalog_upsertTag",
     "command": [
+      "policy",
       "custom-catalog",
       "replace"
     ],
@@ -3156,22 +3680,25 @@
   {
     "operationId": "Policy_Customization_Type_index",
     "command": [
+      "policy",
       "customization-type",
-      "list-policy"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Policy_Customization_Type_show",
     "command": [
+      "policy",
       "customization-type",
-      "get-policy"
+      "get"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Policy_Customization_Value_delete",
     "command": [
+      "policy",
       "customization-value",
       "delete"
     ],
@@ -3180,6 +3707,7 @@
   {
     "operationId": "Policy_Customization_Value_index",
     "command": [
+      "policy",
       "customization-value",
       "list"
     ],
@@ -3188,6 +3716,7 @@
   {
     "operationId": "Policy_Customization_Value_show",
     "command": [
+      "policy",
       "customization-value",
       "get"
     ],
@@ -3196,6 +3725,7 @@
   {
     "operationId": "Policy_Customization_Value_upsert",
     "command": [
+      "policy",
       "customization-value",
       "replace"
     ],
@@ -3204,6 +3734,7 @@
   {
     "operationId": "Policy_Incident_Aggregate_index",
     "command": [
+      "policy",
       "incident-aggregate",
       "list"
     ],
@@ -3212,6 +3743,7 @@
   {
     "operationId": "Policy_Incident_Aggregate_show",
     "command": [
+      "policy",
       "incident-aggregate",
       "get"
     ],
@@ -3220,6 +3752,7 @@
   {
     "operationId": "Policy_Policy_Aggregate_create",
     "command": [
+      "policy",
       "policy-aggregate",
       "create"
     ],
@@ -3228,6 +3761,7 @@
   {
     "operationId": "Policy_Policy_Aggregate_delete",
     "command": [
+      "policy",
       "policy-aggregate",
       "delete"
     ],
@@ -3236,6 +3770,7 @@
   {
     "operationId": "Policy_Policy_Aggregate_index",
     "command": [
+      "policy",
       "policy-aggregate",
       "list"
     ],
@@ -3244,6 +3779,7 @@
   {
     "operationId": "Policy_Policy_Aggregate_show",
     "command": [
+      "policy",
       "policy-aggregate",
       "get"
     ],
@@ -3252,6 +3788,7 @@
   {
     "operationId": "Policy_Policy_Aggregate_update",
     "command": [
+      "policy",
       "policy-aggregate",
       "update"
     ],
@@ -3260,6 +3797,7 @@
   {
     "operationId": "Policy_Policy_Manager_create",
     "command": [
+      "policy",
       "policy-manager",
       "create"
     ],
@@ -3268,6 +3806,7 @@
   {
     "operationId": "Policy_Policy_Manager_delete",
     "command": [
+      "policy",
       "policy-manager",
       "delete"
     ],
@@ -3276,6 +3815,7 @@
   {
     "operationId": "Policy_Policy_Manager_index",
     "command": [
+      "policy",
       "policy-manager",
       "list"
     ],
@@ -3284,6 +3824,7 @@
   {
     "operationId": "Policy_Policy_Manager_show",
     "command": [
+      "policy",
       "policy-manager",
       "get"
     ],
@@ -3292,6 +3833,7 @@
   {
     "operationId": "Policy_Policy_Manager_summary",
     "command": [
+      "policy",
       "policy-manager",
       "summary"
     ],
@@ -3300,6 +3842,7 @@
   {
     "operationId": "Policy_Policy_Manager_update",
     "command": [
+      "policy",
       "policy-manager",
       "update"
     ],
@@ -3308,6 +3851,7 @@
   {
     "operationId": "Policy_Policy_Manager_updateTemplate",
     "command": [
+      "policy",
       "policy-manager",
       "update-template"
     ],
@@ -3379,6 +3923,7 @@
   {
     "operationId": "Policy_Published_Template_create",
     "command": [
+      "policy",
       "published-template",
       "create"
     ],
@@ -3387,6 +3932,7 @@
   {
     "operationId": "Policy_Published_Template_delete",
     "command": [
+      "policy",
       "published-template",
       "delete"
     ],
@@ -3395,6 +3941,7 @@
   {
     "operationId": "Policy_Published_Template_hide",
     "command": [
+      "policy",
       "published-template",
       "hide"
     ],
@@ -3403,6 +3950,7 @@
   {
     "operationId": "Policy_Published_Template_index",
     "command": [
+      "policy",
       "published-template",
       "list"
     ],
@@ -3411,6 +3959,7 @@
   {
     "operationId": "Policy_Published_Template_show",
     "command": [
+      "policy",
       "published-template",
       "get"
     ],
@@ -3419,6 +3968,7 @@
   {
     "operationId": "Policy_Published_Template_unhide",
     "command": [
+      "policy",
       "published-template",
       "unhide"
     ],
@@ -3427,6 +3977,7 @@
   {
     "operationId": "Policy_Published_Template_update",
     "command": [
+      "policy",
       "published-template",
       "replace"
     ],
@@ -3435,6 +3986,7 @@
   {
     "operationId": "Policy_Unmanaged_Applied_Policies_index",
     "command": [
+      "policy",
       "unmanaged-applied-policies",
       "list"
     ],
@@ -3443,6 +3995,7 @@
   {
     "operationId": "Policy_Unmanaged_Incidents_index",
     "command": [
+      "policy",
       "unmanaged-incidents",
       "list"
     ],
@@ -3451,6 +4004,7 @@
   {
     "operationId": "Risk_create_notification_risk_v1_orgs_orgId_notifications_create_post",
     "command": [
+      "risk",
       "notifications",
       "create"
     ],
@@ -3459,6 +4013,7 @@
   {
     "operationId": "Risk_enumerate_filter_values_risk_v1_orgs_orgId_vulnerability_enumerate_post",
     "command": [
+      "risk",
       "vulnerability",
       "enumerate"
     ],
@@ -3467,6 +4022,7 @@
   {
     "operationId": "Risk_enumerate_filter_values_vulnerability_enumerate_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "enumerate"
     ],
@@ -3475,54 +4031,52 @@
   {
     "operationId": "Risk_export_compliance_data_risk_v1_orgs_orgId_compliance_export_post",
     "command": [
+      "risk",
       "compliance",
       "export"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_export_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_export_post",
-    "command": [
-      "misconfiguration-ui",
-      "create-all-2"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "create-all-7"
+      "export"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_export_findings_distribution_risk_v1_orgs_orgId_vulnerability_findings_distribution_export_post",
     "command": [
+      "risk",
       "vulnerability",
-      "create-findings-distribution"
+      "get-findings-distribution"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_export_individual_cves_risk_v1_orgs_orgId_vulnerability_failed_assets_export_post",
     "command": [
+      "risk",
       "vulnerability",
-      "create-failed-assets"
+      "get-failed-assets"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_export_list_findings_distribution_risk_v1_orgs_orgId_vulnerability_list_export_post",
     "command": [
+      "risk",
       "vulnerability",
-      "create-list"
+      "get-list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_agent_onboarding_status_risk_v1_orgs_orgId_vulnerability_oneagent_onboarding_status_get",
     "command": [
+      "risk",
       "vulnerability",
       "oneagent-onboarding-status"
     ],
@@ -3531,6 +4085,7 @@
   {
     "operationId": "Risk_get_agent_onboarding_status_vulnerability_oneagent_onboarding_status_orgId_get",
     "command": [
+      "risk",
       "vulnerability-local",
       "oneagent-onboarding-status"
     ],
@@ -3539,6 +4094,7 @@
   {
     "operationId": "Risk_get_asset_statistics_risk_v1_orgs_orgId_regulatory_compliance_asset_statistics_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "asset-statistics"
     ],
@@ -3547,6 +4103,7 @@
   {
     "operationId": "Risk_get_bpc_rule_list_risk_v1_orgs_orgId_regulatory_compliance_list_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "list"
     ],
@@ -3555,6 +4112,7 @@
   {
     "operationId": "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "filter"
     ],
@@ -3563,6 +4121,7 @@
   {
     "operationId": "Risk_get_cis_benchmark_details_risk_v1_orgs_orgId_compliance_cis_post",
     "command": [
+      "risk",
       "compliance",
       "cis"
     ],
@@ -3571,6 +4130,7 @@
   {
     "operationId": "Risk_get_compliance_favorites_risk_v1_orgs_orgId_compliance_trend_post",
     "command": [
+      "risk",
       "compliance",
       "trend"
     ],
@@ -3579,6 +4139,7 @@
   {
     "operationId": "Risk_get_compliance_standards_risk_v1_orgs_orgId_compliance_standard_post",
     "command": [
+      "risk",
       "compliance",
       "standard"
     ],
@@ -3587,6 +4148,7 @@
   {
     "operationId": "Risk_get_conformity_summary_risk_v1_orgs_orgId_regulatory_compliance_conformity_summary_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "conformity-summary"
     ],
@@ -3595,6 +4157,7 @@
   {
     "operationId": "Risk_get_cve_details_risk_v1_orgs_orgId_vulnerability_cve_get",
     "command": [
+      "risk",
       "vulnerability",
       "cve"
     ],
@@ -3603,6 +4166,7 @@
   {
     "operationId": "Risk_get_cve_details_vulnerability_cve_orgId_get",
     "command": [
+      "risk",
       "vulnerability-local",
       "cve"
     ],
@@ -3611,30 +4175,25 @@
   {
     "operationId": "Risk_get_failed_asset_risk_v1_orgs_orgId_regulatory_compliance_failed_asset_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "failed-asset"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_get_failed_assets_recommendation_v1_orgs_orgId_misconfiguration_failed_asset_post",
-    "command": [
-      "misconfiguration-ui",
-      "create-all"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_get_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_post",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "create-all-6"
+      "failed-asset"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_failed_assets_risk_v1_orgs_orgId_vulnerability_failed_assets_post",
     "command": [
+      "risk",
       "vulnerability",
       "failed-assets"
     ],
@@ -3643,6 +4202,7 @@
   {
     "operationId": "Risk_get_failed_assets_vulnerability_failed_assets_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "failed-assets"
     ],
@@ -3651,6 +4211,7 @@
   {
     "operationId": "Risk_get_findings_distribution_risk_v1_orgs_orgId_vulnerability_findings_distribution_post",
     "command": [
+      "risk",
       "vulnerability",
       "findings-distribution"
     ],
@@ -3659,6 +4220,7 @@
   {
     "operationId": "Risk_get_findings_distribution_vulnerability_findings_distribution_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "findings-distribution"
     ],
@@ -3667,6 +4229,7 @@
   {
     "operationId": "Risk_get_findings_summary_risk_v1_orgs_orgId_vulnerability_total_findings_post",
     "command": [
+      "risk",
       "vulnerability",
       "total-findings"
     ],
@@ -3675,6 +4238,7 @@
   {
     "operationId": "Risk_get_findings_summary_vulnerability_total_findings_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "total-findings"
     ],
@@ -3683,6 +4247,7 @@
   {
     "operationId": "Risk_get_findings_trend_risk_v1_orgs_orgId_vulnerability_findings_trend_post",
     "command": [
+      "risk",
       "vulnerability",
       "findings-trend"
     ],
@@ -3691,6 +4256,7 @@
   {
     "operationId": "Risk_get_findings_trend_vulnerability_findings_trend_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "findings-trend"
     ],
@@ -3699,6 +4265,7 @@
   {
     "operationId": "Risk_get_lifecycle_forecast_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_forecast_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "lifecycle-forecast"
     ],
@@ -3707,6 +4274,7 @@
   {
     "operationId": "Risk_get_lifecycle_trend_risk_v1_orgs_orgId_regulatory_compliance_lifecycle_trend_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "lifecycle-trend"
     ],
@@ -3715,6 +4283,7 @@
   {
     "operationId": "Risk_get_list_findings_distribution_risk_v1_orgs_orgId_vulnerability_list_post",
     "command": [
+      "risk",
       "vulnerability",
       "list"
     ],
@@ -3723,54 +4292,43 @@
   {
     "operationId": "Risk_get_list_findings_distribution_vulnerability_list_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "list"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_get_misconfig_overview_recommendation_v1_orgs_orgId_misconfiguration_overview_post",
-    "command": [
-      "misconfiguration-ui",
-      "create-all-4"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_misconfiguration_overview_post",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "create-all-9"
+      "overview"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "overview"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_get_misconfig_rules_recommendation_v1_orgs_orgId_misconfiguration_list_post",
-    "command": [
-      "misconfiguration-ui",
-      "create-all-3"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_get_misconfig_rules_risk_v1_orgs_orgId_misconfiguration_list_post",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "create-all-8"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_open_cve_counts_risk_v1_orgs_orgId_vulnerability_open_cve_post",
     "command": [
+      "risk",
       "vulnerability",
       "open-cve"
     ],
@@ -3779,46 +4337,34 @@
   {
     "operationId": "Risk_get_open_cve_counts_vulnerability_open_cve_orgId_post",
     "command": [
+      "risk",
       "vulnerability-local",
       "open-cve"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_get_remediation_steps_recommendation_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get",
-    "command": [
-      "misconfiguration-ui",
-      "get-recommendation"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "get-risk"
-    ],
-    "ownership": "generated"
-  },
-  {
-    "operationId": "Risk_get_risk_details_recommendation_v1_orgs_orgId_misconfiguration_risk_riskId_details_get",
-    "command": [
-      "misconfiguration-ui",
-      "list-recommendation"
+      "remediation-steps"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "list-risk"
+      "details"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_get_standard_control_details_risk_v1_orgs_orgId_compliance_standard_name_control_post",
     "command": [
+      "risk",
       "compliance",
       "control"
     ],
@@ -3827,6 +4373,7 @@
   {
     "operationId": "Risk_get_year_wise_asset_list_risk_v1_orgs_orgId_regulatory_compliance_year_wise_asset_list_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "year-wise-asset-list"
     ],
@@ -3835,38 +4382,34 @@
   {
     "operationId": "Risk_list_compliances_risk_v1_orgs_orgId_compliances_get",
     "command": [
+      "risk",
       "compliance",
-      "list"
+      "compliances"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post",
     "command": [
+      "risk",
       "regulatory-compliance",
       "suppress"
     ],
     "ownership": "generated"
   },
   {
-    "operationId": "Risk_suppress_rule_or_asset_recommendation_v1_orgs_orgId_misconfiguration_rule_suppress_post",
-    "command": [
-      "misconfiguration-ui",
-      "create-all-5"
-    ],
-    "ownership": "generated"
-  },
-  {
     "operationId": "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post",
     "command": [
+      "risk",
       "misconfiguration-ui",
-      "create"
+      "suppress"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Risk_toggle_compliance_favorite_risk_v1_orgs_orgId_compliance_favorite_patch",
     "command": [
+      "risk",
       "compliance",
       "update"
     ],
@@ -3875,14 +4418,16 @@
   {
     "operationId": "Saas_Application_User_Activity_Count_indexActivityCountByRanges",
     "command": [
+      "saas",
       "application-user-activity-count",
-      "create"
+      "list"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Saas_Customer_Group_Type_index",
     "command": [
+      "saas",
       "customer-group-type",
       "list"
     ],
@@ -3891,6 +4436,7 @@
   {
     "operationId": "Saas_Customer_Group_Type_show",
     "command": [
+      "saas",
       "customer-group-type",
       "get"
     ],
@@ -3899,6 +4445,7 @@
   {
     "operationId": "Saas_Customer_Group_Type_summary",
     "command": [
+      "saas",
       "customer-group-type",
       "summary"
     ],
@@ -3907,6 +4454,7 @@
   {
     "operationId": "Saas_Customer_Group_index",
     "command": [
+      "saas",
       "customer-group",
       "list"
     ],
@@ -3915,6 +4463,7 @@
   {
     "operationId": "Saas_Customer_Group_show",
     "command": [
+      "saas",
       "customer-group",
       "get"
     ],
@@ -3923,6 +4472,7 @@
   {
     "operationId": "Saas_Discovered_Application_usage",
     "command": [
+      "saas",
       "discovered-application",
       "list"
     ],
@@ -3931,6 +4481,7 @@
   {
     "operationId": "Saas_Import_Job_createManagedAppImportJob",
     "command": [
+      "saas",
       "import-job",
       "create"
     ],
@@ -3939,6 +4490,7 @@
   {
     "operationId": "Saas_Import_Job_index",
     "command": [
+      "saas",
       "import-job",
       "list"
     ],
@@ -3947,6 +4499,7 @@
   {
     "operationId": "Saas_Import_Job_show",
     "command": [
+      "saas",
       "import-job",
       "get"
     ],
@@ -3955,6 +4508,7 @@
   {
     "operationId": "Saas_License_allocation_create",
     "command": [
+      "saas",
       "license",
       "allocations-all"
     ],
@@ -3963,6 +4517,7 @@
   {
     "operationId": "Saas_License_allocation_delete",
     "command": [
+      "saas",
       "license",
       "allocations-all-2"
     ],
@@ -3971,6 +4526,7 @@
   {
     "operationId": "Saas_License_allocation_index",
     "command": [
+      "saas",
       "license",
       "allocations-all-3"
     ],
@@ -3979,6 +4535,7 @@
   {
     "operationId": "Saas_License_allocation_update",
     "command": [
+      "saas",
       "license",
       "allocations"
     ],
@@ -3987,6 +4544,7 @@
   {
     "operationId": "Saas_License_create",
     "command": [
+      "saas",
       "license",
       "create"
     ],
@@ -3995,6 +4553,7 @@
   {
     "operationId": "Saas_License_delete",
     "command": [
+      "saas",
       "license",
       "delete"
     ],
@@ -4003,6 +4562,7 @@
   {
     "operationId": "Saas_License_fee_create",
     "command": [
+      "saas",
       "license",
       "fees-all"
     ],
@@ -4011,6 +4571,7 @@
   {
     "operationId": "Saas_License_fee_delete",
     "command": [
+      "saas",
       "license",
       "fees-all-2"
     ],
@@ -4019,6 +4580,7 @@
   {
     "operationId": "Saas_License_fee_index",
     "command": [
+      "saas",
       "license",
       "fees-all-4"
     ],
@@ -4027,6 +4589,7 @@
   {
     "operationId": "Saas_License_fee_show",
     "command": [
+      "saas",
       "license",
       "fees-all-3"
     ],
@@ -4035,6 +4598,7 @@
   {
     "operationId": "Saas_License_fee_update",
     "command": [
+      "saas",
       "license",
       "fees"
     ],
@@ -4043,6 +4607,7 @@
   {
     "operationId": "Saas_License_index",
     "command": [
+      "saas",
       "license",
       "list"
     ],
@@ -4051,6 +4616,7 @@
   {
     "operationId": "Saas_License_note_create",
     "command": [
+      "saas",
       "license",
       "notes-all"
     ],
@@ -4059,6 +4625,7 @@
   {
     "operationId": "Saas_License_note_delete",
     "command": [
+      "saas",
       "license",
       "notes-all-2"
     ],
@@ -4067,6 +4634,7 @@
   {
     "operationId": "Saas_License_note_index",
     "command": [
+      "saas",
       "license",
       "notes-all-4"
     ],
@@ -4075,6 +4643,7 @@
   {
     "operationId": "Saas_License_note_show",
     "command": [
+      "saas",
       "license",
       "notes-all-3"
     ],
@@ -4083,6 +4652,7 @@
   {
     "operationId": "Saas_License_note_update",
     "command": [
+      "saas",
       "license",
       "notes"
     ],
@@ -4091,6 +4661,7 @@
   {
     "operationId": "Saas_License_purchase_create",
     "command": [
+      "saas",
       "license",
       "purchases-all"
     ],
@@ -4099,6 +4670,7 @@
   {
     "operationId": "Saas_License_purchase_delete",
     "command": [
+      "saas",
       "license",
       "purchases-all-2"
     ],
@@ -4107,6 +4679,7 @@
   {
     "operationId": "Saas_License_purchase_index",
     "command": [
+      "saas",
       "license",
       "purchases-all-4"
     ],
@@ -4115,6 +4688,7 @@
   {
     "operationId": "Saas_License_purchase_show",
     "command": [
+      "saas",
       "license",
       "purchases-all-3"
     ],
@@ -4123,6 +4697,7 @@
   {
     "operationId": "Saas_License_purchase_update",
     "command": [
+      "saas",
       "license",
       "purchases"
     ],
@@ -4131,6 +4706,7 @@
   {
     "operationId": "Saas_License_show",
     "command": [
+      "saas",
       "license",
       "get"
     ],
@@ -4139,6 +4715,7 @@
   {
     "operationId": "Saas_License_term_create",
     "command": [
+      "saas",
       "license",
       "terms-all"
     ],
@@ -4147,6 +4724,7 @@
   {
     "operationId": "Saas_License_term_delete",
     "command": [
+      "saas",
       "license",
       "terms-all-2"
     ],
@@ -4155,6 +4733,7 @@
   {
     "operationId": "Saas_License_term_index",
     "command": [
+      "saas",
       "license",
       "terms-all-4"
     ],
@@ -4163,6 +4742,7 @@
   {
     "operationId": "Saas_License_term_show",
     "command": [
+      "saas",
       "license",
       "terms-all-3"
     ],
@@ -4171,6 +4751,7 @@
   {
     "operationId": "Saas_License_term_update",
     "command": [
+      "saas",
       "license",
       "terms"
     ],
@@ -4179,6 +4760,7 @@
   {
     "operationId": "Saas_License_update",
     "command": [
+      "saas",
       "license",
       "update"
     ],
@@ -4187,6 +4769,7 @@
   {
     "operationId": "Saas_Managed_Application_Event_index",
     "command": [
+      "saas",
       "managed-application-event",
       "list"
     ],
@@ -4195,6 +4778,7 @@
   {
     "operationId": "Saas_Managed_Application_Event_show",
     "command": [
+      "saas",
       "managed-application-event",
       "get"
     ],
@@ -4203,6 +4787,7 @@
   {
     "operationId": "Saas_Managed_Application_User_index",
     "command": [
+      "saas",
       "managed-application-user",
       "list"
     ],
@@ -4211,6 +4796,7 @@
   {
     "operationId": "Saas_Managed_Application_User_indexHistory",
     "command": [
+      "saas",
       "managed-application-user",
       "history"
     ],
@@ -4219,6 +4805,7 @@
   {
     "operationId": "Saas_Managed_Application_User_show",
     "command": [
+      "saas",
       "managed-application-user",
       "get"
     ],
@@ -4227,6 +4814,7 @@
   {
     "operationId": "Saas_Managed_Application_delete",
     "command": [
+      "saas",
       "managed-application",
       "delete"
     ],
@@ -4235,6 +4823,7 @@
   {
     "operationId": "Saas_Managed_Application_index",
     "command": [
+      "saas",
       "managed-application",
       "list"
     ],
@@ -4243,6 +4832,7 @@
   {
     "operationId": "Saas_Managed_Application_indexEvents",
     "command": [
+      "saas",
       "managed-application",
       "app-events"
     ],
@@ -4251,6 +4841,7 @@
   {
     "operationId": "Saas_Managed_Application_indexUsers",
     "command": [
+      "saas",
       "managed-application",
       "app-users"
     ],
@@ -4259,6 +4850,7 @@
   {
     "operationId": "Saas_Managed_Application_show",
     "command": [
+      "saas",
       "managed-application",
       "get"
     ],
@@ -4267,6 +4859,7 @@
   {
     "operationId": "Saas_Managed_Application_update",
     "command": [
+      "saas",
       "managed-application",
       "update"
     ],
@@ -4275,6 +4868,7 @@
   {
     "operationId": "Saas_Metric_Query_eventCountsByType",
     "command": [
+      "saas",
       "metric-query",
       "event-counts-by-type"
     ],
@@ -4283,14 +4877,16 @@
   {
     "operationId": "Saas_Metric_Query_query",
     "command": [
+      "saas",
       "metric-query",
-      "stored-metric-queries"
+      "get"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Saas_Metric_Query_totalEventCounts",
     "command": [
+      "saas",
       "metric-query",
       "total-event-counts"
     ],
@@ -4299,6 +4895,7 @@
   {
     "operationId": "Saas_Metric_Query_userCountsByEventsPerformed",
     "command": [
+      "saas",
       "metric-query",
       "user-counts-by-events-performed"
     ],
@@ -4307,6 +4904,7 @@
   {
     "operationId": "Saas_Object_Definition_index",
     "command": [
+      "saas",
       "object-definition",
       "list"
     ],
@@ -4315,6 +4913,7 @@
   {
     "operationId": "Saas_Object_Definition_show",
     "command": [
+      "saas",
       "object-definition",
       "get"
     ],
@@ -4323,6 +4922,7 @@
   {
     "operationId": "Saas_SaaS_Data_create",
     "command": [
+      "saas",
       "saa-s-data",
       "create"
     ],
@@ -4331,6 +4931,7 @@
   {
     "operationId": "Saas_SaaS_Data_index",
     "command": [
+      "saas",
       "saa-s-data",
       "list"
     ],
@@ -4339,6 +4940,7 @@
   {
     "operationId": "Saas_SaaS_Data_show",
     "command": [
+      "saas",
       "saa-s-data",
       "get"
     ],
@@ -4347,6 +4949,7 @@
   {
     "operationId": "Saas_SaaS_Data_upload",
     "command": [
+      "saas",
       "saa-s-data",
       "update"
     ],
@@ -4355,6 +4958,7 @@
   {
     "operationId": "Saas_Usage_Group_create",
     "command": [
+      "saas",
       "usage-group",
       "create"
     ],
@@ -4363,6 +4967,7 @@
   {
     "operationId": "Saas_Usage_Group_createCost",
     "command": [
+      "saas",
       "usage-group",
       "costs-all"
     ],
@@ -4371,6 +4976,7 @@
   {
     "operationId": "Saas_Usage_Group_delete",
     "command": [
+      "saas",
       "usage-group",
       "delete"
     ],
@@ -4379,6 +4985,7 @@
   {
     "operationId": "Saas_Usage_Group_deleteCost",
     "command": [
+      "saas",
       "usage-group",
       "costs-all-2"
     ],
@@ -4387,6 +4994,7 @@
   {
     "operationId": "Saas_Usage_Group_index",
     "command": [
+      "saas",
       "usage-group",
       "list"
     ],
@@ -4395,6 +5003,7 @@
   {
     "operationId": "Saas_Usage_Group_show",
     "command": [
+      "saas",
       "usage-group",
       "get"
     ],
@@ -4403,6 +5012,7 @@
   {
     "operationId": "Saas_Usage_Group_showCost",
     "command": [
+      "saas",
       "usage-group",
       "costs-all-3"
     ],
@@ -4411,6 +5021,7 @@
   {
     "operationId": "Saas_Usage_Group_update",
     "command": [
+      "saas",
       "usage-group",
       "replace"
     ],
@@ -4419,6 +5030,7 @@
   {
     "operationId": "Saas_Usage_Group_updateCost",
     "command": [
+      "saas",
       "usage-group",
       "costs"
     ],
@@ -4427,6 +5039,7 @@
   {
     "operationId": "Saas_Usage_Message_Query_index",
     "command": [
+      "saas",
       "usage-message-query",
       "list"
     ],
@@ -4435,6 +5048,7 @@
   {
     "operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post",
     "command": [
+      "unified-onboarding",
       "saa-s-onboarding",
       "collect"
     ],
@@ -4443,6 +5057,7 @@
   {
     "operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post",
     "command": [
+      "unified-onboarding",
       "saa-s-onboarding",
       "create"
     ],
@@ -4451,6 +5066,7 @@
   {
     "operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete",
     "command": [
+      "unified-onboarding",
       "saa-s-onboarding",
       "delete"
     ],
@@ -4459,6 +5075,7 @@
   {
     "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_cloud_connectors_status_get",
     "command": [
+      "unified-onboarding",
       "connector",
       "status"
     ],
@@ -4467,6 +5084,7 @@
   {
     "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_saas_connectors_status_get",
     "command": [
+      "unified-onboarding",
       "saa-s-connector",
       "status"
     ],
@@ -4475,6 +5093,7 @@
   {
     "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_cloud_connectors_identifier_get",
     "command": [
+      "unified-onboarding",
       "connector",
       "get"
     ],
@@ -4483,6 +5102,7 @@
   {
     "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_saas_connectors_identifier_get",
     "command": [
+      "unified-onboarding",
       "saa-s-connector",
       "get"
     ],
@@ -4491,6 +5111,7 @@
   {
     "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_cloud_connectors_count_get",
     "command": [
+      "unified-onboarding",
       "connector",
       "count"
     ],
@@ -4499,6 +5120,7 @@
   {
     "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_saas_connectors_count_get",
     "command": [
+      "unified-onboarding",
       "saa-s-connector",
       "count"
     ],
@@ -4507,6 +5129,7 @@
   {
     "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_cloud_connectors_get",
     "command": [
+      "unified-onboarding",
       "connector",
       "list"
     ],
@@ -4515,6 +5138,7 @@
   {
     "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_saas_connectors_get",
     "command": [
+      "unified-onboarding",
       "saa-s-connector",
       "list"
     ],
@@ -4523,30 +5147,34 @@
   {
     "operationId": "Uobs_trigger_onboarding_delete_uobs_v1_orgs_org_id_cloud_onboarding_delete",
     "command": [
+      "unified-onboarding",
       "onboarding",
-      "delete-uobs"
+      "delete"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Uobs_trigger_onboarding_post_gcp_uobs_v1_orgs_org_id_cloud_onboarding_gcp_post",
     "command": [
+      "unified-onboarding",
       "onboarding",
-      "gcp-all"
+      "create"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Uobs_trigger_onboarding_put_gcp_uobs_v1_orgs_org_id_cloud_onboarding_gcp_connector_id_put",
     "command": [
+      "unified-onboarding",
       "onboarding",
-      "gcp"
+      "replace"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put",
     "command": [
+      "unified-onboarding",
       "saa-s-onboarding",
       "replace"
     ],
@@ -4555,6 +5183,7 @@
   {
     "operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post",
     "command": [
+      "unified-onboarding",
       "saa-s-onboarding",
       "validate"
     ],
@@ -4563,6 +5192,7 @@
   {
     "operationId": "Vis_Device_delete",
     "command": [
+      "it-visibility",
       "device",
       "submit"
     ],
@@ -4571,14 +5201,16 @@
   {
     "operationId": "Vis_Device_estimateDelete",
     "command": [
+      "it-visibility",
       "device",
-      "estimate"
+      "get"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Vis_ExportDownload",
     "command": [
+      "it-visibility",
       "export-retired",
       "get"
     ],
@@ -4587,6 +5219,7 @@
   {
     "operationId": "Vis_ExportIndex",
     "command": [
+      "it-visibility",
       "export-retired",
       "list"
     ],
@@ -4595,14 +5228,16 @@
   {
     "operationId": "Vis_Query_create",
     "command": [
+      "it-visibility",
       "query",
-      "create"
+      "get-all"
     ],
     "ownership": "generated"
   },
   {
     "operationId": "Vis_Query_download",
     "command": [
+      "it-visibility",
       "query",
       "list"
     ],
@@ -4611,6 +5246,7 @@
   {
     "operationId": "Vis_Query_show",
     "command": [
+      "it-visibility",
       "query",
       "get"
     ],

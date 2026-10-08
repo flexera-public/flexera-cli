@@ -1,8 +1,6 @@
-// Package userorgs provides the hand-written "user-orgs" command: a thin,
-// opinionated wrapper over the IAM endpoint GET /iam/v1/users/{id}/orgs that
-// auto-detects the caller's user ID from the access-token JWT when --id is
-// omitted. This is the preferred replacement for the legacy GRS user-orgs
-// command (GRS is deprecated; IAM endpoints are preferred where available).
+// Package userorgs provides `iam user-memberships orgs`: a wrapper over
+// GET /iam/v1/users/{id}/orgs (Iam_User_Memberships_index) that auto-detects
+// the caller's user ID from the access-token JWT when --id is omitted.
 package userorgs
 
 import (
@@ -15,23 +13,19 @@ import (
 	flexera "github.com/flexera-public/unified-go-client"
 )
 
-// NewCmd builds the "user-orgs" command tree.
-func NewCmd() *cobra.Command {
-	c := &cobra.Command{
-		Use:     "user-orgs",
-		Short:   "List organizations a user can access (IAM)",
-		Example: "flexera-cli user-orgs list --refresh-token <token>   # discover orgs your credentials can access",
-	}
-	c.AddCommand(newListCmd())
-	return c
+// Attach adds `orgs` beneath the generated `iam user-memberships` command.
+func Attach(root *cobra.Command) error {
+	return clipkg.AttachCommands(root, []string{"iam", "user-memberships"}, newOrgsCmd())
 }
 
-func newListCmd() *cobra.Command {
+func newOrgsCmd() *cobra.Command {
 	var userID int
 	c := &cobra.Command{
-		Use:   "list",
-		Short: "List organizations the authenticated user (or --id) can access",
-		Args:  cobra.NoArgs,
+		Use:         "orgs",
+		Short:       "List organizations the authenticated user (or --id) can access",
+		Example:     "flexera-cli iam user-memberships orgs --refresh-token <token>   # discover orgs your credentials can access",
+		Annotations: map[string]string{"flexera.operationId": "Iam_User_Memberships_index", "flexera.readOnly": "true", clipkg.OutputAnnotation: "structured"},
+		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			deps := clipkg.DepsFrom(cmd.Context())
 			cfg := deps.Config

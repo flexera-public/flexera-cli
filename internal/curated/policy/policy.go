@@ -1,6 +1,8 @@
-// Package policy provides the hand-written "policy" command tree (Policy
-// service). It is kept hand-written (not spec-generated) because of GRS
-// project auto-resolution, envelope pagination, and write-op confirmation.
+// Package policy provides the project-scoped Policy resources (applied-policy,
+// action-status, archived-incident, policy-template) and the meta workflows,
+// attached beneath the generated `policy` service. They are hand-written
+// because of GRS project auto-resolution (--project-id may be omitted),
+// envelope pagination, and write-op confirmation.
 package policy
 
 import (
@@ -19,19 +21,16 @@ import (
 	flexera "github.com/flexera-public/unified-go-client"
 )
 
-// NewCmd builds the "policy" command tree.
-func NewCmd() *cobra.Command {
-	c := &cobra.Command{
-		Use:   "policy",
-		Short: "Project-scoped policy operations with GRS project auto-resolution",
-		Long: "Project-scoped policy operations. When --project-id is omitted, the " +
-			"project is auto-resolved for the org via GRS. Org-scoped policy " +
-			"resources (published-template, custom-catalog, customization-value, " +
-			"policy-manager, policy-aggregate, incident-aggregate, unmanaged-*) are " +
-			"available as their own top-level commands.",
-		Example: "flexera-cli policy applied-policy list --org-id 123 --access-token <token>",
-		RunE:    parentRunE,
-	}
+// Attach adds the project-scoped resource groups and relationship-aware meta
+// workflows beneath the generated `policy` service command, which already
+// carries the org-scoped Policy resources.
+func Attach(root *cobra.Command) error {
+	return clipkg.AttachCommands(root, []string{"policy"}, newGroups()...)
+}
+
+// newGroups builds the curated policy resource groups.
+func newGroups() []*cobra.Command {
+	c := &cobra.Command{}
 	c.AddCommand(
 		group("applied-policy", "Applied policies (project-scoped)",
 			newAppliedPolicyListCmd(), newAppliedPolicyGetCmd(), newAppliedPolicyCreateCmd(),
@@ -50,7 +49,11 @@ func NewCmd() *cobra.Command {
 			newMetaTerminateOrphanedCmd()),
 	)
 	annotateDirectOperations(c)
-	return c
+	groups := c.Commands()
+	for _, g := range groups {
+		c.RemoveCommand(g)
+	}
+	return groups
 }
 
 // annotateDirectOperations adds catalog identities only to direct API leaves,

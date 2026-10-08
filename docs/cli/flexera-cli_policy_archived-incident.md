@@ -35,7 +35,7 @@ flexera-cli policy archived-incident [flags]
 
 ### SEE ALSO
 
-* [flexera-cli policy](flexera-cli_policy.md)	 - Project-scoped policy operations with GRS project auto-resolution
+* [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy archived-incident get](flexera-cli_policy_archived-incident_get.md)	 - Show an archived incident
 * [flexera-cli policy archived-incident list](flexera-cli_policy_archived-incident_list.md)	 - List archived incidents
 

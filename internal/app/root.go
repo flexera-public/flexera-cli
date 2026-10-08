@@ -23,9 +23,10 @@ import (
 )
 
 // NewRootCmd constructs the root command: persistent flags + viper config via
-// internal/cli, the spec-generated tag commands (internal/commands), and the
-// hand-written curated commands (auth, grs, curated workflows, finops, policy,
-// user-orgs) that wrap library operations the spec can't express.
+// internal/cli, the spec-generated service commands (internal/commands, one
+// top-level command per API service), and the hand-written curated commands
+// attached beneath their service. Only `auth` and `cli` are top-level
+// curated commands.
 //
 // It is the single source of truth for the command tree, shared by the binary
 // (package main) and the docs generator (cmd/gendocs).
@@ -42,26 +43,21 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 	root.SetErr(stderr)
 
 	commands.RegisterAll(root)
-	if err := billuploadcmd.Attach(root); err != nil {
-		panic(err)
-	}
-	if err := graphqlcmd.Attach(root); err != nil {
-		panic(err)
-	}
-	if err := rulebaseddimensioncmd.Attach(root); err != nil {
-		panic(err)
-	}
-
-	for _, c := range []*cobra.Command{
-		authcmd.NewCmd(),
-		grscmd.NewCmd(),
-		workflowscmd.NewCmd(),
-		finopscmd.NewCmd(),
-		policycmd.NewCmd(),
-		userorgscmd.NewCmd(),
+	for _, attach := range []func(*cobra.Command) error{
+		billuploadcmd.Attach,
+		graphqlcmd.Attach,
+		rulebaseddimensioncmd.Attach,
+		finopscmd.Attach,
+		workflowscmd.Attach,
+		policycmd.Attach,
+		grscmd.Attach,
+		userorgscmd.Attach,
 	} {
-		root.AddCommand(c)
+		if err := attach(root); err != nil {
+			panic(err)
+		}
 	}
+	root.AddCommand(authcmd.NewCmd())
 	root.AddCommand(clipkg.NewDiscoveryCmd(root))
 
 	return root, deps

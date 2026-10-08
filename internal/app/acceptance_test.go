@@ -114,15 +114,15 @@ func TestAcceptanceGeneratedExamplesResolveLiveCommands(t *testing.T) {
 			}
 		})
 		path := strings.Fields(cmd.CommandPath())
-		if len(path) == 4 && path[1] == "bill-connect" {
-			nestedVendors[path[2]] = true
+		if len(path) == 5 && path[1] == "finops-onboarding" && path[2] == "bill-connect" {
+			nestedVendors[path[3]] = true
 		}
 	}
-	// These vendors are deliberately nested by RegisterAll, not published as
-	// top-level bill-connect-<vendor> command paths.
+	// These vendors are deliberately nested by RegisterAll beneath
+	// `finops-onboarding bill-connect`, not published as sibling tags.
 	for _, vendor := range []string{"aws", "azure-csp", "azure-ea-management", "azure-mca", "common-bill-ingestion", "databricks", "gcp"} {
 		if !nestedVendors[vendor] {
-			t.Errorf("no generated examples exercised bill-connect %s", vendor)
+			t.Errorf("no generated examples exercised finops-onboarding bill-connect %s", vendor)
 		}
 	}
 }
@@ -162,6 +162,7 @@ func TestAcceptanceGeneratedInteractiveFlags(t *testing.T) {
 	}
 	type operation struct {
 		ID          string `json:"operationId"`
+		Action      string `json:"x-flexera-action"`
 		RequestBody *struct {
 			Ref     string                     `json:"$ref"`
 			Content map[string]json.RawMessage `json:"content"`
@@ -183,7 +184,15 @@ func TestAcceptanceGeneratedInteractiveFlags(t *testing.T) {
 			if op.RequestBody != nil && op.RequestBody.Ref != "" {
 				t.Fatalf("resolve requestBody reference before classifying %s", op.ID)
 			}
-			write := method == "post" || method == "put" || method == "patch" || method == "delete"
+			// Mirror gencli: x-flexera-action decides write semantics, so
+			// read-like POSTs annotated get/list are not writes.
+			write := false
+			switch op.Action {
+			case "create", "update", "replace", "delete":
+				write = true
+			case "action":
+				write = method != "get"
+			}
 			eligible[op.ID] = write && op.RequestBody != nil && op.RequestBody.Content["application/json"] != nil
 		}
 	}

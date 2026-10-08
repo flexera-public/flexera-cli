@@ -39,6 +39,7 @@ func newSearchCmd(root *cobra.Command) *cobra.Command {
 		return deps.Printer.Render(deps.Stdout, deps.Config.Output, results)
 	}}
 	cmd.Flags().IntVar(&options.Limit, "limit", 10, "maximum results")
+	cmd.Flags().StringVar(&options.Service, "service", "", "restrict to an API service (command, alias, or service id, e.g. bill-analysis, ba, bill_analysis)")
 	cmd.Flags().StringVar(&options.Tag, "tag", "", "restrict to a spec tag")
 	cmd.Flags().StringVar(&options.Action, "action", "", "restrict to a spec action (list|get|create|update|replace|delete|action)")
 	cmd.Flags().BoolVar(&options.ReadOnly, "read-only", false, "only HTTP reads and explicitly classified read-only curated commands")

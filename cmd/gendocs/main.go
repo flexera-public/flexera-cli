@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/cobra/doc"
@@ -24,6 +25,17 @@ func main() {
 
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		log.Fatalf("gendocs: %v", err)
+	}
+	// Every page is generated; prune so renamed or removed commands do not
+	// leave stale pages behind.
+	stale, err := filepath.Glob(filepath.Join(outDir, root.Name()+"*.md"))
+	if err != nil {
+		log.Fatalf("gendocs: %v", err)
+	}
+	for _, path := range stale {
+		if err := os.Remove(path); err != nil {
+			log.Fatalf("gendocs: %v", err)
+		}
 	}
 	if err := doc.GenMarkdownTree(root, outDir); err != nil {
 		log.Fatalf("gendocs: %v", err)

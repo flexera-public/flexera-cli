@@ -22,7 +22,7 @@ func TestRootHelp(t *testing.T) {
 		t.Fatalf("--help exit=%d stderr=%s", exit, stderr.String())
 	}
 	out := stdout.String() + stderr.String()
-	for _, want := range []string{"budget", "policy", "finops", "user-orgs", "Find commands for a task: flexera-cli cli search"} {
+	for _, want := range []string{"budget", "policy", "bill-analysis", "iam", "Find commands for a task: flexera-cli cli search"} {
 		if !strings.Contains(out, want) {
 			t.Errorf("--help output missing %q", want)
 		}
@@ -43,7 +43,7 @@ func TestBinaryDownloadPreservesBytes(t *testing.T) {
 		return &http.Response{StatusCode: 200, Header: http.Header{"Content-Type": []string{"text/plain; charset=utf-8"}}, Body: io.NopCloser(bytes.NewReader(body)), Request: r}, nil
 	})
 	var out, stderr bytes.Buffer
-	args := []string{"bill-months", "download", "--download-token", "test-token", "--org-id", "123", "--access-token", "smoke-token", "--json-style", "pretty"}
+	args := []string{"bill-analysis", "bill-months", "download", "--download-token", "test-token", "--org-id", "123", "--access-token", "smoke-token", "--json-style", "pretty"}
 	if code := run(context.Background(), args, &out, &stderr, noEnv, doer); code != 0 || !bytes.Equal(out.Bytes(), body) {
 		t.Fatalf("download bytes changed: %d %q %s", code, out.Bytes(), stderr.String())
 	}
@@ -71,7 +71,7 @@ func TestUnknownCommand(t *testing.T) {
 
 func TestRuleBasedDimensionCompatibilityAlias(t *testing.T) {
 	var stdout, stderr bytes.Buffer
-	exit := run(context.Background(), []string{"rule-base-dimension", "bulk", "--help"}, &stdout, &stderr, noEnv, &http.Client{})
+	exit := run(context.Background(), []string{"finops-customizations", "rule-base-dimension", "bulk", "--help"}, &stdout, &stderr, noEnv, &http.Client{})
 	if exit != 0 {
 		t.Fatalf("alias help exit=%d stderr=%s", exit, stderr.String())
 	}

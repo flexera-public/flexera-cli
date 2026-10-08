@@ -51,6 +51,37 @@ Output shaping flags (`--out-jq`, `--out-fields`, `--raw-output`) are CLI-only.
 | `FLEXERA_CLI_GRS_BASE_URL` | `--grs-base-url` | Override the GRS host (`grs`, project resolution) |
 | `FLEXERA_CLI_DEBUG` | `--debug`/`-d` | HTTP method/host/path/status to stderr; excludes headers, queries, bodies |
 
+## Command layout
+
+Each top-level command is one API service from the unified OpenAPI spec:
+
+```text
+flexera-cli <service> <resource> <action> [flags]
+flexera-cli bill-analysis costs aggregated
+flexera-cli iam user list
+flexera-cli finops-onboarding bill-connect aws list
+```
+
+- Service commands use friendly names; short aliases cover the spec service ids
+  (`ba`, `bc`, `cred`, `divnt`, `uobs`, `vis`, `optima-recommendations`).
+- Single-resource services expose their actions directly (`budget list`,
+  `billing-center list`, `credential list`, `recommendations list`,
+  `bill-upload list`, `graphql query`).
+- Curated workflows that add behavior beyond one API call live beside the
+  generated commands for their service:
+
+| Command | Adds |
+|---|---|
+| `bill-analysis costs query` | Picks aggregated/select, defaults billing centers, chunks long windows |
+| `bill-analysis anomalies investigate` | Multi-step AI anomaly investigation |
+| `recommendations list-usage-reduction`, `list-rate-reduction` | Billing-center auto-resolution and category filter |
+| `iam user-memberships orgs` | Detects the user ID from the access token |
+| `grs project list-for-org` | Org-filtered projects with Policy-ready project IDs |
+| `policy applied-policy` / `action-status` / `archived-incident` / `policy-template` / `meta` | GRS project auto-resolution and relationship-aware workflows |
+| `finops-customizations rule-based-dimension bulk` / `from_csv` | Bulk and CSV-driven dimension updates |
+| `bill-upload push` / `verify` | Upload, commit, and local CSV verification |
+| `graphql generate` | Query authoring helper |
+
 ## CLI Helpers
 
 There are several CLI helpers available to simplify common tasks such as: cli search to help find commands, output format and shaping to control command output and display, automatic pagination, and more.  See the sections below for details.
@@ -65,7 +96,8 @@ Search is lexical, deterministic, and offline. Results include command, summary,
 score, confirmation requirement, usage synopsis, and schema link when available.
 
 - `--limit 10` caps search results; `-o table` selects table output.
-- `--tag Budget` and `--action delete` filter spec metadata.
+- `--service bill-analysis` (or an alias/service id such as `ba` or `bill_analysis`),
+  `--tag Budget`, and `--action delete` filter results.
 - `--read-only` uses HTTP semantics and classified curated side effects, not
   confirmation requirements or `--yes`; unclassified curated workflows are excluded.
   Authentication/output may still involve token or temporary-file activity.
@@ -80,7 +112,7 @@ flexera-cli cli schema budget create
 ```
 
 Inspects parameters, request/response schemas, and examples without auth or network.
-Paths resolve against the live tree, including aliases and bill-connect nesting.
+Paths resolve against the live tree, including aliases and nested tags such as `finops-onboarding bill-connect aws`.
 
 - `--part request`, `--part response`, or `--part params` selects one part.
 - `--depth` defaults to 3; `--depth 0` preserves references. Cycles/deeper refs remain `$ref`.
@@ -125,7 +157,7 @@ Errors are unshaped JSON on stderr, including pre-configuration/auth failures.
 Generate JSON write commands support local `--interactive` / `-i`:
 
 ```sh
-flexera-cli tag-dimension create -i --dry-run
+flexera-cli finops-customizations tag-dimension create -i --dry-run
 ```
 
 - Input and stderr must be terminals; stdout may be redirected. Required parameters
@@ -166,8 +198,8 @@ Set local authentication and replace `12345` with your org ID:
 ```sh
 export FLEXERA_CLI_REFRESH_TOKEN="$TOKEN"
 export FLEXERA_CLI_ORG_ID=12345
-flexera-cli role list
-flexera-cli role list -o table
+flexera-cli iam role list
+flexera-cli iam role list -o table
 flexera-cli policy applied-policy list
 ```
 

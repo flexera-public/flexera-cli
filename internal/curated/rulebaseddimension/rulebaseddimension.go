@@ -113,16 +113,14 @@ func resolveInput(inline, file string, stdin interface{ Read([]byte) (int, error
 	return clipkg.ResolveBody(arg, nil, stdin)
 }
 
-// Attach adds the curated bulk workflow below the generated
-// rule-based-dimension command.
+// Attach adds the curated bulk workflows below the generated
+// `finops-customizations rule-based-dimension` command.
 func Attach(root *cobra.Command) error {
-	for _, command := range root.Commands() {
-		if command.Name() == "rule-based-dimension" {
-			command.Aliases = append(command.Aliases, "rule-base-dimension")
-			command.AddCommand(NewBulkCmd())
-			command.AddCommand(NewFromCSVCommand())
-			return nil
-		}
+	command, err := clipkg.FindCommand(root, "finops-customizations", "rule-based-dimension")
+	if err != nil {
+		return err
 	}
-	return errors.New("rule-based-dimension generated command is not registered")
+	command.Aliases = append(command.Aliases, "rule-base-dimension")
+	command.AddCommand(NewBulkCmd(), NewFromCSVCommand())
+	return nil
 }

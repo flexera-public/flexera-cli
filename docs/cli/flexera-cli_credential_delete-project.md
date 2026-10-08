@@ -48,5 +48,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ### SEE ALSO
 
-* [flexera-cli credential](flexera-cli_credential.md)	 - Credential operations (generated from the unified OpenAPI spec)
+* [flexera-cli credential](flexera-cli_credential.md)	 - Credential API
 

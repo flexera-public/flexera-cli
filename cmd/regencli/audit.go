@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
@@ -47,6 +48,9 @@ func auditStagedTree(stage string, catalogData []byte) error {
 			return err
 		}
 	}
+	if err := absolutizeLocalReplaces(workspace); err != nil {
+		return err
+	}
 	entries, err := os.ReadDir("internal")
 	if err != nil {
 		return err
@@ -77,6 +81,44 @@ func auditStagedTree(stage string, catalogData []byte) error {
 	return nil
 }
 
+// absolutizeLocalReplaces rewrites relative filesystem `replace` targets in the
+// workspace go.mod (e.g. ../unified-go-client) so they still resolve from the
+// temporary verification directory.
+func absolutizeLocalReplaces(workspace string) error {
+	out, err := exec.Command("go", "mod", "edit", "-json").Output()
+	if err != nil {
+		return fmt.Errorf("read go.mod replaces: %w", err)
+	}
+	var mod struct {
+		Replace []struct {
+			Old struct{ Path, Version string }
+			New struct{ Path, Version string }
+		}
+	}
+	if err := json.Unmarshal(out, &mod); err != nil {
+		return fmt.Errorf("parse go.mod replaces: %w", err)
+	}
+	for _, r := range mod.Replace {
+		if r.New.Version != "" || filepath.IsAbs(r.New.Path) {
+			continue
+		}
+		abs, err := filepath.Abs(r.New.Path)
+		if err != nil {
+			return err
+		}
+		old := r.Old.Path
+		if r.Old.Version != "" {
+			old += "@" + r.Old.Version
+		}
+		c := exec.Command("go", "mod", "edit", "-replace", old+"="+abs)
+		c.Dir = workspace
+		if output, err := c.CombinedOutput(); err != nil {
+			return fmt.Errorf("rewrite replace %s: %w\n%s", old, err, output)
+		}
+	}
+	return nil
+}
+
 const stagedAuditSource = `package main
 import (
  "fmt"
@@ -98,6 +140,7 @@ func main() {
 	if c.Parent()==root && (c.Name()=="cli" || contains(c.Aliases,"cli")) && c.Annotations["flexera.meta"]!="true" {issues=append(issues,"reserved top-level cli collision")}
 	if id:=c.Annotations["flexera.operationId"];id!="" {path:=strings.TrimPrefix(c.CommandPath(),root.Name()+" ");if seen[id]||expected[id]!=path{issues=append(issues,fmt.Sprintf("catalog/tree mismatch %s: tree=%s catalog=%s",id,path,expected[id]))};seen[id]=true;for _,p:=range metadata[id].Params{if c.Flags().Lookup(p.Flag)==nil && c.InheritedFlags().Lookup(p.Flag)==nil{issues=append(issues,"catalog flag missing: "+path+" --"+p.Flag)}};for _,flag:=range metadata[id].BodyFlags{if c.Flags().Lookup(flag)==nil{issues=append(issues,"catalog body flag missing: "+path+" --"+flag)}}}
   if c!=root {c.LocalNonPersistentFlags().VisitAll(func(f *pflag.Flag){for p:=c.Parent();p!=nil;p=p.Parent(){p.PersistentFlags().VisitAll(func(inherited *pflag.Flag){if f.Name==inherited.Name || f.Shorthand!="" && f.Shorthand==inherited.Shorthand {issues=append(issues,fmt.Sprintf("flag collision: %s --%s with %s --%s",c.CommandPath(),f.Name,p.CommandPath(),inherited.Name))}})}})}
+  names:=map[string]string{};for _,child:=range c.Commands(){for _,n:=range append([]string{child.Name()},child.Aliases...){if other,dup:=names[n];dup{issues=append(issues,fmt.Sprintf("sibling name collision under %s: %q used by %s and %s",c.CommandPath(),n,other,child.Name()))};names[n]=child.Name()}}
   for _,child:=range c.Commands(){walk(child)}
  }
  walk(root);for id,path:=range expected{if !seen[id]{issues=append(issues,"catalog entry without annotated command: "+id+" "+path)}}

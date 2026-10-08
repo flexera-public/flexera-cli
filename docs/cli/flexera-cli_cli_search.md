@@ -13,11 +13,12 @@ flexera-cli cli search <words...> [flags]
 ### Options
 
 ```
-      --action string   restrict to a spec action (list|get|create|update|replace|delete|action)
-  -h, --help            help for search
-      --limit int       maximum results (default 10)
-      --read-only       only HTTP reads and explicitly classified read-only curated commands
-      --tag string      restrict to a spec tag
+      --action string    restrict to a spec action (list|get|create|update|replace|delete|action)
+  -h, --help             help for search
+      --limit int        maximum results (default 10)
+      --read-only        only HTTP reads and explicitly classified read-only curated commands
+      --service string   restrict to an API service (command, alias, or service id, e.g. bill-analysis, ba, bill_analysis)
+      --tag string       restrict to a spec tag
 ```
 
 ### Options inherited from parent commands

@@ -54,5 +54,5 @@ Validated illustrative body, when available (review before use):
 
 ### SEE ALSO
 
-* [flexera-cli budget](flexera-cli_budget.md)	 - Budget operations (generated from the unified OpenAPI spec)
+* [flexera-cli budget](flexera-cli_budget.md)	 - Budget API
 

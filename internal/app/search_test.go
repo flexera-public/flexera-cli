@@ -18,7 +18,7 @@ func TestSearchGoldenQueries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, tc := range []struct{ query, want string }{{"delete a budget", "flexera-cli budget delete"}, {"list cloud bills", "flexera-cli bill-connect list"}, {"who has access to org", "flexera-cli access-policy users"}, {"run a policy", "flexera-cli policy applied-policy evaluate"}} {
+	for _, tc := range []struct{ query, want string }{{"delete a budget", "flexera-cli budget delete"}, {"list cloud bill connects", "flexera-cli finops-onboarding bill-connect list"}, {"who has access to org", "flexera-cli iam access-policy users"}, {"run a policy", "flexera-cli policy applied-policy evaluate"}} {
 		results := index.Search(tc.query, catalog.SearchOptions{Limit: 3})
 		found := false
 		for _, r := range results {
@@ -102,5 +102,27 @@ func TestSearchReadOnlyAndSynopsis(t *testing.T) {
 		if result.Command == "flexera-cli bill-upload verify" && result.Schema != "" {
 			t.Fatal("curated-only result has schema")
 		}
+	}
+}
+
+func TestSearchServiceFilter(t *testing.T) {
+	root, _ := app.NewRootCmd(io.Discard, io.Discard, func(string) string { return "" }, offlineDoer{t}, "test")
+	index, err := catalog.NewSearchIndex(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, service := range []string{"bill-analysis", "BA", "bill_analysis"} {
+		results := index.Search("list costs", catalog.SearchOptions{Limit: 20, Service: service})
+		if len(results) == 0 {
+			t.Fatalf("%s: no results", service)
+		}
+		for _, r := range results {
+			if !strings.HasPrefix(r.Command, "flexera-cli bill-analysis ") {
+				t.Errorf("%s: result outside service: %s", service, r.Command)
+			}
+		}
+	}
+	if results := index.Search("list projects", catalog.SearchOptions{Limit: 20, Service: "grs"}); len(results) < 2 {
+		t.Fatalf("curated and generated grs commands not both indexed: %+v", results)
 	}
 }

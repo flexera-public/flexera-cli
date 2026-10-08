@@ -45,5 +45,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ### SEE ALSO
 
-* [flexera-cli graphql](flexera-cli_graphql.md)	 - graphql operations (generated from the unified OpenAPI spec)
+* [flexera-cli graphql](flexera-cli_graphql.md)	 - GraphQL API
 

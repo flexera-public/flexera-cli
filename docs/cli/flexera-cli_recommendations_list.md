@@ -45,5 +45,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ### SEE ALSO
 
-* [flexera-cli recommendations](flexera-cli_recommendations.md)	 - Recommendations operations (generated from the unified OpenAPI spec)
+* [flexera-cli recommendations](flexera-cli_recommendations.md)	 - Optima Recommendations API
 

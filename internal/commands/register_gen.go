@@ -5,262 +5,318 @@ package commands
 import (
 	"github.com/spf13/cobra"
 
-	accesspolicy "github.com/flexera-public/flexera-cli/internal/commands/accesspolicy"
-	accessrule "github.com/flexera-public/flexera-cli/internal/commands/accessrule"
-	accessrules "github.com/flexera-public/flexera-cli/internal/commands/accessrules"
-	adjustmentdefinition "github.com/flexera-public/flexera-cli/internal/commands/adjustmentdefinition"
-	allocationtable "github.com/flexera-public/flexera-cli/internal/commands/allocationtable"
-	anomalies "github.com/flexera-public/flexera-cli/internal/commands/anomalies"
-	apievent "github.com/flexera-public/flexera-cli/internal/commands/apievent"
-	apikeycredential "github.com/flexera-public/flexera-cli/internal/commands/apikeycredential"
-	applicationuseractivitycount "github.com/flexera-public/flexera-cli/internal/commands/applicationuseractivitycount"
-	awscredential "github.com/flexera-public/flexera-cli/internal/commands/awscredential"
-	awsstscredential "github.com/flexera-public/flexera-cli/internal/commands/awsstscredential"
-	basiccredential "github.com/flexera-public/flexera-cli/internal/commands/basiccredential"
-	billconnect "github.com/flexera-public/flexera-cli/internal/commands/billconnect"
-	billconnectaws "github.com/flexera-public/flexera-cli/internal/commands/billconnectaws"
-	billconnectazurecsp "github.com/flexera-public/flexera-cli/internal/commands/billconnectazurecsp"
-	billconnectazureeamanagement "github.com/flexera-public/flexera-cli/internal/commands/billconnectazureeamanagement"
-	billconnectazuremca "github.com/flexera-public/flexera-cli/internal/commands/billconnectazuremca"
-	billconnectcommonbillingestion "github.com/flexera-public/flexera-cli/internal/commands/billconnectcommonbillingestion"
-	billconnectdatabricks "github.com/flexera-public/flexera-cli/internal/commands/billconnectdatabricks"
-	billconnectgcp "github.com/flexera-public/flexera-cli/internal/commands/billconnectgcp"
-	billconnectsnowflake "github.com/flexera-public/flexera-cli/internal/commands/billconnectsnowflake"
-	billing "github.com/flexera-public/flexera-cli/internal/commands/billing"
-	billingaudit "github.com/flexera-public/flexera-cli/internal/commands/billingaudit"
-	billingcenteraccessrules "github.com/flexera-public/flexera-cli/internal/commands/billingcenteraccessrules"
-	billingcenters "github.com/flexera-public/flexera-cli/internal/commands/billingcenters"
-	billingcredits "github.com/flexera-public/flexera-cli/internal/commands/billingcredits"
-	billingsettings "github.com/flexera-public/flexera-cli/internal/commands/billingsettings"
-	billmonths "github.com/flexera-public/flexera-cli/internal/commands/billmonths"
-	billupload "github.com/flexera-public/flexera-cli/internal/commands/billupload"
-	budget "github.com/flexera-public/flexera-cli/internal/commands/budget"
-	capability "github.com/flexera-public/flexera-cli/internal/commands/capability"
-	cloudvendoraccount "github.com/flexera-public/flexera-cli/internal/commands/cloudvendoraccount"
-	cloudvendoraccounts "github.com/flexera-public/flexera-cli/internal/commands/cloudvendoraccounts"
-	commitmentreallocationsetting "github.com/flexera-public/flexera-cli/internal/commands/commitmentreallocationsetting"
-	compliance "github.com/flexera-public/flexera-cli/internal/commands/compliance"
-	connector "github.com/flexera-public/flexera-cli/internal/commands/connector"
-	contracts "github.com/flexera-public/flexera-cli/internal/commands/contracts"
-	costs "github.com/flexera-public/flexera-cli/internal/commands/costs"
-	credential "github.com/flexera-public/flexera-cli/internal/commands/credential"
-	currencysetting "github.com/flexera-public/flexera-cli/internal/commands/currencysetting"
-	customcatalog "github.com/flexera-public/flexera-cli/internal/commands/customcatalog"
-	customdashboards "github.com/flexera-public/flexera-cli/internal/commands/customdashboards"
-	customdimension "github.com/flexera-public/flexera-cli/internal/commands/customdimension"
-	customdimensions "github.com/flexera-public/flexera-cli/internal/commands/customdimensions"
-	customergroup "github.com/flexera-public/flexera-cli/internal/commands/customergroup"
-	customergrouptype "github.com/flexera-public/flexera-cli/internal/commands/customergrouptype"
-	customization "github.com/flexera-public/flexera-cli/internal/commands/customization"
-	customizationtype "github.com/flexera-public/flexera-cli/internal/commands/customizationtype"
-	customizationvalue "github.com/flexera-public/flexera-cli/internal/commands/customizationvalue"
-	device "github.com/flexera-public/flexera-cli/internal/commands/device"
-	digestcredential "github.com/flexera-public/flexera-cli/internal/commands/digestcredential"
-	discoveredapplication "github.com/flexera-public/flexera-cli/internal/commands/discoveredapplication"
-	event "github.com/flexera-public/flexera-cli/internal/commands/event"
-	exportretired "github.com/flexera-public/flexera-cli/internal/commands/exportretired"
-	forecasts "github.com/flexera-public/flexera-cli/internal/commands/forecasts"
-	graphql "github.com/flexera-public/flexera-cli/internal/commands/graphql"
-	group "github.com/flexera-public/flexera-cli/internal/commands/group"
-	groupmembership "github.com/flexera-public/flexera-cli/internal/commands/groupmembership"
-	importjob "github.com/flexera-public/flexera-cli/internal/commands/importjob"
-	incidentaggregate "github.com/flexera-public/flexera-cli/internal/commands/incidentaggregate"
-	ipaccesscontrol "github.com/flexera-public/flexera-cli/internal/commands/ipaccesscontrol"
-	license "github.com/flexera-public/flexera-cli/internal/commands/license"
-	managedapplication "github.com/flexera-public/flexera-cli/internal/commands/managedapplication"
-	managedapplicationevent "github.com/flexera-public/flexera-cli/internal/commands/managedapplicationevent"
-	managedapplicationuser "github.com/flexera-public/flexera-cli/internal/commands/managedapplicationuser"
-	metricquery "github.com/flexera-public/flexera-cli/internal/commands/metricquery"
-	misconfigurationui "github.com/flexera-public/flexera-cli/internal/commands/misconfigurationui"
-	mspcustomer "github.com/flexera-public/flexera-cli/internal/commands/mspcustomer"
-	mspcustomerdomain "github.com/flexera-public/flexera-cli/internal/commands/mspcustomerdomain"
-	mspcustomertag "github.com/flexera-public/flexera-cli/internal/commands/mspcustomertag"
-	mspcustomerv2 "github.com/flexera-public/flexera-cli/internal/commands/mspcustomerv2"
-	notifications "github.com/flexera-public/flexera-cli/internal/commands/notifications"
-	ntlmcredential "github.com/flexera-public/flexera-cli/internal/commands/ntlmcredential"
-	oauth2credential "github.com/flexera-public/flexera-cli/internal/commands/oauth2credential"
-	objectdefinition "github.com/flexera-public/flexera-cli/internal/commands/objectdefinition"
-	onboarding "github.com/flexera-public/flexera-cli/internal/commands/onboarding"
-	oraclecredential "github.com/flexera-public/flexera-cli/internal/commands/oraclecredential"
-	organization "github.com/flexera-public/flexera-cli/internal/commands/organization"
-	organizationinvitation "github.com/flexera-public/flexera-cli/internal/commands/organizationinvitation"
-	orgdashboards "github.com/flexera-public/flexera-cli/internal/commands/orgdashboards"
-	orgloginpolicy "github.com/flexera-public/flexera-cli/internal/commands/orgloginpolicy"
-	policyaggregate "github.com/flexera-public/flexera-cli/internal/commands/policyaggregate"
-	policymanager "github.com/flexera-public/flexera-cli/internal/commands/policymanager"
-	processinghistory "github.com/flexera-public/flexera-cli/internal/commands/processinghistory"
-	project "github.com/flexera-public/flexera-cli/internal/commands/project"
-	publishedtemplate "github.com/flexera-public/flexera-cli/internal/commands/publishedtemplate"
-	query "github.com/flexera-public/flexera-cli/internal/commands/query"
-	recommendations "github.com/flexera-public/flexera-cli/internal/commands/recommendations"
-	refreshtoken "github.com/flexera-public/flexera-cli/internal/commands/refreshtoken"
-	regulatorycompliance "github.com/flexera-public/flexera-cli/internal/commands/regulatorycompliance"
-	reportsubscriptions "github.com/flexera-public/flexera-cli/internal/commands/reportsubscriptions"
-	role "github.com/flexera-public/flexera-cli/internal/commands/role"
-	rulebaseddimension "github.com/flexera-public/flexera-cli/internal/commands/rulebaseddimension"
-	saasconnector "github.com/flexera-public/flexera-cli/internal/commands/saasconnector"
-	saasdata "github.com/flexera-public/flexera-cli/internal/commands/saasdata"
-	saasonboarding "github.com/flexera-public/flexera-cli/internal/commands/saasonboarding"
-	saml2domain "github.com/flexera-public/flexera-cli/internal/commands/saml2domain"
-	saml2identityprovider "github.com/flexera-public/flexera-cli/internal/commands/saml2identityprovider"
-	saml2identityprovidersigningkey "github.com/flexera-public/flexera-cli/internal/commands/saml2identityprovidersigningkey"
-	saml2singleidentityprovider "github.com/flexera-public/flexera-cli/internal/commands/saml2singleidentityprovider"
-	savedfilters "github.com/flexera-public/flexera-cli/internal/commands/savedfilters"
-	scimconfig "github.com/flexera-public/flexera-cli/internal/commands/scimconfig"
-	scimgroup "github.com/flexera-public/flexera-cli/internal/commands/scimgroup"
-	scimuser "github.com/flexera-public/flexera-cli/internal/commands/scimuser"
-	serviceaccount "github.com/flexera-public/flexera-cli/internal/commands/serviceaccount"
-	serviceaccountclient "github.com/flexera-public/flexera-cli/internal/commands/serviceaccountclient"
-	settings "github.com/flexera-public/flexera-cli/internal/commands/settings"
-	sharedcostrules "github.com/flexera-public/flexera-cli/internal/commands/sharedcostrules"
-	tagdimension "github.com/flexera-public/flexera-cli/internal/commands/tagdimension"
-	unmanagedappliedpolicies "github.com/flexera-public/flexera-cli/internal/commands/unmanagedappliedpolicies"
-	unmanagedincidents "github.com/flexera-public/flexera-cli/internal/commands/unmanagedincidents"
-	usagegroup "github.com/flexera-public/flexera-cli/internal/commands/usagegroup"
-	usagemessagequery "github.com/flexera-public/flexera-cli/internal/commands/usagemessagequery"
-	user "github.com/flexera-public/flexera-cli/internal/commands/user"
-	userbillingcenters "github.com/flexera-public/flexera-cli/internal/commands/userbillingcenters"
-	userinvitation "github.com/flexera-public/flexera-cli/internal/commands/userinvitation"
-	usermemberships "github.com/flexera-public/flexera-cli/internal/commands/usermemberships"
-	userprofile "github.com/flexera-public/flexera-cli/internal/commands/userprofile"
-	usersettingblob "github.com/flexera-public/flexera-cli/internal/commands/usersettingblob"
-	vulnerability "github.com/flexera-public/flexera-cli/internal/commands/vulnerability"
-	vulnerabilitylocal "github.com/flexera-public/flexera-cli/internal/commands/vulnerabilitylocal"
+	billanalysisadjustmentdefinition "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/adjustmentdefinition"
+	billanalysisanomalies "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/anomalies"
+	billanalysisbillingsettings "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/billingsettings"
+	billanalysisbillmonths "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/billmonths"
+	billanalysiscloudvendoraccounts "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/cloudvendoraccounts"
+	billanalysiscommitmentreallocationsetting "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/commitmentreallocationsetting"
+	billanalysiscosts "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/costs"
+	billanalysiscurrencysetting "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/currencysetting"
+	billanalysiscustomdashboards "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/customdashboards"
+	billanalysiscustomdimension "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/customdimension"
+	billanalysiscustomdimensions "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/customdimensions"
+	billanalysisforecasts "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/forecasts"
+	billanalysisorgdashboards "github.com/flexera-public/flexera-cli/internal/commands/billanalysis/orgdashboards"
+	billingcenteraccessrules "github.com/flexera-public/flexera-cli/internal/commands/billingcenter/accessrules"
+	billingcenterallocationtable "github.com/flexera-public/flexera-cli/internal/commands/billingcenter/allocationtable"
+	billingcenterbillingcenteraccessrules "github.com/flexera-public/flexera-cli/internal/commands/billingcenter/billingcenteraccessrules"
+	billingcenterbillingcenters "github.com/flexera-public/flexera-cli/internal/commands/billingcenter/billingcenters"
+	billingcenteruserbillingcenters "github.com/flexera-public/flexera-cli/internal/commands/billingcenter/userbillingcenters"
+	billuploadbillupload "github.com/flexera-public/flexera-cli/internal/commands/billupload/billupload"
+	budgetbudget "github.com/flexera-public/flexera-cli/internal/commands/budget/budget"
+	budgetcloudvendoraccount "github.com/flexera-public/flexera-cli/internal/commands/budget/cloudvendoraccount"
+	credentialapikeycredential "github.com/flexera-public/flexera-cli/internal/commands/credential/apikeycredential"
+	credentialawscredential "github.com/flexera-public/flexera-cli/internal/commands/credential/awscredential"
+	credentialawsstscredential "github.com/flexera-public/flexera-cli/internal/commands/credential/awsstscredential"
+	credentialbasiccredential "github.com/flexera-public/flexera-cli/internal/commands/credential/basiccredential"
+	credentialcredential "github.com/flexera-public/flexera-cli/internal/commands/credential/credential"
+	credentialdigestcredential "github.com/flexera-public/flexera-cli/internal/commands/credential/digestcredential"
+	credentialntlmcredential "github.com/flexera-public/flexera-cli/internal/commands/credential/ntlmcredential"
+	credentialoauth2credential "github.com/flexera-public/flexera-cli/internal/commands/credential/oauth2credential"
+	credentialoraclecredential "github.com/flexera-public/flexera-cli/internal/commands/credential/oraclecredential"
+	datainventoryonboarding "github.com/flexera-public/flexera-cli/internal/commands/datainventory/onboarding"
+	finopsbillingbilling "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billing"
+	finopsbillingbillingaudit "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billingaudit"
+	finopsbillingbillingcredits "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billingcredits"
+	finopsbillinginvoices "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoices"
+	finopsbillinginvoicescheduleinvoices "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoicescheduleinvoices"
+	finopsbillinginvoiceschedules "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoiceschedules"
+	finopsbillinginvoicetemplates "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoicetemplates"
+	finopsbillingsettings "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/settings"
+	finopsbillingsharedcostrules "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/sharedcostrules"
+	finopscustomizationscurrency "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/currency"
+	finopscustomizationsreportsubscriptions "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/reportsubscriptions"
+	finopscustomizationsrulebaseddimension "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/rulebaseddimension"
+	finopscustomizationssavedfilters "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/savedfilters"
+	finopscustomizationstagdimension "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/tagdimension"
+	finopscustomizationstagobservation "github.com/flexera-public/flexera-cli/internal/commands/finopscustomizations/tagobservation"
+	finopsonboardingbillconnect "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnect"
+	finopsonboardingbillconnectaws "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectaws"
+	finopsonboardingbillconnectazurecsp "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectazurecsp"
+	finopsonboardingbillconnectazureeamanagement "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectazureeamanagement"
+	finopsonboardingbillconnectazuremca "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectazuremca"
+	finopsonboardingbillconnectcommonbillingestion "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectcommonbillingestion"
+	finopsonboardingbillconnectdatabricks "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectdatabricks"
+	finopsonboardingbillconnectgcp "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectgcp"
+	finopsonboardingbillconnectsnowflake "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectsnowflake"
+	finopsonboardingprocessinghistory "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/processinghistory"
+	graphqlgraphql "github.com/flexera-public/flexera-cli/internal/commands/graphql/graphql"
+	grsproject "github.com/flexera-public/flexera-cli/internal/commands/grs/project"
+	grsuser "github.com/flexera-public/flexera-cli/internal/commands/grs/user"
+	iamaccesspolicy "github.com/flexera-public/flexera-cli/internal/commands/iam/accesspolicy"
+	iamaccessrule "github.com/flexera-public/flexera-cli/internal/commands/iam/accessrule"
+	iamapievent "github.com/flexera-public/flexera-cli/internal/commands/iam/apievent"
+	iamcapability "github.com/flexera-public/flexera-cli/internal/commands/iam/capability"
+	iamcontracts "github.com/flexera-public/flexera-cli/internal/commands/iam/contracts"
+	iamcustomization "github.com/flexera-public/flexera-cli/internal/commands/iam/customization"
+	iamcustomizationtype "github.com/flexera-public/flexera-cli/internal/commands/iam/customizationtype"
+	iamevent "github.com/flexera-public/flexera-cli/internal/commands/iam/event"
+	iamgroup "github.com/flexera-public/flexera-cli/internal/commands/iam/group"
+	iamgroupmembership "github.com/flexera-public/flexera-cli/internal/commands/iam/groupmembership"
+	iamipaccesscontrol "github.com/flexera-public/flexera-cli/internal/commands/iam/ipaccesscontrol"
+	iammspcustomer "github.com/flexera-public/flexera-cli/internal/commands/iam/mspcustomer"
+	iammspcustomerdomain "github.com/flexera-public/flexera-cli/internal/commands/iam/mspcustomerdomain"
+	iammspcustomertag "github.com/flexera-public/flexera-cli/internal/commands/iam/mspcustomertag"
+	iammspcustomerv2 "github.com/flexera-public/flexera-cli/internal/commands/iam/mspcustomerv2"
+	iamorganization "github.com/flexera-public/flexera-cli/internal/commands/iam/organization"
+	iamorganizationinvitation "github.com/flexera-public/flexera-cli/internal/commands/iam/organizationinvitation"
+	iamorgloginpolicy "github.com/flexera-public/flexera-cli/internal/commands/iam/orgloginpolicy"
+	iamproject "github.com/flexera-public/flexera-cli/internal/commands/iam/project"
+	iamrefreshtoken "github.com/flexera-public/flexera-cli/internal/commands/iam/refreshtoken"
+	iamrole "github.com/flexera-public/flexera-cli/internal/commands/iam/role"
+	iamsaml2domain "github.com/flexera-public/flexera-cli/internal/commands/iam/saml2domain"
+	iamsaml2identityprovider "github.com/flexera-public/flexera-cli/internal/commands/iam/saml2identityprovider"
+	iamsaml2identityprovidersigningkey "github.com/flexera-public/flexera-cli/internal/commands/iam/saml2identityprovidersigningkey"
+	iamsaml2singleidentityprovider "github.com/flexera-public/flexera-cli/internal/commands/iam/saml2singleidentityprovider"
+	iamscimconfig "github.com/flexera-public/flexera-cli/internal/commands/iam/scimconfig"
+	iamscimgroup "github.com/flexera-public/flexera-cli/internal/commands/iam/scimgroup"
+	iamscimuser "github.com/flexera-public/flexera-cli/internal/commands/iam/scimuser"
+	iamserviceaccount "github.com/flexera-public/flexera-cli/internal/commands/iam/serviceaccount"
+	iamserviceaccountclient "github.com/flexera-public/flexera-cli/internal/commands/iam/serviceaccountclient"
+	iamuser "github.com/flexera-public/flexera-cli/internal/commands/iam/user"
+	iamuserinvitation "github.com/flexera-public/flexera-cli/internal/commands/iam/userinvitation"
+	iamusermemberships "github.com/flexera-public/flexera-cli/internal/commands/iam/usermemberships"
+	iamuserprofile "github.com/flexera-public/flexera-cli/internal/commands/iam/userprofile"
+	iamusersettingblob "github.com/flexera-public/flexera-cli/internal/commands/iam/usersettingblob"
+	itvisibilitydevice "github.com/flexera-public/flexera-cli/internal/commands/itvisibility/device"
+	itvisibilityexportretired "github.com/flexera-public/flexera-cli/internal/commands/itvisibility/exportretired"
+	itvisibilityquery "github.com/flexera-public/flexera-cli/internal/commands/itvisibility/query"
+	policycustomcatalog "github.com/flexera-public/flexera-cli/internal/commands/policy/customcatalog"
+	policycustomizationtype "github.com/flexera-public/flexera-cli/internal/commands/policy/customizationtype"
+	policycustomizationvalue "github.com/flexera-public/flexera-cli/internal/commands/policy/customizationvalue"
+	policyincidentaggregate "github.com/flexera-public/flexera-cli/internal/commands/policy/incidentaggregate"
+	policypolicyaggregate "github.com/flexera-public/flexera-cli/internal/commands/policy/policyaggregate"
+	policypolicymanager "github.com/flexera-public/flexera-cli/internal/commands/policy/policymanager"
+	policypublishedtemplate "github.com/flexera-public/flexera-cli/internal/commands/policy/publishedtemplate"
+	policyunmanagedappliedpolicies "github.com/flexera-public/flexera-cli/internal/commands/policy/unmanagedappliedpolicies"
+	policyunmanagedincidents "github.com/flexera-public/flexera-cli/internal/commands/policy/unmanagedincidents"
+	recommendationsrecommendations "github.com/flexera-public/flexera-cli/internal/commands/recommendations/recommendations"
+	riskcompliance "github.com/flexera-public/flexera-cli/internal/commands/risk/compliance"
+	riskmisconfigurationui "github.com/flexera-public/flexera-cli/internal/commands/risk/misconfigurationui"
+	risknotifications "github.com/flexera-public/flexera-cli/internal/commands/risk/notifications"
+	riskregulatorycompliance "github.com/flexera-public/flexera-cli/internal/commands/risk/regulatorycompliance"
+	riskvulnerability "github.com/flexera-public/flexera-cli/internal/commands/risk/vulnerability"
+	riskvulnerabilitylocal "github.com/flexera-public/flexera-cli/internal/commands/risk/vulnerabilitylocal"
+	saasapplicationuseractivitycount "github.com/flexera-public/flexera-cli/internal/commands/saas/applicationuseractivitycount"
+	saascustomergroup "github.com/flexera-public/flexera-cli/internal/commands/saas/customergroup"
+	saascustomergrouptype "github.com/flexera-public/flexera-cli/internal/commands/saas/customergrouptype"
+	saasdiscoveredapplication "github.com/flexera-public/flexera-cli/internal/commands/saas/discoveredapplication"
+	saasimportjob "github.com/flexera-public/flexera-cli/internal/commands/saas/importjob"
+	saaslicense "github.com/flexera-public/flexera-cli/internal/commands/saas/license"
+	saasmanagedapplication "github.com/flexera-public/flexera-cli/internal/commands/saas/managedapplication"
+	saasmanagedapplicationevent "github.com/flexera-public/flexera-cli/internal/commands/saas/managedapplicationevent"
+	saasmanagedapplicationuser "github.com/flexera-public/flexera-cli/internal/commands/saas/managedapplicationuser"
+	saasmetricquery "github.com/flexera-public/flexera-cli/internal/commands/saas/metricquery"
+	saasobjectdefinition "github.com/flexera-public/flexera-cli/internal/commands/saas/objectdefinition"
+	saassaasdata "github.com/flexera-public/flexera-cli/internal/commands/saas/saasdata"
+	saasusagegroup "github.com/flexera-public/flexera-cli/internal/commands/saas/usagegroup"
+	saasusagemessagequery "github.com/flexera-public/flexera-cli/internal/commands/saas/usagemessagequery"
+	unifiedonboardingconnector "github.com/flexera-public/flexera-cli/internal/commands/unifiedonboarding/connector"
+	unifiedonboardingonboarding "github.com/flexera-public/flexera-cli/internal/commands/unifiedonboarding/onboarding"
+	unifiedonboardingsaasconnector "github.com/flexera-public/flexera-cli/internal/commands/unifiedonboarding/saasconnector"
+	unifiedonboardingsaasonboarding "github.com/flexera-public/flexera-cli/internal/commands/unifiedonboarding/saasonboarding"
 )
 
-// RegisterAll adds every generated tag command to root.
+// RegisterAll adds one command per API service to root; each service
+// command holds that service's generated tag commands.
 func RegisterAll(root *cobra.Command) {
 	root.AddCommand(
-		accesspolicy.NewCmd(),
-		accessrule.NewCmd(),
-		accessrules.NewCmd(),
-		adjustmentdefinition.NewCmd(),
-		allocationtable.NewCmd(),
-		anomalies.NewCmd(),
-		apievent.NewCmd(),
-		apikeycredential.NewCmd(),
-		applicationuseractivitycount.NewCmd(),
-		awscredential.NewCmd(),
-		awsstscredential.NewCmd(),
-		basiccredential.NewCmd(),
-		billconnectsnowflake.NewCmd(),
-		billing.NewCmd(),
-		billingaudit.NewCmd(),
-		billingcenteraccessrules.NewCmd(),
-		billingcenters.NewCmd(),
-		billingcredits.NewCmd(),
-		billingsettings.NewCmd(),
-		billmonths.NewCmd(),
-		billupload.NewCmd(),
-		budget.NewCmd(),
-		capability.NewCmd(),
-		cloudvendoraccount.NewCmd(),
-		cloudvendoraccounts.NewCmd(),
-		commitmentreallocationsetting.NewCmd(),
-		compliance.NewCmd(),
-		connector.NewCmd(),
-		contracts.NewCmd(),
-		costs.NewCmd(),
-		credential.NewCmd(),
-		currencysetting.NewCmd(),
-		customcatalog.NewCmd(),
-		customdashboards.NewCmd(),
-		customdimension.NewCmd(),
-		customdimensions.NewCmd(),
-		customergroup.NewCmd(),
-		customergrouptype.NewCmd(),
-		customization.NewCmd(),
-		customizationtype.NewCmd(),
-		customizationvalue.NewCmd(),
-		device.NewCmd(),
-		digestcredential.NewCmd(),
-		discoveredapplication.NewCmd(),
-		event.NewCmd(),
-		exportretired.NewCmd(),
-		forecasts.NewCmd(),
-		graphql.NewCmd(),
-		group.NewCmd(),
-		groupmembership.NewCmd(),
-		importjob.NewCmd(),
-		incidentaggregate.NewCmd(),
-		ipaccesscontrol.NewCmd(),
-		license.NewCmd(),
-		managedapplication.NewCmd(),
-		managedapplicationevent.NewCmd(),
-		managedapplicationuser.NewCmd(),
-		metricquery.NewCmd(),
-		misconfigurationui.NewCmd(),
-		mspcustomer.NewCmd(),
-		mspcustomerdomain.NewCmd(),
-		mspcustomertag.NewCmd(),
-		mspcustomerv2.NewCmd(),
-		notifications.NewCmd(),
-		ntlmcredential.NewCmd(),
-		oauth2credential.NewCmd(),
-		objectdefinition.NewCmd(),
-		onboarding.NewCmd(),
-		oraclecredential.NewCmd(),
-		organization.NewCmd(),
-		organizationinvitation.NewCmd(),
-		orgdashboards.NewCmd(),
-		orgloginpolicy.NewCmd(),
-		policyaggregate.NewCmd(),
-		policymanager.NewCmd(),
-		processinghistory.NewCmd(),
-		project.NewCmd(),
-		publishedtemplate.NewCmd(),
-		query.NewCmd(),
-		recommendations.NewCmd(),
-		refreshtoken.NewCmd(),
-		regulatorycompliance.NewCmd(),
-		reportsubscriptions.NewCmd(),
-		role.NewCmd(),
-		rulebaseddimension.NewCmd(),
-		saasconnector.NewCmd(),
-		saasdata.NewCmd(),
-		saasonboarding.NewCmd(),
-		saml2domain.NewCmd(),
-		saml2identityprovider.NewCmd(),
-		saml2identityprovidersigningkey.NewCmd(),
-		saml2singleidentityprovider.NewCmd(),
-		savedfilters.NewCmd(),
-		scimconfig.NewCmd(),
-		scimgroup.NewCmd(),
-		scimuser.NewCmd(),
-		serviceaccount.NewCmd(),
-		serviceaccountclient.NewCmd(),
-		settings.NewCmd(),
-		sharedcostrules.NewCmd(),
-		tagdimension.NewCmd(),
-		unmanagedappliedpolicies.NewCmd(),
-		unmanagedincidents.NewCmd(),
-		usagegroup.NewCmd(),
-		usagemessagequery.NewCmd(),
-		user.NewCmd(),
-		userbillingcenters.NewCmd(),
-		userinvitation.NewCmd(),
-		usermemberships.NewCmd(),
-		userprofile.NewCmd(),
-		usersettingblob.NewCmd(),
-		vulnerability.NewCmd(),
-		vulnerabilitylocal.NewCmd(),
+		withChildren(service(&cobra.Command{Use: "bill-analysis"}, "bill-analysis", []string{"ba"}, "Bill Analysis API", "Commands for the Bill Analysis API (RightScale Bill Analysis API).\n\nService id: bill_analysis"),
+			billanalysisadjustmentdefinition.NewCmd(),
+			billanalysisanomalies.NewCmd(),
+			billanalysisbillmonths.NewCmd(),
+			billanalysisbillingsettings.NewCmd(),
+			billanalysiscloudvendoraccounts.NewCmd(),
+			billanalysiscommitmentreallocationsetting.NewCmd(),
+			billanalysiscosts.NewCmd(),
+			billanalysiscurrencysetting.NewCmd(),
+			billanalysiscustomdashboards.NewCmd(),
+			billanalysiscustomdimension.NewCmd(),
+			billanalysiscustomdimensions.NewCmd(),
+			billanalysisforecasts.NewCmd(),
+			billanalysisorgdashboards.NewCmd(),
+		),
+		service(billuploadbillupload.NewCmd(), "bill-upload", nil, "Bill Upload API", "Commands for the Bill Upload API (RightScale Optima Bill Upload API).\n\nService id: bill_upload"),
+		withChildren(service(nest(billingcenterbillingcenters.NewCmd(), "billing-center"), "billing-center", []string{"bc"}, "Billing Center API", "Commands for the Billing Center API (RightScale Billing Center API).\n\nService id: billing_center_service"),
+			billingcenteraccessrules.NewCmd(),
+			billingcenterbillingcenteraccessrules.NewCmd(),
+			billingcenterallocationtable.NewCmd(),
+			billingcenteruserbillingcenters.NewCmd(),
+		),
+		withChildren(service(budgetbudget.NewCmd(), "budget", nil, "Budget API", "Commands for the Budget API (Flexera Budget API, v1).\n\nService id: budget"),
+			budgetcloudvendoraccount.NewCmd(),
+		),
+		withChildren(service(credentialcredential.NewCmd(), "credential", []string{"cred"}, "Credential API", "Commands for the Credential API (Flexera Credential API, v2).\n\nService id: cred"),
+			credentialapikeycredential.NewCmd(),
+			credentialawscredential.NewCmd(),
+			credentialawsstscredential.NewCmd(),
+			credentialbasiccredential.NewCmd(),
+			credentialdigestcredential.NewCmd(),
+			credentialntlmcredential.NewCmd(),
+			credentialoauth2credential.NewCmd(),
+			credentialoraclecredential.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "data-inventory"}, "data-inventory", []string{"divnt"}, "Data Inventory API", "Commands for the Data Inventory API (Flexera Data Inventory API, v1).\n\nService id: divnt"),
+			datainventoryonboarding.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "finops-billing"}, "finops-billing", nil, "FinOps Billing API", "Commands for the FinOps Billing API (Flexera FinOps Billing API, v1).\n\nService id: finops_billing"),
+			finopsbillingbilling.NewCmd(),
+			finopsbillingbillingaudit.NewCmd(),
+			finopsbillingbillingcredits.NewCmd(),
+			finopsbillinginvoicescheduleinvoices.NewCmd(),
+			finopsbillinginvoiceschedules.NewCmd(),
+			finopsbillinginvoicetemplates.NewCmd(),
+			finopsbillinginvoices.NewCmd(),
+			finopsbillingsettings.NewCmd(),
+			finopsbillingsharedcostrules.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "finops-customizations"}, "finops-customizations", nil, "FinOps Customizations API", "Commands for the FinOps Customizations API (Flexera FinOps Customizations API, v1).\n\nService id: finops_customizations"),
+			finopscustomizationscurrency.NewCmd(),
+			finopscustomizationsreportsubscriptions.NewCmd(),
+			finopscustomizationsrulebaseddimension.NewCmd(),
+			finopscustomizationssavedfilters.NewCmd(),
+			finopscustomizationstagdimension.NewCmd(),
+			finopscustomizationstagobservation.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "finops-onboarding"}, "finops-onboarding", nil, "FinOps Onboarding API", "Commands for the FinOps Onboarding API (Flexera FinOps Onboarding API, v1).\n\nService id: finops_onboarding"),
+			withChildren(finopsonboardingbillconnect.NewCmd(),
+				nest(finopsonboardingbillconnectaws.NewCmd(), "aws"),
+				nest(finopsonboardingbillconnectazurecsp.NewCmd(), "azure-csp"),
+				nest(finopsonboardingbillconnectazureeamanagement.NewCmd(), "azure-ea-management"),
+				nest(finopsonboardingbillconnectazuremca.NewCmd(), "azure-mca"),
+				nest(finopsonboardingbillconnectcommonbillingestion.NewCmd(), "common-bill-ingestion"),
+				nest(finopsonboardingbillconnectdatabricks.NewCmd(), "databricks"),
+				nest(finopsonboardingbillconnectgcp.NewCmd(), "gcp"),
+				nest(finopsonboardingbillconnectsnowflake.NewCmd(), "snowflake"),
+			),
+			finopsonboardingprocessinghistory.NewCmd(),
+		),
+		service(graphqlgraphql.NewCmd(), "graphql", nil, "GraphQL API", "Commands for the GraphQL API (Flexera GraphQL API, v1).\n\nService id: graphql"),
+		withChildren(service(&cobra.Command{Use: "grs"}, "grs", nil, "Global Resource Service API", "Commands for the Global Resource Service API (Flexera Global Resource Service API, v2).\n\nService id: grs"),
+			grsproject.NewCmd(),
+			grsuser.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "iam"}, "iam", nil, "Identity and Access Management API", "Commands for the Identity and Access Management API (Flexera Identity and Access Management API, v1).\n\nService id: iam"),
+			iamaccesspolicy.NewCmd(),
+			iamaccessrule.NewCmd(),
+			iamapievent.NewCmd(),
+			iamcapability.NewCmd(),
+			iamcontracts.NewCmd(),
+			iamcustomization.NewCmd(),
+			iamcustomizationtype.NewCmd(),
+			iamevent.NewCmd(),
+			iamgroup.NewCmd(),
+			iamgroupmembership.NewCmd(),
+			iamipaccesscontrol.NewCmd(),
+			iammspcustomer.NewCmd(),
+			iammspcustomerdomain.NewCmd(),
+			iammspcustomertag.NewCmd(),
+			iammspcustomerv2.NewCmd(),
+			iamorgloginpolicy.NewCmd(),
+			iamorganization.NewCmd(),
+			iamorganizationinvitation.NewCmd(),
+			iamproject.NewCmd(),
+			iamrefreshtoken.NewCmd(),
+			iamrole.NewCmd(),
+			iamsaml2domain.NewCmd(),
+			iamsaml2identityprovider.NewCmd(),
+			iamsaml2identityprovidersigningkey.NewCmd(),
+			iamsaml2singleidentityprovider.NewCmd(),
+			iamscimconfig.NewCmd(),
+			iamscimgroup.NewCmd(),
+			iamscimuser.NewCmd(),
+			iamserviceaccount.NewCmd(),
+			iamserviceaccountclient.NewCmd(),
+			iamuser.NewCmd(),
+			iamuserinvitation.NewCmd(),
+			iamusermemberships.NewCmd(),
+			iamuserprofile.NewCmd(),
+			iamusersettingblob.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "it-visibility"}, "it-visibility", []string{"vis"}, "IT Visibility Insights API", "Commands for the IT Visibility Insights API (Flexera IT Visibility Insights API, v2).\n\nService id: vis"),
+			itvisibilitydevice.NewCmd(),
+			itvisibilityexportretired.NewCmd(),
+			itvisibilityquery.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "policy"}, "policy", nil, "Policy API", "Commands for the Policy API (Flexera Policy API, v1).\n\nService id: policy"),
+			policycustomcatalog.NewCmd(),
+			policycustomizationtype.NewCmd(),
+			policycustomizationvalue.NewCmd(),
+			policyincidentaggregate.NewCmd(),
+			policypolicyaggregate.NewCmd(),
+			policypolicymanager.NewCmd(),
+			policypublishedtemplate.NewCmd(),
+			policyunmanagedappliedpolicies.NewCmd(),
+			policyunmanagedincidents.NewCmd(),
+		),
+		service(recommendationsrecommendations.NewCmd(), "recommendations", []string{"optima-recommendations"}, "Optima Recommendations API", "Commands for the Optima Recommendations API (RightScale Optima Recommendations API).\n\nService id: optima_recommendations"),
+		withChildren(service(&cobra.Command{Use: "risk"}, "risk", nil, "Risk Management API", "Commands for the Risk Management API (Flexera Risk Management API, v1).\n\nService id: risk"),
+			riskcompliance.NewCmd(),
+			riskmisconfigurationui.NewCmd(),
+			risknotifications.NewCmd(),
+			riskregulatorycompliance.NewCmd(),
+			riskvulnerability.NewCmd(),
+			riskvulnerabilitylocal.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "saas"}, "saas", nil, "SaaS API", "Commands for the SaaS API (Flexera SaaS API, v1).\n\nService id: saas"),
+			saasapplicationuseractivitycount.NewCmd(),
+			saascustomergroup.NewCmd(),
+			saascustomergrouptype.NewCmd(),
+			saasdiscoveredapplication.NewCmd(),
+			saasimportjob.NewCmd(),
+			saaslicense.NewCmd(),
+			saasmanagedapplication.NewCmd(),
+			saasmanagedapplicationevent.NewCmd(),
+			saasmanagedapplicationuser.NewCmd(),
+			saasmetricquery.NewCmd(),
+			saasobjectdefinition.NewCmd(),
+			saassaasdata.NewCmd(),
+			saasusagegroup.NewCmd(),
+			saasusagemessagequery.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "unified-onboarding"}, "unified-onboarding", []string{"uobs"}, "Unified Onboarding API", "Commands for the Unified Onboarding API (Flexera Unified Onboarding API, v1).\n\nService id: uobs"),
+			unifiedonboardingconnector.NewCmd(),
+			unifiedonboardingonboarding.NewCmd(),
+			unifiedonboardingsaasconnector.NewCmd(),
+			unifiedonboardingsaasonboarding.NewCmd(),
+		),
 	)
-	root.AddCommand(billConnectGroup())
 }
 
-// billConnectGroup nests the per-vendor bill-connect commands under a
-// single `bill-connect` parent (vendors are not top-level commands).
-func billConnectGroup() *cobra.Command {
-	nest := func(c *cobra.Command, use string) *cobra.Command { c.Use = use; return c }
-	parent := billconnect.NewCmd()
-	parent.AddCommand(
-		nest(billconnectaws.NewCmd(), "aws"),
-		nest(billconnectazurecsp.NewCmd(), "azure-csp"),
-		nest(billconnectazureeamanagement.NewCmd(), "azure-ea-management"),
-		nest(billconnectazuremca.NewCmd(), "azure-mca"),
-		nest(billconnectcommonbillingestion.NewCmd(), "common-bill-ingestion"),
-		nest(billconnectdatabricks.NewCmd(), "databricks"),
-		nest(billconnectgcp.NewCmd(), "gcp"),
-	)
-	return parent
+// service presents c as the top-level command for one API service.
+func service(c *cobra.Command, use string, aliases []string, short, long string) *cobra.Command {
+	c.Use, c.Aliases, c.Short, c.Long = use, aliases, short, long
+	return c
+}
+
+// nest renames a tag command that is registered beneath a sibling tag.
+func nest(c *cobra.Command, use string) *cobra.Command {
+	c.Use = use
+	return c
+}
+
+func withChildren(c *cobra.Command, children ...*cobra.Command) *cobra.Command {
+	c.AddCommand(children...)
+	return c
 }

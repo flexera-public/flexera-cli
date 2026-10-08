@@ -1,20 +1,12 @@
 ## flexera-cli policy
 
-Project-scoped policy operations with GRS project auto-resolution
+Policy API
 
 ### Synopsis
 
-Project-scoped policy operations. When --project-id is omitted, the project is auto-resolved for the org via GRS. Org-scoped policy resources (published-template, custom-catalog, customization-value, policy-manager, policy-aggregate, incident-aggregate, unmanaged-*) are available as their own top-level commands.
+Commands for the Policy API (Flexera Policy API, v1).
 
-```
-flexera-cli policy [flags]
-```
-
-### Examples
-
-```
-flexera-cli policy applied-policy list --org-id 123 --access-token <token>
-```
+Service id: policy
 
 ### Options
 
@@ -49,6 +41,15 @@ flexera-cli policy applied-policy list --org-id 123 --access-token <token>
 * [flexera-cli policy action-status](flexera-cli_policy_action-status.md)	 - Policy action statuses (project-scoped)
 * [flexera-cli policy applied-policy](flexera-cli_policy_applied-policy.md)	 - Applied policies (project-scoped)
 * [flexera-cli policy archived-incident](flexera-cli_policy_archived-incident.md)	 - Policy archived incidents (project-scoped)
+* [flexera-cli policy custom-catalog](flexera-cli_policy_custom-catalog.md)	 - CustomCatalog operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy customization-type](flexera-cli_policy_customization-type.md)	 - Customization Type operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy customization-value](flexera-cli_policy_customization-value.md)	 - Customization Value operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy incident-aggregate](flexera-cli_policy_incident-aggregate.md)	 - Incident Aggregate operations (generated from the unified OpenAPI spec)
 * [flexera-cli policy meta](flexera-cli_policy_meta.md)	 - Relationship-aware applied-policy meta operations (project-scoped)
+* [flexera-cli policy policy-aggregate](flexera-cli_policy_policy-aggregate.md)	 - Policy Aggregate operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy policy-manager](flexera-cli_policy_policy-manager.md)	 - Policy Manager operations (generated from the unified OpenAPI spec)
 * [flexera-cli policy policy-template](flexera-cli_policy_policy-template.md)	 - Policy templates (project-scoped)
+* [flexera-cli policy published-template](flexera-cli_policy_published-template.md)	 - Published Template operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy unmanaged-applied-policies](flexera-cli_policy_unmanaged-applied-policies.md)	 - Unmanaged Applied Policies operations (generated from the unified OpenAPI spec)
+* [flexera-cli policy unmanaged-incidents](flexera-cli_policy_unmanaged-incidents.md)	 - Unmanaged Incidents operations (generated from the unified OpenAPI spec)
 

@@ -1,6 +1,12 @@
 ## flexera-cli bill-upload
 
-BillUpload operations (generated from the unified OpenAPI spec)
+Bill Upload API
+
+### Synopsis
+
+Commands for the Bill Upload API (RightScale Optima Bill Upload API).
+
+Service id: bill_upload
 
 ### Options
 

@@ -12,21 +12,10 @@ import (
 	"strings"
 )
 
-// finalHelpPrefix mirrors writeRegister: vendor commands are nested only when
-// the bill-connect parent package is present. Child Use values are canonical,
-// not inferred from tag names (notably azure-ea-management).
-func finalHelpPrefix(tag genTag, tags []genTag) string {
-	for _, parent := range tags {
-		if parent.Pkg != billConnectParent {
-			continue
-		}
-		for _, child := range billConnectChildren {
-			if child.Pkg == tag.Pkg {
-				return "flexera-cli " + parent.Cmd + " " + child.Use + " "
-			}
-		}
-	}
-	return "flexera-cli " + tag.Cmd + " "
+// finalHelpPrefix is the registered invocation prefix for a tag command,
+// mirroring writeRegister (service first, nested tags renamed).
+func finalHelpPrefix(tag genTag) string {
+	return "flexera-cli " + strings.Join(tag.finalPath(), " ") + " "
 }
 
 // rewriteStagedHelp runs after registration and before audit/publication. It
@@ -35,11 +24,11 @@ func finalHelpPrefix(tag genTag, tags []genTag) string {
 // with rewritten help are formatted before they can be published.
 func rewriteStagedHelp(stage string, tags []genTag) error {
 	for _, tag := range tags {
-		from, to := "flexera-cli "+tag.Cmd+" ", finalHelpPrefix(tag, tags)
+		from, to := "flexera-cli "+tag.Cmd+" ", finalHelpPrefix(tag)
 		if from == to {
 			continue
 		}
-		path := filepath.Join(stage, tag.Pkg, "cmd_gen.go")
+		path := filepath.Join(stage, filepath.FromSlash(tag.Pkg), "cmd_gen.go")
 		data, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("staged help %s: %w", path, err)

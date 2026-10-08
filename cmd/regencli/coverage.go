@@ -12,6 +12,7 @@ import (
 // Only exact wrappers belong here; workflow commands intentionally do not.
 var curatedOperations = map[string]string{
 	"Auth_Token_token":                 "auth token create",
+	"Iam_User_Memberships_index":       "iam user-memberships orgs",
 	"Policy_Action_Status_index":       "policy action-status list",
 	"Policy_Action_Status_show":        "policy action-status get",
 	"Policy_Applied_Policy_index":      "policy applied-policy list",
@@ -31,6 +32,15 @@ var curatedOperations = map[string]string{
 	"Policy_Policy_Template_update":    "policy policy-template update",
 	"Policy_Policy_Template_delete":    "policy policy-template delete",
 	"Policy_Policy_Template_evaluate":  "policy policy-template evaluate",
+}
+
+func curatedOperationIDs() []string {
+	ids := make([]string, 0, len(curatedOperations))
+	for id := range curatedOperations {
+		ids = append(ids, id)
+	}
+	sort.Strings(ids)
+	return ids
 }
 
 func curatedEntries(specData []byte) ([]catalog.Entry, error) {
@@ -56,6 +66,7 @@ func curatedEntries(specData []byte) ([]catalog.Entry, error) {
 			_ = json.Unmarshal(op["description"], &e.Description)
 			_ = json.Unmarshal(op["x-flexera-resource"], &e.Resource)
 			_ = json.Unmarshal(op["x-flexera-action"], &e.Action)
+			_ = json.Unmarshal(op["x-flexera-service"], &e.Service)
 			var tags []string
 			_ = json.Unmarshal(op["tags"], &tags)
 			if len(tags) > 0 {

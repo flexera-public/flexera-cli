@@ -29,7 +29,7 @@ Help requires no credentials:
 
 ```sh
 flexera-cli --help
-flexera-cli role --help
+flexera-cli iam --help
 ```
 
 For live reads, use a token in local `$TOKEN` and replace `12345` with your org ID:
@@ -37,19 +37,23 @@ For live reads, use a token in local `$TOKEN` and replace `12345` with your org 
 ```sh
 export FLEXERA_CLI_ACCESS_TOKEN="$TOKEN"
 export FLEXERA_CLI_ORG_ID=12345
-flexera-cli role list -o table
+flexera-cli iam role list -o table
 ```
 
 The region (API zone) defaults to `nam`. For another region, pass `--zone eu`,
 `--zone apac`, or `--zone test`, or set `FLEXERA_CLI_ZONE`.
 See [authentication options](docs/usage.md#authentication) for OAuth workflows.
 
+Commands are grouped by API service: `flexera-cli <service> <resource> <action>`,
+for example `bill-analysis`, `iam`, `finops-billing`, or `policy`. Run
+`flexera-cli --help` for the service list; see [command layout](docs/usage.md#command-layout).
+
 ## Preview a write interactively
 
 Generated JSON writes support interactive input and dry-run plans:
 
 ```sh
-flexera-cli organization-invitation create -i --dry-run
+flexera-cli iam organization-invitation create -i --dry-run
 ```
 
 This prompts for organization/body inputs and prints a redacted plan without

@@ -35,7 +35,7 @@ flexera-cli policy applied-policy [flags]
 
 ### SEE ALSO
 
-* [flexera-cli policy](flexera-cli_policy.md)	 - Project-scoped policy operations with GRS project auto-resolution
+* [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy applied-policy create](flexera-cli_policy_applied-policy_create.md)	 - Create an applied policy
 * [flexera-cli policy applied-policy delete](flexera-cli_policy_applied-policy_delete.md)	 - Delete an applied policy
 * [flexera-cli policy applied-policy evaluate](flexera-cli_policy_applied-policy_evaluate.md)	 - Request evaluation of an applied policy

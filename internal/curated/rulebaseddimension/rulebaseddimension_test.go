@@ -28,8 +28,10 @@ func TestResolveInput(t *testing.T) {
 
 func TestAttach(t *testing.T) {
 	root := &cobra.Command{Use: "root"}
+	service := &cobra.Command{Use: "finops-customizations"}
 	generated := &cobra.Command{Use: "rule-based-dimension"}
-	root.AddCommand(generated)
+	service.AddCommand(generated)
+	root.AddCommand(service)
 	if err := Attach(root); err != nil {
 		t.Fatalf("Attach: %v", err)
 	}

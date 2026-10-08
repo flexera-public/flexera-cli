@@ -54,12 +54,14 @@ func TestApplyCommandsExposeCSVFlags(t *testing.T) {
 
 func TestCommandCanBeAddedToRoot(t *testing.T) {
 	root := &cobra.Command{Use: "root"}
+	service := &cobra.Command{Use: "finops-customizations"}
 	generated := &cobra.Command{Use: "rule-based-dimension"}
-	root.AddCommand(generated)
+	service.AddCommand(generated)
+	root.AddCommand(service)
 	if err := Attach(root); err != nil {
 		t.Fatalf("attach: %v", err)
 	}
-	if _, _, err := root.Find([]string{"rule-based-dimension", "from_csv", "generate"}); err != nil {
+	if _, _, err := root.Find([]string{"finops-customizations", "rule-based-dimension", "from_csv", "generate"}); err != nil {
 		t.Fatalf("find command: %v", err)
 	}
 }

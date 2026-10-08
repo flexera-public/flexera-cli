@@ -53,5 +53,5 @@ Validated illustrative body, when available (review before use):
 
 ### SEE ALSO
 
-* [flexera-cli recommendations](flexera-cli_recommendations.md)	 - Recommendations operations (generated from the unified OpenAPI spec)
+* [flexera-cli recommendations](flexera-cli_recommendations.md)	 - Optima Recommendations API
 

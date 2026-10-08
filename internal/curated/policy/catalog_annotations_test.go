@@ -1,6 +1,7 @@
 package policy
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -33,7 +34,7 @@ func TestCatalogOperationAnnotations(t *testing.T) {
 	count := 0
 	var walk func(*cobra.Command)
 	walk = func(cmd *cobra.Command) {
-		path := cmd.CommandPath()
+		path := strings.TrimPrefix(cmd.CommandPath(), "flexera-cli ")
 		got, annotated := cmd.Annotations[annotation]
 		if expected, ok := want[path]; ok {
 			seen[path] = true
@@ -53,7 +54,13 @@ func TestCatalogOperationAnnotations(t *testing.T) {
 			walk(child)
 		}
 	}
-	walk(NewCmd())
+	root := &cobra.Command{Use: "flexera-cli"}
+	root.AddCommand(&cobra.Command{Use: "policy"})
+	if err := Attach(root); err != nil {
+		t.Fatal(err)
+	}
+	policyCmd, _, _ := root.Find([]string{"policy"})
+	walk(policyCmd)
 	if count != 19 {
 		t.Errorf("annotated command count = %d, want 19", count)
 	}

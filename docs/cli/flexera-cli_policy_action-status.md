@@ -35,7 +35,7 @@ flexera-cli policy action-status [flags]
 
 ### SEE ALSO
 
-* [flexera-cli policy](flexera-cli_policy.md)	 - Project-scoped policy operations with GRS project auto-resolution
+* [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy action-status get](flexera-cli_policy_action-status_get.md)	 - Show an action status
 * [flexera-cli policy action-status list](flexera-cli_policy_action-status_list.md)	 - List action statuses
 

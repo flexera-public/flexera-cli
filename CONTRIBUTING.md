@@ -51,5 +51,9 @@ Spec updates record repository, commit, and SHA-256 for an immutable snapshot in
 
 The Cobra command tree calls the [unified Go SDK](https://github.com/flexera-public/unified-go-client).
 The CLI handles configuration, discovery, validation, output, and interactive input.
-Generated commands mirror APIs; curated commands adapt auth, FinOps, policy resolution,
-GRS, organization discovery, and anomalies. Use the SDK directly for other integrations.
+Generated commands mirror APIs and are grouped by the `x-flexera-service` metadata in
+the unified spec (`internal/commands/<service>/<tag>/`; CLI names, aliases, hoisting,
+and renames live in `cmd/regencli/services.go`). Curated commands add behavior beyond a
+single API call (auth, FinOps cost queries, policy resolution, GRS, organization
+discovery, anomalies) and attach beneath their service via `Attach` in
+`internal/app/root.go`; do not add curated commands that only duplicate a generated one. Use the SDK directly for other integrations.

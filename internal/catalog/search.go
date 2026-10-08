@@ -33,11 +33,15 @@ func (results SearchResults) TableRows() ([]string, [][]string) {
 type SearchOptions struct {
 	Limit       int
 	Tag, Action string
-	ReadOnly    bool
+	// Service matches the top-level service command, one of its aliases, or
+	// the x-flexera-service id (e.g. "bill-analysis", "ba", "bill_analysis").
+	Service  string
+	ReadOnly bool
 }
 type searchDocument struct {
 	result   SearchResult
 	tag      string
+	services []string
 	readOnly bool
 	terms    map[string]float64
 	length   float64
@@ -88,6 +92,25 @@ func tokens(text string) []string {
 	return out
 }
 
+// topLevel returns the ancestor of cmd that is a direct child of root.
+func topLevel(root, cmd *cobra.Command) *cobra.Command {
+	for c := cmd; c != nil; c = c.Parent() {
+		if c.Parent() == root {
+			return c
+		}
+	}
+	return nil
+}
+
+func matchesAny(want string, values []string) bool {
+	for _, v := range values {
+		if strings.EqualFold(want, v) {
+			return true
+		}
+	}
+	return false
+}
+
 // NewSearchIndex walks only the supplied tree. It never runs commands or
 // initializes configuration, authentication or an API client.
 func NewSearchIndex(root *cobra.Command) (*SearchIndex, error) {
@@ -113,12 +136,21 @@ func NewSearchIndex(root *cobra.Command) (*SearchIndex, error) {
 			add(path, 3)
 			add(cmd.Short, 2)
 			add(cmd.Long, 1)
+			if top := topLevel(root, cmd); top != nil {
+				doc.services = append([]string{top.Name()}, top.Aliases...)
+				if top != cmd {
+					add(top.Short, 1) // service title, e.g. "Identity and Access Management API"
+				}
+			}
 			if id := cmd.Annotations["flexera.operationId"]; id != "" {
 				e, found := loaded.Lookup(id)
 				if !found {
 					return fmt.Errorf("search: command %s has no catalog operation %s", path, id)
 				}
 				doc.tag = e.Tag
+				if e.Service != "" {
+					doc.services = append(doc.services, e.Service)
+				}
 				doc.result.Action = e.Action
 				doc.result.Destructive = e.Destructive
 				doc.result.Schema = root.Name() + " cli schema " + path
@@ -175,7 +207,8 @@ func (index *SearchIndex) Search(query string, options SearchOptions) SearchResu
 	terms := tokens(query)
 	unique := map[string]bool{}
 	for _, doc := range index.docs {
-		if options.Tag != "" && !strings.EqualFold(options.Tag, doc.tag) || options.Action != "" && !strings.EqualFold(options.Action, doc.result.Action) || options.ReadOnly && !doc.readOnly {
+		if options.Service != "" && !matchesAny(options.Service, doc.services) ||
+			options.Tag != "" && !strings.EqualFold(options.Tag, doc.tag) || options.Action != "" && !strings.EqualFold(options.Action, doc.result.Action) || options.ReadOnly && !doc.readOnly {
 			continue
 		}
 		score := 0.0

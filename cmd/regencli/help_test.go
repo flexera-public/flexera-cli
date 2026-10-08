@@ -6,6 +6,7 @@ import (
 	"go/format"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -15,20 +16,19 @@ import (
 )
 
 func TestFinalHelpPrefix(t *testing.T) {
-	parent := genTag{Pkg: billConnectParent, Cmd: "billing"}
-	for _, child := range billConnectChildren {
-		t.Run(child.Pkg, func(t *testing.T) {
-			tag := genTag{Pkg: child.Pkg, Cmd: "provisional-" + child.Pkg}
-			if got := finalHelpPrefix(tag, []genTag{tag, parent}); got != "flexera-cli billing "+child.Use+" " {
-				t.Fatalf("final prefix: %q", got)
-			}
-			if got := finalHelpPrefix(tag, []genTag{tag}); got != "flexera-cli "+tag.Cmd+" " {
-				t.Fatalf("parent absent: %q", got)
-			}
-		})
+	tags := fixtureTags(t)
+	for name, want := range map[string]string{
+		"Bill Connect":         "flexera-cli finops-onboarding bill-connect ",
+		"Bill Connect - AWS":   "flexera-cli finops-onboarding bill-connect aws ",
+		"Budget":               "flexera-cli budget ",
+		"Cloud Vendor Account": "flexera-cli budget cloud-vendor-account ",
+	} {
+		if got := finalHelpPrefix(tagByName(t, tags, name)); got != want {
+			t.Errorf("%s: final prefix %q, want %q", name, got, want)
+		}
 	}
-	if got := finalHelpPrefix(parent, []genTag{parent}); got != "flexera-cli billing " {
-		t.Fatal(got)
+	if got := finalHelpPrefix(genTag{Pkg: "x", Cmd: "x"}); got != "flexera-cli x " {
+		t.Fatalf("ungrouped tag: %q", got)
 	}
 }
 
@@ -67,12 +67,12 @@ func TestRegenerateMapsHelpBeforePreparation(t *testing.T) {
 	destination := filepath.Join(t.TempDir(), "commands")
 	hooks := testHooks(t)
 	hooks.generate = func(tag genTag, out string) error {
-		writeTestFile(t, out, "package "+tag.Pkg+"\nimport \"github.com/spf13/cobra\"\nvar _ = cobra.Command{Example: "+strconv.Quote("flexera-cli "+tag.Cmd+" get")+"}\n")
+		writeTestFile(t, out, "package "+path.Base(tag.Pkg)+"\nimport \"github.com/spf13/cobra\"\nvar _ = cobra.Command{Example: "+strconv.Quote("flexera-cli "+tag.Cmd+" get")+"}\n")
 		return nil
 	}
 	hooks.prepare = func(stage string, tags []genTag) ([]publicationArtifact, error) {
-		data, err := os.ReadFile(filepath.Join(stage, "billconnectaws", "cmd_gen.go"))
-		if err != nil || !strings.Contains(string(data), "flexera-cli bill-connect aws get") {
+		data, err := os.ReadFile(filepath.Join(stage, "finopsonboarding", "billconnectaws", "cmd_gen.go"))
+		if err != nil || !strings.Contains(string(data), "flexera-cli finops-onboarding bill-connect aws get") {
 			t.Fatalf("preparation saw provisional help: %s, %v", data, err)
 		}
 		if _, err := os.Stat(filepath.Join(stage, "register_gen.go")); err != nil {
@@ -80,7 +80,7 @@ func TestRegenerateMapsHelpBeforePreparation(t *testing.T) {
 		}
 		return nil, nil
 	}
-	if err := regenerate(destination, []string{"Bill Connect", "Bill Connect AWS"}, hooks); err != nil {
+	if err := regenerate(destination, fixtureTags(t), hooks); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -108,14 +108,14 @@ func TestStagedHelpFailureDoesNotPublish(t *testing.T) {
 	hooks := testHooks(t)
 	hooks.verify = func(stage string, tags []genTag) error {
 		// Inject invalid staged source after the separate symbol gate.
-		writeTestFile(t, filepath.Join(stage, "billconnectaws", "cmd_gen.go"), "not Go")
+		writeTestFile(t, filepath.Join(stage, "finopsonboarding", "billconnectaws", "cmd_gen.go"), "not Go")
 		return nil
 	}
 	hooks.prepare = func(string, []genTag) ([]publicationArtifact, error) {
 		t.Fatal("preparation ran after failed help transform")
 		return nil, nil
 	}
-	if err := regenerate(destination, []string{"Bill Connect", "Bill Connect AWS"}, hooks); err == nil || !strings.Contains(err.Error(), "staged help") {
+	if err := regenerate(destination, fixtureTags(t), hooks); err == nil || !strings.Contains(err.Error(), "staged help") {
 		t.Fatalf("expected contextual transform error: %v", err)
 	}
 	files := treeContents(t, destination)
@@ -131,21 +131,19 @@ func TestStagedHelpFailureDoesNotPublish(t *testing.T) {
 func TestCatalogHelpInvocationsMatchRegisteredTree(t *testing.T) {
 	workspace := t.TempDir()
 	stage := filepath.Join(workspace, "internal", "commands")
-	tags := []genTag{{Pkg: billConnectParent, Cmd: "bill-connect"}, {Pkg: "budget", Cmd: "budget"}}
-	for _, child := range billConnectChildren {
-		tags = append(tags, genTag{Pkg: child.Pkg, Cmd: "bill-connect-" + child.Use})
-	}
+	tags := fixtureTags(t)
 	paths := map[string]any{}
 	for _, tag := range tags {
-		entry := catalog.Entry{OperationID: tag.Pkg, Command: []string{tag.Cmd, "get"}, Method: "GET", Path: "/" + tag.Pkg, ResponseEnvelope: "none"}
-		metadata, err := json.Marshal(map[string]catalog.Entry{tag.Pkg: entry})
+		id := tag.importAlias()
+		entry := catalog.Entry{OperationID: id, Command: []string{tag.Cmd, "get"}, Method: "GET", Path: "/" + tag.Pkg, ResponseEnvelope: "none"}
+		metadata, err := json.Marshal(map[string]catalog.Entry{id: entry})
 		if err != nil {
 			t.Fatal(err)
 		}
-		writeTestFile(t, filepath.Join(stage, tag.Pkg, "metadata.json"), string(metadata))
-		paths[entry.Path] = map[string]any{"get": map[string]string{"operationId": tag.Pkg}}
+		writeTestFile(t, filepath.Join(stage, filepath.FromSlash(tag.Pkg), "metadata.json"), string(metadata))
+		paths[entry.Path] = map[string]any{"get": map[string]string{"operationId": id}}
 		example := "  flexera-cli " + tag.Cmd + " get --help\n  flexera-cli " + tag.Cmd + " show --help"
-		writeTestFile(t, filepath.Join(stage, tag.Pkg, "cmd_gen.go"), "package "+tag.Pkg+"\nimport \"github.com/spf13/cobra\"\nfunc NewCmd() *cobra.Command { c := &cobra.Command{Use: "+strconv.Quote(tag.Cmd)+"}; c.AddCommand(&cobra.Command{Use: \"get\", Aliases: []string{\"show\"}, Annotations: map[string]string{\"flexera.operationId\": "+strconv.Quote(tag.Pkg)+"}, Example: "+strconv.Quote(example)+"}); return c }\n")
+		writeTestFile(t, filepath.Join(stage, filepath.FromSlash(tag.Pkg), "cmd_gen.go"), "package "+path.Base(tag.Pkg)+"\nimport \"github.com/spf13/cobra\"\nfunc NewCmd() *cobra.Command { c := &cobra.Command{Use: "+strconv.Quote(tag.Cmd)+"}; c.AddCommand(&cobra.Command{Use: \"get\", Aliases: []string{\"show\"}, Annotations: map[string]string{\"flexera.operationId\": "+strconv.Quote(id)+"}, Example: "+strconv.Quote(example)+"}); return c }\n")
 	}
 	if err := writeRegister(stage, tags); err != nil {
 		t.Fatal(err)

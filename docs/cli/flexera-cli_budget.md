@@ -1,6 +1,12 @@
 ## flexera-cli budget
 
-Budget operations (generated from the unified OpenAPI spec)
+Budget API
+
+### Synopsis
+
+Commands for the Budget API (Flexera Budget API, v1).
+
+Service id: budget
 
 ### Options
 
@@ -32,6 +38,7 @@ Budget operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
+* [flexera-cli budget cloud-vendor-account](flexera-cli_budget_cloud-vendor-account.md)	 - Cloud Vendor Account operations (generated from the unified OpenAPI spec)
 * [flexera-cli budget create](flexera-cli_budget_create.md)	 - Creates a budget
 * [flexera-cli budget delete](flexera-cli_budget_delete.md)	 - Deletes a budget
 * [flexera-cli budget get](flexera-cli_budget_get.md)	 - Shows individual budget

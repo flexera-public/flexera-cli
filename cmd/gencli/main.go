@@ -117,6 +117,8 @@ func main() {
 		cmdName      = flag.String("cmd", "", "root CLI command name (e.g. budget-gen)")
 		outPath      = flag.String("out", "", "output Go file path")
 		metadataPath = flag.String("metadata", "", "optional per-tag operation metadata JSON output (keyed by operationId; command paths are provisional)")
+		service      = flag.String("service", "", "optional x-flexera-service id; only operations stamped with this service are generated")
+		exclude      = flag.String("exclude", "", "optional comma-separated operationIds owned by curated commands (not generated)")
 	)
 	flag.Parse()
 	if *specPath == "" || *tag == "" || *outPath == "" || *pkg == "" || *cmdName == "" {
@@ -130,7 +132,13 @@ func main() {
 	var s spec
 	check(json.Unmarshal(data, &s))
 
-	ops, drops := collectOps(&s, *tag)
+	filter := opFilter{Service: *service, Exclude: map[string]bool{}}
+	for _, id := range strings.Split(*exclude, ",") {
+		if id = strings.TrimSpace(id); id != "" {
+			filter.Exclude[id] = true
+		}
+	}
+	ops, drops := collectOpsFiltered(&s, *tag, filter)
 	for _, d := range drops {
 		fmt.Fprintf(os.Stderr, "gencli: skip %s %s — %s\n", strings.ToUpper(d.Method), d.Path, d.Reason)
 	}
@@ -201,7 +209,18 @@ type drop struct {
 	Reason string
 }
 
+// opFilter narrows a tag to one service (tags such as "Project" are shared
+// across services) and skips operations owned by curated commands.
+type opFilter struct {
+	Service string
+	Exclude map[string]bool
+}
+
 func collectOps(s *spec, tag string) ([]operation, []drop) {
+	return collectOpsFiltered(s, tag, opFilter{})
+}
+
+func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []drop) {
 	var ops []operation
 	var drops []drop
 	methods := []string{"get", "put", "post", "delete", "patch"}
@@ -248,6 +267,12 @@ func collectOps(s *spec, tag string) ([]operation, []drop) {
 				}
 			}
 			if !matched {
+				continue
+			}
+			if service, _ := op["x-flexera-service"].(string); filter.Service != "" && service != filter.Service {
+				continue
+			}
+			if id, _ := op["operationId"].(string); filter.Exclude[id] {
 				continue
 			}
 			action, _ := op["x-flexera-action"].(string)

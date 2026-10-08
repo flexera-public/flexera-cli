@@ -39,5 +39,5 @@ flexera-cli graphql generate [flags]
 
 ### SEE ALSO
 
-* [flexera-cli graphql](flexera-cli_graphql.md)	 - graphql operations (generated from the unified OpenAPI spec)
+* [flexera-cli graphql](flexera-cli_graphql.md)	 - GraphQL API
 

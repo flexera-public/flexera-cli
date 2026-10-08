@@ -1,6 +1,12 @@
 ## flexera-cli recommendations
 
-Recommendations operations (generated from the unified OpenAPI spec)
+Optima Recommendations API
+
+### Synopsis
+
+Commands for the Optima Recommendations API (RightScale Optima Recommendations API).
+
+Service id: optima_recommendations
 
 ### Options
 
@@ -33,5 +39,7 @@ Recommendations operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli recommendations list](flexera-cli_recommendations_list.md)	 - List all recommendations
+* [flexera-cli recommendations list-rate-reduction](flexera-cli_recommendations_list-rate-reduction.md)	 - List rate-reduction recommendations (auto-resolves billing centers)
+* [flexera-cli recommendations list-usage-reduction](flexera-cli_recommendations_list-usage-reduction.md)	 - List usage-reduction recommendations (auto-resolves billing centers)
 * [flexera-cli recommendations replace](flexera-cli_recommendations_replace.md)	 - updateStatus Recommendations
 

@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"strings"
 
 	cliconfig "github.com/flexera-public/flexera-cli/internal/config"
 	cliflexera "github.com/flexera-public/flexera-cli/internal/flexera"
@@ -47,7 +48,13 @@ func (d *Deps) APIClient() (*flexera.ClientWithResponses, error) {
 	if d == nil {
 		return nil, fmt.Errorf("cli: nil deps")
 	}
-	return cliflexera.Factory{HTTPClient: d.HTTP}.NewAPIClient(d.Config)
+	factory := cliflexera.Factory{HTTPClient: d.HTTP}
+	// Generated Optima operations (bill-analysis, recommendations, ...) honor
+	// the same host override as the curated Optima workflows.
+	if d.Getenv != nil && strings.TrimSpace(d.Getenv(cliflexera.EnvOptimaBaseURL)) != "" {
+		return factory.NewOptimaClient(d.Config, d.Getenv, "")
+	}
+	return factory.NewAPIClient(d.Config)
 }
 
 // Factory exposes the lower-level client factory for curated commands that

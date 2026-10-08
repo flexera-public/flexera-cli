@@ -1,17 +1,23 @@
 ## flexera-cli grs project list
 
-List GRS projects for the org
+List projects accessible by the authenticated user
 
 ```
 flexera-cli grs project list [flags]
 ```
 
+### Examples
+
+```
+Illustrative only: replace uppercase tokens; provide your own request.json for body input.
+  flexera-cli grs project list --user-id USER_ID
+```
+
 ### Options
 
 ```
-      --api-version string    Optional X-Api-Version header (defaults to 2.0)
-      --grs-base-url string   Override the GRS base URL (default: zone-specific grs-front host)
-  -h, --help                  help for list
+  -h, --help          help for list
+      --user-id int   userId (path, required)
 ```
 
 ### Options inherited from parent commands
@@ -37,5 +43,5 @@ flexera-cli grs project list [flags]
 
 ### SEE ALSO
 
-* [flexera-cli grs project](flexera-cli_grs_project.md)	 - GRS projects
+* [flexera-cli grs project](flexera-cli_grs_project.md)	 - Project operations (generated from the unified OpenAPI spec)
 
