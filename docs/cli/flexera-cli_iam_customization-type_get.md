@@ -2,6 +2,12 @@
 
 Returns a specific customization type
 
+### Synopsis
+
+Returns a specific customization type
+
+Get one available customization type.
+
 ```
 flexera-cli iam customization-type get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id string     id (path, required)
-      --view string   view (query)
+      --id string     id (path, required); The customization type's unique identifier; required by API; pattern: "^[a-z-]+$"; illustrative example: "navbar-logo-url"
+      --view string   view (query); View used to render the customization type; enum: ["default"]; API default: "default"; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

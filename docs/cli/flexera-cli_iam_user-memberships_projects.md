@@ -2,6 +2,12 @@
 
 Index a user's projects
 
+### Synopsis
+
+Index a user's projects
+
+Returns the list of projects that the user belongs to.
+
 ```
 flexera-cli iam user-memberships projects [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for projects
-      --id int        id (path, required)
-      --view string   view (query)
+      --id int        id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
+      --view string   view (query); View used to render user projects; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

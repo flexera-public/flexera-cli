@@ -2,6 +2,12 @@
 
 Retrieve Summary by Organization
 
+### Synopsis
+
+Retrieve Summary by Organization
+
+Retrieves summary of policy error status by organization.
+
 ```
 flexera-cli policy policy-manager summary [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for summary
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the policy manager.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "def01234567890abcdef0123"
 ```
 
 ### Options inherited from parent commands

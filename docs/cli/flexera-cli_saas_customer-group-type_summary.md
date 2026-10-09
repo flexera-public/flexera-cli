@@ -2,6 +2,12 @@
 
 Retrieve summary of customer groups for a given group type.
 
+### Synopsis
+
+Retrieve summary of customer groups for a given group type.
+
+Retrieves user counts and total cost for all customer groups within a given group type.
+
 ```
 flexera-cli saas customer-group-type summary [flags]
 ```
@@ -16,13 +22,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-group-type-id string   customerGroupTypeId (path, required)
-      --filter string                   filter (query)
+      --customer-group-type-id string   customerGroupTypeId (path, required); customerGroupTypeId identifies a customer group type by given ID.; required by API; pattern: "^[0-9]+$"; illustrative example: "123"
+      --filter string                   filter (query); The filter to query the customer group summary. Supported fields in the filter are [groupName]; illustrative example: "groupName eq 'Technical Support'"
   -h, --help                            help for summary
-      --limit int                       limit (query)
+      --limit int                       limit (query); Limit the page result size. Maximum page size is 1000. This value is ignored if a skip token is provided.; maximum: 1000; API default: 1000; illustrative example: 1000
       --no-paginate                     return only the first page (do not follow nextPage)
-      --order-by string                 orderBy (query)
-      --skip-token string               resume pagination from this token
+      --order-by string                 orderBy (query); The order by filter to sort the customer group summaries. Supported fields in the orderBy are [groupName, totalActiveSaasPeople, totalApplications, totalAnnualCost].; API default: "totalAnnualCost desc"; illustrative example: "groupName desc"
+      --skip-token string               resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

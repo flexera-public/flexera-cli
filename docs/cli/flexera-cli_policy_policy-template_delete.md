@@ -2,6 +2,13 @@
 
 Delete a policy template
 
+### Synopsis
+
+Delete a policy template
+
+Delete removes a policy template from a project. Deleting a policy template will not delete any applied policies created from the template,
+        they must be stopped explicitly.
+
 ```
 flexera-cli policy policy-template delete [flags]
 ```
@@ -10,8 +17,8 @@ flexera-cli policy policy-template delete [flags]
 
 ```
   -h, --help             help for delete
-      --id string        Policy template ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Policy template ID; The unique identifier for the policy template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

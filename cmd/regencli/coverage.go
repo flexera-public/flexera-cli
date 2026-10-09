@@ -113,12 +113,12 @@ func curatedEntries(specData []byte) ([]catalog.Entry, error) {
 			}
 			// Curated wrappers have adapters distinct from generated flags. Their
 			// precise API parameters remain available as schema metadata.
-			var params []struct {
-				Name, In, Description string
-				Required              bool
-				Schema                json.RawMessage
+			var params []catalog.Param
+			if raw := op["parameters"]; len(raw) != 0 {
+				if err := json.Unmarshal(raw, &params); err != nil {
+					return nil, fmt.Errorf("curated operation %s parameters: %w", id, err)
+				}
 			}
-			_ = json.Unmarshal(op["parameters"], &params)
 			for _, p := range params {
 				if p.In != "path" && p.In != "query" {
 					continue
@@ -136,7 +136,8 @@ func curatedEntries(specData []byte) ([]catalog.Entry, error) {
 				if p.Name == "appliedPolicyId" || p.Name == "actionStatusId" || p.Name == "archivedIncidentId" || p.Name == "policyTemplateId" {
 					flag = "id"
 				}
-				e.Params = append(e.Params, catalog.Param{Flag: flag, Source: source, In: p.In, Type: schema.Type, Required: p.Required, Schema: p.Schema, Enum: schema.Enum, Description: p.Description})
+				p.Flag, p.Source, p.Type, p.Enum = flag, source, schema.Type, schema.Enum
+				e.Params = append(e.Params, p)
 			}
 			entries = append(entries, e)
 		}

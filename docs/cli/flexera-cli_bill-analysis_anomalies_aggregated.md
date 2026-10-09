@@ -2,6 +2,12 @@
 
 aggregated anomalies
 
+### Synopsis
+
+aggregated anomalies
+
+List aggregated anomaly metrics for a given org, filtered by the supported dimensions and metric. The startAt and endAt times are specified in YYYY-MM-DD format. User must have the 'common:org:own' privilege to make this call.
+
 ```
 flexera-cli bill-analysis anomalies aggregated [flags]
 ```
@@ -19,10 +25,10 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string       raw JSON body (inline | @file | @-); overrides body field flags
-      --end-at string     endAt (body)
+      --end-at string     endAt (body); required by API; Latest timestamp (exclusive) of the anomaly. Consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries. No records will be returned on or after this timestamp.; pattern: "^\\d{4}-\\d{2}-\\d{2}$"; illustrative example: "2025-02-17"
   -h, --help              help for aggregated
-      --metric string     metric (body)
-      --start-at string   startAt (body)
+      --metric string     metric (body); required by API; The metric used for the anomaly; enum: ["BilledCost","EffectiveCost"]; illustrative example: "BilledCost"
+      --start-at string   startAt (body); required by API; Earliest timestamp (inclusive) of the returned anomaly. Consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries.; pattern: "^\\d{4}-\\d{2}-\\d{2}$"; illustrative example: "2025-01-18"
 ```
 
 ### Options inherited from parent commands

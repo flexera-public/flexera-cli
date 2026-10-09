@@ -2,6 +2,12 @@
 
 Index report subscriptions
 
+### Synopsis
+
+Index report subscriptions
+
+Lists report subscriptions in the organization visible to the caller (owned or shared), newest first.
+
 ```
 flexera-cli finops-customizations report-subscriptions list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --dashboard-id string   dashboardId (query)
+      --dashboard-id string   dashboardId (query); Optional filter: only subscriptions targeting this dashboard.; illustrative example: "dash-8f21"
   -h, --help                  help for list
-      --limit int             limit (query)
+      --limit int             limit (query); Page size (default 50, max 200); minimum: 1; maximum: 200; API default: 50; illustrative example: 138
       --no-paginate           return only the first page (do not follow nextPage)
-      --skip-token string     resume pagination from this token
+      --skip-token string     resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

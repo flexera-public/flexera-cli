@@ -2,6 +2,12 @@
 
 SaaS Onboarding: Update
 
+### Synopsis
+
+SaaS Onboarding: Update
+
+Update an existing SaaS connector (partial). Supply `credentials` to rotate the stored secret. Async acceptance. Generic request keyed on `provider`.
+
 ```
 flexera-cli unified-onboarding saa-s-onboarding replace [flags]
 ```
@@ -20,12 +26,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --connector-id string     connector_id (path, required)
-      --connector-name string   connectorName (body)
+      --connector-id string     connector_id (path, required); Connector ID; required by API
+      --connector-name string   connectorName (body); Human-readable connector name.; minLength: 1
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for replace
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --provider string         provider (body)
+      --provider string         provider (body); required by API; Connector provider discriminator (e.g. n8n).; minLength: 1
       --yes                     confirm the operation (required for destructive ops)
 ```
 

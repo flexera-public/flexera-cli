@@ -2,6 +2,15 @@
 
 GET /optima/orgs/{orgId}/billUploads
 
+### Synopsis
+
+GET /optima/orgs/{orgId}/billUploads
+
+Lists existing bill uploads. You can filter by bill upload and/or billing period, too..
+
+**Required security scopes for JWTAuth**:
+  * `optima:bill_upload:index+optima:bill_connect:index+common:org:own`
+
 ```
 flexera-cli bill-upload list [flags]
 ```
@@ -16,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-connect-id string   billConnectId (query)
-      --billing-period string    billingPeriod (query)
+      --bill-connect-id string   billConnectId (query); Optional filter by bill connect ID
+      --billing-period string    billingPeriod (query); Optional filter by billing period; pattern: "^([0-9]{4})-([0-9]{2})$"
   -h, --help                     help for list
 ```
 

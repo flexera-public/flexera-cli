@@ -2,6 +2,12 @@
 
 show commitment_reallocation_setting
 
+### Synopsis
+
+show commitment_reallocation_setting
+
+Retrieve the commitment reallocation settings for the org.
+
 ```
 flexera-cli bill-analysis commitment-reallocation-setting list [flags]
 ```

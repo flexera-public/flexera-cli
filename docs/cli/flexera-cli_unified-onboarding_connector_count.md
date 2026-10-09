@@ -2,6 +2,12 @@
 
 Get connectors count by provider
 
+### Synopsis
+
+Get connectors count by provider
+
+Get count of connectors grouped by provider for the organization
+
 ```
 flexera-cli unified-onboarding connector count [flags]
 ```

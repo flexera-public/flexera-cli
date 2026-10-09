@@ -2,6 +2,12 @@
 
 Get CIS Benchmark Details.
 
+### Synopsis
+
+Get CIS Benchmark Details.
+
+Returns CIS benchmark details with compliance percentage and category breakdown.
+
 ```
 flexera-cli risk compliance cis [flags]
 ```
@@ -18,15 +24,15 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --accounts strings    accounts (body)
+      --accounts strings    accounts (body); required by API; List of account IDs. Use 'all' to include all accounts.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["837570591364","252277358118"]
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
-      --etime string        etime (body)
+      --etime string        etime (body); required by API; End time for data in YYYY-MM-DD format; illustrative example: "2025-11-04"
   -h, --help                help for cis
-      --imc                 imc (body)
-      --level int           level (body)
-      --providers strings   providers (body)
-      --regions strings     regions (body)
-      --services strings    services (body)
+      --imc                 imc (body); required by API; IMC filter flag; illustrative example: false
+      --level int           level (body); required by API; CIS level filter; illustrative example: 1
+      --providers strings   providers (body); required by API; List of cloud providers. Allowed values: 'aws', 'azure', 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["aws","azure"]
+      --regions strings     regions (body); required by API; List of regions. Use 'all' to include all regions.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["us-east-1","us-east-2","us-west-1","us-west-2"]
+      --services strings    services (body); required by API; List of services. Use 'all' to include all services.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["cloudfront","cloudtrail","cloudwatch","config","dynamodb","ec2","ecs","eks","elb","elbv2","iam","kms","lambda","rds","s3","ses","sns","sqs","vpc"]
 ```
 
 ### Options inherited from parent commands

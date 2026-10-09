@@ -2,6 +2,13 @@
 
 Generate a new signing key
 
+### Synopsis
+
+Generate a new signing key
+
+Generate a new signing key for the IdP to use when signing as part of key rotation.
+The IdP additionally needs to be updated to make the new signing key active.
+
 ```
 flexera-cli iam saml2-identity-provider-signing-key create [flags]
 ```
@@ -22,9 +29,9 @@ Validated illustrative body, when available (review before use):
       --body string                   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for create
-      --identity-provider-id string   identityProviderId (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
   -i, --interactive                   edit inputs in a terminal form, review a plan and approve with typed yes
-      --validity-years int            validityYears (body)
+      --validity-years int            validityYears (body); required by API; Years that key will be valid; minimum: 2; maximum: 10; API default: 2; illustrative example: 7
       --yes                           confirm the operation (required for destructive ops)
 ```
 

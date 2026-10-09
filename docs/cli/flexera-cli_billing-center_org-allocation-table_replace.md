@@ -2,6 +2,15 @@
 
 Update an AllocationTable or create it if it doesn't exist
 
+### Synopsis
+
+Update an AllocationTable or create it if it doesn't exist
+
+Update an AllocationTable
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:update+common:org:own`
+
 ```
 flexera-cli billing-center org-allocation-table replace [flags]
 ```
@@ -23,7 +32,7 @@ Validated illustrative body, when available (review before use):
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for replace
   -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --sequence-number int   sequence_number (query)
+      --sequence-number int   sequence_number (query); The version sequence number
       --yes                   confirm the operation (required for destructive ops)
 ```
 

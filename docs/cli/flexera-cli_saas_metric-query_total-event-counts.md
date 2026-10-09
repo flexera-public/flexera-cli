@@ -2,6 +2,12 @@
 
 Total event counts
 
+### Synopsis
+
+Total event counts
+
+Retrieves the event counts across all users and all action types for each sub application associated with a managed application.
+
 ```
 flexera-cli saas metric-query total-event-counts [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --days-since int          daysSince (query)
+      --days-since int          daysSince (query); The total number of days worth of events to be included within the returned counts.; required by API; enum: [90,180,365,730]; illustrative example: 90
   -h, --help                    help for total-event-counts
-      --managed-app-id string   managedAppId (query)
+      --managed-app-id string   managedAppId (query); The managed application unique identifier for which application events count to be returned.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "34556"
 ```
 
 ### Options inherited from parent commands

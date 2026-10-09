@@ -2,6 +2,13 @@
 
 Create a service account
 
+### Synopsis
+
+Create a service account
+
+Create adds a new service account to an org. A maximum of 20 service accounts may exist in an org at
+any one time.
+
 ```
 flexera-cli iam service-account create [flags]
 ```
@@ -20,11 +27,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Optional text describing the service account; maxLength: 4096; illustrative example: "Service Account for calling Flexera APIs."
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Friendly name for the service account; minLength: 1; maxLength: 512; illustrative example: "My Service Account"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Update currency customizations
 
+### Synopsis
+
+Update currency customizations
+
+Enables or disables currency conversion.
+
 ```
 flexera-cli finops-customizations currency update [flags]
 ```

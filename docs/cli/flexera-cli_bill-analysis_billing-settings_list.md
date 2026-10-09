@@ -2,6 +2,12 @@
 
 show billing-settings
 
+### Synopsis
+
+show billing-settings
+
+Get the current automatic locking settings
+
 ```
 flexera-cli bill-analysis billing-settings list [flags]
 ```

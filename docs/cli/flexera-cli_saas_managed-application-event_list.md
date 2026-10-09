@@ -2,6 +2,12 @@
 
 List managed application events
 
+### Synopsis
+
+List managed application events
+
+Retrieves a collection of managed application events.
+
 ```
 flexera-cli saas managed-application-event list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string             filter (query)
+      --filter string             filter (query); The date filter to query the managed application events. Supported fields in the filter are [occurredAt, managedAppId] | Attribute | Description | Allowed Operators | Example | |--------------|-------------------------------------------------------------------------------|-------------------|-------------------------------------------| | managedAppId | Filte... (see cli schema); illustrative example: "occurredAt gt 'ISO 8601 date'"
   -h, --help                      help for list
-      --most-recent-events-only   mostRecentEventsOnly (query)
+      --most-recent-events-only   mostRecentEventsOnly (query); If true, returns recent events per uniqueId and subAppName; illustrative example: true
       --no-paginate               return only the first page (do not follow nextPage)
-      --skip-token string         resume pagination from this token
+      --skip-token string         resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

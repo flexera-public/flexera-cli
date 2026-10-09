@@ -2,6 +2,12 @@
 
 Show an CBI bill connect
 
+### Synopsis
+
+Show an CBI bill connect
+
+Shows the details of a CBI bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect common-bill-ingestion get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-optima-test-1"
 ```
 
 ### Options inherited from parent commands

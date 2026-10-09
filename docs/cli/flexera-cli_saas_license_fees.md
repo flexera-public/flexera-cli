@@ -2,6 +2,12 @@
 
 Update license agreement fee
 
+### Synopsis
+
+Update license agreement fee
+
+Updates a license fee associated with license agreement.
+
 ```
 flexera-cli saas license fees [flags]
 ```
@@ -20,17 +26,17 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
-      --currency string            currency (body)
+      --currency string            currency (body); Type of currency.; illustrative example: "USD"
       --dry-run                    print the planned operation as JSON and exit without calling the API
-      --effective-at string        effectiveAt (body)
-      --ends-at string             endsAt (body)
-      --fee-id string              feeId (path, required)
-      --frequency-type string      frequencyType (body)
+      --effective-at string        effectiveAt (body); Start date associated with license agreement with time varying price.; illustrative example: "2019-10-15T16:05:36.1000Z"
+      --ends-at string             endsAt (body); End date associated with license agreement with time varying price.; illustrative example: "2018-12-30T00:00:00.1000Z"
+      --fee-id string              feeId (path, required); Unique ID associated with license agreement fee.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "32123"
+      --frequency-type string      frequencyType (body); Frequency of a payment for miscellaneous fees.; enum: ["once","monthly","quarterly","semiannually","annually","every18months","biannually","triennially"]; illustrative example: "semiannually"
   -h, --help                       help for fees
   -i, --interactive                edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string          licenseId (path, required)
-      --miscellaneous-fees float   miscellaneousFees (body)
-      --name string                name (body)
+      --license-id string          licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --miscellaneous-fees float   miscellaneousFees (body); Miscellaneous fee associated with a license agreement.; format: double; illustrative example: 213.5
+      --name string                name (body); Name of the fee to indicate the miscellaneous spend associated with licenses.; illustrative example: "Workday"
       --yes                        confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Compliance Favorites.
 
+### Synopsis
+
+Compliance Favorites.
+
+Returns list of favorite compliance standards with their control pass/fail status.
+
 ```
 flexera-cli risk compliance trend [flags]
 ```
@@ -18,13 +24,13 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --accounts strings    accounts (body)
+      --accounts strings    accounts (body); required by API; List of account IDs. Use 'all' to include all accounts.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["837570591364","252277358118"]
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
-      --days int            days (body)
+      --days int            days (body); required by API; Number of days for data; illustrative example: 14
   -h, --help                help for trend
-      --providers strings   providers (body)
-      --regions strings     regions (body)
-      --services strings    services (body)
+      --providers strings   providers (body); required by API; List of cloud providers. Allowed values: 'aws', 'azure', 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["aws","azure"]
+      --regions strings     regions (body); required by API; List of regions. Use 'all' to include all regions.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["us-east-1","us-east-2","us-west-1","us-west-2"]
+      --services strings    services (body); required by API; List of services. Use 'all' to include all services.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["cloudfront","cloudtrail","cloudwatch","config","dynamodb","ec2","ecs","eks","elb","elbv2","iam","kms","lambda","rds","s3","ses","sns","sqs","vpc"]
 ```
 
 ### Options inherited from parent commands

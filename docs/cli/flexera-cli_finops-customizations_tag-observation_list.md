@@ -2,6 +2,12 @@
 
 List tag observations
 
+### Synopsis
+
+List tag observations
+
+Lists observed tag keys, optionally filtered by provider, source type, or tag-key fields using the filter query parameter. Returns a snapshot-consistent page of matching observations.
+
 ```
 flexera-cli finops-customizations tag-observation list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter for Tag Observations. The following filters are supported: | Filter | Allowed Operators | Example | | --- | --- | --- | | provider | eq ne in | provider in ['aws', 'azure'] | | sourceType | eq ne in | sourceType eq 'awsCostAllocationTag' | | qualifiedKey | co eq ne in | qualifiedKey co 'user:Customer' | | key | co eq ne in | key co 'Customer'... (see cli schema); maxLength: 8192; illustrative example: "provider in ['aws', 'azure'] and (qualifiedKey co 'customer' or key co 'customer' or normalizedKey co 'customer')"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Page size (default 50, max 200).; minimum: 1; maximum: 200; API default: 50; illustrative example: 15
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

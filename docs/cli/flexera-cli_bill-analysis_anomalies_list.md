@@ -2,6 +2,12 @@
 
 index anomalies
 
+### Synopsis
+
+index anomalies
+
+List all anomalies for a given org, filtered by the supported dimensions and metric. The startAt and endAt times are specified in YYYY-MM-DD format. User must have the 'common:org:own' privilege to make this call.
+
 ```
 flexera-cli bill-analysis anomalies list [flags]
 ```
@@ -19,14 +25,14 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --end-at string        endAt (body)
+      --end-at string        endAt (body); required by API; Latest timestamp (exclusive) of the anomaly. Consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries. No records will be returned on or after this timestamp.; pattern: "^\\d{4}-\\d{2}-\\d{2}$"; illustrative example: "2025-02-17"
   -h, --help                 help for list
-      --limit int            limit (body)
-      --metric string        metric (body)
-      --offset int           offset (body)
-      --sort-column string   sortColumn (body)
-      --sort-order string    sortOrder (body)
-      --start-at string      startAt (body)
+      --limit int            limit (body); Pagination limit; format: int64; minimum: 1; maximum: 1000; illustrative example: 10
+      --metric string        metric (body); required by API; The metric used for the anomaly; enum: ["BilledCost","EffectiveCost"]; illustrative example: "BilledCost"
+      --offset int           offset (body); Pagination offset; format: int64; minimum: 0; illustrative example: 0
+      --sort-column string   sortColumn (body); Sort column; API default: "costImpact"; illustrative example: "costImpact"
+      --sort-order string    sortOrder (body); Sort order; enum: ["asc","desc"]; API default: "desc"; illustrative example: "desc"
+      --start-at string      startAt (body); required by API; Earliest timestamp (inclusive) of the returned anomaly. Consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries.; pattern: "^\\d{4}-\\d{2}-\\d{2}$"; illustrative example: "2025-01-18"
 ```
 
 ### Options inherited from parent commands

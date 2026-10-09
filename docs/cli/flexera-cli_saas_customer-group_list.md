@@ -2,6 +2,12 @@
 
 List customer groups
 
+### Synopsis
+
+List customer groups
+
+Retrieves a collection of customer groups.
+
 ```
 flexera-cli saas customer-group list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The filter to query the customer groups. Supported fields in the filter are [name,displayName,type.id]; illustrative example: "type.id eq 5667"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); The order by filter to sort the customer groups. Supported fields in the orderBy are [createdAt,modifiedAt]; API default: "modifiedAt desc"; illustrative example: "modifiedAt desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

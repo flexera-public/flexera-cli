@@ -2,6 +2,12 @@
 
 Show license
 
+### Synopsis
+
+Show license
+
+Retrieves a license identified by ID.
+
 ```
 flexera-cli saas license get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for get
-      --license-id string   licenseId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier for license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Index incident aggregates.
 
+### Synopsis
+
+Index incident aggregates.
+
+Index retrieves the list of incident aggregates in an organization.
+
 ```
 flexera-cli policy incident-aggregate list [flags]
 ```
@@ -16,13 +22,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter to retrieve incident aggregates based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ---------- | ------ | ------------------------------------ | ---------------------------------------------------------------- | | severity | string | severity in ['high', 'critical'] | Returns incident aggregates w... (see cli schema); illustrative example: "category eq 'cost'"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --order-by string     orderBy (query); Specifies the order to sort incident aggregates by fields such as [severity, createdAt, updatedAt, category, dryRun]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "severity asc, createdAt asc"
+      --skip-token string   resume pagination from this token; Used in pagination to point to the next or previous set of records.
+      --view string         view (query); View used to render incident aggregates.; enum: ["default"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

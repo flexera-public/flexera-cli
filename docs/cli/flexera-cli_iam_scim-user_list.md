@@ -2,6 +2,12 @@
 
 Index an org's users.
 
+### Synopsis
+
+Index an org's users.
+
+Index returns a list of users for an org.
+
 ```
 flexera-cli iam scim-user list [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); A filter to narrow the number of users to return. Supported fields in the filter are [id, UserName] The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | id | Filters on the user's ID | eq | Equal - The attribute and operator values must be identical for a match. | id eq '123' |... (see cli schema); illustrative example: "id eq '586859'"
   -h, --help            help for list
 ```
 

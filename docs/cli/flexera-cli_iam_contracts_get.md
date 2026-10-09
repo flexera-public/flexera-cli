@@ -2,6 +2,12 @@
 
 Shows an org's contract details
 
+### Synopsis
+
+Shows an org's contract details
+
+Shows a single contract
+
 ```
 flexera-cli iam contracts get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id int        id (path, required)
-      --view string   view (query)
+      --id int        id (path, required); Contract ID; required by API; illustrative example: 12345
+      --view string   view (query); View used to render the contract; enum: ["default","index","extended"]; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

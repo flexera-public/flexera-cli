@@ -2,6 +2,12 @@
 
 Index an org's groups
 
+### Synopsis
+
+Index an org's groups
+
+Lists all Groups in an Org.
+
 ```
 flexera-cli iam group list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render the group; enum: ["default","extended"]; API default: "default"; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

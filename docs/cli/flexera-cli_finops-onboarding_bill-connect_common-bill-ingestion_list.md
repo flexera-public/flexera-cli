@@ -2,6 +2,12 @@
 
 Validate the credentials stored for an cbi bill connect
 
+### Synopsis
+
+Validate the credentials stored for an cbi bill connect
+
+Validates the credentials stored for a CBI bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect common-bill-ingestion list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-optima-test-1"
 ```
 
 ### Options inherited from parent commands

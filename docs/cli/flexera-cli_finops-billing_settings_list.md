@@ -2,6 +2,12 @@
 
 Get billing settings for the organization
 
+### Synopsis
+
+Get billing settings for the organization
+
+Returns the billing settings for the organization.
+
 ```
 flexera-cli finops-billing settings list [flags]
 ```

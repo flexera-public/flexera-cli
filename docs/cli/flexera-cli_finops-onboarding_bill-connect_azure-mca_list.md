@@ -2,6 +2,12 @@
 
 Validate the credentials stored for an Azure MCA bill connect
 
+### Synopsis
+
+Validate the credentials stored for an Azure MCA bill connect
+
+Validates the credentials stored for an Azure MCA bill connect associated with the provided bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-mca list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-azure-mca-23lopi-7875-b6d7-ploip-zx77-pppdf67fdfc7:32662f18-7ca4-4845-99e0-1213414d5bc4_2024-01-31"
 ```
 
 ### Options inherited from parent commands

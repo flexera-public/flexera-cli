@@ -2,6 +2,12 @@
 
 Regulatory Compliance Year-Wise Asset List
 
+### Synopsis
+
+Regulatory Compliance Year-Wise Asset List
+
+Returns a paginated list of assets grouped by end-of-support year.
+
 ```
 flexera-cli risk regulatory-compliance year-wise-asset-list [flags]
 ```
@@ -19,10 +25,10 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string       raw JSON body (inline | @file | @-); overrides body field flags
-      --fields strings    fields (body)
-      --filter string     filter (body)
+      --fields strings    fields (body); Fields to include in the response.; CLI: comma-separated values or repeated flag
+      --filter string     filter (body); Filter expression like 'manufacturer co "Microsoft"'; API default: ""
   -h, --help              help for year-wise-asset-list
-      --order-by string   orderBy (body)
+      --order-by string   orderBy (body); Order expression like 'manufacturer asc'; API default: ""
 ```
 
 ### Options inherited from parent commands

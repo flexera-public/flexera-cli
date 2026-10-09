@@ -2,6 +2,12 @@
 
 Create an applied policy
 
+### Synopsis
+
+Create an applied policy
+
+Create applies a policy template to a given project. The applied policy will continually run until deleted.
+
 ```
 flexera-cli policy applied-policy create [flags]
 ```
@@ -11,7 +17,7 @@ flexera-cli policy applied-policy create [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for create
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

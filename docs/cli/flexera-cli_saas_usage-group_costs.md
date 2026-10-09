@@ -2,6 +2,12 @@
 
 Update an existing cost for the specified usage group
 
+### Synopsis
+
+Update an existing cost for the specified usage group
+
+Update an existing cost object for the specified Usage group object
+
 ```
 flexera-cli saas usage-group costs [flags]
 ```
@@ -20,15 +26,15 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --cost-id string          costId (path, required)
+      --cost-id string          costId (path, required); Usage Cost Id; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "243412"
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --ends-at string          endsAt (body)
+      --ends-at string          endsAt (body); End date of the consumption period; format: date-time; illustrative example: "2022-02-01T00:00:00.000Z"
   -h, --help                    help for costs
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --overage-cost float      overageCost (body)
-      --starts-at string        startsAt (body)
-      --total-purchased int     totalPurchased (body)
-      --usage-group-id string   usageGroupID (path, required)
+      --overage-cost float      overageCost (body); Cost per consumption incurred after exceeding the total within the date range defined; format: double; illustrative example: 0.00075
+      --starts-at string        startsAt (body); Start date of the consumption period; format: date-time; illustrative example: "2021-02-01T00:00:00.000Z"
+      --total-purchased int     totalPurchased (body); Total amount of consumption allocated; format: int64; illustrative example: 15000
+      --usage-group-id string   usageGroupID (path, required); ID of the usage group to which cost is associated; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "1105"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

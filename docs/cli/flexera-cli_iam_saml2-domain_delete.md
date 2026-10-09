@@ -2,6 +2,12 @@
 
 Delete an IdP's domain
 
+### Synopsis
+
+Delete an IdP's domain
+
+Delete an existing domain associated with an IdP.
+
 ```
 flexera-cli iam saml2-domain delete [flags]
 ```
@@ -19,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for delete
-      --identity-provider-id string   identityProviderId (path, required)
-      --name string                   name (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
+      --name string                   name (path, required); Name of the domain. See also "RFC 1035".; required by API; maxLength: 255; pattern: "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "flexera.com"
       --yes                           confirm the operation (required for destructive ops)
 ```
 

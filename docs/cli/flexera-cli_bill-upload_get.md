@@ -2,6 +2,15 @@
 
 GET /optima/orgs/{orgId}/billUploads/{billUploadId}
 
+### Synopsis
+
+GET /optima/orgs/{orgId}/billUploads/{billUploadId}
+
+Shows the details of a bill upload, including the list of successfully uploaded files so far.
+
+**Required security scopes for JWTAuth**:
+  * `optima:bill_upload:show+optima:bill_connect:show+common:org:own`
+
 ```
 flexera-cli bill-upload get [flags]
 ```
@@ -16,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-upload-id string   billUploadId (path, required)
+      --bill-upload-id string   billUploadId (path, required); The identifier of the bill upload; required by API; format: uuid
   -h, --help                    help for get
 ```
 

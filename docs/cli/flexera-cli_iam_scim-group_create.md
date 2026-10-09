@@ -2,6 +2,12 @@
 
 Create a group in an org.
 
+### Synopsis
+
+Create a group in an org.
+
+Creates a new group in an org.
+
 ```
 flexera-cli iam scim-group create [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --display-name string   displayName (body)
+      --display-name string   displayName (body); required by API; The display name of the group.; illustrative example: "Administrators"
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for create
   -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --schemas strings       schemas (body)
+      --schemas strings       schemas (body); required by API; List of URIs of the SCIM schemas supported.; CLI: comma-separated values or repeated flag; illustrative example: ["urn:ietf:params:scim:schemas:core:2.0:Group"]
       --yes                   confirm the operation (required for destructive ops)
 ```
 

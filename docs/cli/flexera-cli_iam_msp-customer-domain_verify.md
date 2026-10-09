@@ -2,6 +2,12 @@
 
 Verify an MSP's customer's IdP's domain
 
+### Synopsis
+
+Verify an MSP's customer's IdP's domain
+
+Verify an MSP's customer's IdP's domain, which has already been verified in the MSP and registered in the customer org.
+
 ```
 flexera-cli iam msp-customer-domain verify [flags]
 ```
@@ -17,11 +23,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int               customerId (path, required)
+      --customer-id int               customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for verify
-      --identity-provider-id string   identityProviderId (path, required)
-      --name string                   name (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
+      --name string                   name (path, required); Name of the domain. See also "RFC 1035".; required by API; maxLength: 255; pattern: "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "flexera.com"
       --yes                           confirm the operation (required for destructive ops)
 ```
 

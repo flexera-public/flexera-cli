@@ -2,6 +2,15 @@
 
 Create a new BillingCenter
 
+### Synopsis
+
+Create a new BillingCenter
+
+Create a new BillingCenter
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:create+common:org:own`
+
 ```
 flexera-cli billing-center create [flags]
 ```
@@ -20,12 +29,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); required by API; Description of the BillingCenter; illustrative example: "cloud resources used in marketing campaigns"
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
-      --parent-href string   parent_href (body)
+      --name string          name (body); required by API; Name of the BillingCenter; illustrative example: "Marketing"
+      --parent-href string   parent_href (body); API reference of parent billing center; pattern: "^/analytics/orgs/(\\d+)/billing_centers/([^/]+)$"; illustrative example: "/analytics/orgs/1/billing_centers/abc123"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

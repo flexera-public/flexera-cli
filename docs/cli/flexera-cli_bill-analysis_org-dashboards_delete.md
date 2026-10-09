@@ -2,6 +2,12 @@
 
 destroy org_dashboards
 
+### Synopsis
+
+destroy org_dashboards
+
+Destroys a Dashboard for a given Org.
+
 ```
 flexera-cli bill-analysis org-dashboards delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); The id of the dashboard.; required by API; illustrative example: "4DruwQHeCnL4TpzVhkf22s"
       --yes         confirm the operation (required for destructive ops)
 ```
 

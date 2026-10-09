@@ -2,6 +2,12 @@
 
 List connectors for cloud Accounts in the Organization
 
+### Synopsis
+
+List connectors for cloud Accounts in the Organization
+
+List all connectors for the organization with optional filtering
+
 ```
 flexera-cli unified-onboarding connector list [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); Advanced filter expression for querying connectors. ### Supported Fields & Operators | Field | Operators | Description | |-----------------|-----------|-------------------------------------------| | connectorName | eq, co | Exact or contains match on connector name | | accountId | eq, co | Exact / contains match on account ID | | provider | in | Allowed valu... (see cli schema)
   -h, --help            help for list
-      --limit int       limit (query)
-      --offset int      offset (query)
+      --limit int       limit (query); Maximum number of results; minimum: 1; API default: 5000
+      --offset int      offset (query); Number of results to skip; minimum: 0; API default: 0
 ```
 
 ### Options inherited from parent commands

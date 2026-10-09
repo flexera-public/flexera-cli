@@ -2,6 +2,12 @@
 
 Show a Credential
 
+### Synopsis
+
+Show a Credential
+
+Show a Credential that uses the 'OAuth2' scheme.
+
 ```
 flexera-cli credential o-auth2-credential get-project [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help             help for get-project
-      --id string        id (path, required)
-      --project-id int   projectId (path, required)
+      --id string        id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
+      --project-id int   projectId (path, required); Identifies the Project that owns the Credential.; required by API; format: int64; minimum: 1; illustrative example: 2345
 ```
 
 ### Options inherited from parent commands

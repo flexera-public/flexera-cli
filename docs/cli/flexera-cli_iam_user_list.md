@@ -2,6 +2,12 @@
 
 Index an org's users
 
+### Synopsis
+
+Index an org's users
+
+Returns the list of users who are affiliated to the org.
+
 ```
 flexera-cli iam user list [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --access-source string   accessSource (query)
-      --filter string          filter (query)
+      --access-source string   accessSource (query); Filter users by access source type; enum: ["org_member","external_access_policy"]; illustrative example: "org_member"
+      --filter string          filter (query); A filter to narrow the number of users to return. Supported fields in the filter are [email, firstName, lastName, lastUILogin, lastAPILogin, hasActiveRefreshToken] The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | email | Filters on the user's email | co | Contains - The ent... (see cli schema); illustrative example: "email co 'flexera.com' and lastUILogin ge '2021-05-16T16:31:52.1000Z'"
   -h, --help                   help for list
-      --order-by string        orderBy (query)
+      --order-by string        orderBy (query); The order by which to sort the users. Supported fields in the orderBy are [firstName, lastName, email, lastUILogin, lastAPILogin]; API default: "firstName asc"; illustrative example: "firstName, lastUILogin desc"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Index a list of Credentials
 
+### Synopsis
+
+Index a list of Credentials
+
+Index a list of Credentials using optional filters.
+
 ```
 flexera-cli credential list [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); Optional filter for Credentials. The following filters are supported: | Filter | Allowed Operators | Example | | --- | --- | --- | | createdAt | eq le lt ge gt | createdAt ge '2019-08-07T23:59:59Z' | | id | co eq ne | id eq 'azure-ro' | | name | co eq ne | name co 'Azure' | | scheme | eq ne | scheme eq 'api-key' | | tags._tag-name_ | co eq ne | tags.cloud-pr... (see cli schema); illustrative example: "(id co 'azure-' and scheme eq 'oauth2')"
   -h, --help            help for list
 ```
 

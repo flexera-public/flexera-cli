@@ -2,6 +2,12 @@
 
 Retrieve usage for the given period of time and for given usage group.
 
+### Synopsis
+
+Retrieve usage for the given period of time and for given usage group.
+
+Retrieves usage for the given period of time and usage group.
+
 ```
 flexera-cli saas usage-message-query list [flags]
 ```
@@ -16,15 +22,15 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --ended-at string     endedAt (query, RFC3339 date-time with timezone)
-      --filter string       filter (query)
-      --group-by strings    groupBy (query)
+      --ended-at string     endedAt (query, RFC3339 date-time with timezone); End date of the usage consumption period; format: date-time; illustrative example: "2022-06-28T00:00:00.000Z"
+      --filter string       filter (query); The date filter to query the usage groups. Supported fields in the filter are [managedAppId, sourceId, appUser, usageGroup] | Attribute | Description | Allowed Operators | Example | |---------------|-------------------------------------------------------------|-------------------|----------------------------| | managedAppId | Filter usage consumption by thei... (see cli schema); illustrative example: "Rerum ut saepe."
+      --group-by strings    groupBy (query); List of fields to group results by.; CLI: comma-separated values or repeated flag; illustrative example: ["usageGroups","usage"]
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --resolution string   resolution (query)
-      --skip-token string   resume pagination from this token
-      --started-at string   startedAt (query, RFC3339 date-time with timezone)
-      --view string         view (query)
+      --resolution string   resolution (query); resolution specifies the granularity to query results. The boundaries align to the timestamp representation.; enum: ["all","none","second","minute","fifteen_minute","thirty_minute","hour","day","week","month","quarter","year"]; illustrative example: "day"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --started-at string   startedAt (query, RFC3339 date-time with timezone); Start date of the usage consumption period; format: date-time; illustrative example: "2021-06-28T00:00:00.000Z"
+      --view string         view (query); View used to render usage group data.; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

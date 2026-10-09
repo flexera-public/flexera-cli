@@ -2,6 +2,12 @@
 
 Creates a tag dimension
 
+### Synopsis
+
+Creates a tag dimension
+
+Creates a tag dimension in the organization.
+
 ```
 flexera-cli finops-customizations tag-dimension create [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for create
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Name of the tag dimension to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
       --yes           confirm the operation (required for destructive ops)
 ```
 

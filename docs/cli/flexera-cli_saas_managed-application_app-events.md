@@ -2,6 +2,12 @@
 
 List managed application's events
 
+### Synopsis
+
+List managed application's events
+
+Retrieves a managed application's events identified by managed application Id.
+
 ```
 flexera-cli saas managed-application app-events [flags]
 ```
@@ -17,10 +23,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                      help for app-events
-      --managed-app-id string     managedAppId (path, required)
-      --most-recent-events-only   mostRecentEventsOnly (query)
+      --managed-app-id string     managedAppId (path, required); managedAppId identifies an managed application by given Id.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
+      --most-recent-events-only   mostRecentEventsOnly (query); If true, returns the most recent events per sub-application; illustrative example: true
       --no-paginate               return only the first page (do not follow nextPage)
-      --skip-token string         resume pagination from this token
+      --skip-token string         resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

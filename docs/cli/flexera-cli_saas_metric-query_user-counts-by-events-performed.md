@@ -2,6 +2,12 @@
 
 User counts by events performed
 
+### Synopsis
+
+User counts by events performed
+
+Retrieves the counts of users grouped into ranges by the number of events of each type they have performed against a given sub application on a managed application.
+
 ```
 flexera-cli saas metric-query user-counts-by-events-performed [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --days-since int          daysSince (query)
+      --days-since int          daysSince (query); The total number of days worth of events to be included within the returned counts.; required by API; enum: [90,180,365,730]; illustrative example: 90
   -h, --help                    help for user-counts-by-events-performed
-      --managed-app-id string   managedAppId (query)
-      --sub-app-id string       subAppId (query)
+      --managed-app-id string   managedAppId (query); The managed application unique identifier for which application events count to be returned.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "34556"
+      --sub-app-id string       subAppId (query); The unique identifier of the sub application for which the events counts is requested.; required by API; illustrative example: "incident_management"
 ```
 
 ### Options inherited from parent commands

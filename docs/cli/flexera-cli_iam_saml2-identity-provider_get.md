@@ -2,6 +2,12 @@
 
 Show an identity provider
 
+### Synopsis
+
+Show an identity provider
+
+Show an existing identity provider.
+
 ```
 flexera-cli iam saml2-identity-provider get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id string     id (path, required)
-      --view string   view (query)
+      --id string     id (path, required); ID of the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
+      --view string   view (query); View used to render identity provider; enum: ["default","extended","index"]; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

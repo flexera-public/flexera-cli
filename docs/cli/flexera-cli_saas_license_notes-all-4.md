@@ -2,6 +2,12 @@
 
 List notes
 
+### Synopsis
+
+List notes
+
+Retrieves list of notes.
+
 ```
 flexera-cli saas license notes-all-4 [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The filter to query the notes. Supported fields in the filter are [createdAt, createdBy, referenceId]; illustrative example: "referenceId eq '38932'"
   -h, --help                help for notes-all-4
-      --license-id string   licenseId (path, required)
-      --order-by string     orderBy (query)
+      --license-id string   licenseId (path, required); Unique identifier of license that note is associated to.; required by API; illustrative example: "34521"
+      --order-by string     orderBy (query); The order by filter to sort the notes. Supported fields in the orderBy are [createdAt]; API default: "createdAt desc"; illustrative example: "createdAt desc"
 ```
 
 ### Options inherited from parent commands

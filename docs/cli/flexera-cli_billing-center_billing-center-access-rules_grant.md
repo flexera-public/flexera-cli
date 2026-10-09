@@ -2,6 +2,15 @@
 
 Create an AccessRule for the given BillingCenter
 
+### Synopsis
+
+Create an AccessRule for the given BillingCenter
+
+Create an AccessRule for the given BillingCenter
+
+**Required security scopes for GlobalSession**:
+  * `iam:access_rule:grant+optima:access_rule:grant+common:org:own`
+
 ```
 flexera-cli billing-center billing-center-access-rules grant [flags]
 ```
@@ -19,10 +28,10 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --expires-at string       expires_at (body)
+      --expires-at string       expires_at (body); Expiry date of granted access rules; format: date-time; illustrative example: "2018-01-23T00:13:18"
   -h, --help                    help for grant
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
       --yes                     confirm the operation (required for destructive ops)

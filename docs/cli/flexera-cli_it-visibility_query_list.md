@@ -2,6 +2,12 @@
 
 Download query results
 
+### Synopsis
+
+Download query results
+
+Download the specified query results.
+
 ```
 flexera-cli it-visibility query list [flags]
 ```
@@ -17,9 +23,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                      help for list
-      --id string                 id (path, required)
-      --max-results int           maxResults (query)
-      --query-skip-token string   skipToken (query)
+      --id string                 id (path, required); The unique query identifier; required by API; maxLength: 36; pattern: "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"; illustrative example: "7d795afa-c508-4d47-92ae-248113a792d1"
+      --max-results int           maxResults (query); The maximum number of rows to return for uncompressed CSV downloads. The maxResults parameter cannot be used with outputCompression=gzip. If both parameters are specified in the same request, the API will return a 400 Bad Request error.; maximum: 100000; API default: 0; illustrative example: 100000
+      --query-skip-token string   skipToken (query); An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

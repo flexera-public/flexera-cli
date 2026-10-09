@@ -2,6 +2,12 @@
 
 Index an MSP's customer
 
+### Synopsis
+
+Index an MSP's customer
+
+Show details for a managed service provider's customer tenant.
+
 ```
 flexera-cli iam msp-customer get [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
   -h, --help              help for get
-      --view string       view (query)
+      --view string       view (query); View used to render the customer; enum: ["default","index","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

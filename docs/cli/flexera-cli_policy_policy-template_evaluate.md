@@ -2,6 +2,13 @@
 
 Evaluate a policy template
 
+### Synopsis
+
+Evaluate a policy template
+
+Evaluates the datasources or resources requested and returns the result. If the datasource or resource requires parameters or
+        credentials they must be also provided if there is no default value.
+
 ```
 flexera-cli policy policy-template evaluate [flags]
 ```
@@ -11,8 +18,8 @@ flexera-cli policy policy-template evaluate [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for evaluate
-      --id string        Policy template ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Policy template ID; The unique identifier for the policy template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

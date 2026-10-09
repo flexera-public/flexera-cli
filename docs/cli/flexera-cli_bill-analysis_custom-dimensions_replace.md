@@ -2,6 +2,12 @@
 
 replace custom_dimensions
 
+### Synopsis
+
+replace custom_dimensions
+
+Replaces a non-Default Dimension in a given Org.
+
 ```
 flexera-cli bill-analysis custom-dimensions replace [flags]
 ```
@@ -22,10 +28,10 @@ Validated illustrative body, when available (review before use):
       --body string      raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run          print the planned operation as JSON and exit without calling the API
   -h, --help             help for replace
-      --id string        id (path, required)
+      --id string        id (path, required); The id of the dimension.; required by API; illustrative example: "environment"
   -i, --interactive      edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string      name (body)
-      --tag-key string   tag_key (body)
+      --name string      name (body); required by API; Name to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
+      --tag-key string   tag_key (body); required by API; Tag key (the part of the tag before the "=" character).; illustrative example: "environment"
       --yes              confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Create an org's group
 
+### Synopsis
+
+Create an org's group
+
+Creates a new Group in an Org.
+
 ```
 flexera-cli iam group create [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Description of the group; illustrative example: "The Admins group description"
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Name of the group; illustrative example: "Admins"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

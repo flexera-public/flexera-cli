@@ -2,6 +2,12 @@
 
 Shows a user's details.
 
+### Synopsis
+
+Shows a user's details.
+
+Shows the details of a user.
+
 ```
 flexera-cli iam scim-user get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Unique identifier for the user.; required by API; illustrative example: "12345"
 ```
 
 ### Options inherited from parent commands

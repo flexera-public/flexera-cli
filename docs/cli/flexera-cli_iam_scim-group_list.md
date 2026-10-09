@@ -2,6 +2,14 @@
 
 Index an org's groups.
 
+### Synopsis
+
+Index an org's groups.
+
+Index returns a list of groups for an org.
+
+This API returns the members attribute as an empty array in index responses. To retrieve members, call GET /scim/v2/orgs/{orgId}/Groups/{id}.
+
 ```
 flexera-cli iam scim-group list [flags]
 ```
@@ -16,7 +24,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); A filter to narrow the number of groups to return. Supported fields in the filter are [id, displayName] The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | id | Filters on the group's ID | eq | Equal - The attribute and operator values must be identical for a match. | id eq '1... (see cli schema); illustrative example: "id eq '586859'"
   -h, --help            help for list
 ```
 

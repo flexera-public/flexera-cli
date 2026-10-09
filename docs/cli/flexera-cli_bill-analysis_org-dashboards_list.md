@@ -2,6 +2,13 @@
 
 index org_dashboards
 
+### Synopsis
+
+index org_dashboards
+
+Lists all Dashboards for a given Org.
+Requires user to have `optima:public_dashboard:index` on a billing center within the org.
+
 ```
 flexera-cli bill-analysis org-dashboards list [flags]
 ```
@@ -16,9 +23,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --area string         area (query)
+      --area string         area (query); Optional area filter; illustrative example: "bc-index"
   -h, --help                help for list
-      --visibility string   visibility (query)
+      --visibility string   visibility (query); Optional visibility filter; enum: ["default","public"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

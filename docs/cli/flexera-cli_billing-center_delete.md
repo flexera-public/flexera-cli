@@ -2,6 +2,15 @@
 
 Delete a BillingCenter
 
+### Synopsis
+
+Delete a BillingCenter
+
+Delete a BillingCenter
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:delete+common:org:own`
+
 ```
 flexera-cli billing-center delete [flags]
 ```
@@ -17,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for delete
       --yes                     confirm the operation (required for destructive ops)

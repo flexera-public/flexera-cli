@@ -2,6 +2,22 @@
 
 Update an MSP's customer (v2)
 
+### Synopsis
+
+Update an MSP's customer (v2)
+
+Update modifies a managed service provider's customer tenant.
+
+V2 API enhancements over v1:
+* Validates MSP capability hierarchy constraints when adding or modifying MSP capability
+* Prevents removal of capabilities if any child organizations currently have those capabilities
+* Returns specific error codes indicating which constraints were violated
+* Ensures hierarchy integrity is maintained across all updates
+
+Important: Capabilities can only be removed if no child organizations currently depend on them.
+If you need to remove a capability that children have, you must first remove it from all children
+or delete the child organizations.
+
 ```
 flexera-cli iam msp-customer-v2 update [flags]
 ```
@@ -20,13 +36,13 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --customer-id int      customerId (path, required)
-      --description string   description (body)
+      --customer-id int      customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
+      --description string   description (body); Optional text describing the customer; maxLength: 4096; illustrative example: "MSP Customer requires services X, Y, Z."
       --dry-run              print the planned operation as JSON and exit without calling the API
-      --external-id string   externalId (body)
+      --external-id string   externalId (body); Identifier of the organization used in your external system; maxLength: 256; illustrative example: "W12345"
   -h, --help                 help for update
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); Friendly name for the customer; minLength: 1; maxLength: 512; illustrative example: "MSPCustomer Inc."
       --yes                  confirm the operation (required for destructive ops)
 ```
 

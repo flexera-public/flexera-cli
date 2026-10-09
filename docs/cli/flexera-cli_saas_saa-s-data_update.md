@@ -2,6 +2,14 @@
 
 Upload data
 
+### Synopsis
+
+Upload data
+
+The upload action into a SaaS data entry. Once data is upload to the entity, this endpoint will not allow you to call this action again.
+
+Request body: The file content to upload, in JSON-L (newline-delimited JSON) format. May be gzip-compressed; when compressed, set the Content-Encoding header to gzip.
+
 ```
 flexera-cli saas saa-s-data update [flags]
 ```
@@ -22,7 +30,7 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for update
-      --id string     id (path, required)
+      --id string     id (path, required); The identifier returned by create endpoint as part of the Url.; required by API; maxLength: 150; illustrative example: "0ae0f4c1-7c3a-4172-bcce-e96b9927fa07"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
       --yes           confirm the operation (required for destructive ops)
 ```

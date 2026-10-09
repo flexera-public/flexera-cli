@@ -2,6 +2,12 @@
 
 Delete note
 
+### Synopsis
+
+Delete note
+
+Deletes a note associated to resource.
+
 ```
 flexera-cli saas license notes-all-2 [flags]
 ```
@@ -19,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run             print the planned operation as JSON and exit without calling the API
   -h, --help                help for notes-all-2
-      --id string           id (path, required)
-      --license-id string   licenseId (path, required)
+      --id string           id (path, required); Unique identifier of note.; required by API; illustrative example: "3421"
+      --license-id string   licenseId (path, required); Unique identifier of license that note is associated to.; required by API; illustrative example: "34521"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Show an IdP's domain
 
+### Synopsis
+
+Show an IdP's domain
+
+Show an existing domain belonging to an IDP.
+
 ```
 flexera-cli iam saml2-domain get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                          help for get
-      --identity-provider-id string   identityProviderId (path, required)
-      --name string                   name (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
+      --name string                   name (path, required); Name of the domain. See also "RFC 1035".; required by API; maxLength: 255; pattern: "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "flexera.com"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Estimate device evidence that would be deleted using the query
 
+### Synopsis
+
+Estimate device evidence that would be deleted using the query
+
+Returns an estimated number of device evidences associated with the datasource data that would be deleted using the query.
+
 ```
 flexera-cli it-visibility device get [flags]
 ```
@@ -19,7 +25,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --device-ids strings   deviceIds (body)
+      --device-ids strings   deviceIds (body); required by API; List of device IDs to delete; CLI: comma-separated values or repeated flag; illustrative example: ["Quasi cum itaque fugiat.","Voluptatibus aliquam iste ipsa.","Aliquid nam.","Enim laboriosam tempore."]
   -h, --help                 help for get
 ```
 

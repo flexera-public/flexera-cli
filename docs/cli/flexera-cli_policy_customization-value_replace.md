@@ -2,6 +2,12 @@
 
 Creates or updates a customization value
 
+### Synopsis
+
+Creates or updates a customization value
+
+Creates or updates a customization value identified by customization type ID. The applied changes will take effect immediately. Some changes, such as those to the emails, will not affect existing assets, but will be applied to all items created after the fact.
+
 ```
 flexera-cli policy customization-value replace [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                    raw JSON body (inline | @file | @-); overrides body field flags
-      --customization-type-id string   customizationTypeId (path, required)
+      --customization-type-id string   customizationTypeId (path, required); Customization Type ID; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "policy-published-by-email"
       --dry-run                        print the planned operation as JSON and exit without calling the API
   -h, --help                           help for replace
   -i, --interactive                    edit inputs in a terminal form, review a plan and approve with typed yes
-      --value string                   value (body)
+      --value string                   value (body); required by API; Customization value; illustrative example: "support@myorg.com"
       --yes                            confirm the operation (required for destructive ops)
 ```
 

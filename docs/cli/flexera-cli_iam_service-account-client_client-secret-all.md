@@ -2,6 +2,14 @@
 
 Rotate a service account client secret
 
+### Synopsis
+
+Rotate a service account client secret
+
+Rotate creates a new client secret for an existing service account client.
+The response is returned in the same shape as create, and may return the secret encrypted
+when recipientPublicKey is provided.
+
 ```
 flexera-cli iam service-account-client client-secret-all [flags]
 ```
@@ -19,8 +27,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for client-secret-all
-      --service-account-id int    serviceAccountId (path, required)
-      --target-client-id string   clientId (path, required)
+      --service-account-id int    serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
+      --target-client-id string   clientId (path, required); Identifier for the client; required by API; minLength: 1; maxLength: 512; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

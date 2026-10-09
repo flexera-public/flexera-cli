@@ -2,6 +2,12 @@
 
 Update an org's login policy
 
+### Synopsis
+
+Update an org's login policy
+
+Update an org's login policy.
+
 ```
 flexera-cli iam org-login-policy update [flags]
 ```

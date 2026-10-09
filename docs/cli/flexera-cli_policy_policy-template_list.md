@@ -2,6 +2,12 @@
 
 List policy templates
 
+### Synopsis
+
+List policy templates
+
+Index retrieves the list of policy templates in a project.
+
 ```
 flexera-cli policy policy-template list [flags]
 ```
@@ -9,14 +15,14 @@ flexera-cli policy policy-template list [flags]
 ### Options
 
 ```
-      --filter string       Optional filter expression
+      --filter string       Optional filter expression; Optional filter to retrieve policy templates based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ------------------------- | ------ | -------------------------------------- | -----------------------------------------------------------------------------------| | name | string | name in ['policy123', 'policy124'] |... (see cli schema); illustrative example: "name eq 'foo'"
   -h, --help                help for list
-      --limit int           Optional page size
+      --limit int           Optional page size; Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate         return only the requested page (do not follow nextPage)
-      --order-by string     Optional sort expression
-      --project-id int      Project ID (optional; resolved from GRS for the org when omitted)
-      --skip-token string   Optional pagination token; resume from this position
-      --view string         Optional Policy template view
+      --order-by string     Optional sort expression; Specifies the order to sort policy templates by fields such as [name, shortDescription, longDescription, docLink, category, createdBy.email, createdAt, updatedAt]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "category asc, createdAt asc"
+      --project-id int      Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --skip-token string   Optional pagination token; resume from this position; Used in pagination to point to the next or previous set of records.
+      --view string         Optional Policy template view; View used to render policy templates.; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

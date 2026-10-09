@@ -2,6 +2,16 @@
 
 Update a GCP bill connect
 
+### Synopsis
+
+Update a GCP bill connect
+
+Modifies an existing GCP bill connect associated with a given bill connect ID.
+Bill Connects provisioned through Unified Onboarding are read-only in this API. Update and delete operations will be rejected with a 403 Forbidden. Use Unified Onboarding to manage these resources.
+You can identify these Bill Connects by the onboardingOrigin field:
+- "platform": created via Unified Onboarding
+- "finops": created and managed through this API (default)
+
 ```
 flexera-cli finops-onboarding bill-connect gcp update [flags]
 ```
@@ -21,9 +31,9 @@ Validated illustrative body, when available (review before use):
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --gcs-export-uri string   gcsExportUri (body)
+      --gcs-export-uri string   gcsExportUri (body); URI of the Google Cloud Storage file path where the billing data is exported; illustrative example: "gs://\u003cbucket_name\u003e/\u003cfile_path_inside_bucket\u003e"
   -h, --help                    help for update
-      --id string               id (path, required)
+      --id string               id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-gcp-956d603z-fdg2-4263-v81e-bae187d0e099"
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
       --yes                     confirm the operation (required for destructive ops)
 ```

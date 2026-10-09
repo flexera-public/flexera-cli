@@ -2,6 +2,12 @@
 
 Create a Credential
 
+### Synopsis
+
+Create a Credential
+
+Create a Credential that uses the 'Oracle' scheme.
+
 ```
 flexera-cli credential oracle-credential replace-project [flags]
 ```
@@ -20,18 +26,18 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --description string    description (body)
+      --description string    description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run               print the planned operation as JSON and exit without calling the API
-      --fingerprint string    fingerprint (body)
+      --fingerprint string    fingerprint (body); required by API; Fingerprint for the public key that is associated with the user OCID; pattern: "^[0-9a-f]{2}(:[0-9a-f]{2}){15}$"; illustrative example: "00:11:22:33:44:55:66:77:88:99:aa:bb:cc:dd:ee:ff"
   -h, --help                  help for replace-project
-      --id string             id (path, required)
+      --id string             id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string           name (body)
-      --password string       password (body)
-      --private-key string    privateKey (body)
-      --project-id int        projectId (path, required)
-      --tenancy-ocid string   tenancyOcid (body)
-      --user-ocid string      userOcid (body)
+      --name string           name (body); required by API; Credentials name used in UI; illustrative example: "Development Credentials"
+      --password string       password (body); Password used to decrypt the private key only if it is encrypted
+      --private-key string    privateKey (body); required by API; Private Key in PEM format
+      --project-id int        projectId (path, required); Identifies the Project that owns the Credential.; required by API; format: int64; minimum: 1; illustrative example: 2345
+      --tenancy-ocid string   tenancyOcid (body); required by API; OCID of your tenancy; pattern: "^ocid1\\.tenancy\\."; illustrative example: "ocid1.tenancy.oc1..tttttttttttt9999999999999999mmmmmmmmmmmmmmmm4444444444444444"
+      --user-ocid string      userOcid (body); required by API; OCID of the user calling the API; pattern: "^ocid1\\.user\\."; illustrative example: "ocid1.user.oc1..uuuuuuuuuuuuuuuuu7777777777777wwwwwwwwwwwww33333333333333333"
       --yes                   confirm the operation (required for destructive ops)
 ```
 

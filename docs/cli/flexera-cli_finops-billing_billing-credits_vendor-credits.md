@@ -2,6 +2,21 @@
 
 Index vendor credits for a bill month
 
+### Synopsis
+
+Index vendor credits for a bill month
+
+List vendor credits eligible for assignment.
+
+Each row represents the total credit amount across a unique combination of the following fields:
+
+- charge description
+- type
+- customer
+- billing account
+- sub-account
+- provider
+
 ```
 flexera-cli finops-billing billing-credits vendor-credits [flags]
 ```
@@ -16,12 +31,12 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter for returning vendor credits matching specific criteria. Filter parameters may be combined with 'and' and 'or' logical operators. ### Vendor Credits Filter Attributes - billMonth, the YYYYMM string representing the billing month of a credit row - chargeDescription, the charge description of a credit row - creditType, the CCO line item type of... (see cli schema); illustrative example: "billMonth eq '202601' and provider eq 'AWS' and chargeDescription co 'EDP'"
   -h, --help                help for vendor-credits
-      --limit int           limit (query)
+      --limit int           limit (query); Return no more than limit values per page; maximum: 200; API default: 20; illustrative example: 20
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "amount desc, lineItemCount desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

@@ -165,6 +165,13 @@ func (s *exampleSafety) sanitize(schema any, secret bool) {
 					unsafe = unsafe || s.sensitive(v, example, map[string]bool{})
 				}
 			}
+			if examples, ok := value.(map[string]any); ok {
+				for _, example := range examples {
+					if example, ok := example.(map[string]any); ok {
+						unsafe = unsafe || s.sensitive(v, example["value"], map[string]bool{})
+					}
+				}
+			}
 		}
 		if unsafe {
 			delete(v, key)
@@ -226,7 +233,25 @@ func sanitizeCatalogExamples(doc *catalog.Document) error {
 				if err != nil {
 					return err
 				}
-				s.markSecretRefs(value, secretSampleName(p.Flag), active)
+				s.markSecretRefs(value, secretSampleName(p.Flag) || secretSampleName(p.Name), active)
+			}
+		}
+		for _, field := range e.BodyFields {
+			if len(field.Schema) != 0 {
+				value, err := decodeSampleJSON(field.Schema)
+				if err != nil {
+					return err
+				}
+				s.markSecretRefs(value, secretSampleName(field.Property), active)
+			}
+		}
+		for _, header := range e.Headers {
+			if len(header.Schema) != 0 {
+				value, err := decodeSampleJSON(header.Schema)
+				if err != nil {
+					return err
+				}
+				s.markSecretRefs(value, secretSampleName(header.Name), active)
 			}
 		}
 	}
@@ -243,6 +268,36 @@ func sanitizeCatalogExamples(doc *catalog.Document) error {
 		s.sanitize(value, secret)
 		return json.Marshal(value)
 	}
+	sanitizeAnnotations := func(schema json.RawMessage, example, examples *json.RawMessage, secret bool) error {
+		value := map[string]any{}
+		if len(schema) != 0 {
+			if err := json.Unmarshal(schema, &value); err != nil {
+				return err
+			}
+		}
+		for key, raw := range map[string]*json.RawMessage{"example": example, "examples": examples} {
+			if len(*raw) != 0 {
+				sample, err := decodeSampleJSON(*raw)
+				if err != nil {
+					return err
+				}
+				value[key] = sample
+			}
+		}
+		s.sanitize(value, secret)
+		for key, raw := range map[string]*json.RawMessage{"example": example, "examples": examples} {
+			if sample, found := value[key]; found {
+				var err error
+				*raw, err = json.Marshal(sample)
+				if err != nil {
+					return err
+				}
+			} else {
+				*raw = nil
+			}
+		}
+		return nil
+	}
 	omitted := 0
 	for i := range doc.Entries {
 		e := &doc.Entries[i]
@@ -252,6 +307,7 @@ func sanitizeCatalogExamples(doc *catalog.Document) error {
 			value, valueErr := decodeSampleJSON(e.RequestExample)
 			if validationErr != nil || schemaErr != nil || valueErr != nil || s.sensitive(schema, value, map[string]bool{}) {
 				e.RequestExample = nil
+				e.RequestExampleSource = ""
 				omitted++
 			}
 		}
@@ -264,7 +320,27 @@ func sanitizeCatalogExamples(doc *catalog.Document) error {
 		e.Params = append([]catalog.Param(nil), e.Params...)
 		for j := range e.Params {
 			p := &e.Params[j]
-			p.Schema, err = sanitizeRaw(p.Schema, secretSampleName(p.Flag))
+			if err := sanitizeAnnotations(p.Schema, &p.Example, &p.Examples, secretSampleName(p.Flag) || secretSampleName(p.Name)); err != nil {
+				return err
+			}
+			p.Schema, err = sanitizeRaw(p.Schema, secretSampleName(p.Flag) || secretSampleName(p.Name))
+			if err != nil {
+				return err
+			}
+		}
+		for j := range e.BodyFields {
+			field := &e.BodyFields[j]
+			field.Schema, err = sanitizeRaw(field.Schema, secretSampleName(field.Property))
+			if err != nil {
+				return err
+			}
+		}
+		for j := range e.Headers {
+			header := &e.Headers[j]
+			if err := sanitizeAnnotations(header.Schema, &header.Example, &header.Examples, secretSampleName(header.Name)); err != nil {
+				return err
+			}
+			header.Schema, err = sanitizeRaw(header.Schema, secretSampleName(header.Name))
 			if err != nil {
 				return err
 			}

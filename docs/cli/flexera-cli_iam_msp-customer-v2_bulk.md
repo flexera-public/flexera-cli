@@ -2,6 +2,29 @@
 
 Bulk create MSP customers (v2)
 
+### Synopsis
+
+Bulk create MSP customers (v2)
+
+BulkCreate provisions multiple customer tenants for a managed service provider in a single request.
+This operation is limited to 100 customers in a single request.
+Individual customer creation attempts can succeed or fail independently. The response includes detailed
+status information for each customer creation attempt, along with summary statistics.
+
+Use the optional 'status' query parameter to filter which results are included in the response:
+- Without filter: returns all results (both successful and failed)
+- status=success: returns only successfully created customers
+- status=failed: returns only failed customer creation attempts
+
+V2 API enhancements over v1:
+* Validates MSP capability hierarchy constraints (max_depth, max_width) for each customer during creation
+* Enforces hierarchy depth limits - prevents creating MSP children if parent's max_depth is 0
+* Enforces hierarchy width limits - prevents creation if parent has reached max_width children
+* Returns specific error codes for constraint violations in individual results
+
+Note: Capabilities granted to each customer organization must be a subset of the capabilities
+available to the MSP parent organization.
+
 ```
 flexera-cli iam msp-customer-v2 bulk [flags]
 ```
@@ -23,7 +46,7 @@ Validated illustrative body, when available (review before use):
       --dry-run         print the planned operation as JSON and exit without calling the API
   -h, --help            help for bulk
   -i, --interactive     edit inputs in a terminal form, review a plan and approve with typed yes
-      --status string   status (query)
+      --status string   status (query); Optional filter to include only results with this status in the response; enum: ["success","failed"]; illustrative example: "failed"
       --yes             confirm the operation (required for destructive ops)
 ```
 

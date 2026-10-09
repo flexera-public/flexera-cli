@@ -38,30 +38,31 @@ import (
 )
 
 type operation struct {
-	Method           string
-	Path             string
-	OperationID      string
-	Summary          string
-	Description      string
-	RequestSchema    map[string]interface{}
-	ResponseSchema   map[string]interface{}
-	RequestExample   interface{}
-	SuccessResponses []successResponse
-	Tag              string
-	Action           string
-	Resource         string
-	PathParams       []param
-	QueryParams      []param
-	HasHeaders       bool
-	HasBody          bool
-	HasRawBody       bool
-	RawBodyType      string
-	BodyTypeName     string // generated client's "<Method>JSONRequestBody"
-	BodyFields       []bodyField
-	Paginated        bool
-	Success2xx       string // lowest documented numeric 2xx
-	HasJSONResp      bool
-	HasSchemaResp    bool
+	Method               string
+	Path                 string
+	OperationID          string
+	Summary              string
+	Description          string
+	RequestSchema        map[string]interface{}
+	ResponseSchema       map[string]interface{}
+	RequestExample       interface{}
+	RequestExampleSource string
+	SuccessResponses     []successResponse
+	Tag                  string
+	Action               string
+	Resource             string
+	PathParams           []param
+	QueryParams          []param
+	HasHeaders           bool
+	HasBody              bool
+	HasRawBody           bool
+	RawBodyType          string
+	BodyTypeName         string // generated client's "<Method>JSONRequestBody"
+	BodyFields           []bodyField
+	Paginated            bool
+	Success2xx           string // lowest documented numeric 2xx
+	HasJSONResp          bool
+	HasSchemaResp        bool
 }
 
 type param struct {
@@ -81,6 +82,7 @@ type param struct {
 	Description string
 	Source      string // flag|config|pagination
 	ValueExpr   string // config-backed query value
+	Metadata    map[string]interface{}
 }
 
 type successResponse struct {
@@ -98,6 +100,8 @@ type bodyField struct {
 	GoVar    string // local Go variable name
 	FlagName string // kebab-case CLI flag
 	GoType   string // string|int|int64|float64|bool|[]string
+	Required bool
+	Schema   map[string]interface{}
 }
 
 type spec struct {
@@ -239,7 +243,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 		var pathLevelParams []interface{}
 		if rawParams, ok := pi["parameters"]; ok {
 			var arr []interface{}
-			_ = json.Unmarshal(rawParams, &arr)
+			_ = decodeSpecJSON(rawParams, &arr)
 			pathLevelParams = arr
 		}
 		for _, m := range methods {
@@ -248,7 +252,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 				continue
 			}
 			var op map[string]interface{}
-			if err := json.Unmarshal(raw, &op); err != nil {
+			if err := decodeSpecJSON(raw, &op); err != nil {
 				continue
 			}
 			if len(pathLevelParams) > 0 {
@@ -303,6 +307,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 			var bodyFields []bodyField
 			var requestSchema map[string]interface{}
 			var requestExample interface{}
+			requestExampleSource := ""
 			if rb, ok := op["requestBody"].(map[string]interface{}); ok {
 				if content, ok := rb["content"].(map[string]interface{}); ok {
 					if jc, ok := content["application/json"].(map[string]interface{}); ok {
@@ -310,6 +315,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 						bodyFields = extractBodyFields(s, jc)
 						requestSchema, _ = jc["schema"].(map[string]interface{})
 						requestExample = bodyExample(s, jc)
+						requestExampleSource = bodyExampleSource(jc)
 					} else if octets, ok := content["application/octet-stream"].(map[string]interface{}); ok {
 						hasRawBody = true
 						rawBodyType = "application/octet-stream"
@@ -331,30 +337,31 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 			}
 
 			ops = append(ops, operation{
-				Description:      description,
-				RequestSchema:    requestSchema,
-				RequestExample:   requestExample,
-				ResponseSchema:   successResponses(op)[0].Schema,
-				SuccessResponses: successResponses(op),
-				Method:           m,
-				Path:             p,
-				OperationID:      opID,
-				Summary:          summary,
-				Tag:              tag,
-				Action:           action,
-				Resource:         resource,
-				PathParams:       pps,
-				QueryParams:      qps,
-				HasHeaders:       hasHeaders,
-				HasBody:          hasBody,
-				HasRawBody:       hasRawBody,
-				RawBodyType:      rawBodyType,
-				BodyTypeName:     methodName(opID) + "JSONRequestBody",
-				BodyFields:       bodyFields,
-				Paginated:        pag,
-				Success2xx:       success,
-				HasJSONResp:      hasJSON,
-				HasSchemaResp:    hasSchema,
+				Description:          description,
+				RequestSchema:        requestSchema,
+				RequestExample:       requestExample,
+				RequestExampleSource: requestExampleSource,
+				ResponseSchema:       successResponses(op)[0].Schema,
+				SuccessResponses:     successResponses(op),
+				Method:               m,
+				Path:                 p,
+				OperationID:          opID,
+				Summary:              summary,
+				Tag:                  tag,
+				Action:               action,
+				Resource:             resource,
+				PathParams:           pps,
+				QueryParams:          qps,
+				HasHeaders:           hasHeaders,
+				HasBody:              hasBody,
+				HasRawBody:           hasRawBody,
+				RawBodyType:          rawBodyType,
+				BodyTypeName:         methodName(opID) + "JSONRequestBody",
+				BodyFields:           bodyFields,
+				Paginated:            pag,
+				Success2xx:           success,
+				HasJSONResp:          hasJSON,
+				HasSchemaResp:        hasSchema,
 			})
 		}
 	}
@@ -461,6 +468,8 @@ func extractBodyFields(s *spec, jsonContent map[string]interface{}) []bodyField 
 			GoVar:    "f" + pascal(goIdent(name)),
 			FlagName: flag,
 			GoType:   goType,
+			Required: containsString(schema["required"], name),
+			Schema:   ps,
 		})
 	}
 	return fields
@@ -484,7 +493,7 @@ func resolveSchemaRef(s *spec, schema map[string]interface{}, depth int) map[str
 		return nil
 	}
 	var next map[string]interface{}
-	if err := json.Unmarshal(raw, &next); err != nil {
+	if err := decodeSpecJSON(raw, &next); err != nil {
 		return nil
 	}
 	return resolveSchemaRef(s, next, depth+1)
@@ -560,6 +569,7 @@ func extractParams(op map[string]interface{}) (path, query []param, hasHeaders b
 			return nil, nil, false, false
 		}
 		pp := param{
+			Metadata:    m,
 			Schema:      schema,
 			Description: stringValue(m["description"]),
 			Source:      "flag",
@@ -651,12 +661,19 @@ func sortedKeys(m map[string]interface{}) []string {
 
 func stringValue(v interface{}) string { s, _ := v.(string); return s }
 
+func decodeSpecJSON(raw []byte, target interface{}) error {
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	return decoder.Decode(target)
+}
+
 // Catalog examples are illustrative, not validated requests. Help deliberately
 // uses @request.json instead of printing spec values that could contain secrets.
 func bodyExample(s *spec, media map[string]interface{}) interface{} {
 	if v, ok := media["example"]; ok {
 		return v
 	}
+
 	examples, _ := media["examples"].(map[string]interface{})
 	for _, key := range sortedKeys(examples) {
 		example, _ := examples[key].(map[string]interface{})
@@ -669,6 +686,20 @@ func bodyExample(s *spec, media map[string]interface{}) interface{} {
 	return v
 }
 
+func bodyExampleSource(media map[string]interface{}) string {
+	if _, exists := media["example"]; exists {
+		return "upstream"
+	}
+	examples, _ := media["examples"].(map[string]interface{})
+	for _, key := range sortedKeys(examples) {
+		example, _ := examples[key].(map[string]interface{})
+		if _, exists := example["value"]; exists {
+			return "upstream"
+		}
+	}
+	return "synthesized"
+}
+
 func synthesizeExample(s *spec, schema map[string]interface{}, depth int, seen map[string]bool) (interface{}, bool) {
 	if schema == nil || depth > 4 {
 		return nil, false
@@ -678,7 +709,7 @@ func synthesizeExample(s *spec, schema map[string]interface{}, depth int, seen m
 			return nil, false
 		}
 		var resolved map[string]interface{}
-		if err := json.Unmarshal(s.Components.Schemas[strings.TrimPrefix(ref, "#/components/schemas/")], &resolved); err != nil {
+		if err := decodeSpecJSON(s.Components.Schemas[strings.TrimPrefix(ref, "#/components/schemas/")], &resolved); err != nil {
 			return nil, false
 		}
 		seen[ref] = true
@@ -1140,11 +1171,18 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 		if p.Schema != nil {
 			enum = p.Schema["enum"]
 		}
-		params = append(params, map[string]interface{}{
+		metadata := map[string]interface{}{
 			"flag": p.FlagName, "source": source, "in": p.In,
 			"type": stringValue(p.Schema["type"]), "required": p.Required,
 			"enum": enum, "schema": p.Schema, "description": p.Description,
-		})
+			"name": p.Name,
+		}
+		for _, key := range []string{"example", "examples", "style", "explode", "allowReserved", "deprecated"} {
+			if value, exists := p.Metadata[key]; exists {
+				metadata[key] = value
+			}
+		}
+		params = append(params, metadata)
 	}
 	for _, p := range o.PathParams {
 		if p.FlagName == "org-id" {
@@ -1170,8 +1208,14 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 		}
 	}
 	bodyFlags := []string{}
+	bodyFields := []interface{}{}
 	for _, f := range r.BodyFields {
 		bodyFlags = append(bodyFlags, f.FlagName)
+		if f.Schema != nil {
+			bodyFields = append(bodyFields, map[string]interface{}{
+				"flag": f.FlagName, "property": f.JSONKey, "required": f.Required, "schema": f.Schema,
+			})
+		}
 	}
 	envelope := "none"
 	if r.CanPaginate {
@@ -1183,6 +1227,9 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 		"summary": o.Summary, "description": o.Description, "destructive": r.IsDestructive,
 		"paginated": r.CanPaginate, "responseEnvelope": envelope, "params": params, "bodyFlags": bodyFlags,
 	}
+	if len(bodyFields) > 0 {
+		m["bodyFields"] = bodyFields
+	}
 	if o.RequestSchema != nil {
 		m["requestSchema"] = o.RequestSchema
 	}
@@ -1191,8 +1238,21 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 	}
 	if o.RequestExample != nil {
 		m["requestExample"] = o.RequestExample
+		if o.RequestExampleSource != "" {
+			m["requestExampleSource"] = o.RequestExampleSource
+		}
 	}
 	return m
+}
+
+func containsString(value interface{}, want string) bool {
+	values, _ := value.([]interface{})
+	for _, value := range values {
+		if value == want {
+			return true
+		}
+	}
+	return false
 }
 
 func helpExample(cmdName string, o operation, r renderOp) string {

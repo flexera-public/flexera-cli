@@ -2,6 +2,12 @@
 
 Create a Credential
 
+### Synopsis
+
+Create a Credential
+
+Create a Credential that uses the 'Basic' scheme.
+
 ```
 flexera-cli credential basic-credential replace-project [flags]
 ```
@@ -20,15 +26,15 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for replace-project
-      --id string            id (path, required)
+      --id string            id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
-      --password string      password (body)
-      --project-id int       projectId (path, required)
-      --username string      username (body)
+      --name string          name (body); required by API; Credentials name used in UI; illustrative example: "Development Credentials"
+      --password string      password (body); required by API; Password for authorization
+      --project-id int       projectId (path, required); Identifies the Project that owns the Credential.; required by API; format: int64; minimum: 1; illustrative example: 2345
+      --username string      username (body); required by API; Username for authorization; illustrative example: "john.smith@example.com"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

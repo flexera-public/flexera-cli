@@ -2,6 +2,12 @@
 
 Retrieves a collection of customization values
 
+### Synopsis
+
+Retrieves a collection of customization values
+
+Retrieves a collection of customization values in an org.
+
 ```
 flexera-cli policy customization-value list [flags]
 ```

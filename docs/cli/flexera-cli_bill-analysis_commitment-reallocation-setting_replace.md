@@ -2,6 +2,12 @@
 
 upsert commitment_reallocation_setting
 
+### Synopsis
+
+upsert commitment_reallocation_setting
+
+Creates or update the commitment reallocation settings for the org.
+
 ```
 flexera-cli bill-analysis commitment-reallocation-setting replace [flags]
 ```

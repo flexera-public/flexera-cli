@@ -2,6 +2,12 @@
 
 Get a policy manager
 
+### Synopsis
+
+Get a policy manager
+
+Retrieves a specific policy manager.
+
 ```
 flexera-cli policy policy-manager get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id string     id (path, required)
-      --view string   view (query)
+      --id string     id (path, required); ID of the policy manager.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "def01234567890abcdef0123"
+      --view string   view (query); View used to render policy manager; enum: ["default","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

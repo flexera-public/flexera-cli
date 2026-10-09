@@ -2,6 +2,12 @@
 
 Create a shared cost rule
 
+### Synopsis
+
+Create a shared cost rule
+
+Creates a new shared cost rule in the organization. The rule name must be unique within the organization. Source dimensions identify the costs to reallocate, and the allocation block defines how those costs are distributed.
+
 ```
 flexera-cli finops-billing shared-cost-rules create [flags]
 ```
@@ -21,11 +27,11 @@ Validated illustrative body, when available (review before use):
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --effective-from string   effectiveFrom (body)
-      --effective-to string     effectiveTo (body)
+      --effective-from string   effectiveFrom (body); required by API; The month (inclusive) from which the rule applies, formatted YYYY-MM. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-07"
+      --effective-to string     effectiveTo (body); The month (exclusive) before which the rule applies, formatted YYYY-MM. Must be > effectiveFrom. Omit this field for no end date; the rule applies indefinitely. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-12"
   -h, --help                    help for create
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string             name (body)
+      --name string             name (body); required by API; Display name for the shared cost rule. Must be unique within the organization. Must not contain "(", ")" or ">".; minLength: 1; maxLength: 255; pattern: "^[^()\u003e]+$"; illustrative example: "Equal split for AWS between Teams A, B and C"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

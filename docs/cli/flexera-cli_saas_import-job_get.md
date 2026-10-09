@@ -2,6 +2,12 @@
 
 Show import job
 
+### Synopsis
+
+Show import job
+
+Retrieves import job identified by ID.
+
 ```
 flexera-cli saas import-job get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); A Base 32 encoded UUID Type 4 identifier for the ImportJob object; required by API; pattern: "^[2-7A-Z]{26}$"; illustrative example: "P6VAGLVY6BBKPF5F2TUCQJONPY"
 ```
 
 ### Options inherited from parent commands

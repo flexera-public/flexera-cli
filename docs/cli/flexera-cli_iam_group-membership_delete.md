@@ -2,6 +2,12 @@
 
 Delete user membership of a group
 
+### Synopsis
+
+Delete user membership of a group
+
+Delete user membership of a group.
+
 ```
 flexera-cli iam group-membership delete [flags]
 ```
@@ -18,9 +24,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
       --dry-run        print the planned operation as JSON and exit without calling the API
-      --group-id int   groupId (path, required)
+      --group-id int   groupId (path, required); The ID of the Group; required by API; illustrative example: 1234
   -h, --help           help for delete
-      --id string      id (path, required)
+      --id string      id (path, required); The ID of the group membership; required by API; illustrative example: "1234:12345"
       --yes            confirm the operation (required for destructive ops)
 ```
 

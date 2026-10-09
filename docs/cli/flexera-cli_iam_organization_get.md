@@ -2,6 +2,12 @@
 
 Show an org
 
+### Synopsis
+
+Show an org
+
+Returns details for a specific org.
+
 ```
 flexera-cli iam organization get [flags]
 ```

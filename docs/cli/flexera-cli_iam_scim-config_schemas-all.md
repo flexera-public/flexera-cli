@@ -2,6 +2,12 @@
 
 Returns a list of supported schemas for an org.
 
+### Synopsis
+
+Returns a list of supported schemas for an org.
+
+Index returns a list of supported schemas for an org.
+
 ```
 flexera-cli iam scim-config schemas-all [flags]
 ```

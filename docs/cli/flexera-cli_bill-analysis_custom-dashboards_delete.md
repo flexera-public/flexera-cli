@@ -2,6 +2,12 @@
 
 destroy custom_dashboards
 
+### Synopsis
+
+destroy custom_dashboards
+
+Destroys a Dashboard for a given Org and User.
+
 ```
 flexera-cli bill-analysis custom-dashboards delete [flags]
 ```
@@ -19,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
-      --user int    user (path, required)
+      --id string   id (path, required); The id of the dashboard.; required by API; illustrative example: "4DruwQHeCnL4TpzVhkf22s"
+      --user int    user (path, required); User Identifier; required by API; format: int64; illustrative example: 6204100221997734000
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -102,6 +102,40 @@ func buildCatalog(stage string, tags []genTag, specData []byte, curated ...catal
 		}
 	}
 	sort.Slice(doc.Entries, func(i, j int) bool { return doc.Entries[i].OperationID < doc.Entries[j].OperationID })
+	for i := range doc.Entries {
+		e := &doc.Entries[i]
+		location, found := operations[e.OperationID]
+		if !found {
+			return nil, fmt.Errorf("catalog: operation %q missing from spec", e.OperationID)
+		}
+		var op struct {
+			Deprecated   bool            `json:"deprecated"`
+			ExternalDocs json.RawMessage `json:"externalDocs"`
+			Parameters   []struct {
+				In string `json:"in"`
+				catalog.Header
+			} `json:"parameters"`
+			RequestBody struct {
+				Description string                     `json:"description"`
+				Required    bool                       `json:"required"`
+				Content     map[string]json.RawMessage `json:"content"`
+			} `json:"requestBody"`
+		}
+		if err := json.Unmarshal(s.Paths[location.path][strings.ToLower(location.method)], &op); err != nil {
+			return nil, fmt.Errorf("catalog operation %s: %w", e.OperationID, err)
+		}
+		e.Deprecated, e.ExternalDocs = op.Deprecated, op.ExternalDocs
+		e.RequestDescription, e.RequestRequired = op.RequestBody.Description, op.RequestBody.Required
+		for mediaType := range op.RequestBody.Content {
+			e.RequestMediaTypes = append(e.RequestMediaTypes, mediaType)
+		}
+		sort.Strings(e.RequestMediaTypes)
+		for _, p := range op.Parameters {
+			if p.In == "header" {
+				e.Headers = append(e.Headers, p.Header)
+			}
+		}
+	}
 
 	// Walk metadata as well as schemas, including Param.Schema and every
 	// request/response composition. Mark components before walking for cycles.

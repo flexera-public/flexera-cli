@@ -2,6 +2,20 @@
 
 Create an invoice schedule
 
+### Synopsis
+
+Create an invoice schedule
+
+Creates one invoice schedule covering every customer in the request. Validation applies to the whole request: if any customer is invalid the entire request fails and nothing is created.
+
+The schedule's invoice template is selected one of three ways:
+
+- link an existing template: isCreateTemplate=false with invoiceTemplateId set
+- create one: isCreateTemplate=true with template set, and the created template's id is returned as the schedule's invoiceTemplateId
+- no template: isCreateTemplate=false with neither field, and the created schedule has no invoiceTemplateId
+
+Any other combination is rejected with 422.
+
 ```
 flexera-cli finops-billing invoice-schedules create [flags]
 ```
@@ -23,9 +37,9 @@ Validated illustrative body, when available (review before use):
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for create
   -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
-      --invoice-template-id string   invoiceTemplateId (body)
-      --is-create-template           isCreateTemplate (body)
-      --schedule-name string         scheduleName (body)
+      --invoice-template-id string   invoiceTemplateId (body); Identifier of an existing invoice template to share across every customer on this schedule. Omit both this and template to create a schedule with no template.; illustrative example: "tmpl_9001"
+      --is-create-template           isCreateTemplate (body); Whether to create a new invoice template from the template properties in this request, rather than link an existing one.; API default: false; illustrative example: false
+      --schedule-name string         scheduleName (body); required by API; Human-readable name for the schedule.; maxLength: 255; illustrative example: "Monthly Q3 Invoice"
       --yes                          confirm the operation (required for destructive ops)
 ```
 

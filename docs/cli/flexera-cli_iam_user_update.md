@@ -2,6 +2,29 @@
 
 Update user name
 
+### Synopsis
+
+Update user name
+
+Updates the first name and/or last name of a user affiliated to an org.
+
+**Required privilege**: iam:org_user:update (org_owner or equivalent).
+
+**Multi-org security**: The caller must have admin access in *every* org the target user
+belongs to. If the user is affiliated with orgs A, B, and C, the caller needs access
+in all three — not just the org specified in the request. This prevents an admin in one
+org from modifying a shared user's name without consent from admins in other orgs.
+
+**Sync guard**: A successful update sets an internal `updated_by` marker
+(`admin:{callerID}`) on the user record. The User Management Service uses this
+marker to reject subsequent AD/SAML sync writes that would overwrite the manually-set
+name. The marker is cleared when the IdP profile master sync next runs with a value
+that matches the current name.
+
+**isNameManagedByIDP**: The response includes this flag. When `true`, the org's SAML
+IDP has profile-master enabled, meaning the name edit may be overridden on the user's
+next SSO login if the AD/SAML attribute mapping still points to a different value.
+
 ```
 flexera-cli iam user update [flags]
 ```
@@ -21,11 +44,11 @@ Validated illustrative body, when available (review before use):
 ```
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run             print the planned operation as JSON and exit without calling the API
-      --first-name string   firstName (body)
+      --first-name string   firstName (body); First name to set.; minLength: 1; illustrative example: "Jane"
   -h, --help                help for update
-      --id int              id (path, required)
+      --id int              id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
   -i, --interactive         edit inputs in a terminal form, review a plan and approve with typed yes
-      --last-name string    lastName (body)
+      --last-name string    lastName (body); Last name to set.; minLength: 1; illustrative example: "Smith"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

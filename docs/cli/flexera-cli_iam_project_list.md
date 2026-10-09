@@ -2,6 +2,12 @@
 
 Index an org's projects
 
+### Synopsis
+
+Index an org's projects
+
+Index returns all projects in an org.
+
 ```
 flexera-cli iam project list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render projects; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

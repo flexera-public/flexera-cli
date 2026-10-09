@@ -2,6 +2,12 @@
 
 Onboarding GCP: Create
 
+### Synopsis
+
+Onboarding GCP: Create
+
+Onboard a new GCP bill connect connector.
+
 ```
 flexera-cli unified-onboarding onboarding create [flags]
 ```
@@ -19,14 +25,14 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-account-id string         BillingAccountId (body)
+      --billing-account-id string         BillingAccountId (body); required by API; GCP billing account ID.; minLength: 1
       --body string                       raw JSON body (inline | @file | @-); overrides body field flags
-      --connector-name string             ConnectorName (body)
+      --connector-name string             ConnectorName (body); required by API; Connector name.; minLength: 3; pattern: "^[a-zA-Z0-9._-]+$"
       --dry-run                           print the planned operation as JSON and exit without calling the API
   -h, --help                              help for create
-      --include-cost-and-usage string     IncludeCostAndUsage (body)
+      --include-cost-and-usage string     IncludeCostAndUsage (body); required by API; Must be 'true' for GCP Bill Connect.
   -i, --interactive                       edit inputs in a terminal form, review a plan and approve with typed yes
-      --service-account-key-json string   ServiceAccountKeyJson (body)
+      --service-account-key-json string   ServiceAccountKeyJson (body); required by API; GCP service-account key JSON string.; minLength: 1
       --yes                               confirm the operation (required for destructive ops)
 ```
 

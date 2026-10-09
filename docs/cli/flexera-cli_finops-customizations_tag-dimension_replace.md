@@ -2,6 +2,14 @@
 
 Updates a tag dimension
 
+### Synopsis
+
+Updates a tag dimension
+
+Updates a tag dimension in the organization.
+
+Note, the `id` is derived from the `name`. Therefore, changing the `name` could also change the `id`, which will be provided in the response.
+
 ```
 flexera-cli finops-customizations tag-dimension replace [flags]
 ```
@@ -22,9 +30,9 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for replace
-      --id string     id (path, required)
+      --id string     id (path, required); Identifier of the tag dimension.; required by API; illustrative example: "tag_environment"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Name of the tag dimension to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
       --yes           confirm the operation (required for destructive ops)
 ```
 

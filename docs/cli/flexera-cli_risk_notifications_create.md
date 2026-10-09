@@ -2,6 +2,12 @@
 
 Create Notification Policy
 
+### Synopsis
+
+Create Notification Policy
+
+Create a new notification policy for security alerts via gRPC backend service.
+
 ```
 flexera-cli risk notifications create [flags]
 ```
@@ -21,17 +27,17 @@ Validated illustrative body, when available (review before use):
 ```
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                    print the planned operation as JSON and exit without calling the API
-      --email-ids strings          emailIds (body)
-      --expiry-time int            expiryTime (body)
+      --email-ids strings          emailIds (body); required by API; List of email addresses; minItems: 1; CLI: comma-separated values or repeated flag
+      --expiry-time int            expiryTime (body); required by API; Expiry time in hours; minimum: 0
   -h, --help                       help for create
-      --integration-tool string    integrationTool (body)
+      --integration-tool string    integrationTool (body); required by API; Integration tool (e.g., 'email'); minLength: 1
   -i, --interactive                edit inputs in a terminal form, review a plan and approve with typed yes
-      --interval-days int          intervalDays (body)
-      --notification-type string   notificationType (body)
-      --password string            password (body)
-      --policy-name string         policyName (body)
-      --user-id string             userId (body)
-      --user-name string           userName (body)
+      --interval-days int          intervalDays (body); required by API; Interval in days (must be 1, 7, 14, or 30); enum: [1,7,14,30]
+      --notification-type string   notificationType (body); required by API; Notification type; enum: ["MISCONFIG_ALERT","VULN_ALERT"]
+      --password string            password (body); required by API; Password
+      --policy-name string         policyName (body); required by API; Policy name; minLength: 1
+      --user-id string             userId (body); required by API; User ID; minLength: 1
+      --user-name string           userName (body); User name (optional); API default: ""
       --yes                        confirm the operation (required for destructive ops)
 ```
 

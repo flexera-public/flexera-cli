@@ -2,6 +2,12 @@
 
 Index tag dimensions
 
+### Synopsis
+
+Index tag dimensions
+
+Lists all tag dimensions in the organization.
+
 ```
 flexera-cli finops-customizations tag-dimension list [flags]
 ```

@@ -2,6 +2,12 @@
 
 Index an org's identity providers
 
+### Synopsis
+
+Index an org's identity providers
+
+List identity providers for an org.
+
 ```
 flexera-cli iam saml2-identity-provider list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render identity providers; enum: ["default","index"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

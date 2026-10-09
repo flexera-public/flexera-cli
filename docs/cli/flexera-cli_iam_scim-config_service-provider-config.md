@@ -2,6 +2,12 @@
 
 Index an org's service provider configuration
 
+### Synopsis
+
+Index an org's service provider configuration
+
+Index returns a list of service provider configurations for an org.
+
 ```
 flexera-cli iam scim-config service-provider-config [flags]
 ```

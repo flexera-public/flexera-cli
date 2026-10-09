@@ -2,6 +2,16 @@
 
 List projects accessible by the authenticated user
 
+### Synopsis
+
+List projects accessible by the authenticated user
+
+Returns the projects accessible by the user identified by `{userId}`. The authoritative project ID for legacy Flexera APIs is `legacy.account_id` when present (fall back to top-level `id` when `legacy.account_id` is absent).
+
+NOTE: This endpoint is served by the legacy GRS service, which is being deprecated. Prefer newer Flexera One APIs when available.
+
+Deprecated in the upstream API.
+
 ```
 flexera-cli grs project list [flags]
 ```
@@ -16,8 +26,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-  -h, --help          help for list
-      --user-id int   userId (path, required)
+  -h, --help                 help for list
+      --user-id u-{userId}   userId (path, required); Flexera user ID (numeric). For a user-issued access token this is the integer suffix of the JWT 'sub' claim (u-{userId}) or the legacy 'user' claim. Service-account tokens cannot call this endpoint.; required by API; format: int64; minimum: 1
 ```
 
 ### Options inherited from parent commands

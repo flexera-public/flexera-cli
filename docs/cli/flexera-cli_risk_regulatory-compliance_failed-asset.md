@@ -2,6 +2,12 @@
 
 Regulatory Compliance Failed Assets
 
+### Synopsis
+
+Regulatory Compliance Failed Assets
+
+Returns a paginated list of failed assets for a specific rule.
+
 ```
 flexera-cli risk regulatory-compliance failed-asset [flags]
 ```
@@ -19,12 +25,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string               raw JSON body (inline | @file | @-); overrides body field flags
-      --body-skip-token string    skipToken (body)
+      --body-skip-token string    skipToken (body); Cursor for pagination
   -h, --help                      help for failed-asset
-      --page-size int             pageSize (body)
-      --query-skip-token string   skipToken (query)
-      --rule-name string          ruleName (body)
-      --show-suppressed string    showSuppressed (body)
+      --page-size int             pageSize (body); Number of items to fetch; minimum: 1; maximum: 1000; API default: 500
+      --query-skip-token string   skipToken (query); Cursor for pagination (query param overrides body)
+      --rule-name string          ruleName (body); required by API; Rule name to filter failed assets
+      --show-suppressed string    showSuppressed (body); 'true', 'false', or omit for all
 ```
 
 ### Options inherited from parent commands

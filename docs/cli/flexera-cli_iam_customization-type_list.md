@@ -2,6 +2,12 @@
 
 Returns types of customizations that are available to an org
 
+### Synopsis
+
+Returns types of customizations that are available to an org
+
+Get available customization types.
+
 ```
 flexera-cli iam customization-type list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter for selecting the list of customization types returned. The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | id | Filters on the customization type's id | co | Contains - The entire operator value must be a substring of the attribute value for a match. | id co '... (see cli schema); illustrative example: "id co 'navbar'"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --view string         view (query); View used to render the customization type; enum: ["default"]; API default: "default"; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

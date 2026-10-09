@@ -2,6 +2,12 @@
 
 Create a new MSP customer
 
+### Synopsis
+
+Create a new MSP customer
+
+Create provisions a new customer tenant for a managed service provider.
+
 ```
 flexera-cli iam msp-customer create [flags]
 ```
@@ -20,12 +26,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Optional text describing the customer; maxLength: 4096; illustrative example: "MSP Customer requires services X, Y, Z."
       --dry-run              print the planned operation as JSON and exit without calling the API
-      --external-id string   externalId (body)
+      --external-id string   externalId (body); Identifier of the organization used in your external system; maxLength: 256; illustrative example: "W12345"
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Friendly name for the customer; minLength: 1; maxLength: 512; illustrative example: "MSPCustomer Inc."
       --yes                  confirm the operation (required for destructive ops)
 ```
 

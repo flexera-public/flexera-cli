@@ -2,6 +2,12 @@
 
 Show managed application user
 
+### Synopsis
+
+Show managed application user
+
+Retrieves a managed application user identified by user ID.
+
 ```
 flexera-cli saas managed-application-user get [flags]
 ```
@@ -17,9 +23,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help             help for get
-      --include-all      includeAll (query)
-      --user-id string   userId (path, required)
-      --view string      view (query)
+      --include-all      includeAll (query); Flag to determine whether or not inactive users should be included in the results.; API default: false; illustrative example: true
+      --user-id string   userId (path, required); userId identifies an user by given ID.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
+      --view string      view (query); View used to render managed application user.; enum: ["default","minimal","excludeEvent","entitlement","activityByRange"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

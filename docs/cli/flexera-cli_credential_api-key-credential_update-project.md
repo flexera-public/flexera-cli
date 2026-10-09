@@ -2,6 +2,12 @@
 
 Update a Credential
 
+### Synopsis
+
+Update a Credential
+
+Update a Credential that uses the 'API Key' scheme.
+
 ```
 flexera-cli credential api-key-credential update-project [flags]
 ```
@@ -20,17 +26,17 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run              print the planned operation as JSON and exit without calling the API
-      --field string         field (body)
+      --field string         field (body); Name of either the authorization header key or the query parameter field; illustrative example: "Authorization"
   -h, --help                 help for update-project
-      --id string            id (path, required)
+      --id string            id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --key string           key (body)
-      --location string      location (body)
-      --name string          name (body)
-      --project-id int       projectId (path, required)
-      --type string          type (body)
+      --key string           key (body); Static API key; illustrative example: "sumthingSeekrit"
+      --location string      location (body); Location of the authorization; enum: ["header","query"]; illustrative example: "query"
+      --name string          name (body); Credentials name used in UI; illustrative example: "Development Credentials"
+      --project-id int       projectId (path, required); Identifies the Project that owns the Credential.; required by API; format: int64; minimum: 1; illustrative example: 2345
+      --type string          type (body); Type of authorization header, prefixes the key value; illustrative example: "Bearer"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

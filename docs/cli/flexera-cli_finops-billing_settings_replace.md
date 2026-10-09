@@ -2,6 +2,12 @@
 
 Update billing settings for the organization
 
+### Synopsis
+
+Update billing settings for the organization
+
+Updates the billing settings for the organization.
+
 ```
 flexera-cli finops-billing settings replace [flags]
 ```
@@ -19,7 +25,7 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --base-costs-on string   baseCostsOn (body)
+      --base-costs-on string   baseCostsOn (body); The base cost value used for adjustments. Note that using 'listCost' may reduce the utility of some adjustment rules. The 'observedCosts' value is deprecated; use 'billedCost' or 'modifiedCost' instead. The 'observedCosts' value is retained for legacy compatibility.; enum: ["observedCosts","listCost","billedCost","modifiedCost"]; illustrative example: "listCost"
       --body string            raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                print the planned operation as JSON and exit without calling the API
   -h, --help                   help for replace

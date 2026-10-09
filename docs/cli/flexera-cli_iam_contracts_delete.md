@@ -2,6 +2,12 @@
 
 Deletes a contract
 
+### Synopsis
+
+Deletes a contract
+
+Delete a contract
+
 ```
 flexera-cli iam contracts delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run   print the planned operation as JSON and exit without calling the API
   -h, --help      help for delete
-      --id int    id (path, required)
+      --id int    id (path, required); Contract ID; required by API; illustrative example: 12345
       --yes       confirm the operation (required for destructive ops)
 ```
 

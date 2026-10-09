@@ -2,6 +2,13 @@
 
 show org_dashboards
 
+### Synopsis
+
+show org_dashboards
+
+Shows a Dashboard for a given Org.
+Requires user to have `optima:public_dashboard:show` on a billing center within the org.
+
 ```
 flexera-cli bill-analysis org-dashboards get [flags]
 ```
@@ -17,7 +24,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); The id of the dashboard.; required by API; illustrative example: "4DruwQHeCnL4TpzVhkf22s"
 ```
 
 ### Options inherited from parent commands

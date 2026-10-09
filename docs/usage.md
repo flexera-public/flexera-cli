@@ -121,6 +121,24 @@ Paths resolve against the live tree, including aliases and nested tags such as `
 - `--example` rejects `--part`, table output, and shaping. Introspection is JSON-only.
 - Curated workflows without exact operation annotations have no schema; use `--help`.
 
+The full schema result includes original API parameter names alongside CLI flag
+names, named parameter examples, serialization hints, documented headers,
+request-body description/requiredness/media types, and upstream deprecation and
+documentation links when present. `bodyFields` maps typed body flags to exact
+JSON properties and their requiredness/schemas; `bodyFlags` remains the flat flag
+list. Documented headers are not necessarily user-settable CLI flags.
+
+`requestExampleSource` distinguishes complete upstream media-type examples from
+`synthesized` bodies assembled from schemas. Both are illustrative; schema
+validation cannot verify identifiers, permissions, or server state. Sensitive
+samples are omitted from the published catalog, including named examples.
+
+Spec-backed command help shows operation descriptions and local flag guidance:
+formats, enums, constraints, API defaults, and illustrative examples where
+available. **API defaults are documentation, not CLI defaults**; help does not
+change which values are sent. Long values are abbreviated in help; use
+`cli schema` for the complete contract.
+
 ### Output format flag
 
 Most commands default to JSON. `--output table` / `-o table` requires a table

@@ -2,6 +2,12 @@
 
 Show an invoice
 
+### Synopsis
+
+Show an invoice
+
+Shows a specific invoice export lifecycle record in the organization.
+
 ```
 flexera-cli finops-billing invoices get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Voluptates et."
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Show an adjustment plan
 
+### Synopsis
+
+Show an adjustment plan
+
+Show a single adjustment plan, including its rules.
+
 ```
 flexera-cli finops-billing billing plans-all-3 [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for plans-all-3
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the billing plan; required by API; format: uuid; illustrative example: "c6671c74-513a-4127-b8df-81adfb65bf7f"
 ```
 
 ### Options inherited from parent commands

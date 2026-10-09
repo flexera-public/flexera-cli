@@ -2,6 +2,12 @@
 
 Index an MSP's customers
 
+### Synopsis
+
+Index an MSP's customers
+
+Index a managed service provider's list of customer tenants.
+
 ```
 flexera-cli iam msp-customer list [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); Optional filter for filtering list of customers returned. The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | name | Filters on the organization name | co | Contains - The entire operator value must be a substring of the attribute value for a match. | name co 'SAP' | | | | eq ... (see cli schema); minLength: 1; illustrative example: "(name co 'SAP' or name co 'HP')"
   -h, --help            help for list
 ```
 

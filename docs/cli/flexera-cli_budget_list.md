@@ -2,6 +2,12 @@
 
 Index budgets
 
+### Synopsis
+
+Index budgets
+
+Lists all budgets for the given organization.
+
 ```
 flexera-cli budget list [flags]
 ```

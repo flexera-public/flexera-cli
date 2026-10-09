@@ -2,6 +2,12 @@
 
 Update an access policy
 
+### Synopsis
+
+Update an access policy
+
+Update an access policy.
+
 ```
 flexera-cli iam access-policy replace [flags]
 ```
@@ -19,13 +25,13 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --access-policy-id string   accessPolicyId (path, required)
+      --access-policy-id string   accessPolicyId (path, required); Access Policy ID; required by API; illustrative example: "b3e1a2c4-5d6f-7a8b-9c0d-1e2f3a4b5c6d"
       --body string               raw JSON body (inline | @file | @-); overrides body field flags
-      --description string        description (body)
+      --description string        description (body); Description of the access policy; illustrative example: "Comprehensive access policy for finance department"
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for replace
   -i, --interactive               edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string               name (body)
+      --name string               name (body); required by API; Name of the access policy; illustrative example: "financePolicy"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

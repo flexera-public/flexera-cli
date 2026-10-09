@@ -2,6 +2,15 @@
 
 Revoke a given Role from the Subject on this BillingCenter
 
+### Synopsis
+
+Revoke a given Role from the Subject on this BillingCenter
+
+Revoke a given Role from the Subject on this BillingCenter
+
+**Required security scopes for GlobalSession**:
+  * `iam:access_rule:revoke+optima:access_rule:revoke+common:org:own`
+
 ```
 flexera-cli billing-center billing-center-access-rules revoke [flags]
 ```
@@ -19,7 +28,7 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for revoke

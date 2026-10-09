@@ -2,6 +2,12 @@
 
 Regulatory Compliance Conformity Summary
 
+### Synopsis
+
+Regulatory Compliance Conformity Summary
+
+Returns per-framework compliance counts based on the most recent control evaluation run for each requested framework.
+
 ```
 flexera-cli risk regulatory-compliance conformity-summary [flags]
 ```
@@ -19,7 +25,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --frameworks strings   frameworks (body)
+      --frameworks strings   frameworks (body); required by API; Compliance frameworks to summarise (case-insensitive). Examples: DORA, NYDFS, FFIEC.; minItems: 1; maxItems: 20; CLI: comma-separated values or repeated flag
   -h, --help                 help for conformity-summary
 ```
 

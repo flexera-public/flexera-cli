@@ -2,6 +2,12 @@
 
 Risk Details
 
+### Synopsis
+
+Risk Details
+
+Endpoint that forwards request for risk details to the Secops UI API.
+
 ```
 flexera-cli risk misconfiguration-ui details [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help              help for details
-      --provider string   provider (query)
-      --risk-id string    riskId (path, required)
+      --provider string   provider (query); Cloud provider e.g. aws, azure; API default: "aws"
+      --risk-id string    riskId (path, required); Risk ID; required by API
 ```
 
 ### Options inherited from parent commands

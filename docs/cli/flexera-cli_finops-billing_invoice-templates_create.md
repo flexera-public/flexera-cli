@@ -2,6 +2,12 @@
 
 Create an invoice template
 
+### Synopsis
+
+Create an invoice template
+
+Creates an invoice template in the organization.
+
 ```
 flexera-cli finops-billing invoice-templates create [flags]
 ```
@@ -20,17 +26,17 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string               raw JSON body (inline | @file | @-); overrides body field flags
-      --cost-metric string        costMetric (body)
-      --dimensions strings        dimensions (body)
-      --display-logo-within-pdf   displayLogoWithinPdf (body)
+      --cost-metric string        costMetric (body); required by API; Configured cost metric.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "billedCost"
+      --dimensions strings        dimensions (body); Optional grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["service","account","region"]
+      --display-logo-within-pdf   displayLogoWithinPdf (body); required by API; Whether the logo is rendered within PDF exports.; illustrative example: true
       --dry-run                   print the planned operation as JSON and exit without calling the API
-      --export-type string        exportType (body)
-      --free-text string          freeText (body)
+      --export-type string        exportType (body); required by API; Invoice export type.; enum: ["pdf","csv"]; illustrative example: "pdf"
+      --free-text string          freeText (body); Optional free-text company/address block.; illustrative example: "Aut accusamus."
   -h, --help                      help for create
   -i, --interactive               edit inputs in a terminal form, review a plan and approve with typed yes
-      --logo string               logo (body)
-      --period-type string        periodType (body)
-      --template-name string      templateName (body)
+      --logo string               logo (body); Optional logo payload. Ignored when exportType=csv.; illustrative example: "\u003cbase64-or-reference-payload\u003e"
+      --period-type string        periodType (body); required by API; Configured period type.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "chargePeriod"
+      --template-name string      templateName (body); required by API; Human-readable template name.; maxLength: 255; illustrative example: "Standard MSP Invoice"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

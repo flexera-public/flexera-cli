@@ -2,6 +2,12 @@
 
 Delete a policy manager
 
+### Synopsis
+
+Delete a policy manager
+
+Starts the process to delete a specific policy manager. The policy manager will enter a "terminating" after the delete request and will be fully deleted and no longer accessible after every applied policy it is managing is deleted.
+
 ```
 flexera-cli policy policy-manager delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the policy manager.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "def01234567890abcdef0123"
       --yes         confirm the operation (required for destructive ops)
 ```
 

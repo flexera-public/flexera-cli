@@ -2,6 +2,12 @@
 
 Toggle Compliance Standard Favorite Status.
 
+### Synopsis
+
+Toggle Compliance Standard Favorite Status.
+
+Toggles the favorite status of a compliance standard.
+
 ```
 flexera-cli risk compliance update [flags]
 ```
@@ -20,7 +26,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --compliance-standard string   complianceStandard (body)
+      --compliance-standard string   complianceStandard (body); required by API; Compliance standard name to toggle favorite status; illustrative example: "ISO_IEC_27001-2018"
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for update
   -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes

@@ -2,6 +2,14 @@
 
 Index a user's refresh tokens
 
+### Synopsis
+
+Index a user's refresh tokens
+
+Index refresh tokens belonging to a user. Supports optional query parameters orgId and userId.
+Org owners can list refresh tokens for a specific user by providing both orgId and userId in the query.
+The isDeletable flag in the token response tells the org owner whether they can delete the user token or not.
+
 ```
 flexera-cli iam refresh-token list [flags]
 ```
@@ -17,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --user-id int   userId (query)
+      --user-id int   userId (query); User ID; illustrative example: 67890
 ```
 
 ### Options inherited from parent commands

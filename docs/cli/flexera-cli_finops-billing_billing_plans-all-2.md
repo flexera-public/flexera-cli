@@ -2,6 +2,12 @@
 
 Remove an adjustment plan
 
+### Synopsis
+
+Remove an adjustment plan
+
+Remove an adjustment plan.
+
 ```
 flexera-cli finops-billing billing plans-all-2 [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for plans-all-2
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the billing plan; required by API; format: uuid; illustrative example: "c6671c74-513a-4127-b8df-81adfb65bf7f"
       --yes         confirm the operation (required for destructive ops)
 ```
 

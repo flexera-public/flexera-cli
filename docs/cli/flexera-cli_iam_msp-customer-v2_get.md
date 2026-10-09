@@ -2,6 +2,16 @@
 
 Show an MSP's customer (v2)
 
+### Synopsis
+
+Show an MSP's customer (v2)
+
+Show details for a managed service provider's customer tenant.
+
+V2 API enhancements over v1:
+* Includes numberOfCustomers field showing the count of direct children
+* Added inUseByCustomers field in capabilities to indicate whether this capability is currently being used by any child customer organizations
+
 ```
 flexera-cli iam msp-customer-v2 get [flags]
 ```
@@ -16,9 +26,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
   -h, --help              help for get
-      --view string       view (query)
+      --view string       view (query); Response view; enum: ["default","index","extended"]; API default: "default"; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

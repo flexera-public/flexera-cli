@@ -2,6 +2,12 @@
 
 Updates a budget
 
+### Synopsis
+
+Updates a budget
+
+Replaces a specific budget for the given organization and budget ID.
+
 ```
 flexera-cli budget replace [flags]
 ```
@@ -19,16 +25,16 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --dimensions strings    dimensions (body)
-      --dry-run               print the planned operation as JSON and exit without calling the API
-  -h, --help                  help for replace
-      --id string             id (path, required)
-  -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --metric string         metric (body)
-      --name string           name (body)
-      --year-months strings   yearMonths (body)
-      --yes                   confirm the operation (required for destructive ops)
+      --body string             raw JSON body (inline | @file | @-); overrides body field flags
+      --dimensions strings      dimensions (body); required by API; Dimensions used to break down this budget. Each budget segment will be defined as a unique combination of these dimension values.; CLI: comma-separated values or repeated flag; illustrative example: ["bc_level_1","ProviderName"]
+      --dry-run                 print the planned operation as JSON and exit without calling the API
+  -h, --help                    help for replace
+      --id string               id (path, required); Identifier of the budget; required by API; illustrative example: "2ed7db3"
+  -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
+      --metric string           metric (body); required by API; The cost metric used for the budget; enum: ["cost_nonamortized_unblended_adj","cost_amortized_unblended_adj","cost_nonamortized_blended_adj","cost_amortized_blended_adj","BilledCost","ModifiedBilledCost","EffectiveCost","Mo... (see cli schema); API default: "cost_amortized_unblended_adj"; illustrative example: "BilledCost"
+      --name string             name (body); required by API; A descriptive name to uniquely identify the budget; maxLength: 70; illustrative example: "Engineering Budget"
+      --year-months "2023-01"   yearMonths (body); required by API; An array of year-month strings like "2023-01", defining the period covered by the budget.; CLI: comma-separated values or repeated flag; illustrative example: ["2023-01"]
+      --yes                     confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands

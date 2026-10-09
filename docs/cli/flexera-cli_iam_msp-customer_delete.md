@@ -2,6 +2,12 @@
 
 Delete an MSP's customer
 
+### Synopsis
+
+Delete an MSP's customer
+
+Delete removes a managed service provider's customer tenant, including all data and access to the tenant.
+
 ```
 flexera-cli iam msp-customer delete [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
       --dry-run           print the planned operation as JSON and exit without calling the API
   -h, --help              help for delete
       --yes               confirm the operation (required for destructive ops)

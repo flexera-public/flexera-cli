@@ -2,6 +2,10 @@
 
 Delete an existing usage cost for the specified Usage Cost object
 
+### Synopsis
+
+Delete an existing usage cost for the specified Usage Cost object
+
 ```
 flexera-cli saas usage-group costs-all-2 [flags]
 ```
@@ -17,10 +21,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --cost-id string          costId (path, required)
+      --cost-id string          costId (path, required); Object id of the cost object.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "243412"
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for costs-all-2
-      --usage-group-id string   usageGroupID (path, required)
+      --usage-group-id string   usageGroupID (path, required); ID of the usage group to which cost is associated; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "1105"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

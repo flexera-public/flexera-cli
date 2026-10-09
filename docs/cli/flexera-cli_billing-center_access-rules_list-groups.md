@@ -2,6 +2,15 @@
 
 List group's roles in every BillingCenter.
 
+### Synopsis
+
+List group's roles in every BillingCenter.
+
+List every BillingCenter the group has access to, and their directly-assigned roles in each.
+
+**Required security scopes for GlobalSession**:
+  * `iam:access_rule:index+optima:access_rule:index+common:org:own`
+
 ```
 flexera-cli billing-center access-rules list-groups [flags]
 ```
@@ -16,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --group int   group (path, required)
+      --group int   group (path, required); required by API
   -h, --help        help for list-groups
 ```
 

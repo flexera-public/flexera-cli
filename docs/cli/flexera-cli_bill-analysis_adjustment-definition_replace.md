@@ -2,6 +2,12 @@
 
 update adjustment-definition
 
+### Synopsis
+
+update adjustment-definition
+
+Replaces the adjustment program for the org.
+
 ```
 flexera-cli bill-analysis adjustment-definition replace [flags]
 ```

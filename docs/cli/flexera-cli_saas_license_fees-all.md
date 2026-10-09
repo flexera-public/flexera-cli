@@ -2,6 +2,12 @@
 
 Create license agreement fee
 
+### Synopsis
+
+Create license agreement fee
+
+Creates a license fee associated with license agreement.
+
 ```
 flexera-cli saas license fees-all [flags]
 ```
@@ -20,16 +26,16 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
-      --currency string            currency (body)
+      --currency string            currency (body); required by API; Type of currency.; illustrative example: "USD"
       --dry-run                    print the planned operation as JSON and exit without calling the API
-      --effective-at string        effectiveAt (body)
-      --ends-at string             endsAt (body)
-      --frequency-type string      frequencyType (body)
+      --effective-at string        effectiveAt (body); required by API; Start date associated with license agreement fee with time varying price.; illustrative example: "2019-10-15T16:05:36.1000Z"
+      --ends-at string             endsAt (body); End date associated with license agreement fee with time varying price.; illustrative example: "2020-12-30T00:00:00.1000Z"
+      --frequency-type string      frequencyType (body); required by API; Frequency of a payment for miscellaneous fees.; enum: ["once","monthly","quarterly","semiannually","annually","every18months","biannually","triennially"]; API default: "once"; illustrative example: "biannually"
   -h, --help                       help for fees-all
   -i, --interactive                edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string          licenseId (path, required)
-      --miscellaneous-fees float   miscellaneousFees (body)
-      --name string                name (body)
+      --license-id string          licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --miscellaneous-fees float   miscellaneousFees (body); required by API; Miscellaneous fee associated with a license agreement.; format: double; illustrative example: 213.5
+      --name string                name (body); required by API; Name of the fee to indicate the miscellaneous spend associated with licenses.; illustrative example: "Workday"
       --yes                        confirm the operation (required for destructive ops)
 ```
 

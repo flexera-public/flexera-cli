@@ -2,6 +2,15 @@
 
 List the AllocationTable rules for a given Org
 
+### Synopsis
+
+List the AllocationTable rules for a given Org
+
+List the AllocationTable rules for a given Org
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:show+common:org:own`
+
 ```
 flexera-cli billing-center org-allocation-table list [flags]
 ```

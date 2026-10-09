@@ -2,6 +2,12 @@
 
 Show an existing usage group for the specified SaaS object
 
+### Synopsis
+
+Show an existing usage group for the specified SaaS object
+
+Retrieves a existing usage group for the specified SaaS object by ID.
+
 ```
 flexera-cli saas usage-group get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Object id identifies an usage group by given Id.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "243412"
 ```
 
 ### Options inherited from parent commands

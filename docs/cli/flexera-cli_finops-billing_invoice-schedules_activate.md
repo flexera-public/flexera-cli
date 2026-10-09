@@ -2,6 +2,12 @@
 
 Activate an invoice schedule
 
+### Synopsis
+
+Activate an invoice schedule
+
+Activates an invoice schedule (reactivating a previously deactivated schedule) and restores its future runs. Supply endMonthYear to bound the reactivated schedule; omit it to make the schedule open-ended. While inactive, schedules cannot be modified via PATCH; activate first. Supports optimistic locking through If-Match.
+
 ```
 flexera-cli finops-billing invoice-schedules activate [flags]
 ```
@@ -18,9 +24,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --end-month-year string   endMonthYear (query)
+      --end-month-year string   endMonthYear (query); Optional last active billing month for the reactivated schedule (YYYY-MM). Omit it to reactivate indefinitely.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "2027-08"
   -h, --help                    help for activate
-      --id string               id (path, required)
+      --id string               id (path, required); Identifier of the invoice schedule; required by API; illustrative example: "sch_1"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

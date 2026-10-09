@@ -2,6 +2,12 @@
 
 Shows a supported resource type for an org.
 
+### Synopsis
+
+Shows a supported resource type for an org.
+
+Show returns a supported resource type for an org.
+
 ```
 flexera-cli iam scim-config resource-types [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for resource-types
-      --id string   id (path, required)
+      --id string   id (path, required); Unique identifier for the configuration.; required by API; illustrative example: "orgName"
 ```
 
 ### Options inherited from parent commands

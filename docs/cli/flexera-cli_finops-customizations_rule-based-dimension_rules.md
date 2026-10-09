@@ -2,6 +2,12 @@
 
 Shows the rules list
 
+### Synopsis
+
+Shows the rules list
+
+Show the rules list for the given rule-based dimension and effectiveAt date.
+
 ```
 flexera-cli finops-customizations rule-based-dimension rules [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --effective-at string   effectiveAt (path, required)
+      --effective-at string   effectiveAt (path, required); The date (year-month) when this rules list takes effect, superseding any previous list. The list remains in effect until a subsequent list is defined to take effect at a later date.; required by API; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "2023-01"
   -h, --help                  help for rules
-      --id string             id (path, required)
+      --id string             id (path, required); ID of the rule-based dimension; required by API; pattern: "^rbd_[\\S]*$"; illustrative example: "rbd_department"
 ```
 
 ### Options inherited from parent commands

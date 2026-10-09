@@ -2,6 +2,12 @@
 
 Regulatory Compliance Asset Statistics
 
+### Synopsis
+
+Regulatory Compliance Asset Statistics
+
+Returns asset statistics for the requested metrics. Currently supports: lifecycleBreakdown, totalAssetCount, averageTimeToEolInMonths. Scope filters narrow the asset population by manufacturer, product, or version.
+
 ```
 flexera-cli risk regulatory-compliance asset-statistics [flags]
 ```
@@ -20,7 +26,7 @@ Validated illustrative body, when available (review before use):
 ```
       --body string       raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help              help for asset-statistics
-      --metrics strings   metrics (body)
+      --metrics strings   metrics (body); Metrics to compute. Omit or pass empty list to fetch all.; CLI: comma-separated values or repeated flag
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 dimensions costs
 
+### Synopsis
+
+dimensions costs
+
+Returns the dimensions available to use in the `costs/aggregated` and `costs/select` actions.
+
 ```
 flexera-cli bill-analysis costs dimensions [flags]
 ```

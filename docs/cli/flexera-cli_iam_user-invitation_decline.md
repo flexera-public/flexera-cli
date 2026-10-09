@@ -2,6 +2,12 @@
 
 Decline an invitation
 
+### Synopsis
+
+Decline an invitation
+
+Decline an invitation, which does not grant the user any access to the org that issues the invitation.
+
 ```
 flexera-cli iam user-invitation decline [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for decline
-      --id string   id (path, required)
+      --id string   id (path, required); Invitation ID; required by API; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes         confirm the operation (required for destructive ops)
 ```
 

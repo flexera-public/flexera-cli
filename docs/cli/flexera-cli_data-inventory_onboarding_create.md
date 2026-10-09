@@ -2,6 +2,12 @@
 
 Onboarding: Create
 
+### Synopsis
+
+Onboarding: Create
+
+Onboard a new cloud connector.
+
 ```
 flexera-cli data-inventory onboarding create [flags]
 ```
@@ -19,27 +25,27 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --account-type string             AccountType (body)
-      --billing-account-id string       BillingAccountId (body)
+      --account-type string             AccountType (body); Azure account type. Required for Azure BPC and CCO.; enum: ["EA","MCA","CSP"]
+      --billing-account-id string       BillingAccountId (body); Billing Account ID
       --body string                     raw JSON body (inline | @file | @-); overrides body field flags
-      --body-client-id string           ClientId (body)
-      --body-client-secret string       ClientSecret (body)
-      --connector-name string           ConnectorName (body)
+      --body-client-id string           ClientId (body); Client ID.; minLength: 1
+      --body-client-secret string       ClientSecret (body); Client secret.
+      --connector-name string           ConnectorName (body); required by API; Connector name.; minLength: 1
       --dry-run                         print the planned operation as JSON and exit without calling the API
-      --exclude-region strings          ExcludeRegion (body)
-      --external-id string              ExternalId (body)
-      --have-billing-access string      HaveBillingAccess (body)
+      --exclude-region strings          ExcludeRegion (body); Regions to exclude from onboarding.; API default: []; CLI: comma-separated values or repeated flag
+      --external-id string              ExternalId (body); External ID.
+      --have-billing-access string      HaveBillingAccess (body); Indicates if the service principal has billing access.
   -h, --help                            help for create
-      --include-bpc string              IncludeBPC (body)
-      --include-cost-and-usage string   IncludeCostAndUsage (body)
-      --include-inventory string        IncludeInventory (body)
+      --include-bpc string              IncludeBPC (body); required by API; Include BPC flag.
+      --include-cost-and-usage string   IncludeCostAndUsage (body); required by API; Include CCO flag.
+      --include-inventory string        IncludeInventory (body); required by API; Include inventory flag.
   -i, --interactive                     edit inputs in a terminal form, review a plan and approve with typed yes
-      --partner-tenant-id string        PartnerTenantId (body)
-      --provider string                 Provider (body)
-      --role-arn string                 RoleARN (body)
-      --subscription-id string          SubscriptionId (body)
-      --tenant-id string                TenantId (body)
-      --token-url string                TokenUrl (body)
+      --partner-tenant-id string        PartnerTenantId (body); Partner Tenant ID (CSP only). If provided and TenantId is omitted, it is used as TenantId.; minLength: 1
+      --provider string                 Provider (body); required by API; Provider.; enum: ["aws","azure"]
+      --role-arn string                 RoleARN (body); Role ARN.; pattern: "^arn:(?:aws|aws-cn|aws-us-gov):iam::\\d{12}:role/.+$"
+      --subscription-id string          SubscriptionId (body); Subscription ID.; minLength: 1
+      --tenant-id string                TenantId (body); Azure Tenant ID. Required unless PartnerTenantId is provided.; minLength: 1
+      --token-url string                TokenUrl (body); Token URL.
       --yes                             confirm the operation (required for destructive ops)
 ```
 

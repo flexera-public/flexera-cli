@@ -2,6 +2,12 @@
 
 Validate the credentials stored for a GCP bill connect
 
+### Synopsis
+
+Validate the credentials stored for a GCP bill connect
+
+Validates the credentials stored for a GCP bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect gcp list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-gcp-956d603z-fdg2-4263-v81e-bae187d0e099"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 List policy managers
 
+### Synopsis
+
+List policy managers
+
+Lists all policy managers for the given organization.
+
 ```
 flexera-cli policy policy-manager list [flags]
 ```
@@ -16,13 +22,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string         filter (query)
+      --filter string         filter (query); Optional filter to retrieve policy managers based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ---------------------- | ------ | ------------------------------------ | --------------------------------------------------------------- | | name | string | name in ['policy123', 'policy124'] | Returns policy managers ... (see cli schema); illustrative example: "name eq 'foo' or dryRun eq true"
   -h, --help                  help for list
-      --include-terminating   includeTerminating (query)
-      --limit int             limit (query)
+      --include-terminating   includeTerminating (query); When true, includes policy managers that are in the process of termination.; API default: false; illustrative example: false
+      --limit int             limit (query); Custom pagination limit to be used.; format: int64; illustrative example: 1000
       --no-paginate           return only the first page (do not follow nextPage)
-      --order-by string       orderBy (query)
-      --skip-token string     resume pagination from this token
+      --order-by string       orderBy (query); Specifies the order to sort policy managers by fields such as [name, status, createdAt, updatedAt, createdBy.email, template.name, schedule, dryRun, category]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "status asc, createdAt asc"
+      --skip-token string     resume pagination from this token; Used in pagination to point to the next or previous set of records.
 ```
 
 ### Options inherited from parent commands

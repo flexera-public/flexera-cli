@@ -2,6 +2,12 @@
 
 Get user groups
 
+### Synopsis
+
+Get user groups
+
+Returns the list of groups that the user belongs to within the organization.
+
 ```
 flexera-cli iam user groups [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help     help for groups
-      --id int   id (path, required)
+      --id int   id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
 ```
 
 ### Options inherited from parent commands

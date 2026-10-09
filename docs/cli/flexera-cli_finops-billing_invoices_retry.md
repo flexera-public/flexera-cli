@@ -2,6 +2,12 @@
 
 Retry an invoice
 
+### Synopsis
+
+Retry an invoice
+
+Retries a failed invoice export and returns the retried invoice in the standard invoice list response.
+
 ```
 flexera-cli finops-billing invoices retry [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for retry
-      --id string   id (path, required)
+      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Fuga iste et ratione aut."
       --yes         confirm the operation (required for destructive ops)
 ```
 

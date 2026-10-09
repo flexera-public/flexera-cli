@@ -2,6 +2,12 @@
 
 Get status for all products of an AICM (SaaS) connector
 
+### Synopsis
+
+Get status for all products of an AICM (SaaS) connector
+
+Get status for all products of a given AICM connector, with errors if any.
+
 ```
 flexera-cli unified-onboarding saa-s-connector status [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --connector-id string   connector_id (query)
+      --connector-id string   connector_id (query); Connector ID (required); required by API
   -h, --help                  help for status
 ```
 

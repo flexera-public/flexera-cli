@@ -2,6 +2,12 @@
 
 List Object Definitions
 
+### Synopsis
+
+List Object Definitions
+
+This endpoint retrieves a list of object definitions.
+
 ```
 flexera-cli saas object-definition list [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string     filter (query)
+      --filter string     filter (query); The filter to query the query definitions for specific vendor or app.. Supported fields in the filter are [vendorTechnopediaId, appTechnopediaId, appId]; illustrative example: "appTechnopediaId eq '89ccc2c8-f1dc-47e1-bfd6-dc1847f41869'"
   -h, --help              help for list
-      --order-by string   orderBy (query)
+      --order-by string   orderBy (query); The order by filter to sort the managed applications. Supported fields in the orderBy are [modifiedAt]; API default: "modifiedAt desc"; illustrative example: "modifiedAt desc"
 ```
 
 ### Options inherited from parent commands

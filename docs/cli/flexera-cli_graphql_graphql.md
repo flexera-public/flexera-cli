@@ -2,6 +2,12 @@
 
 query graphql
 
+### Synopsis
+
+query graphql
+
+Standard GraphQL query end-point.
+
 ```
 flexera-cli graphql graphql [flags]
 ```

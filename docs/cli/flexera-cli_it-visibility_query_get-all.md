@@ -2,6 +2,12 @@
 
 Execute a query on the delta export data
 
+### Synopsis
+
+Execute a query on the delta export data
+
+Executes the specified query on the delta export data. Supports optional gzip compression for output files by including the query parameter "outputCompression=gzip".
+
 ```
 flexera-cli it-visibility query get-all [flags]
 ```
@@ -20,9 +26,9 @@ Validated illustrative body, when available (review before use):
 ```
       --body string                 raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help                        help for get-all
-      --output-compression string   outputCompression (query)
-      --query-name string           queryName (body)
-      --resume-token string         resumeToken (query)
+      --output-compression string   outputCompression (query); If set to 'gzip', the server will return a gzip-compressed CSV. Supported value: gzip; enum: ["gzip"]; illustrative example: "gzip"
+      --query-name string           queryName (body); required by API; The query to execute.; enum: ["hardware_business_services","hardware_contextualized","hardware_evidence","hardware_inventory","hardware_inventory_source","hardware_technopedia","hardware_technopedia_lifecycle"... (see cli schema); illustrative example: "software_inventory"
+      --resume-token string         resumeToken (query); An opaque token to be provided when requesting a subsequent set of delta changes for the same query.
 ```
 
 ### Options inherited from parent commands

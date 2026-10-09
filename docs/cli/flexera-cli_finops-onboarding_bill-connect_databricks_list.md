@@ -2,6 +2,12 @@
 
 Validate a Databricks bill connect
 
+### Synopsis
+
+Validate a Databricks bill connect
+
+Validates the credentials of a Databricks bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect databricks list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "databricks-dbc-6d0b35df-baa3"
 ```
 
 ### Options inherited from parent commands

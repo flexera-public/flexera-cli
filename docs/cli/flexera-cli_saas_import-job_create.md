@@ -2,6 +2,12 @@
 
 Create import job
 
+### Synopsis
+
+Create import job
+
+This resource creates an import job for loading data into the managed application. SaaS data objects must be first created before an import job can be submitted.
+
 ```
 flexera-cli saas import-job create [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for create
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --managed-app-id string   managedAppId (body)
+      --managed-app-id string   managedAppId (body); required by API; managedAppId identifies a managed application by given ID.; pattern: "^[0-9a-f]+$"; illustrative example: "123"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

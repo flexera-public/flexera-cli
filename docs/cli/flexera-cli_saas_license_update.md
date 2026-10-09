@@ -2,6 +2,12 @@
 
 Update license
 
+### Synopsis
+
+Update license
+
+Updates a license agreement.
+
 ```
 flexera-cli saas license update [flags]
 ```
@@ -23,9 +29,9 @@ Validated illustrative body, when available (review before use):
       --dry-run                         print the planned operation as JSON and exit without calling the API
   -h, --help                            help for update
   -i, --interactive                     edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string               licenseId (path, required)
-      --name string                     name (body)
-      --point-of-contact-email string   pointOfContactEmail (body)
+      --license-id string               licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --name string                     name (body); Name of the licensed product.; illustrative example: "Office 365"
+      --point-of-contact-email string   pointOfContactEmail (body); This email is point of contact of a person associated with license agreement.; illustrative example: "support@flexera.com"
       --yes                             confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Update a Credential
 
+### Synopsis
+
+Update a Credential
+
+Update a Credential that uses the 'NTLM' scheme.
+
 ```
 flexera-cli credential ntlm-credential update [flags]
 ```
@@ -20,14 +26,14 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for update
-      --id string            id (path, required)
+      --id string            id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
-      --password string      password (body)
-      --username string      username (body)
+      --name string          name (body); Credentials name used in UI; illustrative example: "Development Credentials"
+      --password string      password (body); Password for authorization
+      --username string      username (body); Username for authorization; illustrative example: "john.smith@example.com"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

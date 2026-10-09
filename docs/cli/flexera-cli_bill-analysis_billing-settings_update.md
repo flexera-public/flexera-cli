@@ -2,6 +2,12 @@
 
 update billing-settings
 
+### Synopsis
+
+update billing-settings
+
+Update the current automatic locking settings
+
 ```
 flexera-cli bill-analysis billing-settings update [flags]
 ```

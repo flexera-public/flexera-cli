@@ -2,6 +2,13 @@
 
 Delete a Credential
 
+### Synopsis
+
+Delete a Credential
+
+Delete a Credential that uses the given scheme.
+If the scheme is incorrect then the API will return not found.
+
 ```
 flexera-cli credential delete [flags]
 ```
@@ -19,8 +26,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run         print the planned operation as JSON and exit without calling the API
   -h, --help            help for delete
-      --id string       id (path, required)
-      --scheme string   scheme (path, required)
+      --id string       id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
+      --scheme string   scheme (path, required); The name of the security scheme.; required by API; enum: ["api-key","aws","aws-sts","basic","digest","ntlm","oauth2","oracle"]; illustrative example: "aws"
       --yes             confirm the operation (required for destructive ops)
 ```
 

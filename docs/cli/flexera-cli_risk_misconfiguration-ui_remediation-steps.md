@@ -2,6 +2,12 @@
 
 Remediation Steps for Risk.
 
+### Synopsis
+
+Remediation Steps for Risk.
+
+Endpoint that forwards request for remediation steps to the Secops UI API.
+
 ```
 flexera-cli risk misconfiguration-ui remediation-steps [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                        help for remediation-steps
-      --remediation-method string   remediationMethod (path, required)
-      --risk-id string              riskId (path, required)
+      --remediation-method string   remediationMethod (path, required); Remediation method (e.g., code, cli); required by API
+      --risk-id string              riskId (path, required); Risk ID; required by API
 ```
 
 ### Options inherited from parent commands

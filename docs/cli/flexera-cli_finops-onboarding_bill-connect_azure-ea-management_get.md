@@ -2,6 +2,12 @@
 
 Show an Azure EA (Enterprise Agreement) Management bill connect
 
+### Synopsis
+
+Show an Azure EA (Enterprise Agreement) Management bill connect
+
+Shows the details of an Azure EA (Enterprise Agreement) Management bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-ea-management get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-azure-ea-12345678"
 ```
 
 ### Options inherited from parent commands

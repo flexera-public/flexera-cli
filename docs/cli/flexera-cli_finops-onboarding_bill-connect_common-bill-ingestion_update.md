@@ -2,6 +2,12 @@
 
 Update a CBI bill connect
 
+### Synopsis
+
+Update a CBI bill connect
+
+Modifies an existing CBI bill connect associated with a given bill connect ID, e.g. to change the name.
+
 ```
 flexera-cli finops-onboarding bill-connect common-bill-ingestion update [flags]
 ```
@@ -22,9 +28,9 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for update
-      --id string     id (path, required)
+      --id string     id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-optima-test-1"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Human readable name given to CBI bill connect; minLength: 1; illustrative example: "private_cloud_bill"
       --yes           confirm the operation (required for destructive ops)
 ```
 

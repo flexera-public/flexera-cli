@@ -2,6 +2,12 @@
 
 Create a GCP bill connect
 
+### Synopsis
+
+Create a GCP bill connect
+
+Creates a GCP bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect gcp create [flags]
 ```
@@ -19,11 +25,11 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --big-query-dataset string    bigQueryDataset (body)
-      --billing-account-id string   billingAccountId (body)
+      --big-query-dataset string    bigQueryDataset (body); required by API; Name of the BigQuery dataset where bill data is deposited; minLength: 1; illustrative example: "some_dataset"
+      --billing-account-id string   billingAccountId (body); required by API; The ID of the billing account that pays for the set of GCP resources this bill will represent; illustrative example: "963d605a-fac2-4263-b90e-bee184d0e045"
       --body string                 raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                     print the planned operation as JSON and exit without calling the API
-      --gcs-export-uri string       gcsExportUri (body)
+      --gcs-export-uri string       gcsExportUri (body); URI of the Google Cloud Storage file path where the billing data is exported; illustrative example: "gs://\u003cbucket_name\u003e/\u003cfile_path_inside_bucket\u003e"
   -h, --help                        help for create
   -i, --interactive                 edit inputs in a terminal form, review a plan and approve with typed yes
       --yes                         confirm the operation (required for destructive ops)

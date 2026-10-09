@@ -2,6 +2,12 @@
 
 Create a Credential
 
+### Synopsis
+
+Create a Credential
+
+Create a Credential that uses the 'AWS' scheme.
+
 ```
 flexera-cli credential aws-credential replace-project [flags]
 ```
@@ -19,19 +25,19 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --access-key string    accessKey (body)
+      --access-key string    accessKey (body); required by API; AWS Access Key ID; illustrative example: "KEYFROMAWSINCAPSANDDIGITS123"
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --body-version int     version (body)
-      --description string   description (body)
+      --body-version int     version (body); AWS Signature version; format: int64; enum: [4]; API default: 4; illustrative example: 4
+      --description string   description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for replace-project
-      --id string            id (path, required)
+      --id string            id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
-      --project-id int       projectId (path, required)
-      --region string        region (body)
-      --secret-key string    secretKey (body)
-      --service string       service (body)
+      --name string          name (body); required by API; Credentials name used in UI; illustrative example: "Development Credentials"
+      --project-id int       projectId (path, required); Identifies the Project that owns the Credential.; required by API; format: int64; minimum: 1; illustrative example: 2345
+      --region string        region (body); AWS region hosting service endpoint; API default: "inferred"; illustrative example: "us-east-1"
+      --secret-key string    secretKey (body); required by API; AWS Secret Key
+      --service string       service (body); AWS Service for which request is signed; API default: "inferred"; illustrative example: "ec2"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

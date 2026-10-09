@@ -2,6 +2,12 @@
 
 Show an executed query
 
+### Synopsis
+
+Show an executed query
+
+Show details of an executed query.
+
 ```
 flexera-cli it-visibility query get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); The unique query identifier; required by API; maxLength: 36; pattern: "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"; illustrative example: "7d795afa-c508-4d47-92ae-248113a792d1"
 ```
 
 ### Options inherited from parent commands

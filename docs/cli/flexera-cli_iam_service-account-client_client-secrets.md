@@ -2,6 +2,12 @@
 
 Index a service account client's secrets
 
+### Synopsis
+
+Index a service account client's secrets
+
+IndexClientSecrets returns masked secret details for a service account client.
+
 ```
 flexera-cli iam service-account-client client-secrets [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                      help for client-secrets
-      --service-account-id int    serviceAccountId (path, required)
-      --target-client-id string   clientId (path, required)
+      --service-account-id int    serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
+      --target-client-id string   clientId (path, required); Identifier for the client; required by API; minLength: 1; maxLength: 512; illustrative example: "1111aaaa2222bbbb3333cccc"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Deactivate an invoice schedule
 
+### Synopsis
+
+Deactivate an invoice schedule
+
+Deactivates an invoice schedule, sets endMonthYear to the current month in the schedule timezone, and stops its future runs. Supports optimistic locking through If-Match.
+
 ```
 flexera-cli finops-billing invoice-schedules deactivate [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for deactivate
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the invoice schedule; required by API; illustrative example: "sch_1"
       --yes         confirm the operation (required for destructive ops)
 ```
 

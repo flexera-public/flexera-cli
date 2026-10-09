@@ -2,6 +2,12 @@
 
 Deletes a customization value
 
+### Synopsis
+
+Deletes a customization value
+
+Deletes a customization value. After deletion, the value will be removed and cannot be retrieved via Show and Index calls. Places that had previously used the custom value will revert to using the default value.
+
 ```
 flexera-cli policy customization-value delete [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customization-type-id string   customizationTypeId (path, required)
+      --customization-type-id string   customizationTypeId (path, required); Customization Type ID; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "policy-published-by-email"
       --dry-run                        print the planned operation as JSON and exit without calling the API
   -h, --help                           help for delete
       --yes                            confirm the operation (required for destructive ops)

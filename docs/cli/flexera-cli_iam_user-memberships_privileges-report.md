@@ -2,6 +2,12 @@
 
 Show a user's privileges report
 
+### Synopsis
+
+Show a user's privileges report
+
+Returns a detailed report of the user's privileges across requested scopes (organizations and projects). This allows a user to discover what privileges they have been granted through various roles across different scopes.
+
 ```
 flexera-cli iam user-memberships privileges-report [flags]
 ```
@@ -17,10 +23,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                 help for privileges-report
-      --id int               id (path, required)
-      --prefix string        prefix (query)
-      --scope-refs strings   scopeRefs (query)
-      --view string          view (query)
+      --id int               id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
+      --prefix string        prefix (query); Optional prefix to filter privilege IDs. Examples: 'cm:', 'ss:', 'platform:roles:', 'governance:'; minLength: 1; illustrative example: "cm:"
+      --scope-refs strings   scopeRefs (query); Array of scope refs (org or project) to filter privileges. At least one scope ref must be provided.; required by API; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["ref:nam:::iam:org:1234","ref:nam:1234::iam:project:2345"]
+      --view string          view (query); View used to render privilege report details; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

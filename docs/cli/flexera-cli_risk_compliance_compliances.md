@@ -2,6 +2,12 @@
 
 Security Compliance.
 
+### Synopsis
+
+Security Compliance.
+
+A cyber security compliance determines how compliant an asset is. It checks against specific security standards. This API returns list of all compliances supported in Spot. A compliance consists of one or more controls.
+
 ```
 flexera-cli risk compliance compliances [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                    help for compliances
-      --pagination-key string   pagination_key (query)
-      --pagination-size int     pagination_size (query)
+      --pagination-key string   pagination_key (query); Token of the page to return.; required by API
+      --pagination-size int     pagination_size (query); Number of items to return per page.; API default: 0
 ```
 
 ### Options inherited from parent commands

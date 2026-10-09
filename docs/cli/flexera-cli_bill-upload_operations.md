@@ -2,6 +2,15 @@
 
 POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations
 
+### Synopsis
+
+POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations
+
+Performs an operation (i.e. commit or abort) on a bill upload. Committing triggers processing of all uploaded files and replaces that month of data for the bill connect/org; aborting closes the upload and any uploaded files will not be processed.
+
+**Required security scopes for JWTAuth**:
+  * `optima:bill_upload:create+optima:bill_connect:create+common:org:own`
+
 ```
 flexera-cli bill-upload operations [flags]
 ```
@@ -19,12 +28,12 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --bill-upload-id string   billUploadId (path, required)
+      --bill-upload-id string   billUploadId (path, required); The identifier of the bill upload; required by API; format: uuid
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for operations
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --operation string        operation (body)
+      --operation string        operation (body); required by API; The type of operation to perform on this bill upload, ie commit or abort; enum: ["abort","commit"]; illustrative example: "commit"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

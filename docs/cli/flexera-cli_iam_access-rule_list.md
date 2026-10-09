@@ -2,6 +2,12 @@
 
 List access rules
 
+### Synopsis
+
+List access rules
+
+Retrieve an organization's access rules.
+
 ```
 flexera-cli iam access-rule list [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); Optional filter for returning access rules matching specific criteria. ### Supported Filter Keys | Filter | Required | Valid Operators | Example | Description | | --- | --- | --- | --- | --- | | subjectRef | no | eq | subjectRef eq 'ref:nam:::iam:user:123' | Return only access rules for the user with ID 123 | | scopeRef | no | eq | scopeRef eq 'ref:nam:::iam... (see cli schema); minLength: 1; illustrative example: "subjectRef eq 'ref:nam:::iam:user:12345'"
   -h, --help            help for list
-      --view string     view (query)
+      --view string     view (query); View used to render details of the subject; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

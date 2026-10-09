@@ -2,6 +2,12 @@
 
 metrics costs
 
+### Synopsis
+
+metrics costs
+
+Returns the metrics available to use in the `costs/aggregated` and `costs/select` actions.
+
 ```
 flexera-cli bill-analysis costs metrics [flags]
 ```

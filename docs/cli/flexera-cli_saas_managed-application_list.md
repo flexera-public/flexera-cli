@@ -2,6 +2,12 @@
 
 List managed applications
 
+### Synopsis
+
+List managed applications
+
+Retrieves a collection of managed applications.
+
 ```
 flexera-cli saas managed-application list [flags]
 ```
@@ -16,12 +22,12 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The date filter to query the managed applications. Supported fields in the filter are [modifiedAt] | Attribute | Description | Allowed Operators | Example | |------------|--------------------------------------------------------------------------|-------------------|-----------------------| | modifiedAt | Filter managed applications by their modifiedAt date |... (see cli schema); illustrative example: "modifiedAt gt 'ISO 8601 date'"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --order-by string     orderBy (query); The order by filter to sort the managed applications. Supported fields in the orderBy are [modifiedAt]; API default: "modifiedAt desc"; illustrative example: "modifiedAt desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --view string         view (query); View used to render managed application.; enum: ["default","extended","licenseUsage"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

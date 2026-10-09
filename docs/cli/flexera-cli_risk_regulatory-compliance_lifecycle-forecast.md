@@ -2,6 +2,12 @@
 
 Regulatory Compliance Lifecycle Forecast
 
+### Synopsis
+
+Regulatory Compliance Lifecycle Forecast
+
+Returns projected lifecycle distribution grouped by future time intervals. Each bucket shows how many assets are expected to be in each lifecycle status (supported, endOfSupport, endOfLife, obsolete) at that point in time. Interval type drives the bucket granularity (monthly or yearly). horizon.unit must match interval.type.
+
 ```
 flexera-cli risk regulatory-compliance lifecycle-forecast [flags]
 ```
@@ -20,7 +26,7 @@ Validated illustrative body, when available (review before use):
 ```
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help                       help for lifecycle-forecast
-      --include-statuses strings   includeStatuses (body)
+      --include-statuses strings   includeStatuses (body); Status buckets to include. Valid values: supported, endOfSupport, endOfLife, obsolete. Omit or pass empty list to include all.; CLI: comma-separated values or repeated flag
 ```
 
 ### Options inherited from parent commands

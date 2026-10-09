@@ -2,6 +2,12 @@
 
 Create note
 
+### Synopsis
+
+Create note
+
+Creates a note associated to license.
+
 ```
 flexera-cli saas license notes-all [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
-      --details string      details (body)
+      --details string      details (body); required by API; Details of the note.; maxLength: 500; illustrative example: "license had a discount of 10."
       --dry-run             print the planned operation as JSON and exit without calling the API
   -h, --help                help for notes-all
   -i, --interactive         edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string   licenseId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license that note is associated to.; required by API; illustrative example: "34521"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

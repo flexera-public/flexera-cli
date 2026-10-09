@@ -2,6 +2,14 @@
 
 Index adjustment plans
 
+### Synopsis
+
+Index adjustment plans
+
+Lists some or all adjustment plans in the organization.
+
+See ShowPlan to retrieve adjustment rule details.
+
 ```
 flexera-cli finops-billing billing plans-all-4 [flags]
 ```
@@ -16,11 +24,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter for returning plans matching specific criteria. Filter parameters may be combined with 'and' and 'or' logical operators. Each parameter may compare one of the following attributes to a given value or null. ### Plan Filter Attributes - id, the unique identifier of a plan - name, the name of the plan - ruleIds, the list of unique identifiers of... (see cli schema); illustrative example: "endAfter ex false"
   -h, --help                help for plans-all-4
-      --limit int           limit (query)
+      --limit int           limit (query); Return no more than limit values per page; maximum: 50; API default: 20; illustrative example: 20
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

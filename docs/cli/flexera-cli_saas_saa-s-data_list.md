@@ -2,6 +2,12 @@
 
 List SaaS data
 
+### Synopsis
+
+List SaaS data
+
+This endpoint retrieves a list of saas data.
+
 ```
 flexera-cli saas saa-s-data list [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                      help for list
-      --order-by string           orderBy (query)
-      --query-skip-token string   skipToken (query)
+      --order-by string           orderBy (query); The order by to sort the import jobs. Supported fields in the orderBy are [createdAt, modifiedAt]; API default: "completedAt desc"; illustrative example: "completedAt desc"
+      --query-skip-token string   skipToken (query); Used in pagination to point to the next set of records.
 ```
 
 ### Options inherited from parent commands

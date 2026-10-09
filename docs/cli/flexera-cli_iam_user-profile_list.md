@@ -2,6 +2,21 @@
 
 Show current user's profile
 
+### Synopsis
+
+Show current user's profile
+
+Returns the profile of the currently authenticated user.
+
+**isNameManagedByIDP**: When `true`, the user last authenticated via an external SSO/SAML
+identity provider. This means name edits made via PATCH /iam/v1/users/me may be overridden
+on the user's next SSO login if the IdP attribute mapping still points to different values.
+The UI should display a warning when this flag is true.
+
+**Authentication**: Only the authenticated user's own profile is returned. There is no
+admin variant of this endpoint — use GET /iam/v1/orgs/{orgId}/users/{id} for viewing
+another user's profile.
+
 ```
 flexera-cli iam user-profile list [flags]
 ```
@@ -17,7 +32,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render the user's profile; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

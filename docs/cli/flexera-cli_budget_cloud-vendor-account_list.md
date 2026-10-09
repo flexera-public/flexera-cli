@@ -2,6 +2,12 @@
 
 List all cloud vendor accounts
 
+### Synopsis
+
+List all cloud vendor accounts
+
+Lists all cloud vendor accounts, including account tag information.
+
 ```
 flexera-cli budget cloud-vendor-account list [flags]
 ```

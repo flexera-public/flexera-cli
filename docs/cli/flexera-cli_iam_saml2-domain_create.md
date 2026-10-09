@@ -2,6 +2,12 @@
 
 Register a new IdP domain
 
+### Synopsis
+
+Register a new IdP domain
+
+Register a new, unverified domain over which an IdP will have authority, after domain verification.
+
 ```
 flexera-cli iam saml2-domain create [flags]
 ```
@@ -22,9 +28,9 @@ Validated illustrative body, when available (review before use):
       --body string                   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for create
-      --identity-provider-id string   identityProviderId (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
   -i, --interactive                   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string                   name (body)
+      --name string                   name (body); required by API; Name of the domain. See also "RFC 1035".; maxLength: 255; pattern: "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "flexera.com"
       --yes                           confirm the operation (required for destructive ops)
 ```
 

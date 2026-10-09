@@ -2,6 +2,12 @@
 
 List user's history
 
+### Synopsis
+
+List user's history
+
+Retrieves a managed application user's history identified by user ID.
+
 ```
 flexera-cli saas managed-application-user history [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help             help for history
-      --user-id string   userId (path, required)
+      --user-id string   userId (path, required); userId identifies a user by given ID.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
 ```
 
 ### Options inherited from parent commands

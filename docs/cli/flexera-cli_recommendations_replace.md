@@ -2,6 +2,15 @@
 
 updateStatus Recommendations
 
+### Synopsis
+
+updateStatus Recommendations
+
+Update the status of a recommendation
+
+**Required security scopes for GlobalSession**:
+  * `common:org:affiliated+common:org:own`
+
 ```
 flexera-cli recommendations replace [flags]
 ```
@@ -22,11 +31,11 @@ Validated illustrative body, when available (review before use):
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for replace
-      --id string                    id (body)
+      --id string                    id (body); required by API; Recommendation unique ID; illustrative example: "676f0f2c838a081da3f7cd61_vol-06fa6937d41c139eb"
   -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
-      --snoozed-target-date string   snoozedTargetDate (body)
-      --status string                status (body)
-      --status-reason string         statusReason (body)
+      --snoozed-target-date string   snoozedTargetDate (body); Target date to move recommendation from snoozed to active again; illustrative example: "2025-01-30"
+      --status string                status (body); required by API; New status of recommendation; enum: ["active","snoozed","rejected","realized"]; illustrative example: "realized"
+      --status-reason string         statusReason (body); Reason of new status of recommendation; illustrative example: "Recommendation isn't relevant right now"
       --yes                          confirm the operation (required for destructive ops)
 ```
 

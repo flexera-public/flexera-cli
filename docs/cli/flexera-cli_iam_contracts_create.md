@@ -2,6 +2,12 @@
 
 Creates a contract
 
+### Synopsis
+
+Creates a contract
+
+Creates a new contract between two organizations. if there is an existing contract between the two organizations, it will be updated
+
 ```
 flexera-cli iam contracts create [flags]
 ```
@@ -20,12 +26,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Detailed description or notes about the contract; illustrative example: "Contractor will take core of updating our networking information to latest version"
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --target-org-id int    target_org_id (body)
-      --title string         title (body)
+      --target-org-id int    target_org_id (body); required by API; Org ID receiving the contract; illustrative example: 1234
+      --title string         title (body); required by API; Short title to describe the contract; illustrative example: "Contract Example"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

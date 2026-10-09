@@ -2,6 +2,12 @@
 
 Shows individual budget
 
+### Synopsis
+
+Shows individual budget
+
+Shows a budget for the given organization and budget ID.
+
 ```
 flexera-cli budget get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the budget; required by API; illustrative example: "2ed7db3"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,14 @@
 
 Retrieve custom catalog tags for a published template in an organization
 
+### Synopsis
+
+Retrieve custom catalog tags for a published template in an organization
+
+ShowTag allows an MSP parent organization to retrieve the custom catalog tags associated with a published template.
+These settings determine how the template is managed and whether child organizations can access it.
+The response includes all relevant custom catalog metadata configured by the MSP parent.
+
 ```
 flexera-cli policy custom-catalog tag [flags]
 ```
@@ -17,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                           help for tag
-      --published-template-id string   publishedTemplateId (path, required)
+      --published-template-id string   publishedTemplateId (path, required); The unique identifier for the published template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
 ```
 
 ### Options inherited from parent commands

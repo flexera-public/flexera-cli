@@ -2,6 +2,12 @@
 
 Delete a Databricks bill connect
 
+### Synopsis
+
+Delete a Databricks bill connect
+
+Deletes a Databricks bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect databricks delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "databricks-dbc-6d0b35df-baa3"
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Update an org's group
 
+### Synopsis
+
+Update an org's group
+
+Updates an existing Group in an Org.
+
 ```
 flexera-cli iam group update [flags]
 ```
@@ -20,12 +26,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Optional text describing the service account; maxLength: 4096; illustrative example: "Service Account for calling Flexera APIs."
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for update
-      --id int               id (path, required)
+      --id int               id (path, required); ID of the group; required by API; illustrative example: 1234
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); Friendly name for the service account; minLength: 1; maxLength: 512; illustrative example: "My Service Account"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

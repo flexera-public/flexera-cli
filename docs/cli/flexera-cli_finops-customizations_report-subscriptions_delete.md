@@ -2,6 +2,12 @@
 
 Delete a report subscription
 
+### Synopsis
+
+Delete a report subscription
+
+Deletes a report subscription in the organization (owner only). Supports optimistic locking through If-Match.
+
 ```
 flexera-cli finops-customizations report-subscriptions delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the report subscription (UUID); required by API; format: uuid; illustrative example: "550e8400-e29b-41d4-a716-446655440000"
       --yes         confirm the operation (required for destructive ops)
 ```
 

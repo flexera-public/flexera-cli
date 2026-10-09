@@ -2,6 +2,12 @@
 
 Delete license term
 
+### Synopsis
+
+Delete license term
+
+Deletes a license term associated with license agreement.
+
 ```
 flexera-cli saas license terms-all-2 [flags]
 ```
@@ -19,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run             print the planned operation as JSON and exit without calling the API
   -h, --help                help for terms-all-2
-      --license-id string   licenseId (path, required)
-      --term-id string      termId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --term-id string      termId (path, required); Identifies a license term associated with license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

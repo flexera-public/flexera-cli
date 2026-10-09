@@ -2,6 +2,12 @@
 
 List AICM (SaaS) connectors for the Organization
 
+### Synopsis
+
+List AICM (SaaS) connectors for the Organization
+
+List all AICM connectors for the organization with optional filtering.
+
 ```
 flexera-cli unified-onboarding saa-s-connector list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
-  -h, --help            help for list
-      --limit int       limit (query)
-      --offset int      offset (query)
-      --sort string     sort (query)
+      --filter string         filter (query); Advanced filter expression for AICM connectors. | Field | Operators | Description | |------------------|-----------|-------------| | connectorName | eq, co | Exact or contains match on connector name | | provider | in | n8n, anthropic, openAi, cursor, salesforceAgentforce, googleWorkspace | | status | in | enrollment status: enabled, failed, deleted, in-prog... (see cli schema)
+  -h, --help                  help for list
+      --limit int             limit (query); Maximum number of results; API default: 1000
+      --offset int            offset (query); Number of results to skip; API default: 0
+      --sort field:asc|desc   sort (query); Sort field, optionally with direction as field:asc|desc (default desc; NULLs last). Fields: connectorName, provider, enrollmentStatus, executionStatus, lastRunAt, onboardedAt, updatedAt. Example: `lastRunAt:desc`.
 ```
 
 ### Options inherited from parent commands

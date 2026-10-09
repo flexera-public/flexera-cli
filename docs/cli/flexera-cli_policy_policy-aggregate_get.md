@@ -2,6 +2,12 @@
 
 Show a policy aggregate
 
+### Synopsis
+
+Show a policy aggregate
+
+Show retrieves the details of a policy aggregate.
+
 ```
 flexera-cli policy policy-aggregate get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                         help for get
-      --policy-aggregate-id string   policyAggregateId (path, required)
-      --view string                  view (query)
+      --policy-aggregate-id string   policyAggregateId (path, required); The unique identifier for the policy aggregate; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --view string                  view (query); View used to render policy aggregate; enum: ["default","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

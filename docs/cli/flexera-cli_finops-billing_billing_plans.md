@@ -2,6 +2,14 @@
 
 Overwrite an adjustment plan
 
+### Synopsis
+
+Overwrite an adjustment plan
+
+Overwrite an adjustment plan, including the order of its rules.
+
+Note that omitting an optional attribute will generally reset its value.
+
 ```
 flexera-cli finops-billing billing plans [flags]
 ```
@@ -20,12 +28,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Description of the adjustment plan; illustrative example: "Gold Tier Customers enjoy our highest discounts"
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for plans
-      --id string            id (path, required)
+      --id string            id (path, required); ID of the billing plan; required by API; format: uuid; illustrative example: "c6671c74-513a-4127-b8df-81adfb65bf7f"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Display name for the adjustment plan; illustrative example: "Gold Tier"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

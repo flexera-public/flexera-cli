@@ -2,6 +2,12 @@
 
 Onboarding: Delete
 
+### Synopsis
+
+Onboarding: Delete
+
+Remove an existing cloud connector for AWS, Azure, or GCP.
+
 ```
 flexera-cli unified-onboarding onboarding delete [flags]
 ```
@@ -17,10 +23,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --connector-id string   connector_id (query)
+      --connector-id string   connector_id (query); Connector ID; required by API
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for delete
-      --provider string       provider (query)
+      --provider string       provider (query); Provider (aws/azure/gcp); required by API
       --yes                   confirm the operation (required for destructive ops)
 ```
 

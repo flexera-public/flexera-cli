@@ -2,6 +2,12 @@
 
 Retrieves a customization type
 
+### Synopsis
+
+Retrieves a customization type
+
+Retrieves a customization type identified by id.
+
 ```
 flexera-cli policy customization-type get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Customization Type id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "policy-published-by-email"
 ```
 
 ### Options inherited from parent commands

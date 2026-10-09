@@ -2,6 +2,12 @@
 
 List managed application's users
 
+### Synopsis
+
+List managed application's users
+
+Retrieves a managed application's users identified by managed application Id.
+
 ```
 flexera-cli saas managed-application app-users [flags]
 ```
@@ -17,11 +23,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                    help for app-users
-      --include-all             includeAll (query)
-      --managed-app-id string   managedAppId (path, required)
+      --include-all             includeAll (query); Flag to determine whether or not inactive users should be included in the results; API default: false; illustrative example: false
+      --managed-app-id string   managedAppId (path, required); managedAppId identifies an managed application by given Id.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
       --no-paginate             return only the first page (do not follow nextPage)
-      --skip-token string       resume pagination from this token
-      --view string             view (query)
+      --skip-token string       resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --view string             view (query); View used to render managed application users; enum: ["default","minimal","excludeEvent","entitlement"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

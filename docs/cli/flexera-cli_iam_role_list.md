@@ -2,6 +2,12 @@
 
 Index an org's roles
 
+### Synopsis
+
+Index an org's roles
+
+Index returns a list of roles for an org
+
 ```
 flexera-cli iam role list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render list of Roles; enum: ["default","index","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

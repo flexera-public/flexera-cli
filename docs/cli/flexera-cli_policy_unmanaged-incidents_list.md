@@ -2,6 +2,12 @@
 
 Index unmanaged incidents.
 
+### Synopsis
+
+Index unmanaged incidents.
+
+Index retrieves the list of unmanaged incidents in an organization.
+
 ```
 flexera-cli policy unmanaged-incidents list [flags]
 ```
@@ -16,13 +22,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter to retrieve unmanaged incidents based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ------------------- | ------ | ---------------------------------------- | ---------------------------------------------------------------------------------- | | project.id | number | project.id in [10017, 10134] | ... (see cli schema); illustrative example: "updatedAt lt '2024-01-09T00:00:00Z'"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --order-by string     orderBy (query); Specifies the order to sort unmanaged incidents by fields such as [project.id, appliedPolicy.name, createdAt, updatedAt, resolvedAt, resolvedBy.email, actionFailed, actionPending, severity, category, dryRun]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "appliedPolicy.name asc, updatedAt"
+      --skip-token string   resume pagination from this token; Used in pagination to point to the next or previous set of records.
+      --view string         view (query); View used to render unmanaged incidents.; enum: ["default","index"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

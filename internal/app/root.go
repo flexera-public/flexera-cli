@@ -59,6 +59,9 @@ func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexe
 	}
 	root.AddCommand(authcmd.NewCmd())
 	root.AddCommand(clipkg.NewDiscoveryCmd(root))
+	if err := clipkg.EnrichMetadataHelp(root); err != nil {
+		panic(err)
+	}
 
 	return root, deps
 }

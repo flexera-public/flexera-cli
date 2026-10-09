@@ -2,6 +2,12 @@
 
 Delete a tag for an MSP's customer
 
+### Synopsis
+
+Delete a tag for an MSP's customer
+
+Delete removes a tag from the managed service provider's customer tenant.
+
 ```
 flexera-cli iam msp-customer-tag delete [flags]
 ```
@@ -17,10 +23,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 1234
       --dry-run           print the planned operation as JSON and exit without calling the API
   -h, --help              help for delete
-      --tag string        tag (path, required)
+      --tag string        tag (path, required); Name of the tag; required by API; minLength: 1; maxLength: 256; pattern: "[a-zA-Z0-1\\:]"; illustrative example: "alpha"
       --yes               confirm the operation (required for destructive ops)
 ```
 

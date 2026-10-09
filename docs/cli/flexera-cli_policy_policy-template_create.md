@@ -2,6 +2,13 @@
 
 Create a policy template
 
+### Synopsis
+
+Create a policy template
+
+Creates a policy template for a project, first compiling it. On failure, an array of syntax errors will be returned.
+        The created policy template can be applied or published in the automation catalog.
+
 ```
 flexera-cli policy policy-template create [flags]
 ```
@@ -11,7 +18,7 @@ flexera-cli policy policy-template create [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for create
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

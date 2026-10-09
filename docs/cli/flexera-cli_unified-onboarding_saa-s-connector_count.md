@@ -2,6 +2,12 @@
 
 Get AICM (SaaS) connector counts by provider
 
+### Synopsis
+
+Get AICM (SaaS) connector counts by provider
+
+Count of AICM connectors grouped by provider for the organization.
+
 ```
 flexera-cli unified-onboarding saa-s-connector count [flags]
 ```

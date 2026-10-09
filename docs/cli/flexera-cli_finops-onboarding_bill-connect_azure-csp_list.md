@@ -2,6 +2,12 @@
 
 Validate the credentials stored for an Azure CSP bill connect
 
+### Synopsis
+
+Validate the credentials stored for an Azure CSP bill connect
+
+Validates the credentials stored for an Azure CSP bill connect associated with the provided bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-csp list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-azure-csp-605fd6aa9c95c35bc2ddff0c651b182aefc900fa2bc83ea035fed434caef97b5"
 ```
 
 ### Options inherited from parent commands

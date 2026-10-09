@@ -2,6 +2,12 @@
 
 Risk Misconfiguration Overview.
 
+### Synopsis
+
+Risk Misconfiguration Overview.
+
+Proxy endpoint that forwards api request for list of misconfiguration overview to the Secops UI API.
+
 ```
 flexera-cli risk misconfiguration-ui overview [flags]
 ```
@@ -18,12 +24,12 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --accounts strings    accounts (body)
+      --accounts strings    accounts (body); required by API; List of cloud account IDs or 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["837570591364","252277358118"]
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help                help for overview
-      --providers strings   providers (body)
-      --regions strings     regions (body)
-      --services strings    services (body)
+      --providers strings   providers (body); required by API; List of cloud providers or ['all']. Allowed values: 'aws', 'azure'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["aws","azure"]
+      --regions strings     regions (body); required by API; List of cloud regions to filter by or 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["us-east-1","us-east-2"]
+      --services strings    services (body); required by API; List of cloud services to filter by or 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["ec2","rds","s3"]
 ```
 
 ### Options inherited from parent commands

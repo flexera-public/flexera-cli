@@ -13,35 +13,66 @@ import (
 )
 
 type Param struct {
-	Flag        string          `json:"flag"`
-	Source      string          `json:"source"`
-	In          string          `json:"in"`
-	Type        string          `json:"type"`
+	Flag          string          `json:"flag"`
+	Source        string          `json:"source"`
+	In            string          `json:"in"`
+	Type          string          `json:"type"`
+	Required      bool            `json:"required"`
+	Enum          json.RawMessage `json:"enum"`
+	Schema        json.RawMessage `json:"schema"`
+	Description   string          `json:"description,omitempty"`
+	Name          string          `json:"name,omitempty"`
+	Example       json.RawMessage `json:"example,omitempty"`
+	Examples      json.RawMessage `json:"examples,omitempty"`
+	Style         string          `json:"style,omitempty"`
+	Explode       *bool           `json:"explode,omitempty"`
+	AllowReserved *bool           `json:"allowReserved,omitempty"`
+	Deprecated    bool            `json:"deprecated,omitempty"`
+}
+
+type BodyField struct {
+	Flag     string          `json:"flag"`
+	Property string          `json:"property"`
+	Required bool            `json:"required"`
+	Schema   json.RawMessage `json:"schema"`
+}
+
+type Header struct {
+	Name        string          `json:"name"`
 	Required    bool            `json:"required"`
-	Enum        json.RawMessage `json:"enum"`
-	Schema      json.RawMessage `json:"schema"`
 	Description string          `json:"description,omitempty"`
+	Schema      json.RawMessage `json:"schema,omitempty"`
+	Example     json.RawMessage `json:"example,omitempty"`
+	Examples    json.RawMessage `json:"examples,omitempty"`
 }
 
 type Entry struct {
-	OperationID      string          `json:"operationId"`
-	Command          []string        `json:"command"`
-	Method           string          `json:"method"`
-	Path             string          `json:"path"`
-	Tag              string          `json:"tag"`
-	Service          string          `json:"service,omitempty"`
-	Resource         string          `json:"resource"`
-	Action           string          `json:"action"`
-	Summary          string          `json:"summary"`
-	Description      string          `json:"description"`
-	Destructive      bool            `json:"destructive"`
-	Paginated        bool            `json:"paginated"`
-	ResponseEnvelope string          `json:"responseEnvelope"`
-	Params           []Param         `json:"params"`
-	BodyFlags        []string        `json:"bodyFlags"`
-	RequestSchema    json.RawMessage `json:"requestSchema,omitempty"`
-	ResponseSchema   json.RawMessage `json:"responseSchema,omitempty"`
-	RequestExample   json.RawMessage `json:"requestExample,omitempty"`
+	OperationID          string          `json:"operationId"`
+	Command              []string        `json:"command"`
+	Method               string          `json:"method"`
+	Path                 string          `json:"path"`
+	Tag                  string          `json:"tag"`
+	Service              string          `json:"service,omitempty"`
+	Resource             string          `json:"resource"`
+	Action               string          `json:"action"`
+	Summary              string          `json:"summary"`
+	Description          string          `json:"description"`
+	Destructive          bool            `json:"destructive"`
+	Paginated            bool            `json:"paginated"`
+	ResponseEnvelope     string          `json:"responseEnvelope"`
+	Params               []Param         `json:"params"`
+	BodyFlags            []string        `json:"bodyFlags"`
+	RequestSchema        json.RawMessage `json:"requestSchema,omitempty"`
+	ResponseSchema       json.RawMessage `json:"responseSchema,omitempty"`
+	RequestExample       json.RawMessage `json:"requestExample,omitempty"`
+	RequestExampleSource string          `json:"requestExampleSource,omitempty"`
+	BodyFields           []BodyField     `json:"bodyFields,omitempty"`
+	Headers              []Header        `json:"headers,omitempty"`
+	RequestDescription   string          `json:"requestDescription,omitempty"`
+	RequestRequired      bool            `json:"requestRequired,omitempty"`
+	RequestMediaTypes    []string        `json:"requestMediaTypes,omitempty"`
+	Deprecated           bool            `json:"deprecated,omitempty"`
+	ExternalDocs         json.RawMessage `json:"externalDocs,omitempty"`
 }
 
 // Document is the final publication shape. Per-tag generator metadata is a
@@ -134,6 +165,21 @@ func Parse(data []byte) (*Catalog, error) {
 				return nil, fmt.Errorf("catalog: %s: duplicate/empty body flag %q", e.OperationID, flag)
 			}
 			flags[flag] = true
+		}
+		fields := map[string]bool{}
+		properties := map[string]bool{}
+		for _, field := range e.BodyFields {
+			bodyFlag := false
+			for _, flag := range e.BodyFlags {
+				bodyFlag = bodyFlag || flag == field.Flag
+			}
+			if !bodyFlag || fields[field.Flag] || field.Property == "" || properties[field.Property] || len(field.Schema) == 0 {
+				return nil, fmt.Errorf("catalog: %s: invalid body-field mapping", e.OperationID)
+			}
+			fields[field.Flag], properties[field.Property] = true, true
+		}
+		if e.RequestExampleSource != "" && e.RequestExampleSource != "upstream" && e.RequestExampleSource != "synthesized" {
+			return nil, fmt.Errorf("catalog: %s: invalid request example source", e.OperationID)
 		}
 	}
 	// Walking the whole document validates nested refs and cycles without

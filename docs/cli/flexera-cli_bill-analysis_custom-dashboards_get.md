@@ -2,6 +2,12 @@
 
 show custom_dashboards
 
+### Synopsis
+
+show custom_dashboards
+
+Shows a Dashboard for a given Org and User.
+
 ```
 flexera-cli bill-analysis custom-dashboards get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
-      --user int    user (path, required)
+      --id string   id (path, required); The id of the dashboard.; required by API; illustrative example: "4DruwQHeCnL4TpzVhkf22s"
+      --user int    user (path, required); User Identifier; required by API; format: int64; illustrative example: 5308408351046348000
 ```
 
 ### Options inherited from parent commands

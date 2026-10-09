@@ -2,6 +2,12 @@
 
 Regulatory Compliance Catalog Filter
 
+### Synopsis
+
+Regulatory Compliance Catalog Filter
+
+Returns cascading filter dropdown options for Manufacturer → Product → Version. Only dimensions listed in the request are returned. Scope filters narrow downstream dimensions based on upstream selections.
+
 ```
 flexera-cli risk regulatory-compliance filter [flags]
 ```
@@ -19,7 +25,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --dimensions strings   dimensions (body)
+      --dimensions strings   dimensions (body); Dimensions to fetch. Omit or pass empty list to fetch all.; CLI: comma-separated values or repeated flag
   -h, --help                 help for filter
 ```
 

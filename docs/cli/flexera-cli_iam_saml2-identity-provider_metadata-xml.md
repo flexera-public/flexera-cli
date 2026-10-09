@@ -2,6 +2,12 @@
 
 Get identity provider metadata
 
+### Synopsis
+
+Get identity provider metadata
+
+Show an existing identity provider's metadata in XML format.
+
 ```
 flexera-cli iam saml2-identity-provider metadata-xml [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for metadata-xml
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
 ```
 
 ### Options inherited from parent commands

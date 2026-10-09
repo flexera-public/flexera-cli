@@ -2,6 +2,12 @@
 
 Show a shared cost rule
 
+### Synopsis
+
+Show a shared cost rule
+
+Returns a single shared cost rule including its source dimensions, allocation, and full metadata.
+
 ```
 flexera-cli finops-billing shared-cost-rules get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Unique identifier of the shared cost rule; required by API; illustrative example: "68f2a91c4b3d2e1f5a6b7c8d"
 ```
 
 ### Options inherited from parent commands

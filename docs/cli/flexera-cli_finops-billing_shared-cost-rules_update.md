@@ -2,6 +2,12 @@
 
 Update a shared cost rule
 
+### Synopsis
+
+Update a shared cost rule
+
+Updates an existing shared cost rule. All fields in the request body are optional; only supplied fields are changed. The rule name, if provided, must remain unique within the organization.
+
 ```
 flexera-cli finops-billing shared-cost-rules update [flags]
 ```
@@ -21,13 +27,13 @@ Validated illustrative body, when available (review before use):
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --effective-from string   effectiveFrom (body)
-      --effective-to string     effectiveTo (body)
+      --effective-from string   effectiveFrom (body); Updated month (inclusive) from which the rule applies, formatted YYYY-MM. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-07"
+      --effective-to string     effectiveTo (body); Updated month (exclusive) before which the rule applies, formatted YYYY-MM. Must be > effectiveFrom. Omit this field for no end date; the rule applies indefinitely. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-12"
   -h, --help                    help for update
-      --id string               id (path, required)
+      --id string               id (path, required); Unique identifier of the shared cost rule; required by API; illustrative example: "68f2a91c4b3d2e1f5a6b7c8d"
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string             name (body)
-      --status string           status (body)
+      --name string             name (body); Updated display name for the shared cost rule. Must not contain "(", ")" or ">".; minLength: 1; maxLength: 255; pattern: "^[^()\u003e]+$"; illustrative example: "Equal split for AWS between Teams A, B and C - revised"
+      --status string           status (body); Updated lifecycle status.; enum: ["active"]; illustrative example: "active"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

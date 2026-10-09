@@ -2,6 +2,12 @@
 
 List import jobs
 
+### Synopsis
+
+List import jobs
+
+This endpoint retrieves a list of import jobs. The import jobs may be filtered or ordered by their status.
+
 ```
 flexera-cli saas import-job list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); A filter to narrow the number of jobs to return. Supported fields in the filter are [sourceHref, startedAt, completedAt, failedAt, status] | Attribute | Description | Allowed operators | Example | |------------|------------------------------------------------------------------------------------|-------------------|--------------------------------------------... (see cli schema); illustrative example: "sourceHref eq 'saas/v1/orgs/1234/managed-apps/5678' and startedAt gt 'ISO 8601 date' and status eq completed"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); The order by to sort the import jobs. Supported fields in the orderBy are [startedAt, completedAt, failedAt]; API default: "completedAt desc"; illustrative example: "completedAt desc"
+      --skip-token string   resume pagination from this token; Used in pagination to point to the next set of records.
 ```
 
 ### Options inherited from parent commands

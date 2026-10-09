@@ -2,6 +2,12 @@
 
 Show an object definition
 
+### Synopsis
+
+Show an object definition
+
+This endpoint retrieves a single object definition.
+
 ```
 flexera-cli saas object-definition get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); required by API; illustrative example: "Ipsum aut placeat."
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Update an existing usage group for the specified SaaS object
 
+### Synopsis
+
+Update an existing usage group for the specified SaaS object
+
+Update an existing usage group for the specified SaaS object.
+
 ```
 flexera-cli saas usage-group replace [flags]
 ```
@@ -22,7 +28,7 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for replace
-      --id string     id (path, required)
+      --id string     id (path, required); Object id.; required by API; illustrative example: "243412"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
       --yes           confirm the operation (required for destructive ops)
 ```

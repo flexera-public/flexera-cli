@@ -2,6 +2,14 @@
 
 Revoke a refresh token
 
+### Synopsis
+
+Revoke a refresh token
+
+Revoke a refresh token. Supports optional query parameters orgId and userId.
+Org owners can revoke refresh token for a specific user by providing both orgId and userId in the query.
+Note that org owners cannot revoke tokens for users who are affiliated with other organizations.
+
 ```
 flexera-cli iam refresh-token delete [flags]
 ```
@@ -19,8 +27,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for delete
-      --id string     id (path, required)
-      --user-id int   userId (query)
+      --id string     id (path, required); A short string that identifies the token but which cannot be used to gain access; required by API; pattern: "^[a-zA-Z0-9]+$"; illustrative example: "a1B2c3D4e5F6g7H8i9J0"
+      --user-id int   userId (query); User ID; illustrative example: 67890
       --yes           confirm the operation (required for destructive ops)
 ```
 

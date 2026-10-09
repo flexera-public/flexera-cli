@@ -2,6 +2,15 @@
 
 List all BillingCenters in a given Org.
 
+### Synopsis
+
+List all BillingCenters in a given Org.
+
+List all the BillingCenter resources in a given Org
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:index+common:org:own`
+
 ```
 flexera-cli billing-center list [flags]
 ```
@@ -17,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); Optional view selection; enum: ["default","allocation_table"]; API default: "default"
 ```
 
 ### Options inherited from parent commands

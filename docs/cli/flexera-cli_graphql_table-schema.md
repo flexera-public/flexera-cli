@@ -2,6 +2,12 @@
 
 tableSchema graphql
 
+### Synopsis
+
+tableSchema graphql
+
+Returns a table schema which includes all possible fields.
+
 ```
 flexera-cli graphql table-schema [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run        print the planned operation as JSON and exit without calling the API
   -h, --help           help for table-schema
   -i, --interactive    edit inputs in a terminal form, review a plan and approve with typed yes
-      --query string   query (body)
+      --query string   query (body); required by API; The current GraphQL query.; illustrative example: "query {\n software(\n limit: 10\n where: { name: { contains: \"test\" } }\n ) {\n name\n }\n}\n"
       --yes            confirm the operation (required for destructive ops)
 ```
 

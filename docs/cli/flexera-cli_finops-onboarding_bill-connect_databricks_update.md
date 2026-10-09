@@ -2,6 +2,12 @@
 
 Update a Databricks bill connect
 
+### Synopsis
+
+Update a Databricks bill connect
+
+Updates an existing Databricks bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect databricks update [flags]
 ```
@@ -20,14 +26,14 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                 raw JSON body (inline | @file | @-); overrides body field flags
-      --body-client-id string       clientId (body)
-      --body-client-secret string   clientSecret (body)
+      --body-client-id string       clientId (body); required by API; The Databricks service principal Application ID; minLength: 1; illustrative example: "061a44ab-a1bb-4b73-9548-330acadd7cd8"
+      --body-client-secret string   clientSecret (body); required by API; The Databricks service principal secret
       --dry-run                     print the planned operation as JSON and exit without calling the API
   -h, --help                        help for update
-      --id string                   id (path, required)
+      --id string                   id (path, required); Identifies a bill connect; required by API; illustrative example: "databricks-dbc-6d0b35df-baa3"
   -i, --interactive                 edit inputs in a terminal form, review a plan and approve with typed yes
-      --sql-warehouse-id string     sqlWarehouseId (body)
-      --workspace-url string        workspaceUrl (body)
+      --sql-warehouse-id string     sqlWarehouseId (body); Databricks SQL warehouse ID for cost and usage queries; minLength: 1; illustrative example: "5d31479ca2dfbd90"
+      --workspace-url string        workspaceUrl (body); Databricks workspace URL; minLength: 1; illustrative example: "https://dbc-6d0b35df-baa3.cloud.databricks.com"
       --yes                         confirm the operation (required for destructive ops)
 ```
 

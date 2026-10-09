@@ -2,6 +2,12 @@
 
 Show license agreement fees
 
+### Synopsis
+
+Show license agreement fees
+
+Retrieves a license agreement fee identified by ID
+
 ```
 flexera-cli saas license fees-all-3 [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --fee-id string       feeId (path, required)
+      --fee-id string       feeId (path, required); Unique ID associated with license agreement fee.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "434312"
   -h, --help                help for fees-all-3
-      --license-id string   licenseId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
 ```
 
 ### Options inherited from parent commands

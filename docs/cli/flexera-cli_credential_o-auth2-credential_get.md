@@ -2,6 +2,12 @@
 
 Show a Credential
 
+### Synopsis
+
+Show a Credential
+
+Show a Credential that uses the 'OAuth2' scheme.
+
 ```
 flexera-cli credential o-auth2-credential get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
 ```
 
 ### Options inherited from parent commands

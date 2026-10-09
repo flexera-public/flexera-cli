@@ -2,6 +2,12 @@
 
 Update an applied policy
 
+### Synopsis
+
+Update an applied policy
+
+Updates attributes of an applied policy and immediately evaluates it. It only affects the normal execution schedule, if the frequency changes
+
 ```
 flexera-cli policy applied-policy update [flags]
 ```
@@ -11,8 +17,8 @@ flexera-cli policy applied-policy update [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for update
-      --id string        Applied policy ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Applied policy ID; The unique identifier for the policy; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

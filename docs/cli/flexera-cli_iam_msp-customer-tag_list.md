@@ -2,6 +2,12 @@
 
 Show the tags for an MSP's customer
 
+### Synopsis
+
+Show the tags for an MSP's customer
+
+Show the tags for a managed service provider's customer tenant.
+
 ```
 flexera-cli iam msp-customer-tag list [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 1234
   -h, --help              help for list
 ```
 

@@ -2,6 +2,12 @@
 
 Index custom dimensions
 
+### Synopsis
+
+Index custom dimensions
+
+Lists all custom dimensions in a given organization.
+
 ```
 flexera-cli bill-analysis custom-dimension list [flags]
 ```

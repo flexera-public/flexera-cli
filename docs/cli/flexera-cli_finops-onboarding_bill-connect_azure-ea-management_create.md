@@ -2,6 +2,12 @@
 
 Create an Azure EA (Enterprise Agreement) Management bill connect
 
+### Synopsis
+
+Create an Azure EA (Enterprise Agreement) Management bill connect
+
+Creates an Azure EA (Enterprise Agreement) Management bill connect using the provided SPN (Service Principal Name) Credentials.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-ea-management create [flags]
 ```
@@ -19,15 +25,15 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-account-id string     billingAccountId (body)
+      --billing-account-id string     billingAccountId (body); required by API; The Billing Account ID in an Azure Enterprise Agreement; minLength: 1; illustrative example: "12345679"
       --body string                   raw JSON body (inline | @file | @-); overrides body field flags
-      --body-client-id string         clientId (body)
-      --body-client-secret string     clientSecret (body)
+      --body-client-id string         clientId (body); required by API; The Client ID of the relevant SPN used to access the Billing Account; minLength: 1; illustrative example: "56fff7875-b6d7-7f5j-zx77-977df67fdfc7"
+      --body-client-secret string     clientSecret (body); required by API; The Client Secret of the relevant SPN used to access the Billing Account
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for create
   -i, --interactive                   edit inputs in a terminal form, review a plan and approve with typed yes
-      --start-billing-period string   startBillingPeriod (body)
-      --tenant-id string              tenantId (body)
+      --start-billing-period string   startBillingPeriod (body); Optional Parameter formatted as YYYYMM to let the service know what Billing Period to start ingest from. The value of startBillingPeriod is required to be on or after the enrollment started and on or before the current year month. If not provided, the ingest will begin from the billing period at the time of creation of the bill connect.; pattern: "^20[\\d]{2}((0[1-9])|(1[012]))$"; illustrative example: "202308"
+      --tenant-id string              tenantId (body); required by API; The Tenant ID to which the Billing Account belongs to; minLength: 1; illustrative example: "5837ffw33fg7-3g6t-52mt-4fht-5fd71ejf43fi"
       --yes                           confirm the operation (required for destructive ops)
 ```
 

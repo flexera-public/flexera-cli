@@ -2,6 +2,12 @@
 
 Deletes a budget
 
+### Synopsis
+
+Deletes a budget
+
+Deletes a budget for the given organization and budget ID.
+
 ```
 flexera-cli budget delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the budget; required by API; illustrative example: "2ed7db3"
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Show a credit assignment
 
+### Synopsis
+
+Show a credit assignment
+
+Returns a single credit assignment by ID.
+
 ```
 flexera-cli finops-billing billing-credits get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Unique identifier of the credit assignment.; required by API; format: uuid; illustrative example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 ```
 
 ### Options inherited from parent commands

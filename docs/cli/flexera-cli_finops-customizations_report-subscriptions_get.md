@@ -2,6 +2,12 @@
 
 Show a report subscription
 
+### Synopsis
+
+Show a report subscription
+
+Shows a specified report subscription in the organization.
+
 ```
 flexera-cli finops-customizations report-subscriptions get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the report subscription (UUID); required by API; format: uuid; illustrative example: "550e8400-e29b-41d4-a716-446655440000"
 ```
 
 ### Options inherited from parent commands

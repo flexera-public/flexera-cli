@@ -2,6 +2,13 @@
 
 Delete a CBI bill connect
 
+### Synopsis
+
+Delete a CBI bill connect
+
+Removes a CBI bill connect associated with a given bill connect ID; you will no longer be able to
+                        use it to upload bills (but bills uploaded so far remain in the system).
+
 ```
 flexera-cli finops-onboarding bill-connect common-bill-ingestion delete [flags]
 ```
@@ -19,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-optima-test-1"
       --yes         confirm the operation (required for destructive ops)
 ```
 

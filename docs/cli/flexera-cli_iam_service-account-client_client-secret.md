@@ -2,6 +2,13 @@
 
 Delete old service account client secret
 
+### Synopsis
+
+Delete old service account client secret
+
+DeleteOldSecret removes the older active client secret for an existing service account client.
+The newest secret remains active.
+
 ```
 flexera-cli iam service-account-client client-secret [flags]
 ```
@@ -19,8 +26,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for client-secret
-      --service-account-id int    serviceAccountId (path, required)
-      --target-client-id string   clientId (path, required)
+      --service-account-id int    serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
+      --target-client-id string   clientId (path, required); Identifier for the client; required by API; minLength: 1; maxLength: 512; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

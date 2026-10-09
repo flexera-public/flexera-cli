@@ -2,6 +2,12 @@
 
 Request evaluation of an applied policy
 
+### Synopsis
+
+Request evaluation of an applied policy
+
+Evaluate executes an applied policy evaluation on demand. It does not affect the normal execution schedule.
+
 ```
 flexera-cli policy applied-policy evaluate [flags]
 ```
@@ -10,8 +16,8 @@ flexera-cli policy applied-policy evaluate [flags]
 
 ```
   -h, --help             help for evaluate
-      --id string        Applied policy ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Applied policy ID; The unique identifier for the policy; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

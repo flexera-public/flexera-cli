@@ -2,6 +2,12 @@
 
 Onboarding GCP: Update
 
+### Synopsis
+
+Onboarding GCP: Update
+
+Update an existing GCP bill connect connector.
+
 ```
 flexera-cli unified-onboarding onboarding replace [flags]
 ```
@@ -20,13 +26,13 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                       raw JSON body (inline | @file | @-); overrides body field flags
-      --connector-id string               connector_id (path, required)
-      --connector-name string             ConnectorName (body)
+      --connector-id string               connector_id (path, required); Connector ID; required by API
+      --connector-name string             ConnectorName (body); Connector name.; minLength: 3; pattern: "^[a-zA-Z0-9._-]+$"
       --dry-run                           print the planned operation as JSON and exit without calling the API
   -h, --help                              help for replace
-      --include-cost-and-usage string     IncludeCostAndUsage (body)
+      --include-cost-and-usage string     IncludeCostAndUsage (body); Include CCO flag.; enum: ["true","false"]
   -i, --interactive                       edit inputs in a terminal form, review a plan and approve with typed yes
-      --service-account-key-json string   ServiceAccountKeyJson (body)
+      --service-account-key-json string   ServiceAccountKeyJson (body); Updated GCP service-account key JSON string.; minLength: 1
       --yes                               confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,15 @@
 
 POST /optima/orgs/{orgId}/billUploads
 
+### Synopsis
+
+POST /optima/orgs/{orgId}/billUploads
+
+Creates a new bill upload, for a given [bill connect](https://reference.rightscale.com/optima-bill/#/CBIBillConnects) and billing period (month, yyyy-mm). Committing and processing a bill upload replaces that month of data for the bill connect/org.
+
+**Required security scopes for JWTAuth**:
+  * `optima:bill_upload:create+optima:bill_connect:create+common:org:own`
+
 ```
 flexera-cli bill-upload create [flags]
 ```
@@ -19,8 +28,8 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --bill-connect-id string   billConnectId (body)
-      --billing-period string    billingPeriod (body)
+      --bill-connect-id string   billConnectId (body); required by API; The bill connect to use for this bill upload; illustrative example: "cbi-integration1-1234567"
+      --billing-period string    billingPeriod (body); required by API; The billing period covered by this bill upload, formatted as yyyy-mm; pattern: "^([0-9]{4})-([0-9]{2})$"; illustrative example: "2020-03"
       --body string              raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                  print the planned operation as JSON and exit without calling the API
   -h, --help                     help for create

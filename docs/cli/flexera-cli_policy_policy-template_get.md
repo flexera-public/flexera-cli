@@ -2,6 +2,12 @@
 
 Show a policy template
 
+### Synopsis
+
+Show a policy template
+
+Show retrieves the details of a policy template.
+
 ```
 flexera-cli policy policy-template get [flags]
 ```
@@ -10,9 +16,9 @@ flexera-cli policy policy-template get [flags]
 
 ```
   -h, --help             help for get
-      --id string        Policy template ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
-      --view string      Optional Policy template view
+      --id string        Policy template ID; The unique identifier for the policy template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --view string      Optional Policy template view; View used to render policy template.; enum: ["default","extended","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

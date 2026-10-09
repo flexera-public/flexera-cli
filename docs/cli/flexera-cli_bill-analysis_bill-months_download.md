@@ -2,6 +2,12 @@
 
 download bill-months
 
+### Synopsis
+
+download bill-months
+
+Download bill months data in CSV format using a download token
+
 ```
 flexera-cli bill-analysis bill-months download [flags]
 ```
@@ -16,8 +22,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --download-token string   download_token (query)
-      --format string           format (query)
+      --download-token string   download_token (query); Token for downloading the complete result set; required by API
+      --format string           format (query); Download format (default: csv); enum: ["csv"]; illustrative example: "csv"
   -h, --help                    help for download
 ```
 

@@ -2,6 +2,12 @@
 
 Download specified export file
 
+### Synopsis
+
+Download specified export file
+
+Download returns the specified export file.
+
 ```
 flexera-cli it-visibility export-retired get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); The Identifier of the file as returned from the INDEX endpoint; required by API; maxLength: 36; illustrative example: "7d795afa-c508-4d47-92ae-248113a792d1"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Index user memberships of a group in an organization
 
+### Synopsis
+
+Index user memberships of a group in an organization
+
+Lists user memberships of a group in an organization.
+
 ```
 flexera-cli iam group-membership list [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --group-id int   groupId (path, required)
+      --group-id int   groupId (path, required); The ID of the Group; required by API; illustrative example: 1234
   -h, --help           help for list
-      --view string    view (query)
+      --view string    view (query); View used to render list of memberships; enum: ["default","extended"]; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

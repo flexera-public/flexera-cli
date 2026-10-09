@@ -2,6 +2,12 @@
 
 Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings
 
+### Synopsis
+
+Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings
+
+Retrieves a signed URL to access a user settings object associated with a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier.
+
 ```
 flexera-cli iam user-setting-blob list [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --expiry int    expiry (query)
+      --expiry int    expiry (query); expriy time in seconds in signed url; required by API; minimum: 1; maximum: 1800; illustrative example: 1800
   -h, --help          help for list
-      --id string     id (query)
-      --type string   type (query)
+      --id string     id (query); The key may be a combination of a Page ID and a Prefix ID. For example: page-settings:optima/cloud-dashboards/82783782372230, where page-settings:optima/cloud-dashboards represents the Page ID and 82783782372230 is the Prefix ID.; required by API; minLength: 1; maxLength: 100; pattern: "^[-._a-zA-Z0-9:/=?\u0026]+$"; illustrative example: "preferredLoginMethod"
+      --type string   type (query); The scope/context of the setting, either 'org' or 'global'.; enum: ["global","org"]; illustrative example: "global"
 ```
 
 ### Options inherited from parent commands

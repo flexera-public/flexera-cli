@@ -2,6 +2,13 @@
 
 Delete a service account client
 
+### Synopsis
+
+Delete a service account client
+
+Delete removes a service account client, invalidating the client's ID and secret. Other
+clients belonging to the service account are unaffected.
+
 ```
 flexera-cli iam service-account-client delete [flags]
 ```
@@ -19,8 +26,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for delete
-      --service-account-id int    serviceAccountId (path, required)
-      --target-client-id string   clientId (path, required)
+      --service-account-id int    serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
+      --target-client-id string   clientId (path, required); Identifier for the client; required by API; minLength: 1; maxLength: 512; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,16 @@
 
 Delete an Azure MCA bill connect
 
+### Synopsis
+
+Delete an Azure MCA bill connect
+
+Removes an Azure MCA bill connect associated with a given bill connect ID.
+Bill Connects provisioned through Unified Onboarding are read-only in this API. Update and delete operations will be rejected with a 403 Forbidden. Use Unified Onboarding to manage these resources.
+You can identify these Bill Connects by the onboardingOrigin field:
+- "platform": created via Unified Onboarding
+- "finops": created and managed through this API (default)
+
 ```
 flexera-cli finops-onboarding bill-connect azure-mca delete [flags]
 ```
@@ -19,7 +29,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-azure-mca-23lopi-7875-b6d7-ploip-zx77-pppdf67fdfc7:32662f18-7ca4-4845-99e0-1213414d5bc4_2024-01-31"
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,16 @@
 
 List all recommendations
 
+### Synopsis
+
+List all recommendations
+
+List all recommendations.
+User must have the 'optima:recommendation:index' privilege on the org or on the specified billing center(s) to make this call.
+
+**Required security scopes for GlobalSession**:
+  * `common:org:affiliated+common:org:own`
+
 ```
 flexera-cli recommendations list [flags]
 ```
@@ -16,10 +26,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --billing-center-i-ds strings   billingCenterIDs (query)
+      --billing-center-i-ds strings   billingCenterIDs (query); IDs of BillingCenters to get recommendations for. It is not allowed for any of the BillingCenterIDs to be an ancestor of another specified BillingCenterID.; CLI: comma-separated values or repeated flag
   -h, --help                          help for list
-      --statuses strings              statuses (query)
-      --view string                   view (query)
+      --statuses strings              statuses (query); Recommendation statuses to get; API default: ["active"]; CLI: comma-separated values or repeated flag; items.enum: ["active","snoozed","rejected","realized"]
+      --view details                  view (query); An optional parameter that controls the level of detail returned about policy violation data. Depending on it the data is returned in the details or `detailsExtended` field; enum: ["default","extended"]; API default: "default"
 ```
 
 ### Options inherited from parent commands

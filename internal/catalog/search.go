@@ -1,6 +1,7 @@
 package catalog
 
 import (
+	"encoding/json"
 	"fmt"
 	"math"
 	"sort"
@@ -160,9 +161,24 @@ func NewSearchIndex(root *cobra.Command) (*SearchIndex, error) {
 				add(e.Description, 1)
 				for _, p := range e.Params {
 					add(p.Flag, 1)
+					add(p.Description, 1)
 					if p.Required {
 						doc.result.Usage += " --" + p.Flag + " " + strings.ToUpper(strings.ReplaceAll(p.Flag, "-", "_"))
 					}
+				}
+				for _, field := range e.BodyFields {
+					add(field.Property, 1)
+					raw, err := loaded.Expand(field.Schema, 1)
+					if err != nil {
+						return err
+					}
+					var schema struct {
+						Description string `json:"description"`
+					}
+					if err := json.Unmarshal(raw, &schema); err != nil {
+						return fmt.Errorf("search %s body field %s: %w", id, field.Property, err)
+					}
+					add(schema.Description, 1)
 				}
 				if len(e.RequestSchema) > 0 {
 					if cmd.Flags().Lookup("body") != nil {

@@ -2,6 +2,12 @@
 
 Show an invitation
 
+### Synopsis
+
+Show an invitation
+
+Show an invitation belonging to a user.
+
 ```
 flexera-cli iam user-invitation get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id string     id (path, required)
-      --view string   view (query)
+      --id string     id (path, required); Invitation ID; required by API; illustrative example: "1111aaaa2222bbbb3333cccc"
+      --view string   view (query); View used to render invitations; enum: ["default","tiny"]; illustrative example: "tiny"
 ```
 
 ### Options inherited from parent commands

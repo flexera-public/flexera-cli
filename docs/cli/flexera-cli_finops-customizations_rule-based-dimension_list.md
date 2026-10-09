@@ -2,6 +2,12 @@
 
 Index rule-based dimensions
 
+### Synopsis
+
+Index rule-based dimensions
+
+Returns a list of rule-based dimensions defined in the organization.
+
 ```
 flexera-cli finops-customizations rule-based-dimension list [flags]
 ```

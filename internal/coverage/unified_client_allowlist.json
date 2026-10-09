@@ -1,5 +1,25 @@
 [
   {
+    "symbol": ".#APIOperation",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
+  },
+  {
+    "symbol": ".#ComponentMetadata",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
+  },
+  {
+    "symbol": ".#OperationIDs",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI search/schema use the sanitized spec-derived catalog"
+  },
+  {
+    "symbol": ".#OperationMetadata",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
+  },
+  {
     "symbol": ".#(APIError).Error",
     "status": "excluded",
     "reason": "response/error-parsing helpers used internally by every command"

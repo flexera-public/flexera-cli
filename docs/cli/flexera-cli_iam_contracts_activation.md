@@ -2,6 +2,10 @@
 
 Enable or disable a contract
 
+### Synopsis
+
+Enable or disable a contract
+
 ```
 flexera-cli iam contracts activation [flags]
 ```
@@ -21,9 +25,9 @@ Validated illustrative body, when available (review before use):
 ```
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
-      --enable        enable (body)
+      --enable        enable (body); required by API; Flag to enable or disable the contract; illustrative example: true
   -h, --help          help for activation
-      --id int        id (path, required)
+      --id int        id (path, required); Contract ID; required by API; illustrative example: 12345
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
       --yes           confirm the operation (required for destructive ops)
 ```

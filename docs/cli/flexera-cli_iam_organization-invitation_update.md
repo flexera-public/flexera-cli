@@ -2,6 +2,12 @@
 
 Resend an invitation to an org
 
+### Synopsis
+
+Resend an invitation to an org
+
+Resend an invitation created in an org if original invitation expired or was lost.
+
 ```
 flexera-cli iam organization-invitation update [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for update
-      --id string   id (path, required)
+      --id string   id (path, required); Invitation ID; required by API; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,24 @@
 
 Index an org's contracts
 
+### Synopsis
+
+Index an org's contracts
+
+Retrieve a list of contracts with the following filtering options:
+
+            - **Only orgId**:
+            - Returns all contracts where orgId is either initiator or target
+
+            - **init and target parameters**:
+            - If both init and target are provided → returns only contracts between those two organizations.
+            - If only target is provided → returns contracts between orgId (as initiator) and the target.
+            - If only init is provided → returns contracts between orgId (as target) and the init.
+
+            - **latest_only parameter**:
+            - When set to true with init or target  → returns only the most recent contract between those two orgs.
+            - When set to true with only orgId → returns the latest contract for each pair involving that org.
+
 ```
 flexera-cli iam contracts list [flags]
 ```
@@ -17,10 +35,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --init int      init (query)
-      --latest-only   latest_only (query)
-      --target int    target (query)
-      --view string   view (query)
+      --init int      init (query); Initiator org ID; illustrative example: 1234
+      --latest-only   latest_only (query); When set to true, returns only the most recent contract between the given organizations; illustrative example: true
+      --target int    target (query); Target org ID; illustrative example: 1234
+      --view string   view (query); View used to render the contract; enum: ["default","index","extended"]; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Index customizations which have been applied to an org
 
+### Synopsis
+
+Index customizations which have been applied to an org
+
+Index customizations for an org. Returns the org's own customizations merged with any inheritable customizations from the parent org (partner or MSP), where the child's own values always take precedence. Parent customizations are only included when shouldInherit is true (or unset) on the parent's record. Results are sorted by id and support pagination.
+
 ```
 flexera-cli iam customization list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter for selecting the list of customizations returned. The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | id | Filters on the customization's id | co | Contains - The entire operator value must be a substring of the attribute value for a match. | id co 'navbar' | ... (see cli schema); illustrative example: "id co 'navbar'"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --view string         view (query); View used to render the customization; enum: ["index"]; API default: "index"; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

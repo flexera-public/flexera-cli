@@ -2,6 +2,12 @@
 
 Create an adjustment plan
 
+### Synopsis
+
+Create an adjustment plan
+
+Create a new adjustment plan. An adjustment plan lets you associate multiple customers to multiple adjustment plan rules.
+
 ```
 flexera-cli finops-billing billing plans-all [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Description of the adjustment plan; illustrative example: "Gold Tier Customers enjoy our highest discounts"
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for plans-all
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Display name for the adjustment plan; illustrative example: "Gold Tier"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

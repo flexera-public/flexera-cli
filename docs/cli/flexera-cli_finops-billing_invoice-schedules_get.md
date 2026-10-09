@@ -2,6 +2,12 @@
 
 Show an invoice schedule
 
+### Synopsis
+
+Show an invoice schedule
+
+Shows a specified invoice schedule in the organization.
+
 ```
 flexera-cli finops-billing invoice-schedules get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the invoice schedule; required by API; illustrative example: "sch_1"
 ```
 
 ### Options inherited from parent commands

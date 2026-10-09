@@ -2,6 +2,12 @@
 
 Remove an adjustment plan rule
 
+### Synopsis
+
+Remove an adjustment plan rule
+
+Remove an adjustment plan rule.
+
 ```
 flexera-cli finops-billing billing delete-plans [flags]
 ```
@@ -19,8 +25,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run          print the planned operation as JSON and exit without calling the API
   -h, --help             help for delete-plans
-      --id string        id (path, required)
-      --plan-id string   planId (path, required)
+      --id string        id (path, required); id identifies this rule; required by API; format: uuid; illustrative example: "ae85f96e-6b9e-4d68-a741-d1ea7ca1fb28"
+      --plan-id string   planId (path, required); Unique identifier for the plan this rule is part of.; required by API; format: uuid; illustrative example: "c6671c74-513a-4127-b8df-81adfb65bf7f"
       --yes              confirm the operation (required for destructive ops)
 ```
 

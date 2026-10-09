@@ -2,6 +2,12 @@
 
 Update a Snowflake bill connect
 
+### Synopsis
+
+Update a Snowflake bill connect
+
+Updates an existing Snowflake bill connect.
+
 ```
 flexera-cli finops-onboarding bill-connect snowflake update [flags]
 ```
@@ -22,12 +28,12 @@ Validated illustrative body, when available (review before use):
       --body string        raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run            print the planned operation as JSON and exit without calling the API
   -h, --help               help for update
-      --id string          id (path, required)
+      --id string          id (path, required); Identifies a bill connect; required by API; illustrative example: "paas-snowflake-TYTMXEN-RS68134"
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --pat-token string   patToken (body)
-      --role string        role (body)
-      --user string        user (body)
-      --warehouse string   warehouse (body)
+      --pat-token string   patToken (body); required by API; Snowflake Programmatic Access Token (PAT) used for authentication
+      --role string        role (body); Snowflake role granted to the service user for querying required views (case-sensitive); minLength: 1; illustrative example: "SF_BILL_CONNECT_ROLE"
+      --user string        user (body); Snowflake service user used to query usage and cost data (case-sensitive); minLength: 1; illustrative example: "SF_BILL_CONNECT_USER"
+      --warehouse string   warehouse (body); Snowflake warehouse name used for executing cost and usage queries (case-sensitive); minLength: 1; illustrative example: "SF_BILL_CONNECT_WH"
       --yes                confirm the operation (required for destructive ops)
 ```
 

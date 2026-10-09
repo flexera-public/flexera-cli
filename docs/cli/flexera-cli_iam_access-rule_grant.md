@@ -2,6 +2,12 @@
 
 Create an access rule
 
+### Synopsis
+
+Create an access rule
+
+Idempotently creates an access rule.
+
 ```
 flexera-cli iam access-rule grant [flags]
 ```

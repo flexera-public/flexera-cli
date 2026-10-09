@@ -2,6 +2,12 @@
 
 Show an invoice template
 
+### Synopsis
+
+Show an invoice template
+
+Shows a specific invoice template in the organization.
+
 ```
 flexera-cli finops-billing invoice-templates get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Invoice template identifier; required by API; illustrative example: "tmpl_9001"
 ```
 
 ### Options inherited from parent commands

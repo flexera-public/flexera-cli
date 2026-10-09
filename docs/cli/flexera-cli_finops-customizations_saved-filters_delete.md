@@ -2,6 +2,12 @@
 
 Delete a saved filter
 
+### Synopsis
+
+Delete a saved filter
+
+Soft-deletes a saved filter in the organization. The service enforces the caller's saved-filter delete privilege through IAM before deleting the record. The record is purged after 90 days.
+
 ```
 flexera-cli finops-customizations saved-filters delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the saved filter (UUID); required by API; format: uuid; illustrative example: "550e8400-e29b-41d4-a716-446655440000"
       --yes         confirm the operation (required for destructive ops)
 ```
 

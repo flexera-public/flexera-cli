@@ -2,6 +2,12 @@
 
 summary anomalies
 
+### Synopsis
+
+summary anomalies
+
+Fetch details and time series data for a given org and anomaly ID
+
 ```
 flexera-cli bill-analysis anomalies anomalies [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for anomalies
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the anomaly; required by API; illustrative example: "139283923445"
 ```
 
 ### Options inherited from parent commands

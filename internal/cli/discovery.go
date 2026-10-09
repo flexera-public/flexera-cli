@@ -123,6 +123,7 @@ func newSchemaCmd(root *cobra.Command) *cobra.Command {
 		// depth-limited presentation with unresolved deeper references.
 		if _, err := index.ValidExample(entry); err != nil {
 			entry.RequestExample = nil
+			entry.RequestExampleSource = ""
 		}
 		entry.RequestSchema, err = index.Expand(entry.RequestSchema, depth)
 		if err != nil {
@@ -134,6 +135,18 @@ func newSchemaCmd(root *cobra.Command) *cobra.Command {
 		}
 		for i := range entry.Params {
 			entry.Params[i].Schema, err = index.Expand(entry.Params[i].Schema, depth)
+			if err != nil {
+				return Exit(2, err)
+			}
+		}
+		for i := range entry.BodyFields {
+			entry.BodyFields[i].Schema, err = index.Expand(entry.BodyFields[i].Schema, depth)
+			if err != nil {
+				return Exit(2, err)
+			}
+		}
+		for i := range entry.Headers {
+			entry.Headers[i].Schema, err = index.Expand(entry.Headers[i].Schema, depth)
 			if err != nil {
 				return Exit(2, err)
 			}

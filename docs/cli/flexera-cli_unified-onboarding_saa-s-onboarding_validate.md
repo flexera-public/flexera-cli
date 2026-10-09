@@ -2,6 +2,12 @@
 
 SaaS Onboarding: Validate connection
 
+### Synopsis
+
+SaaS Onboarding: Validate connection
+
+Synchronously test a SaaS connector's **submitted** credentials against the vendor. Unlike create/update this is not fire-and-forget: it returns a verdict at HTTP 200 for every outcome — `success:true` when the vendor accepts the credentials, otherwise `success:false` with the vendor's HTTP `code` (or 502 unreachable / 504 timeout), a normalized `reason` and a specific `detail`. A malformed/missing body is a 422. Keyed on `provider`; tests submitted values only (no stored-credential testing).
+
 ```
 flexera-cli unified-onboarding saa-s-onboarding validate [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --connector-name string   connectorName (body)
+      --connector-name string   connectorName (body); required by API; Human-readable connector name.; minLength: 1
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for validate
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --provider string         provider (body)
+      --provider string         provider (body); required by API; Connector provider discriminator (e.g. n8n).; minLength: 1
       --yes                     confirm the operation (required for destructive ops)
 ```
 

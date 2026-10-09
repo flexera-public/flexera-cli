@@ -2,6 +2,12 @@
 
 Delete an invitation to an org
 
+### Synopsis
+
+Delete an invitation to an org
+
+Delete an invitation to an org, preventing the recipient from accepting it if they have not already.
+
 ```
 flexera-cli iam organization-invitation delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Invitation ID; required by API; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes         confirm the operation (required for destructive ops)
 ```
 

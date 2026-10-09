@@ -2,6 +2,12 @@
 
 Validate a policy template
 
+### Synopsis
+
+Validate a policy template
+
+Validates a policy template for a project. This is only to be used for checking the syntax of a policy template; the results are not stored.
+
 ```
 flexera-cli policy policy-template validate [flags]
 ```
@@ -11,7 +17,7 @@ flexera-cli policy policy-template validate [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for validate
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

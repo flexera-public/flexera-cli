@@ -2,6 +2,12 @@
 
 Show managed application
 
+### Synopsis
+
+Show managed application
+
+Retrieves a managed application identified by ID.
+
 ```
 flexera-cli saas managed-application get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                    help for get
-      --managed-app-id string   managedAppId (path, required)
-      --view string             view (query)
+      --managed-app-id string   managedAppId (path, required); managedAppId identifies an managed application by given Id.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
+      --view string             view (query); View used to render managed application.; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

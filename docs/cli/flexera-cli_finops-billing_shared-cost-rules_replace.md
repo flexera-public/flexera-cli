@@ -2,6 +2,12 @@
 
 Reorder shared cost rules
 
+### Synopsis
+
+Reorder shared cost rules
+
+Updates the execution order (priority) of shared cost rules in the organization. Only rules whose priority is changing need to be included. Each entry assigns a new priority; duplicate priorities within the request are rejected. Rules not in the request keep their current priority. If a submitted priority collides with an unchanged rule, the server shifts the unchanged rule (and subsequent contiguous priorities) down by one. No duplicate rule IDs are allowed.
+
 ```
 flexera-cli finops-billing shared-cost-rules replace [flags]
 ```

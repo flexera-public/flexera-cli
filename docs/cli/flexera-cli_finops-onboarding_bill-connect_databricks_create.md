@@ -2,6 +2,12 @@
 
 Create a Databricks bill connect
 
+### Synopsis
+
+Create a Databricks bill connect
+
+Creates a new Databricks bill connect using Account API credentials.
+
 ```
 flexera-cli finops-onboarding bill-connect databricks create [flags]
 ```
@@ -19,15 +25,15 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --account-id string           accountId (body)
+      --account-id string           accountId (body); required by API; The Databricks account ID; minLength: 1; illustrative example: "e9b1c2d3-4567-8901-2345-6789abcdef01"
       --body string                 raw JSON body (inline | @file | @-); overrides body field flags
-      --body-client-id string       clientId (body)
-      --body-client-secret string   clientSecret (body)
+      --body-client-id string       clientId (body); required by API; The Databricks service principal Application ID; minLength: 1; illustrative example: "061a44ab-a1bb-4b73-9548-330acadd7cd8"
+      --body-client-secret string   clientSecret (body); required by API; The Databricks service principal secret
       --dry-run                     print the planned operation as JSON and exit without calling the API
   -h, --help                        help for create
   -i, --interactive                 edit inputs in a terminal form, review a plan and approve with typed yes
-      --sql-warehouse-id string     sqlWarehouseId (body)
-      --workspace-url string        workspaceUrl (body)
+      --sql-warehouse-id string     sqlWarehouseId (body); required by API; Databricks SQL warehouse ID for cost and usage queries; minLength: 1; illustrative example: "5d31479ca2dfbd90"
+      --workspace-url string        workspaceUrl (body); required by API; Databricks workspace URL; minLength: 1; illustrative example: "https://dbc-6d0b35df-baa3.cloud.databricks.com"
       --yes                         confirm the operation (required for destructive ops)
 ```
 

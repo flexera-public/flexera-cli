@@ -2,6 +2,12 @@
 
 Show an applied policy's log
 
+### Synopsis
+
+Show an applied policy's log
+
+Retrieves the last evaluation log of an applied policy. *The content type is "text/markdown"*.
+
 ```
 flexera-cli policy applied-policy log [flags]
 ```
@@ -10,8 +16,8 @@ flexera-cli policy applied-policy log [flags]
 
 ```
   -h, --help             help for log
-      --id string        Applied policy ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Applied policy ID; The unique identifier for the policy; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

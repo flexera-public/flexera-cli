@@ -2,6 +2,12 @@
 
 Get an AICM (SaaS) connector by id
 
+### Synopsis
+
+Get an AICM (SaaS) connector by id
+
+Retrieve an AICM connector by its identifier.
+
 ```
 flexera-cli unified-onboarding saa-s-connector get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for get
-      --identifier string   identifier (path, required)
+      --identifier string   identifier (path, required); Connector ID; required by API
 ```
 
 ### Options inherited from parent commands

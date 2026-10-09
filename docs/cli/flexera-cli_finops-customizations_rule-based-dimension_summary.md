@@ -2,6 +2,12 @@
 
 Show a rule-based dimension summary
 
+### Synopsis
+
+Show a rule-based dimension summary
+
+Returns a summary with all distinct values used in rules and links to available rule lists.
+
 ```
 flexera-cli finops-customizations rule-based-dimension summary [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for summary
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the rule-based dimension; required by API; pattern: "^rbd_[\\S]*$"; illustrative example: "rbd_department"
 ```
 
 ### Options inherited from parent commands

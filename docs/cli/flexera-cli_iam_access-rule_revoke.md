@@ -2,6 +2,12 @@
 
 Remove an access rule
 
+### Synopsis
+
+Remove an access rule
+
+Idempotently deletes an access rule.
+
 ```
 flexera-cli iam access-rule revoke [flags]
 ```

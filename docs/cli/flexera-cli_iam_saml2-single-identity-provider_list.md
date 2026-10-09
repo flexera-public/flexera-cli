@@ -2,6 +2,12 @@
 
 Show a public identity provider id
 
+### Synopsis
+
+Show a public identity provider id
+
+Show an existing identity provider. If the organization has more than one IDP, or if the IDP does not have at least one verified domain, an error will be returned.
+
 ```
 flexera-cli iam saml2-single-identity-provider list [flags]
 ```

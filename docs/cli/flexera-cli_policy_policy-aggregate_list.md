@@ -2,6 +2,12 @@
 
 Index policy aggregates
 
+### Synopsis
+
+Index policy aggregates
+
+Index retrieves the list of policy aggregates in an org.
+
 ```
 flexera-cli policy policy-aggregate list [flags]
 ```
@@ -16,12 +22,12 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter to retrieve policy aggregates based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ---------------------- | ------ | ------------------------------------| --------------------------------------------------------------- | | name | string | name in ['policy123', 'policy124'] | Returns policy aggregat... (see cli schema); illustrative example: "name eq 'foo'"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); Specifies the order to sort policy aggregates by fields such as [name, status, createdAt, updatedAt, createdBy.email, publishedTemplate.name, schedule, dryRun, category]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "status asc, createdAt asc"
+      --skip-token string   resume pagination from this token; Used in pagination to point to the next or previous set of records.
 ```
 
 ### Options inherited from parent commands

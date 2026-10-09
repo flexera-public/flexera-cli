@@ -2,6 +2,24 @@
 
 Update current user's name
 
+### Synopsis
+
+Update current user's name
+
+Updates the first name and/or last name of the currently authenticated user.
+Only fields provided in the request body are updated — omitting a field leaves it unchanged.
+
+**Sync guard**: A successful update sets an internal `updated_by` marker
+(`user:{callerID}`) on the user record in UMS. The User Management Service uses this
+marker to reject subsequent AD/SAML sync writes that would overwrite the manually-set
+name. This protects users whose IdP has incorrect or stale attribute mappings from having
+their name reverted every time they log in via SSO.
+
+**No org context required**: The update applies globally to the user record, regardless
+of which org they are editing from. The change is reflected in all org contexts.
+
+**Response**: Returns 200 OK with the updated profile on success.
+
 ```
 flexera-cli iam user-profile update [flags]
 ```
@@ -21,10 +39,10 @@ Validated illustrative body, when available (review before use):
 ```
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run             print the planned operation as JSON and exit without calling the API
-      --first-name string   firstName (body)
+      --first-name string   firstName (body); First name to set.; minLength: 1; illustrative example: "Jane"
   -h, --help                help for update
   -i, --interactive         edit inputs in a terminal form, review a plan and approve with typed yes
-      --last-name string    lastName (body)
+      --last-name string    lastName (body); Last name to set.; minLength: 1; illustrative example: "Smith"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

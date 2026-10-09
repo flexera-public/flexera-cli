@@ -2,6 +2,12 @@
 
 Regulatory Compliance BPC Rule List
 
+### Synopsis
+
+Regulatory Compliance BPC Rule List
+
+Returns on-prem BPC rules with their failing asset counts and mapped compliance standards.
+
 ```
 flexera-cli risk regulatory-compliance list [flags]
 ```
@@ -19,10 +25,10 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --compliance-standard string   complianceStandard (body)
-      --control-id string            controlId (body)
-      --date string                  date (body)
-      --feature-type string          featureType (body)
+      --compliance-standard string   complianceStandard (body); Standard code, e.g. CIS_CONTROLS_8
+      --control-id string            controlId (body); Control ID, e.g. CIS_CTRL_8__7_1
+      --date string                  date (body); YYYY-MM-DD. If omitted, uses the latest available run
+      --feature-type string          featureType (body); Type of rules to fetch; API default: "compliance"
   -h, --help                         help for list
 ```
 

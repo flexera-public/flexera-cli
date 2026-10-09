@@ -2,6 +2,12 @@
 
 Show an applied policy
 
+### Synopsis
+
+Show an applied policy
+
+Show retrieves the details of an applied policy.
+
 ```
 flexera-cli policy applied-policy get [flags]
 ```
@@ -10,9 +16,9 @@ flexera-cli policy applied-policy get [flags]
 
 ```
   -h, --help             help for get
-      --id string        Applied policy ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
-      --view string      Optional Policy applied-policy view
+      --id string        Applied policy ID; The unique identifier for the policy; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --view string      Optional Policy applied-policy view; View used to render applied policy; enum: ["default","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

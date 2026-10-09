@@ -2,6 +2,12 @@
 
 Get status for all enabled products for a given connector
 
+### Synopsis
+
+Get status for all enabled products for a given connector
+
+Get status for all enabled products for a given connector along with errors, if any.
+
 ```
 flexera-cli unified-onboarding connector status [flags]
 ```
@@ -16,8 +22,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --account-id string     account_id (query)
-      --connector-id string   connector_id (query)
+      --account-id string     account_id (query); Account ID (optional)
+      --connector-id string   connector_id (query); Connector ID (required); required by API
   -h, --help                  help for status
 ```
 

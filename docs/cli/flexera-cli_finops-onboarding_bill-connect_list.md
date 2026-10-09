@@ -2,6 +2,12 @@
 
 Index all bill connects
 
+### Synopsis
+
+Index all bill connects
+
+Returns the list of all bill connects across all cloud vendors.
+
 ```
 flexera-cli finops-onboarding bill-connect list [flags]
 ```

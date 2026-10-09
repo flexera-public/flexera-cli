@@ -2,6 +2,12 @@
 
 Show an org's capability
 
+### Synopsis
+
+Show an org's capability
+
+Show an org's access to a capability.
+
 ```
 flexera-cli iam capability get [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --capability-name string   capabilityName (path, required)
+      --capability-name string   capabilityName (path, required); The name of the Capability, which must be unique; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "iam"
   -h, --help                     help for get
-      --view string              view (query)
+      --view string              view (query); View used to render Capability; enum: ["default","index"]; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

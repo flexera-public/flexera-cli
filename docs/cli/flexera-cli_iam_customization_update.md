@@ -2,6 +2,12 @@
 
 Creates, updates, or removes a number of customizations
 
+### Synopsis
+
+Creates, updates, or removes a number of customizations
+
+Updates this org's customizations. Provide only the items to change: one of urlValue, stringValue, integerValue, or booleanValue creates or updates the customization; omitting all value fields and omitting shouldInherit removes it; shouldInherit can only be modified when providing a value field; omitting shouldInherit leaves it unchanged.
+
 ```
 flexera-cli iam customization update [flags]
 ```

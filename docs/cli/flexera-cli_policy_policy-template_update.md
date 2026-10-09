@@ -2,6 +2,14 @@
 
 Update a policy template
 
+### Synopsis
+
+Update a policy template
+
+Update modifies a policy template by replacing it in place for a project. Updating a policy template will not change the
+        behavior of existing applied policies or policy aggregates. They will continue to run using the version of the template that existed when they were applied.
+        To update existing applied policies to use the newer version, terminate and reapply.
+
 ```
 flexera-cli policy policy-template update [flags]
 ```
@@ -11,8 +19,8 @@ flexera-cli policy policy-template update [flags]
 ```
       --file string      Path to JSON payload file, or - to read from stdin
   -h, --help             help for update
-      --id string        Policy template ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
+      --id string        Policy template ID; The unique identifier for the policy template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

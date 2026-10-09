@@ -2,6 +2,13 @@
 
 show currency_setting
 
+### Synopsis
+
+show currency_setting
+
+Retrieve the [ISO-4217 currency code](https://en.wikipedia.org/wiki/ISO_4217) for the org.
+See the [currency setting documentation](https://docs.flexera.com/flexera/EN/Optima/Currency_Support.htm) for more details.
+
 ```
 flexera-cli bill-analysis currency-setting list [flags]
 ```

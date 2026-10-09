@@ -2,6 +2,15 @@
 
 List BillingCenters
 
+### Synopsis
+
+List BillingCenters
+
+List highest BillingCenters for which the user has the 'optima:billing_center:show' privilege.
+
+**Required security scopes for SameUser**:
+  * `common:org:affiliated`
+
 ```
 flexera-cli billing-center user-billing-centers list [flags]
 ```
@@ -17,9 +26,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                           help for list
-      --highest-accessible-b-cs-only   highestAccessibleBCsOnly (query)
-      --user int                       user (path, required)
-      --view string                    view (query)
+      --highest-accessible-b-cs-only   highestAccessibleBCsOnly (query); Returns the highest level of billing centers accessible to the user when true and all levels of billing centers accessible to the user when false.; API default: true
+      --user int                       user (path, required); required by API
+      --view string                    view (query); Returns only the id and the name of the billing centers if set to "compact"; enum: ["index","compact"]; API default: "index"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 SaaS Onboarding: Collect now
 
+### Synopsis
+
+SaaS Onboarding: Collect now
+
+Trigger an on-demand data collection for an existing SaaS connector. Async acceptance; id-only (no credentials). The subscriber republishes a Collect event and data-inventory runs a one-off collection — the result surfaces via the connector status (lastRunStatus/executionStatus), not this response.
+
 ```
 flexera-cli unified-onboarding saa-s-onboarding collect [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --connector-id string   connector_id (path, required)
+      --connector-id string   connector_id (path, required); Connector ID; required by API
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for collect
       --yes                   confirm the operation (required for destructive ops)

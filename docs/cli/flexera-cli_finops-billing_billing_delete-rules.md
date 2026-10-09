@@ -2,6 +2,12 @@
 
 Remove an enterprise adjustment rule
 
+### Synopsis
+
+Remove an enterprise adjustment rule
+
+Remove an enterprise adjustment rule.
+
 ```
 flexera-cli finops-billing billing delete-rules [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete-rules
-      --id string   id (path, required)
+      --id string   id (path, required); id identifies this rule; required by API; format: uuid; illustrative example: "ae85f96e-6b9e-4d68-a741-d1ea7ca1fb28"
       --yes         confirm the operation (required for destructive ops)
 ```
 

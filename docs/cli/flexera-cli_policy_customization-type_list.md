@@ -2,6 +2,12 @@
 
 Retrieves a collection of customization types
 
+### Synopsis
+
+Retrieves a collection of customization types
+
+Retrieves a collection of customization types in an org.
+
 ```
 flexera-cli policy customization-type list [flags]
 ```

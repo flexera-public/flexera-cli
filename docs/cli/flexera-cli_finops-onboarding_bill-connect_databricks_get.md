@@ -2,6 +2,12 @@
 
 Show a Databricks bill connect
 
+### Synopsis
+
+Show a Databricks bill connect
+
+Shows the details of a Databricks bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect databricks get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a Databricks bill connect; required by API; illustrative example: "databricks-dbc-6d0b35df-baa3"
 ```
 
 ### Options inherited from parent commands

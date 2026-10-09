@@ -2,6 +2,12 @@
 
 Event counts by type
 
+### Synopsis
+
+Event counts by type
+
+Retrieves the summarized total event counts for each action type in a sub application for a given managed application.
+
 ```
 flexera-cli saas metric-query event-counts-by-type [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --days-since int          daysSince (query)
+      --days-since int          daysSince (query); The total number of days worth of events to be included within the returned counts.; required by API; enum: [90,180,365,730]; illustrative example: 90
   -h, --help                    help for event-counts-by-type
-      --managed-app-id string   managedAppId (query)
-      --resolution string       resolution (query)
-      --sub-app-id string       subAppId (query)
+      --managed-app-id string   managedAppId (query); The managed application unique identifier for which application events count to be returned.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "34556"
+      --resolution string       resolution (query); The granularity to group the counts.; enum: ["none","monthly"]; API default: "none"; illustrative example: "monthly"
+      --sub-app-id string       subAppId (query); The unique identifier of the sub application for which the events counts is requested.; required by API; illustrative example: "incident_management"
 ```
 
 ### Options inherited from parent commands

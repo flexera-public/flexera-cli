@@ -2,6 +2,12 @@
 
 Show a published template
 
+### Synopsis
+
+Show a published template
+
+Show retrieves the details of a published template.
+
 ```
 flexera-cli policy published-template get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                           help for get
-      --published-template-id string   publishedTemplateId (path, required)
-      --view string                    view (query)
+      --published-template-id string   publishedTemplateId (path, required); The unique identifier for the published template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --view string                    view (query); View used to render published template.; enum: ["default","extended","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

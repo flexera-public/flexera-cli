@@ -2,6 +2,12 @@
 
 Regulatory Compliance Lifecycle Trend
 
+### Synopsis
+
+Regulatory Compliance Lifecycle Trend
+
+Returns historical lifecycle counts over time grouped by status at monthly granularity.The time range unit must be 'month' and value must be between 1 and 12.
+
 ```
 flexera-cli risk regulatory-compliance lifecycle-trend [flags]
 ```

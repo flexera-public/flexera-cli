@@ -2,6 +2,12 @@
 
 Show currency customizations
 
+### Synopsis
+
+Show currency customizations
+
+Returns the organization's currency customizations. If currency conversion has not been configured, it is returned as disabled.
+
 ```
 flexera-cli finops-customizations currency list [flags]
 ```

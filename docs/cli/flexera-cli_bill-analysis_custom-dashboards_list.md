@@ -2,6 +2,12 @@
 
 index custom_dashboards
 
+### Synopsis
+
+index custom_dashboards
+
+Lists all Dashboards for a given Org and User.
+
 ```
 flexera-cli bill-analysis custom-dashboards list [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --area string   area (query)
+      --area string   area (query); Optional area filter; illustrative example: "bc-index"
   -h, --help          help for list
-      --user int      user (path, required)
+      --user int      user (path, required); User Identifier; required by API; format: int64; illustrative example: 3073261409084962000
 ```
 
 ### Options inherited from parent commands

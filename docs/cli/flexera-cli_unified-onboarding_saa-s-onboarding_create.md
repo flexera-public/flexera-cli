@@ -2,6 +2,12 @@
 
 SaaS Onboarding: Create
 
+### Synopsis
+
+SaaS Onboarding: Create
+
+Create a new SaaS connector. Async: stores the credential, emits the onboarding event and returns an acceptance. Generic request keyed on `provider`; the provider-specific fields are validated against the connector.
+
 ```
 flexera-cli unified-onboarding saa-s-onboarding create [flags]
 ```
@@ -20,11 +26,11 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --connector-name string   connectorName (body)
+      --connector-name string   connectorName (body); required by API; Human-readable connector name.; minLength: 1
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for create
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --provider string         provider (body)
+      --provider string         provider (body); required by API; Connector provider discriminator (e.g. n8n).; minLength: 1
       --yes                     confirm the operation (required for destructive ops)
 ```
 

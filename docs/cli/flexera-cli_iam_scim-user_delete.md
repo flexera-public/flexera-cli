@@ -2,6 +2,12 @@
 
 Delete a user.
 
+### Synopsis
+
+Delete a user.
+
+Delete removes a user from an org.
+
 ```
 flexera-cli iam scim-user delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Unique identifier for the user.; required by API; illustrative example: "12345"
       --yes         confirm the operation (required for destructive ops)
 ```
 

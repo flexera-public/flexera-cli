@@ -2,6 +2,12 @@
 
 Index an org's service accounts
 
+### Synopsis
+
+Index an org's service accounts
+
+Index returns all service accounts in an org.
+
 ```
 flexera-cli iam service-account list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render service account; enum: ["index"]; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

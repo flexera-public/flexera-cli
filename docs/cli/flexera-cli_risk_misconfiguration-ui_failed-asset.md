@@ -2,6 +2,12 @@
 
 Failed Assets List.
 
+### Synopsis
+
+Failed Assets List.
+
+Endpoint that forwards api request for listing of failed assets to the Secops UI API.
+
 ```
 flexera-cli risk misconfiguration-ui failed-asset [flags]
 ```
@@ -18,16 +24,16 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --accounts strings         accounts (body)
-      --args string              args (body)
+      --accounts strings         accounts (body); required by API; List of cloud account IDs or ['all']; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["837570591364","252277358118"]
+      --args string              args (body); Rule arguments string (comma-separated or JSON array string); minLength: 1; illustrative example: "ingress,source"
       --body string              raw JSON body (inline | @file | @-); overrides body field flags
-      --body-skip-token string   skipToken (body)
+      --body-skip-token string   skipToken (body); Cursor-based pagination token for next page
   -h, --help                     help for failed-asset
-      --page-size int            pageSize (body)
-      --providers strings        providers (body)
-      --regions strings          regions (body)
-      --rule-name string         ruleName (body)
-      --show-suppressed string   showSuppressed (body)
+      --page-size int            pageSize (body); Number of items per page; minimum: 1; maximum: 1000; illustrative example: 100
+      --providers strings        providers (body); List of cloud providers or ['all']; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["aws","azure"]
+      --regions strings          regions (body); List of cloud regions or ['all']; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["us-east-1","us-east-2"]
+      --rule-name string         ruleName (body); required by API; Security rule name to filter assets by; minLength: 1; illustrative example: "vpc-default-network-acls-allow-all"
+      --show-suppressed string   showSuppressed (body); Whether to include suppressed assets: 'true', 'false', or omit for all; minLength: 1; illustrative example: "false"
 ```
 
 ### Options inherited from parent commands

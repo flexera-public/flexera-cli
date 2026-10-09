@@ -2,6 +2,10 @@
 
 Retrieve summarized data around discovered application usage.
 
+### Synopsis
+
+Retrieve summarized data around discovered application usage.
+
 ```
 flexera-cli saas discovered-application list [flags]
 ```
@@ -16,10 +20,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The filter to query discovered app usage . Supported fields in the filter are [source.managedAppId, name, category, snapshotAt] | Attribute | Description | Allowed Operators | Example | |---------------------|-----------------------------------------------------------------------|----------------------|-----------------------------------------| | source.mana... (see cli schema); illustrative example: "snapshotAt ge '2017-05-01T00:00:00.000Z' AND snapshotAt le '2018-05-01T00:00:00.000Z' AND source.managedAppId eq '378432'"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

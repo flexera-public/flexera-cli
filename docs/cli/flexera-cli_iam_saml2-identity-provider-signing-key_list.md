@@ -2,6 +2,12 @@
 
 Index an IdP's signing keys
 
+### Synopsis
+
+Index an IdP's signing keys
+
+List signing keys associated with an IdP.
+
 ```
 flexera-cli iam saml2-identity-provider-signing-key list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                          help for list
-      --identity-provider-id string   identityProviderId (path, required)
+      --identity-provider-id string   identityProviderId (path, required); ID for the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
 ```
 
 ### Options inherited from parent commands

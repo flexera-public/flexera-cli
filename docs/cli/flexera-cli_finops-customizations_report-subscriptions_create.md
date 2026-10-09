@@ -2,6 +2,12 @@
 
 Create a report subscription
 
+### Synopsis
+
+Create a report subscription
+
+Creates a report subscription in the organization. The owner is derived from the JWT subject claim; the caller becomes the owner.
+
 ```
 flexera-cli finops-customizations report-subscriptions create [flags]
 ```
@@ -20,14 +26,14 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string              raw JSON body (inline | @file | @-); overrides body field flags
-      --dashboard-id string      dashboardId (body)
-      --dashboard-scope string   dashboardScope (body)
+      --dashboard-id string      dashboardId (body); required by API; Identifier of the dashboard to render and send.; illustrative example: "dash-8f21"
+      --dashboard-scope string   dashboardScope (body); required by API; Which dashboard store resolves the target dashboard.; enum: ["user","org"]; illustrative example: "org"
       --dry-run                  print the planned operation as JSON and exit without calling the API
-      --enabled                  enabled (body)
+      --enabled                  enabled (body); Whether the schedule is active.; API default: true; illustrative example: false
   -h, --help                     help for create
   -i, --interactive              edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string              name (body)
-      --visibility string        visibility (body)
+      --name string              name (body); required by API; Human-readable name for the subscription; maxLength: 255; illustrative example: "Weekly Cloud Cost"
+      --visibility string        visibility (body); Visibility scope.; enum: ["private","shared"]; API default: "private"; illustrative example: "private"
       --yes                      confirm the operation (required for destructive ops)
 ```
 

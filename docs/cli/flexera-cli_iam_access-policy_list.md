@@ -2,6 +2,12 @@
 
 List all access policies for an organization
 
+### Synopsis
+
+List all access policies for an organization
+
+List all access policies for an organization.
+
 ```
 flexera-cli iam access-policy list [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string   filter (query)
+      --filter string   filter (query); Filter used to narrow down access policies; illustrative example: "Qui voluptatibus dolores a qui eum."
   -h, --help            help for list
-      --view string     view (query)
+      --view string     view (query); View used to render access policy; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

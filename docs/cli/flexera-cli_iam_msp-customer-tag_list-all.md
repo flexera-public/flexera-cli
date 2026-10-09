@@ -2,6 +2,12 @@
 
 Index an MSP's customers based on tag filter
 
+### Synopsis
+
+Index an MSP's customers based on tag filter
+
+Index a managed service provider's customers based on tag(s).
+
 ```
 flexera-cli iam msp-customer-tag list-all [flags]
 ```
@@ -16,10 +22,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Tags filter for filtering list of customers returned. The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | tags | Filters on the tag(s) | co | Contains - The entire operator value must be a substring of the attribute value for a match. | tags co 'SAP' | | | | eq | Equal - The a... (see cli schema); minLength: 1; illustrative example: "(name co 'SAP' or name co 'HP')"
   -h, --help                help for list-all
       --no-paginate         return only the first page (do not follow nextPage)
-      --skip-token string   resume pagination from this token
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

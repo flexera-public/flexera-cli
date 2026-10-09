@@ -2,6 +2,12 @@
 
 Index an org's capabilities
 
+### Synopsis
+
+Index an org's capabilities
+
+Index returns a list of Capabilities to which an org has access.
+
 ```
 flexera-cli iam capability list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for list
-      --view string   view (query)
+      --view string   view (query); View used to render Capability; enum: ["default","index"]; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

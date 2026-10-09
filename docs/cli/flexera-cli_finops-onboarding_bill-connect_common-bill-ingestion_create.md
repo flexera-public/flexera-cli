@@ -2,6 +2,12 @@
 
 Create a CBI bill connect
 
+### Synopsis
+
+Create a CBI bill connect
+
+Creates a CBI(Common Bill Ingest) Bill Connect.
+
 ```
 flexera-cli finops-onboarding bill-connect common-bill-ingestion create [flags]
 ```
@@ -19,13 +25,13 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --bill-identifier string   billIdentifier (body)
+      --bill-identifier string   billIdentifier (body); required by API; Unique identifier for the bill connect, a bill identifier of your choice, alphanumeric (or - or _) sequence uniquely identifying this bill connect of this integration type for your organization; minLength: 1; pattern: "^[0-9a-zA-Z_-]{1,45}$"; illustrative example: "test"
       --body string              raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                  print the planned operation as JSON and exit without calling the API
   -h, --help                     help for create
-      --integration-id string    integrationId (body)
+      --integration-id string    integrationId (body); required by API; ID of the CBI bill integration, Possible integration ids: * [cbi-oi-optima (CSV default format)](https://docs.flexera.com/flexera/EN/Administration/BillConnectConfigsCBIDefaultFormat.htm) * [cbi-oi-aws](https://docs.flexera.com/flexera/EN/Administration/BillConnectConfigsAWS.htm) * [cbi-oi-oracle](https://docs.flexera.com/flexera/EN/Administration/BillConnec... (see cli schema); minLength: 1; pattern: "^[0-9a-zA-Z_-]{1,20}$"; illustrative example: "cbi-oi-optima"
   -i, --interactive              edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string              name (body)
+      --name string              name (body); required by API; Human readable name given to bill connect; minLength: 1; illustrative example: "private_cloud_bill"
       --yes                      confirm the operation (required for destructive ops)
 ```
 

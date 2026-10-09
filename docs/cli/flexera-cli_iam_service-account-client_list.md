@@ -2,6 +2,12 @@
 
 Index a service account's clients
 
+### Synopsis
+
+Index a service account's clients
+
+Index returns all clients for a service account.
+
 ```
 flexera-cli iam service-account-client list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                     help for list
-      --service-account-id int   serviceAccountId (path, required)
+      --service-account-id int   serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
 ```
 
 ### Options inherited from parent commands

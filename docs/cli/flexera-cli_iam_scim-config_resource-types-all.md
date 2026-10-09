@@ -2,6 +2,12 @@
 
 Returns a list of supported resource types for an org.
 
+### Synopsis
+
+Returns a list of supported resource types for an org.
+
+Index returns a list of supported resource types for an org.
+
 ```
 flexera-cli iam scim-config resource-types-all [flags]
 ```

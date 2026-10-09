@@ -2,6 +2,14 @@
 
 Create a service account client
 
+### Synopsis
+
+Create a service account client
+
+Create adds a new service account client. The create response is the only time
+that the sensitive client secret is available. A maximum of 2 service account clients may exist
+for each service account at any one time.
+
 ```
 flexera-cli iam service-account-client clients [flags]
 ```
@@ -19,7 +27,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                  print the planned operation as JSON and exit without calling the API
   -h, --help                     help for clients
-      --service-account-id int   serviceAccountId (path, required)
+      --service-account-id int   serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
       --yes                      confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,15 @@
 
 Update a BillingCenter
 
+### Synopsis
+
+Update a BillingCenter
+
+Update a BillingCenter
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:update+common:org:own`
+
 ```
 flexera-cli billing-center replace [flags]
 ```
@@ -19,13 +28,13 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --description string      description (body)
+      --description string      description (body); required by API; Description of the BillingCenter; illustrative example: "cloud resources used in marketing campaigns"
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for replace
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string             name (body)
+      --name string             name (body); required by API; Name of the BillingCenter; illustrative example: "Marketing"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

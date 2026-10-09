@@ -2,6 +2,12 @@
 
 Show note
 
+### Synopsis
+
+Show note
+
+Retrieves a notes for given identifier.
+
 ```
 flexera-cli saas license notes-all-3 [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for notes-all-3
-      --id string           id (path, required)
-      --license-id string   licenseId (path, required)
+      --id string           id (path, required); Unique identifier of note.; required by API; illustrative example: "3421"
+      --license-id string   licenseId (path, required); Unique identifier of license that note is associated to.; required by API; illustrative example: "34521"
 ```
 
 ### Options inherited from parent commands

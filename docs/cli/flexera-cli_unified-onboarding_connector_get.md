@@ -2,6 +2,12 @@
 
 Get information about a onboarded connector
 
+### Synopsis
+
+Get information about a onboarded connector
+
+Retrieve a connector by its identifier
+
 ```
 flexera-cli unified-onboarding connector get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for get
-      --identifier string   identifier (path, required)
+      --identifier string   identifier (path, required); Connector ID Example : 4664d082-35c8-4a33-abc9-f174b6321234 or 14; required by API
 ```
 
 ### Options inherited from parent commands

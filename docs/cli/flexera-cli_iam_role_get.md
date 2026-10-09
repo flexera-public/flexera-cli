@@ -2,6 +2,12 @@
 
 Show an org's role
 
+### Synopsis
+
+Show an org's role
+
+Show a role in an org
+
 ```
 flexera-cli iam role get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id int        id (path, required)
-      --view string   view (query)
+      --id int        id (path, required); The identifier for the Role; required by API; minimum: 1; illustrative example: 1234
+      --view string   view (query); View used to render Role; enum: ["default","extended","index"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 List licenses
 
+### Synopsis
+
+List licenses
+
+Retrieves a collection of licenses.
+
 ```
 flexera-cli saas license list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The date filter to query the licenses. Supported fields in the filter are [createdAt]; illustrative example: "createdAt gt 'ISO 8601 date'"
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); The order by filter to sort the licenses. Supported values are Supported fields in the orderBy are [createdAt]; API default: "createdAt desc"; illustrative example: "createdAt desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

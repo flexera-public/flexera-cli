@@ -2,6 +2,12 @@
 
 Validate credentials stored for AWS Bill Connect
 
+### Synopsis
+
+Validate credentials stored for AWS Bill Connect
+
+Validates the credentials stored for an AWS Bill Connect.
+
 ```
 flexera-cli finops-onboarding bill-connect aws list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "aws-20194320903"
 ```
 
 ### Options inherited from parent commands

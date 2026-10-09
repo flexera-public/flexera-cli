@@ -2,6 +2,14 @@
 
 Create and affiliate a user to an org
 
+### Synopsis
+
+Create and affiliate a user to an org
+
+Creates and affiliates a user to an org. The user's email domain must match a verified domain in the organization's Identity Providers.
+If the user already exists, they are affiliated with the organization. Only user's email is required.
+If the user does not exist, a new user is created and affiliated to the organization. In this case, User's email, first name and last name are required.
+
 ```
 flexera-cli iam user create [flags]
 ```
@@ -21,11 +29,11 @@ Validated illustrative body, when available (review before use):
 ```
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run             print the planned operation as JSON and exit without calling the API
-      --email string        email (body)
-      --first-name string   first_name (body)
+      --email string        email (body); required by API; Email address of the user; pattern: "^[a-zA-Z0-9!#$%\u0026'*+/=?^_.`{|}~-]+@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "someone@SomeWhere.com"
+      --first-name string   first_name (body); First name of the user; illustrative example: "Jane"
   -h, --help                help for create
   -i, --interactive         edit inputs in a terminal form, review a plan and approve with typed yes
-      --last-name string    last_name (body)
+      --last-name string    last_name (body); Last name of the user; illustrative example: "Smith"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

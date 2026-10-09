@@ -2,6 +2,12 @@
 
 Get an access policy by ID.
 
+### Synopsis
+
+Get an access policy by ID.
+
+Get an access policy by ID
+
 ```
 flexera-cli iam access-policy get [flags]
 ```
@@ -16,9 +22,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --access-policy-id string   accessPolicyId (path, required)
+      --access-policy-id string   accessPolicyId (path, required); Access Policy ID; required by API; illustrative example: "Officiis totam unde saepe cum."
   -h, --help                      help for get
-      --view string               view (query)
+      --view string               view (query); View used to render access policy; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

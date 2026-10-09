@@ -2,6 +2,12 @@
 
 List allocations
 
+### Synopsis
+
+List allocations
+
+Retrieves a list of allocations
+
 ```
 flexera-cli saas license allocations-all-3 [flags]
 ```
@@ -17,9 +23,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                 help for allocations-all-3
-      --license-id string    licenseId (path, required)
-      --purchase-id string   purchaseId (path, required)
-      --term-id string       termId (path, required)
+      --license-id string    licenseId (path, required); Unique identifier of the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --purchase-id string   purchaseId (path, required); Unique identifier of the purchase associated with the license term.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "93214"
+      --term-id string       termId (path, required); Unique identifier of the license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
 ```
 
 ### Options inherited from parent commands

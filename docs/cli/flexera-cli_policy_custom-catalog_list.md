@@ -2,6 +2,15 @@
 
 Index published templates with applied custom catalog settings
 
+### Synopsis
+
+Index published templates with applied custom catalog settings
+
+Index returns a list of published templates which can be filtered by the catalogSource parameter.
+The default setting only includes templates made available to all MSP child orgs.
+Using different catalogSource value enables users to preview what templates will be available to their child orgs with other "policy-catalog-reference-org" settings.
+This setting can be changed at the [Customization Value](https://developer.flexera.com/docs/api/policy/v1#/Customization%20Value) endpoint.
+
 ```
 flexera-cli policy custom-catalog list [flags]
 ```
@@ -16,13 +25,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --catalog-source string   catalogSource (query)
-      --filter string           filter (query)
+      --catalog-source string   catalogSource (query); - "default": Includes templates based on the configuration set in the Policy Customization Service ("flexera-default", "msp-parent", or "msp-parent|flexera-default"). - "msp-parent": Includes only the custom templates created by the MSP parent organization. - "flexera-default": Includes only the templates published by Flexera. - "msp-parent|flexera-default":... (see cli schema); enum: ["default","msp-parent","flexera-default","msp-parent|flexera-default","debug","taggable-templates"]; API default: "default"; illustrative example: "msp-parent"
+      --filter string           filter (query); Optional filter to retrieve published templates based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ------------------------- | ------ | -------------------------------------- | ------------------------------------------------------------------------------------- | | name | string | name in ['policy123', 'policy1... (see cli schema); illustrative example: "name eq 'foo'"
   -h, --help                    help for list
-      --limit int               limit (query)
+      --limit int               limit (query); Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate             return only the first page (do not follow nextPage)
-      --order-by string         orderBy (query)
-      --skip-token string       resume pagination from this token
+      --order-by string         orderBy (query); Specifies the order to sort published templates by fields such as [name, shortDescription, longDescription, docLink, category, createdBy.email, createdAt, updatedAt, builtIn, hidden]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "category asc, createdAt asc"
+      --skip-token string       resume pagination from this token; Used in pagination to point to the next or previous set of records.
 ```
 
 ### Options inherited from parent commands

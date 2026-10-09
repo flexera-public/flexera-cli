@@ -2,6 +2,12 @@
 
 Create Usage group for the specified SaaS object
 
+### Synopsis
+
+Create Usage group for the specified SaaS object
+
+Resource to Create a usage group for the specified SaaS object
+
 ```
 flexera-cli saas usage-group create [flags]
 ```
@@ -23,8 +29,8 @@ Validated illustrative body, when available (review before use):
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for create
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --managed-app-id string   managedAppId (body)
-      --name string             name (body)
+      --managed-app-id string   managedAppId (body); required by API; Id of the managed app to which this usage group is related.; pattern: "^[0-9a-f]+$"; illustrative example: "70253"
+      --name string             name (body); required by API; name of usage group to create; illustrative example: "Contacts"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

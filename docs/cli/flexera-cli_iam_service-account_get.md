@@ -2,6 +2,12 @@
 
 Show an org's service account
 
+### Synopsis
+
+Show an org's service account
+
+Show returns detail for a specific service account.
+
 ```
 flexera-cli iam service-account get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id int        id (path, required)
-      --view string   view (query)
+      --id int        id (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
+      --view string   view (query); View used to render service account; enum: ["default","index"]; illustrative example: "index"
 ```
 
 ### Options inherited from parent commands

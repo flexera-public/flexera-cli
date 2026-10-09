@@ -2,6 +2,12 @@
 
 Show managed application event
 
+### Synopsis
+
+Show managed application event
+
+Retrieves a managed application event identified by Id
+
 ```
 flexera-cli saas managed-application-event get [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --event-id string   eventId (path, required)
+      --event-id string   eventId (path, required); eventId identifies a managed application event by given ID.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
   -h, --help              help for get
 ```
 

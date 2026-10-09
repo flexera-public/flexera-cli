@@ -2,6 +2,14 @@
 
 Revoke all user refresh tokens
 
+### Synopsis
+
+Revoke all user refresh tokens
+
+Revoke all refresh tokens belonging to a user. Supports optional query parameters orgId and userId.
+Org owners can revoke all refresh tokens for a specific user by providing both orgId and userId in the query.
+Note that org owners cannot revoke tokens for users who are affiliated with other organizations.
+
 ```
 flexera-cli iam refresh-token delete-all [flags]
 ```
@@ -19,7 +27,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for delete-all
-      --user-id int   userId (query)
+      --user-id int   userId (query); User ID; illustrative example: 67890
       --yes           confirm the operation (required for destructive ops)
 ```
 

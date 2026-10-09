@@ -2,6 +2,12 @@
 
 Creates a published template
 
+### Synopsis
+
+Creates a published template
+
+Create creates an organization-scoped published template from a project-scoped policy template.
+
 ```
 flexera-cli policy published-template create [flags]
 ```
@@ -19,12 +25,12 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run               print the planned operation as JSON and exit without calling the API
-  -h, --help                  help for create
-  -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --template-ref string   templateRef (body)
-      --yes                   confirm the operation (required for destructive ops)
+      --body string                raw JSON body (inline | @file | @-); overrides body field flags
+      --dry-run                    print the planned operation as JSON and exit without calling the API
+  -h, --help                       help for create
+  -i, --interactive                edit inputs in a terminal form, review a plan and approve with typed yes
+      --template-ref templateRef   templateRef (body); required by API; The templateRef used to specify the policy template to publish to the organization.; illustrative example: "ref:::project/2345:policy:policy-template:5b06ead5e0dacc007058c784"
+      --yes                        confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands

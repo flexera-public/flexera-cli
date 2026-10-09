@@ -2,6 +2,16 @@
 
 Replace IP access control rules
 
+### Synopsis
+
+Replace IP access control rules
+
+Replaces the current list of rules with a new list. The rules in the new list are effective
+immediately.
+If the rules list in the payload is empty it removes all existing rules which means connections from any IP address will be allowed.
+To prevent accidental misconfiguration, an error will be returned if the current user's IP address is not
+allowed by the new rules list.
+
 ```
 flexera-cli iam ip-access-control replace [flags]
 ```

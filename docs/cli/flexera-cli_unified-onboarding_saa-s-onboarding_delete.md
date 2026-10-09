@@ -2,6 +2,12 @@
 
 SaaS Onboarding: Delete
 
+### Synopsis
+
+SaaS Onboarding: Delete
+
+Delete a SaaS connector and its stored credential(s). Async acceptance; id-only (the subscriber reads the provider + credential ids from the connector record).
+
 ```
 flexera-cli unified-onboarding saa-s-onboarding delete [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --connector-id string   connector_id (path, required)
+      --connector-id string   connector_id (path, required); Connector ID; required by API
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for delete
       --yes                   confirm the operation (required for destructive ops)

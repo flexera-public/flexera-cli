@@ -2,6 +2,12 @@
 
 Show SaaS data
 
+### Synopsis
+
+Show SaaS data
+
+This endpoint retrieves a single SaaS data entry.
+
 ```
 flexera-cli saas saa-s-data get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); required by API; illustrative example: "Dolorem repudiandae id quisquam quod."
 ```
 
 ### Options inherited from parent commands

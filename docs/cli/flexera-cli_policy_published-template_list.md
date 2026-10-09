@@ -2,6 +2,12 @@
 
 Index published templates
 
+### Synopsis
+
+Index published templates
+
+Index retrieves the list of published templates in an organization.
+
 ```
 flexera-cli policy published-template list [flags]
 ```
@@ -16,13 +22,13 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Optional filter to retrieve published templates based on specific criteria. ### Supported Filter Keys | Filter | Type | Example | Description | | ------------------------- | ------ | -------------------------------------- | ------------------------------------------------------------------------------------- | | name | string | name in ['policy123', 'policy1... (see cli schema); illustrative example: "name eq 'foo'"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
-      --view string         view (query)
+      --order-by string     orderBy (query); Specifies the order to sort published templates by fields such as [name, shortDescription, longDescription, docLink, category, createdBy.email, createdAt, updatedAt, builtIn, hidden]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "category asc, createdAt asc"
+      --skip-token string   resume pagination from this token; Used in pagination to point to the next or previous set of records.
+      --view string         view (query); View used to render published templates.; enum: ["default","extended"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

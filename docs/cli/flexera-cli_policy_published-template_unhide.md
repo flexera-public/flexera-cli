@@ -2,6 +2,12 @@
 
 Unhide a published template
 
+### Synopsis
+
+Unhide a published template
+
+Unhide enables hidden published templates to be visible in default index calls and to be used to create new applied policies.
+
 ```
 flexera-cli policy published-template unhide [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                        print the planned operation as JSON and exit without calling the API
   -h, --help                           help for unhide
-      --published-template-id string   publishedTemplateId (path, required)
+      --published-template-id string   publishedTemplateId (path, required); The unique identifier for the published template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
       --yes                            confirm the operation (required for destructive ops)
 ```
 

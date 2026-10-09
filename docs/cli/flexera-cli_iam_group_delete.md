@@ -2,6 +2,12 @@
 
 Delete an org's group
 
+### Synopsis
+
+Delete an org's group
+
+Delete removes an org's group
+
 ```
 flexera-cli iam group delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run   print the planned operation as JSON and exit without calling the API
   -h, --help      help for delete
-      --id int    id (path, required)
+      --id int    id (path, required); ID of the group; required by API; illustrative example: 1234
       --yes       confirm the operation (required for destructive ops)
 ```
 

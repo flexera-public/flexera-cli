@@ -2,6 +2,12 @@
 
 delete Access Policy
 
+### Synopsis
+
+delete Access Policy
+
+Delete an access policy.
+
 ```
 flexera-cli iam access-policy delete [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --access-policy-id string   accessPolicyId (path, required)
+      --access-policy-id string   accessPolicyId (path, required); Access Policy ID; required by API; illustrative example: "Qui beatae numquam animi cupiditate autem placeat."
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for delete
       --yes                       confirm the operation (required for destructive ops)

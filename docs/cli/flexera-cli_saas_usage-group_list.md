@@ -2,6 +2,12 @@
 
 Retrieves a collection of usage groups
 
+### Synopsis
+
+Retrieves a collection of usage groups
+
+Retrieves a collection of usage groups.
+
 ```
 flexera-cli saas usage-group list [flags]
 ```
@@ -16,11 +22,11 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); The date filter to query the usage groups. Supported fields in the filter are [managedAppId, name] | Attribute | Description | Allowed Operators | Example | |---------------|-------------------------------------------------------------|-------------------|----------------------------| | managedAppId | Filter usage groups by their Managed AppID | eq | managed... (see cli schema); illustrative example: "Sequi consequatur."
   -h, --help                help for list
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); The order by filter to sort the usage groups. Supported fields in the orderBy are [createdAt]; illustrative example: "createdAt desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

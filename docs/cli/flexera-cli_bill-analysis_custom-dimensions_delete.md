@@ -2,6 +2,12 @@
 
 destroy custom_dimensions
 
+### Synopsis
+
+destroy custom_dimensions
+
+Destroys a non-Default Dimension from a given Org.
+
 ```
 flexera-cli bill-analysis custom-dimensions delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); The id of the dimension.; required by API; illustrative example: "environment"
       --yes         confirm the operation (required for destructive ops)
 ```
 

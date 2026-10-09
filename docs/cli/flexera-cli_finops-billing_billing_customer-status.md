@@ -2,6 +2,14 @@
 
 Show billing customer status
 
+### Synopsis
+
+Show billing customer status
+
+Returns the billing adjustment status of child organizations within the MSP org.
+
+`withPlans` contains the IDs of child organizations that are currently assigned to at least one active billing adjustment plan.
+
 ```
 flexera-cli finops-billing billing customer-status [flags]
 ```

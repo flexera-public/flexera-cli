@@ -2,6 +2,20 @@
 
 Delete an MSP's customer (v2)
 
+### Synopsis
+
+Delete an MSP's customer (v2)
+
+Delete removes a managed service provider's customer tenant, including all data and access to the tenant.
+
+V2 API enhancements over v1:
+* Validates that the organization has no child organizations before deletion
+* Requires bottom-up deletion strategy - child organizations must be deleted first
+* Returns specific error code when deletion is blocked due to existing children
+
+Important: Organizations with child organizations cannot be deleted. You must delete all child
+organizations first, starting from the deepest level of the hierarchy and working upward.
+
 ```
 flexera-cli iam msp-customer-v2 delete [flags]
 ```
@@ -17,7 +31,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 200
       --dry-run           print the planned operation as JSON and exit without calling the API
   -h, --help              help for delete
       --yes               confirm the operation (required for destructive ops)

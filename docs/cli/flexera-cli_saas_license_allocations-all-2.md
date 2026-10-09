@@ -2,6 +2,12 @@
 
 Delete allocation
 
+### Synopsis
+
+Delete allocation
+
+Delete an existing allocation.
+
 ```
 flexera-cli saas license allocations-all-2 [flags]
 ```
@@ -19,10 +25,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for allocations-all-2
-      --id string            id (path, required)
-      --license-id string    licenseId (path, required)
-      --purchase-id string   purchaseId (path, required)
-      --term-id string       termId (path, required)
+      --id string            id (path, required); Unique identifier of the allocation.; required by API; illustrative example: "3421"
+      --license-id string    licenseId (path, required); Unique identifier of the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --purchase-id string   purchaseId (path, required); Unique identifier of the purchase associated with the license term.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "93214"
+      --term-id string       termId (path, required); Unique identifier of the license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

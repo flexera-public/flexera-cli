@@ -2,6 +2,12 @@
 
 Show an Azure MCA bill connect
 
+### Synopsis
+
+Show an Azure MCA bill connect
+
+Shows the details of an Azure MCA bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-mca get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-azure-mca-23lopi-7875-b6d7-ploip-zx77-pppdf67fdfc7:32662f18-7ca4-4845-99e0-1213414d5bc4_2024-01-31"
 ```
 
 ### Options inherited from parent commands

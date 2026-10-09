@@ -2,6 +2,12 @@
 
 Delete managed application
 
+### Synopsis
+
+Delete managed application
+
+Deletes a managed application identified by ID.
+
 ```
 flexera-cli saas managed-application delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for delete
-      --managed-app-id string   managedAppId (path, required)
+      --managed-app-id string   managedAppId (path, required); managedAppId identifies an managed application by given Id; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "123"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

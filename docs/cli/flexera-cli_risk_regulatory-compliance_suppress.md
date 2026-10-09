@@ -2,6 +2,12 @@
 
 Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)
 
+### Synopsis
+
+Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)
+
+Forwards a suppress request to the Secops UI API for on-prem organisations. Because on-prem has no cloud account ID, the account ID is synthesised as '{orgId}_ON_PREM' for rule-based suppression items.
+
 ```
 flexera-cli risk regulatory-compliance suppress [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run            print the planned operation as JSON and exit without calling the API
   -h, --help               help for suppress
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --user-name string   userName (body)
+      --user-name string   userName (body); Name of the user performing the suppress action; minLength: 1; illustrative example: "admin@example.com"
       --yes                confirm the operation (required for destructive ops)
 ```
 

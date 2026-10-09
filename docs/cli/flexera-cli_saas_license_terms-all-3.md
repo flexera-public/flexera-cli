@@ -2,6 +2,12 @@
 
 Show license term
 
+### Synopsis
+
+Show license term
+
+Retrieves a license term identified by ID
+
 ```
 flexera-cli saas license terms-all-3 [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for terms-all-3
-      --license-id string   licenseId (path, required)
-      --term-id string      termId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --term-id string      termId (path, required); Identifies a license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
 ```
 
 ### Options inherited from parent commands

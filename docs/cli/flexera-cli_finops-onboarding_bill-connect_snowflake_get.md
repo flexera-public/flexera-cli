@@ -2,6 +2,12 @@
 
 Show a Snowflake bill connect
 
+### Synopsis
+
+Show a Snowflake bill connect
+
+Shows the details of a Snowflake bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect snowflake get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a Snowflake bill connect; required by API; illustrative example: "paas-snowflake-TYTMXEN-RS68134"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Validate the credentials of all bill connects across all cloud vendors
 
+### Synopsis
+
+Validate the credentials of all bill connects across all cloud vendors
+
+Validates the credentials stored for all cloud vendors.
+
 ```
 flexera-cli finops-onboarding bill-connect validations [flags]
 ```

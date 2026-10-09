@@ -2,6 +2,14 @@
 
 Update a published template
 
+### Synopsis
+
+Update a published template
+
+Update modifies a published template by replacing it in place for an organization. Updating a published template will not change the
+behavior of existing applied policies or policy aggregates. They will continue to run using the version of the template that existed when they were applied.
+To update existing applied policies to use the newer version, terminate and reapply.
+
 ```
 flexera-cli policy published-template replace [flags]
 ```
@@ -23,8 +31,8 @@ Validated illustrative body, when available (review before use):
       --dry-run                        print the planned operation as JSON and exit without calling the API
   -h, --help                           help for replace
   -i, --interactive                    edit inputs in a terminal form, review a plan and approve with typed yes
-      --published-template-id string   publishedTemplateId (path, required)
-      --template-ref string            templateRef (body)
+      --published-template-id string   publishedTemplateId (path, required); The unique identifier for the published template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --template-ref templateRef       templateRef (body); required by API; The templateRef used to specify the policy template to publish to the organization.; illustrative example: "ref:::project/2345:policy:policy-template:5b06ead5e0dacc007058c784"
       --yes                            confirm the operation (required for destructive ops)
 ```
 

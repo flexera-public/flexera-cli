@@ -2,6 +2,12 @@
 
 Creates a custom dimension
 
+### Synopsis
+
+Creates a custom dimension
+
+Creates a custom dimension in a given organization.
+
 ```
 flexera-cli bill-analysis custom-dimension create [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for create
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Name of the custom dimension to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
       --yes           confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Show an individual org user
 
+### Synopsis
+
+Show an individual org user
+
+Returns details for a specific user affiliated to an org.
+
 ```
 flexera-cli iam user get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help     help for get
-      --id int   id (path, required)
+      --id int   id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
 ```
 
 ### Options inherited from parent commands

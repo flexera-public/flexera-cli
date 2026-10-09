@@ -2,6 +2,12 @@
 
 Show an org's customization
 
+### Synopsis
+
+Show an org's customization
+
+Returns the effective customization for an org. If the org has its own value, that is returned (source: "child"). If the org has no value but a parent org (partner or MSP) has one with shouldInherit=true (or unset), the parent's value is returned (source: "parent"). Returns 404 if no effective value exists for the org (no child override and no inheritable parent value).
+
 ```
 flexera-cli iam customization get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id string     id (path, required)
-      --view string   view (query)
+      --id string     id (path, required); The customization's unique identifier, which matches the Id of the customization type implemented by this customization.; required by API; pattern: "^[a-z-]+$"; illustrative example: "navbar-logo-url"
+      --view string   view (query); View used to render the customization; enum: ["default"]; API default: "default"; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

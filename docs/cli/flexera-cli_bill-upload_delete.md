@@ -2,6 +2,15 @@
 
 DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}
 
+### Synopsis
+
+DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}
+
+Deletes a bill upload, provided  it is in the aborted state.
+
+**Required security scopes for JWTAuth**:
+  * `optima:bill_upload:delete+optima:bill_connect:delete+common:org:own`
+
 ```
 flexera-cli bill-upload delete [flags]
 ```
@@ -17,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-upload-id string   billUploadId (path, required)
+      --bill-upload-id string   billUploadId (path, required); The identifier of the bill upload; required by API; format: uuid
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for delete
       --yes                     confirm the operation (required for destructive ops)

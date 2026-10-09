@@ -2,6 +2,12 @@
 
 List enterprise bill months
 
+### Synopsis
+
+List enterprise bill months
+
+Lists all enterprise bill months
+
 ```
 flexera-cli finops-onboarding processing-history list [flags]
 ```
@@ -16,12 +22,12 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string       filter (query)
+      --filter string       filter (query); Supports operators: eq, ne, gt, ge, lt, le, co, sw, ew, in, nin, and, or and parentheses for grouping.; illustrative example: "(billConnectId sw 'cbi-oi-gcp') and (billMonth eq '202507' or billMonth eq '202506') and (status eq 'processing')"
   -h, --help                help for list
-      --limit int           limit (query)
+      --limit int           limit (query); Maximum number of records to return; minimum: 1; maximum: 1000; API default: 100; illustrative example: 250
       --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query)
-      --skip-token string   resume pagination from this token
+      --order-by string     orderBy (query); Format: field [asc|desc][,field [asc|desc]...]. Direction is separated by one or more spaces.; illustrative example: "billMonth asc,billConnectId desc"
+      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

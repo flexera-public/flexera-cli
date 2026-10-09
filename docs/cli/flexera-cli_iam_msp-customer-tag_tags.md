@@ -2,6 +2,12 @@
 
 Sets a tag on an MSP's customer
 
+### Synopsis
+
+Sets a tag on an MSP's customer
+
+Create sets a tag on a customer tenant for a managed service provider.
+
 ```
 flexera-cli iam msp-customer-tag tags [flags]
 ```
@@ -20,7 +26,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string       raw JSON body (inline | @file | @-); overrides body field flags
-      --customer-id int   customerId (path, required)
+      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 1234
       --dry-run           print the planned operation as JSON and exit without calling the API
   -h, --help              help for tags
   -i, --interactive       edit inputs in a terminal form, review a plan and approve with typed yes

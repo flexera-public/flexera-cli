@@ -2,6 +2,12 @@
 
 Index user invitations
 
+### Synopsis
+
+Index user invitations
+
+Index all invitations belonging to a user.
+
 ```
 flexera-cli iam user-invitation list [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help            help for list
-      --status string   status (query)
-      --view string     view (query)
+      --status string   status (query); Status of invitation; enum: ["pending","accepted","expired","declined"]; illustrative example: "pending"
+      --view string     view (query); View used to render invitations; enum: ["default","tiny"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

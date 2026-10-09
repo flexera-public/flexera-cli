@@ -2,6 +2,12 @@
 
 Show a custom dimension result
 
+### Synopsis
+
+Show a custom dimension result
+
+Shows a specified custom dimension in a given organization.
+
 ```
 flexera-cli bill-analysis custom-dimension get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the custom dimension.; required by API; illustrative example: "environment"
 ```
 
 ### Options inherited from parent commands

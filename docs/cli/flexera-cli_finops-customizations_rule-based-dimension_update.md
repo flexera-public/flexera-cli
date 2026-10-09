@@ -2,6 +2,12 @@
 
 Updates a rule-based dimension
 
+### Synopsis
+
+Updates a rule-based dimension
+
+Updates the rule-based dimension with the given ID.
+
 ```
 flexera-cli finops-customizations rule-based-dimension update [flags]
 ```
@@ -22,9 +28,9 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for update
-      --id string     id (path, required)
+      --id string     id (path, required); ID of the rule-based dimension; required by API; pattern: "^rbd_[\\S]*$"; illustrative example: "rbd_department"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Display name for the dimension in the UI; illustrative example: "Department"
       --yes           confirm the operation (required for destructive ops)
 ```
 

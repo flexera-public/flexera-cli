@@ -2,6 +2,12 @@
 
 Delete license
 
+### Synopsis
+
+Delete license
+
+Deletes a license agreement.
+
 ```
 flexera-cli saas license delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run             print the planned operation as JSON and exit without calling the API
   -h, --help                help for delete
-      --license-id string   licenseId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

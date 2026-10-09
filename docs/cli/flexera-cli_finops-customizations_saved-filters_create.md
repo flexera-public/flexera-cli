@@ -2,6 +2,12 @@
 
 Creates a saved filter
 
+### Synopsis
+
+Creates a saved filter
+
+Creates a saved filter in the organization. Owner user ID is derived from the JWT subject claim. Billing Center IDs the caller is not entitled to see are dropped silently, from both billingCenterIds and Billing Center Level filter values. The request fails if the caller's Billing Center entitlement cannot be verified.
+
 ```
 flexera-cli finops-customizations saved-filters create [flags]
 ```
@@ -19,15 +25,15 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center-ids strings   billingCenterIds (body)
+      --billing-center-ids strings   billingCenterIds (body); Optional list of Billing Center IDs to store with the filter (max 100). IDs of Billing Centers the caller is not entitled to see are dropped silently.; maxItems: 100; CLI: comma-separated values or repeated flag; illustrative example: ["adZqre9KZci-oC9r_ZcZJw","kQm2Y7pVQoqxN4M8fCyTig"]
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --description string           description (body)
-      --dimensions strings           dimensions (body)
+      --description string           description (body); Optional description; maxLength: 1024; illustrative example: "Compare cloud provider costs across all regions"
+      --dimensions strings           dimensions (body); Optional list of dimensions for GROUP BY (max 10).; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["provider","region"]
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for create
   -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string                  name (body)
-      --visibility string            visibility (body)
+      --name string                  name (body); required by API; Human-readable name for the filter; maxLength: 255; illustrative example: "Cloud Compare by Region 2027-03-14"
+      --visibility string            visibility (body); required by API; Filter visibility scope; enum: ["private","shared"]; illustrative example: "shared"
       --yes                          confirm the operation (required for destructive ops)
 ```
 

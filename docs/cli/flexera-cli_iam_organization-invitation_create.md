@@ -2,6 +2,13 @@
 
 Create an invitation to an org
 
+### Synopsis
+
+Create an invitation to an org
+
+Create an invitation to an organization, which granting roles or membership to groups within an org.
+The invitation may also grant access to select projects within the org.
+
 ```
 flexera-cli iam organization-invitation create [flags]
 ```
@@ -23,11 +30,11 @@ Validated illustrative body, when available (review before use):
       --dry-run                     print the planned operation as JSON and exit without calling the API
   -h, --help                        help for create
   -i, --interactive                 edit inputs in a terminal form, review a plan and approve with typed yes
-      --invitee-email string        inviteeEmail (body)
-      --invitee-first-name string   inviteeFirstName (body)
-      --invitee-last-name string    inviteeLastName (body)
-      --is-sso                      isSso (body)
-      --skip-email-notification     skipEmailNotification (body)
+      --invitee-email string        inviteeEmail (body); required by API; Email of the invitee; pattern: "^[a-zA-Z0-9!#$%\u0026'*+/=?^_.`{|}~-]+@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]$"; illustrative example: "taylor@example.com"
+      --invitee-first-name string   inviteeFirstName (body); First name of the invitee. If skipEmailNotification=True, this first name will be used to create the user. If the user already exists, the user's first name will not be updated.; maxLength: 256; illustrative example: "Jane"
+      --invitee-last-name string    inviteeLastName (body); Last name of the invitee. If skipEmailNotification=True, this last name will be used to create the user. If the user already exists, the user's last name will not be updated.; maxLength: 256; illustrative example: "Smith"
+      --is-sso                      isSso (body); Used to denote if this is a SSO user invite; illustrative example: true
+      --skip-email-notification     skipEmailNotification (body); When true, no email notification will be sent to the invitee. If the email is not sent, the invitation is still created within Flexera One and can be accepted by the user in the user settings section. When this parameter is true, the inviteeFirstName and inviteeLast Name are required.; API default: false; illustrative example: false
       --yes                         confirm the operation (required for destructive ops)
 ```
 

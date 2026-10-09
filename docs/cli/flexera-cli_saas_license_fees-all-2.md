@@ -2,6 +2,12 @@
 
 Delete license agreement fee
 
+### Synopsis
+
+Delete license agreement fee
+
+Deletes a license fee associated with license agreement.
+
 ```
 flexera-cli saas license fees-all-2 [flags]
 ```
@@ -18,9 +24,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
       --dry-run             print the planned operation as JSON and exit without calling the API
-      --fee-id string       feeId (path, required)
+      --fee-id string       feeId (path, required); Unique ID associated with license agreement fee.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "32123"
   -h, --help                help for fees-all-2
-      --license-id string   licenseId (path, required)
+      --license-id string   licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
       --yes                 confirm the operation (required for destructive ops)
 ```
 

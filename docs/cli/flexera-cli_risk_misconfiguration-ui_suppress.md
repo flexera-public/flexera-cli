@@ -2,6 +2,12 @@
 
 Suppress API for Rule and Failed Asset
 
+### Synopsis
+
+Suppress API for Rule and Failed Asset
+
+Endpoint that forwards request to suppress list of rules or failed assets to the Secops UI API.
+
 ```
 flexera-cli risk misconfiguration-ui suppress [flags]
 ```
@@ -23,7 +29,7 @@ Validated illustrative body, when available (review before use):
       --dry-run            print the planned operation as JSON and exit without calling the API
   -h, --help               help for suppress
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --user-name string   userName (body)
+      --user-name string   userName (body); Name of the user performing the suppress action; minLength: 1; illustrative example: "Automation User SpotSecurity"
       --yes                confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Delete an AWS bill connect
 
+### Synopsis
+
+Delete an AWS bill connect
+
+Removes an AWS bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect aws delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "aws-20194320903"
       --yes         confirm the operation (required for destructive ops)
 ```
 

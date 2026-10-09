@@ -2,6 +2,15 @@
 
 List BillingCenters with privileges.
 
+### Synopsis
+
+List BillingCenters with privileges.
+
+Describe BillingCenter assuming user has access to and enumerate its privileges.
+
+**Required security scopes for SameUser**:
+  * `common:org:affiliated`
+
 ```
 flexera-cli billing-center user-billing-centers get [flags]
 ```
@@ -16,9 +25,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
   -h, --help                    help for get
-      --user int                user (path, required)
+      --user int                user (path, required); required by API
 ```
 
 ### Options inherited from parent commands

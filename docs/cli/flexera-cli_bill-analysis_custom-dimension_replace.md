@@ -2,6 +2,12 @@
 
 Updates a custom dimension
 
+### Synopsis
+
+Updates a custom dimension
+
+Updates a non-default custom dimension in a given organization.
+
 ```
 flexera-cli bill-analysis custom-dimension replace [flags]
 ```
@@ -22,9 +28,9 @@ Validated illustrative body, when available (review before use):
       --body string   raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run       print the planned operation as JSON and exit without calling the API
   -h, --help          help for replace
-      --id string     id (path, required)
+      --id string     id (path, required); Identifier of the custom dimension.; required by API; illustrative example: "environment"
   -i, --interactive   edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string   name (body)
+      --name string   name (body); required by API; Name of the custom dimension to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
       --yes           confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Replace a user's attributes
 
+### Synopsis
+
+Replace a user's attributes
+
+Replaces a user's attributes in an org.
+
 ```
 flexera-cli iam scim-user replace [flags]
 ```
@@ -19,14 +25,14 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --active             active (body)
+      --active             active (body); The user's active status.; API default: true; illustrative example: true
       --body string        raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run            print the planned operation as JSON and exit without calling the API
   -h, --help               help for replace
-      --id string          id (path, required)
+      --id string          id (path, required); Unique identifier for the user.; required by API; illustrative example: "12345"
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --schemas strings    schemas (body)
-      --user-name string   userName (body)
+      --schemas strings    schemas (body); List of URIs of the SCIM schemas supported.; CLI: comma-separated values or repeated flag; illustrative example: ["urn:ietf:params:scim:schemas:core:2.0:User"]
+      --user-name string   userName (body); The user name of the user.; illustrative example: "jsmith"
       --yes                confirm the operation (required for destructive ops)
 ```
 

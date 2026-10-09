@@ -2,6 +2,12 @@
 
 Show a GCP bill connect
 
+### Synopsis
+
+Show a GCP bill connect
+
+Shows the details of a GCP bill connect associated with a given bill connect ID.
+
 ```
 flexera-cli finops-onboarding bill-connect gcp get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "cbi-oi-gcp-956d603z-fdg2-4263-v81e-bae187d0e099"
 ```
 
 ### Options inherited from parent commands

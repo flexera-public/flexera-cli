@@ -2,6 +2,12 @@
 
 Show an archived incident
 
+### Synopsis
+
+Show an archived incident
+
+Show retrieves the details of an archived incident.
+
 ```
 flexera-cli policy archived-incident get [flags]
 ```
@@ -10,9 +16,9 @@ flexera-cli policy archived-incident get [flags]
 
 ```
   -h, --help             help for get
-      --id string        Archived incident ID
-      --project-id int   Project ID (optional; resolved from GRS for the org when omitted)
-      --view string      Optional Policy archived-incident view
+      --id string        Archived incident ID; The unique identifier for the archived incident.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --project-id int   Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --view string      Optional Policy archived-incident view; View used to render archived incidents.; enum: ["default","extended","source"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 Create license
 
+### Synopsis
+
+Create license
+
+Creates a license agreement.
+
 ```
 flexera-cli saas license create [flags]
 ```
@@ -23,9 +29,9 @@ Validated illustrative body, when available (review before use):
       --dry-run                         print the planned operation as JSON and exit without calling the API
   -h, --help                            help for create
   -i, --interactive                     edit inputs in a terminal form, review a plan and approve with typed yes
-      --managed-app-id string           managedAppId (body)
-      --name string                     name (body)
-      --point-of-contact-email string   pointOfContactEmail (body)
+      --managed-app-id string           managedAppId (body); required by API; It identifies a managed application by given ID.; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --name string                     name (body); required by API; Name of the licensed product.; illustrative example: "Office 365"
+      --point-of-contact-email string   pointOfContactEmail (body); This email is point of contact of a person associated with license agreement.; illustrative example: "support@flexera.com"
       --yes                             confirm the operation (required for destructive ops)
 ```
 

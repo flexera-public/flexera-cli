@@ -2,6 +2,10 @@
 
 Show a refresh token
 
+### Synopsis
+
+Show a refresh token
+
 ```
 flexera-cli iam refresh-token get [flags]
 ```
@@ -17,7 +21,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); A short string that identifies the token but which cannot be used to gain access; required by API; pattern: "^[a-zA-Z0-9]+$"; illustrative example: "a1B2c3D4e5F6g7H8i9J0"
 ```
 
 ### Options inherited from parent commands

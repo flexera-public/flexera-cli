@@ -2,6 +2,12 @@
 
 Delete an identity provider
 
+### Synopsis
+
+Delete an identity provider
+
+Delete an existing identity provider.
+
 ```
 flexera-cli iam saml2-identity-provider delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for delete
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the identity provider; required by API; pattern: "^[0-9a-fA-F]{24}$"; illustrative example: "1111aaaa2222bbbb3333cccc"
       --yes         confirm the operation (required for destructive ops)
 ```
 

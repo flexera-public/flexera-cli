@@ -2,6 +2,12 @@
 
 Update purchase
 
+### Synopsis
+
+Update purchase
+
+Updates a purchase for given purchase ID.
+
 ```
 flexera-cli saas license purchases [flags]
 ```
@@ -19,20 +25,20 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --amount float            amount (body)
+      --amount float            amount (body); Price associated with license purchase.; format: double; illustrative example: 123.123
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --currency string         currency (body)
+      --currency string         currency (body); Currency type for the amount.; illustrative example: "USD"
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --effective-at string     effectiveAt (body)
-      --ends-at string          endsAt (body)
-      --frequency-type string   frequencyType (body)
+      --effective-at string     effectiveAt (body); Start date associated with license term.; illustrative example: "2021-02-01 15:19:33"
+      --ends-at string          endsAt (body); End date associated with license term.; illustrative example: "2021-12-31 23:59:59"
+      --frequency-type string   frequencyType (body); Frequency of a payment for a license.; enum: ["once","monthly","quarterly","semiannually","annually","every18months","biannually","triennially"]; illustrative example: "monthly"
   -h, --help                    help for purchases
-      --id string               id (path, required)
+      --id string               id (path, required); Identifies a purchase associated with the license term.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string       licenseId (path, required)
-      --purchase-id string      purchaseId (body)
-      --purchased-at string     purchasedAt (body)
-      --term-id string          termId (path, required)
+      --license-id string       licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --purchase-id string      purchaseId (body); Unique ID associated to license purchase transaction.; illustrative example: "a3355453-86ab-4628-9670-6adb9ff2e444"
+      --purchased-at string     purchasedAt (body); License term purchased date.; illustrative example: "2021-01-01 15:19:33"
+      --term-id string          termId (path, required); Identifies a license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Index invoices
 
+### Synopsis
+
+Index invoices
+
+Lists invoice export lifecycle records in the organization.
+
 ```
 flexera-cli finops-billing invoices list [flags]
 ```
@@ -16,18 +22,18 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-month string          billMonth (query)
-      --customer-name string       customerName (query)
-      --export-type string         exportType (query)
-      --expression-filter string   expressionFilter (query)
-      --filter string              filter (query)
-      --group-by-count int         groupByCount (query)
+      --bill-month string          billMonth (query); Optional bill month filter.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "Cruz Fadel"
+      --customer-name string       customerName (query); Optional customer name filter.; illustrative example: "Officia sed."
+      --export-type string         exportType (query); Optional export type filter.; enum: ["pdf","csv"]; illustrative example: "csv"
+      --expression-filter string   expressionFilter (query); OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fiel... (see cli schema); illustrative example: "customerName co 'Acme' and exportType eq 'pdf'"
+      --filter string              filter (query); Legacy substring search of the stored invoice generation filter JSON. This parameter does not accept OData expressions.; illustrative example: "Facere dolorum est velit adipisci tenetur."
+      --group-by-count int         groupByCount (query); Optional group-by dimension count filter.; illustrative example: 17118634271918162000
   -h, --help                       help for list
-      --limit int                  limit (query)
+      --limit int                  limit (query); Page size (default 10, max 200); minimum: 1; maximum: 200; API default: 10; illustrative example: 7
       --no-paginate                return only the first page (do not follow nextPage)
-      --order-by string            orderBy (query)
-      --skip-token string          resume pagination from this token
-      --status string              status (query)
+      --order-by string            orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "updatedAt desc"
+      --skip-token string          resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+      --status string              status (query); Optional status filter.; illustrative example: "Est ullam."
 ```
 
 ### Options inherited from parent commands

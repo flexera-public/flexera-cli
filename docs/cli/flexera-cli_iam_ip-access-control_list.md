@@ -2,6 +2,12 @@
 
 Index IP access control rules
 
+### Synopsis
+
+Index IP access control rules
+
+Returns the list of IP access control rules for the organization.
+
 ```
 flexera-cli iam ip-access-control list [flags]
 ```

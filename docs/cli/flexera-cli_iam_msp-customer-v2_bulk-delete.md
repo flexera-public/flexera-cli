@@ -2,6 +2,25 @@
 
 Bulk delete MSP customers (v2)
 
+### Synopsis
+
+Bulk delete MSP customers (v2)
+
+BulkDelete removes multiple managed service provider customer tenants in a single request.
+This operation is limited to 100 customers in a single request.
+Individual customer deletion attempts can succeed or fail independently. The response includes detailed
+status information for each customer deletion attempt, along with summary statistics.
+
+Use the optional 'status' query parameter to filter which results are included in the response:
+- Without filter: returns all results (both successful and failed)
+- status=success: returns only successfully deleted customers
+- status=failed: returns only failed customer deletion attempts
+
+V2 API enhancements over v1:
+* Validates that each organization has no child organizations before deletion
+* Returns specific error codes for constraint violations in individual results
+* Allows partial success - some deletions may succeed while others fail
+
 ```
 flexera-cli iam msp-customer-v2 bulk-delete [flags]
 ```
@@ -23,7 +42,7 @@ Validated illustrative body, when available (review before use):
       --dry-run         print the planned operation as JSON and exit without calling the API
   -h, --help            help for bulk-delete
   -i, --interactive     edit inputs in a terminal form, review a plan and approve with typed yes
-      --status string   status (query)
+      --status string   status (query); Optional filter to include only results with this status in the response; enum: ["success","failed"]; illustrative example: "failed"
       --yes             confirm the operation (required for destructive ops)
 ```
 

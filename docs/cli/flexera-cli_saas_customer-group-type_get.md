@@ -2,6 +2,12 @@
 
 Show customer group type
 
+### Synopsis
+
+Show customer group type
+
+Retrieves a customer group type identified by a type Id.
+
 ```
 flexera-cli saas customer-group-type get [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --customer-group-type-id string   customerGroupTypeId (path, required)
+      --customer-group-type-id string   customerGroupTypeId (path, required); Id of the customer group type to show.; required by API; pattern: "^[0-9]+$"; illustrative example: "123"
   -h, --help                            help for get
 ```
 

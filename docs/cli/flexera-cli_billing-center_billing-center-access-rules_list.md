@@ -2,6 +2,20 @@
 
 List roles of users, groups or service accounts
 
+### Synopsis
+
+List roles of users, groups or service accounts
+
+List every user, group and service account with access to this billing
+center and the roles granted to each. Does not "unroll" group memberships,
+i.e. if some group has been granted access, then the response contains
+one RoleReport for the group as a whole, and no reports about any of the
+users _in_ that group unless they have been granted individual roles distinct
+from their membership in the group.
+
+**Required security scopes for GlobalSession**:
+  * `iam:access_rule:index+optima:access_rule:index+common:org:own`
+
 ```
 flexera-cli billing-center billing-center-access-rules list [flags]
 ```
@@ -16,7 +30,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
   -h, --help                    help for list
 ```
 

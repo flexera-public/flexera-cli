@@ -2,6 +2,12 @@
 
 Update managed application
 
+### Synopsis
+
+Update managed application
+
+Updates a managed application identified by ID.
+
 ```
 flexera-cli saas managed-application update [flags]
 ```
@@ -19,16 +25,16 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --activity-threshold int    activityThreshold (body)
+      --activity-threshold int    activityThreshold (body); A global activity threshold for the managed application. An activity threshold defines the number of days that can pass before a user is considered inactive. For example, with a threshold of seven days, if a user logins in on January 1st, if no other activity is seen, on January 8th, the user will be shown as inactive.; enum: [1,7,15,30,45,60,90,120,180]; illustrative example: 90
       --body string               raw JSON body (inline | @file | @-); overrides body field flags
-      --description string        description (body)
+      --description string        description (body); Description of the managed application; illustrative example: "Office 365"
       --dry-run                   print the planned operation as JSON and exit without calling the API
   -h, --help                      help for update
   -i, --interactive               edit inputs in a terminal form, review a plan and approve with typed yes
-      --is-active                 isActive (body)
-      --managed-app-id string     managedAppId (path, required)
-      --name string               name (body)
-      --point-of-contact string   pointOfContact (body)
+      --is-active                 isActive (body); required by API; Is managed application active? An active managed application is considered actively managed. If isActive is false, everything within the managed application is frozen and exists only for historical purposes.; illustrative example: true
+      --managed-app-id string     managedAppId (path, required); managedAppId identifies an managed application by given Id; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "456"
+      --name string               name (body); Name of the managed application; illustrative example: "Office 365"
+      --point-of-contact string   pointOfContact (body); Point of contact for the managed application; illustrative example: "support@flexera.com"
       --yes                       confirm the operation (required for destructive ops)
 ```
 

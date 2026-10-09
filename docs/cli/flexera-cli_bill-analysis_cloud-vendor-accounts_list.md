@@ -2,6 +2,12 @@
 
 index cloud_vendor_accounts
 
+### Synopsis
+
+index cloud_vendor_accounts
+
+List all the cloud vendor account resources for the specified Org.
+
 ```
 flexera-cli bill-analysis cloud-vendor-accounts list [flags]
 ```
@@ -16,7 +22,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --cloud-vendor string   cloud_vendor (query)
+      --cloud-vendor string   cloud_vendor (query); Filter accounts for one specific cloud; illustrative example: "aws"
   -h, --help                  help for list
 ```
 

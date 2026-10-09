@@ -2,6 +2,12 @@
 
 create custom_dimensions
 
+### Synopsis
+
+create custom_dimensions
+
+Creates a Dimensions in a given Org.
+
 ```
 flexera-cli bill-analysis custom-dimensions create [flags]
 ```
@@ -23,8 +29,8 @@ Validated illustrative body, when available (review before use):
       --dry-run          print the planned operation as JSON and exit without calling the API
   -h, --help             help for create
   -i, --interactive      edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string      name (body)
-      --tag-key string   tag_key (body)
+      --name string      name (body); required by API; Name to be displayed in the UI.; maxLength: 64; illustrative example: "Environment"
+      --tag-key string   tag_key (body); required by API; Tag key (the part of the tag before the "=" character).; illustrative example: "environment"
       --yes              confirm the operation (required for destructive ops)
 ```
 

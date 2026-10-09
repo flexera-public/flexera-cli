@@ -2,6 +2,15 @@
 
 List activity counts of the user
 
+### Synopsis
+
+List activity counts of the user
+
+Retrieves the activity counts of the user for all the ranges. Possible ranges are:
+                fifteen(0-15), thirty(16-30), fortyfive(31-45), sixty(46-60), ninety(61-90), onetwenty(91-120), onetwentyplus(121+)
+
+                The activity count is calculated by number of days past the current date.
+
 ```
 flexera-cli saas application-user-activity-count list [flags]
 ```
@@ -20,8 +29,8 @@ Validated illustrative body, when available (review before use):
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help                    help for list
-      --managed-app-id string   managedAppId (body)
-      --unique-id string        uniqueId (body)
+      --managed-app-id string   managedAppId (body); required by API; managed application id for which activity counts should be returned.; pattern: "^[0-9a-f]+$"; illustrative example: "345"
+      --unique-id string        uniqueId (body); required by API; User's unique id for which activity counts should be returned.; illustrative example: "abc-xyz"
 ```
 
 ### Options inherited from parent commands

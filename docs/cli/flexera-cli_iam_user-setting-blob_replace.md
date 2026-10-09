@@ -2,6 +2,12 @@
 
 Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.
 
+### Synopsis
+
+Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.
+
+Retrieves a signed URL for saving a user settings object at a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for user-specific settings.
+
 ```
 flexera-cli iam user-setting-blob replace [flags]
 ```
@@ -20,13 +26,13 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string       raw JSON body (inline | @file | @-); overrides body field flags
-      --body-org-id int   orgId (body)
+      --body-org-id int   orgId (body); The unique identifier for the organization; minimum: 1; illustrative example: 100
       --dry-run           print the planned operation as JSON and exit without calling the API
-      --expiry int        expiry (body)
+      --expiry int        expiry (body); required by API; expriy time in seconds in signed url; minimum: 1; maximum: 1800; illustrative example: 1800
   -h, --help              help for replace
-      --id string         id (body)
+      --id string         id (body); required by API; The key may be a combination of a Page ID and a Prefix ID. For example: page-settings:optima/cloud-dashboards/82783782372230, where page-settings:optima/cloud-dashboards represents the Page ID and 82783782372230 is the Prefix ID.; minLength: 1; maxLength: 100; pattern: "^[-._a-zA-Z0-9:/=?\u0026]+$"; illustrative example: "preferredLoginMethod"
   -i, --interactive       edit inputs in a terminal form, review a plan and approve with typed yes
-      --type string       type (body)
+      --type string       type (body); The scope/context of the setting, either 'org' or 'global'.; enum: ["global","org"]; illustrative example: "global"
       --yes               confirm the operation (required for destructive ops)
 ```
 

@@ -2,6 +2,12 @@
 
 Show an org's group
 
+### Synopsis
+
+Show an org's group
+
+Shows a single Group in an Org.
+
 ```
 flexera-cli iam group get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help          help for get
-      --id int        id (path, required)
-      --view string   view (query)
+      --id int        id (path, required); ID of the group; required by API; illustrative example: 1234
+      --view string   view (query); View used to render the group; enum: ["default","extended"]; API default: "default"; illustrative example: "extended"
 ```
 
 ### Options inherited from parent commands

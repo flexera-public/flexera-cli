@@ -2,6 +2,25 @@
 
 Create a new MSP customer (v2)
 
+### Synopsis
+
+Create a new MSP customer (v2)
+
+Create provisions a new customer tenant for a managed service provider.
+
+This endpoint creates a new customer organization under the specified MSP parent organization.
+The newly created organization is immediately available and functional. Owners specified in the request
+are granted administrator access to the new customer organization.
+
+V2 API enhancements over v1:
+* Validates MSP capability hierarchy constraints (max_depth, max_width) before creation
+* Enforces hierarchy depth limits - prevents creating MSP children if parent's max_depth is 0
+* Enforces hierarchy width limits - prevents creation if parent has reached max_width children
+* Returns specific error codes for constraint violations to help diagnose issues
+
+Note: Capabilities granted to the customer organization must be a subset of the capabilities
+available to the MSP parent organization.
+
 ```
 flexera-cli iam msp-customer-v2 create [flags]
 ```
@@ -20,12 +39,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Optional text describing the customer; maxLength: 4096; illustrative example: "MSP Customer requires services X, Y, Z."
       --dry-run              print the planned operation as JSON and exit without calling the API
-      --external-id string   externalId (body)
+      --external-id string   externalId (body); Identifier of the organization used in your external system; maxLength: 256; illustrative example: "W12345"
   -h, --help                 help for create
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
+      --name string          name (body); required by API; Friendly name for the customer; minLength: 1; maxLength: 512; illustrative example: "MSPCustomer Inc."
       --yes                  confirm the operation (required for destructive ops)
 ```
 

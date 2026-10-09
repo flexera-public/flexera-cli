@@ -2,6 +2,12 @@
 
 Create allocation
 
+### Synopsis
+
+Create allocation
+
+Creates a new allocation
+
 ```
 flexera-cli saas license allocations-all [flags]
 ```
@@ -23,10 +29,10 @@ Validated illustrative body, when available (review before use):
       --dry-run              print the planned operation as JSON and exit without calling the API
   -h, --help                 help for allocations-all
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string    licenseId (path, required)
-      --match-type string    matchType (body)
-      --purchase-id string   purchaseId (path, required)
-      --term-id string       termId (path, required)
+      --license-id string    licenseId (path, required); Unique identifier of the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
+      --match-type string    matchType (body); required by API; Specifies the condition type for the allocation rule.; enum: ["all","any"]; API default: "any"; illustrative example: "all"
+      --purchase-id string   purchaseId (path, required); Unique identifier of the purchase associated with the license term.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "93214"
+      --term-id string       termId (path, required); Unique identifier of the license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

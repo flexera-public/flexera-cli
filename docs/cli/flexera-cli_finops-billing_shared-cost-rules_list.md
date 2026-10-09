@@ -2,6 +2,12 @@
 
 List shared cost rules
 
+### Synopsis
+
+List shared cost rules
+
+Returns all shared cost rules for the organization, ordered by priority.
+
 ```
 flexera-cli finops-billing shared-cost-rules list [flags]
 ```

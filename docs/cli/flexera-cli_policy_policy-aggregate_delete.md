@@ -2,6 +2,14 @@
 
 Delete a policy aggregate
 
+### Synopsis
+
+Delete a policy aggregate
+
+Delete asynchronously stops and deletes a policy aggregate. The aggregate will first go into a "stopping" state.
+        Then all individual applied policies in the aggregate will be terminated.
+        Once all of the applied polices are terminated the aggregate will terminate and be deleted.
+
 ```
 flexera-cli policy policy-aggregate delete [flags]
 ```
@@ -19,7 +27,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                      print the planned operation as JSON and exit without calling the API
   -h, --help                         help for delete
-      --policy-aggregate-id string   policyAggregateId (path, required)
+      --policy-aggregate-id string   policyAggregateId (path, required); The unique identifier for the policy aggregate; required by API; illustrative example: "5b06ead5e0dacc007058c784"
       --yes                          confirm the operation (required for destructive ops)
 ```
 

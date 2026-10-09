@@ -2,6 +2,15 @@
 
 List the AllocationTable rules for a given BC
 
+### Synopsis
+
+List the AllocationTable rules for a given BC
+
+List the AllocationTable rules for a given BC
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:show+common:org:own`
+
 ```
 flexera-cli billing-center allocation-table-all [flags]
 ```
@@ -16,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
   -h, --help                    help for allocation-table-all
 ```
 

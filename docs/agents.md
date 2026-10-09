@@ -27,3 +27,17 @@ Use this task instruction:
 
 Use scoped credentials and terminal approval controls; a skill does not enforce
 permissions. See [authentication](usage.md#authentication).
+
+## Resolve command inputs
+
+Read `--help` for flag guidance, then inspect `cli schema <command path>` for
+the full input contract. `params[].name` is the API parameter name;
+`params[].flag` is the CLI spelling. For typed body flags, use `bodyFields` to
+map each flag to its exact JSON `property`, schema, and requiredness. A renamed
+flag such as `--body-org-id` does not rename the JSON property `orgId`.
+
+API defaults do not mean the CLI sends those values. Examples are illustrative,
+not live resource IDs; `requestExampleSource` identifies upstream versus
+synthesized bodies. Header metadata describes the API contract, not an
+arbitrary-header CLI interface. Missing discovery relationships, filter
+grammars, or prerequisites must not be invented from examples.

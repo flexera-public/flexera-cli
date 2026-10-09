@@ -2,6 +2,13 @@
 
 Delete a published template
 
+### Synopsis
+
+Delete a published template
+
+Delete removes a published template from an organization. Deleting a published template will not delete any applied policies
+created from the template.
+
 ```
 flexera-cli policy published-template delete [flags]
 ```
@@ -19,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run                        print the planned operation as JSON and exit without calling the API
   -h, --help                           help for delete
-      --published-template-id string   publishedTemplateId (path, required)
+      --published-template-id string   publishedTemplateId (path, required); The unique identifier for the published template.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
       --yes                            confirm the operation (required for destructive ops)
 ```
 

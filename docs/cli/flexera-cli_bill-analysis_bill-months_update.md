@@ -2,6 +2,12 @@
 
 reprocess bill-months
 
+### Synopsis
+
+reprocess bill-months
+
+Reprocess bill months, with optional unlocking
+
 ```
 flexera-cli bill-analysis bill-months update [flags]
 ```
@@ -19,7 +25,7 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --action string   action (body)
+      --action string   action (body); required by API; Action to perform on the bill months; enum: ["unlock","reprocess","enterprise_reprocess"]; illustrative example: "unlock"
       --body string     raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run         print the planned operation as JSON and exit without calling the API
   -h, --help            help for update

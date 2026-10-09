@@ -2,6 +2,12 @@
 
 Create an Azure MCA bill connect
 
+### Synopsis
+
+Create an Azure MCA bill connect
+
+Creates an Azure MCA bill connect using the provided credentials.
+
 ```
 flexera-cli finops-onboarding bill-connect azure-mca create [flags]
 ```
@@ -19,16 +25,16 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-account-id string     billingAccountId (body)
+      --billing-account-id string     billingAccountId (body); required by API; The Billing Account ID in an Azure MCA bill; pattern: "[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}:[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}_2[0-9][0-9]{2}-([0][1-9]|[1][0-2])-([1-2][0-9]|[0][1-9]|[3][0-1])"; illustrative example: "23lopi-7875-b6d7-ploip-zx77-pppdf67fdfc7:32662f18-7ca4-4845-99e0-1213414d5bc4_2024-01-31"
       --body string                   raw JSON body (inline | @file | @-); overrides body field flags
-      --body-client-id string         clientId (body)
-      --body-client-secret string     clientSecret (body)
-      --cloud-instance string         cloudInstance (body)
+      --body-client-id string         clientId (body); required by API; Client Id in Azure MCA. This is a GUID that uniquely identifies the app's registration in your Active Directory tenant; minLength: 1; illustrative example: "56fff7875-b6d7-7f5j-zx77-977df67fdfc7"
+      --body-client-secret string     clientSecret (body); required by API; Client Secret in Azure MCA. References the Azure MCA SPN's Client Secret.
+      --cloud-instance string         cloudInstance (body); Cloud Instance indicates whether this Azure Cloud instance is located in a specific geographically isolated region or if it is global.; enum: ["AzureCloud","AzureChinaCloud"]; API default: "AzureCloud"; illustrative example: "AzureCloud"
       --dry-run                       print the planned operation as JSON and exit without calling the API
   -h, --help                          help for create
   -i, --interactive                   edit inputs in a terminal form, review a plan and approve with typed yes
-      --start-billing-period string   startBillingPeriod (body)
-      --tenant-id string              tenantId (body)
+      --start-billing-period string   startBillingPeriod (body); Optional Parameter formatted as YYYYMM to let the service know what Billing Period to start ingest from. The value of startBillingPeriod is required to be on or after the enrollment started and on or before the current year month. If not provided, the ingest will begin from the billing period at the time of creation of the bill connect.; pattern: "^20[\\d]{2}((0[1-9])|(1[012]))$"; illustrative example: "202308"
+      --tenant-id string              tenantId (body); required by API; Tenant ID in Azure MCA. This refers to the tenant/directory the app registration/SPN belongs to.; minLength: 1; illustrative example: "5837ffw33fg7-3g6t-52mt-4fht-5fd71ejf43fi"
       --yes                           confirm the operation (required for destructive ops)
 ```
 

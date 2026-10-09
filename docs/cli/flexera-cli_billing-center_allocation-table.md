@@ -2,6 +2,15 @@
 
 Update a BC AllocationTable or create it if it doesn't exist
 
+### Synopsis
+
+Update a BC AllocationTable or create it if it doesn't exist
+
+Update a BC AllocationTable
+
+**Required security scopes for GlobalSession**:
+  * `optima:billing_center:update+common:org:own`
+
 ```
 flexera-cli billing-center allocation-table [flags]
 ```
@@ -19,12 +28,12 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required)
+      --billing-center string   billing_center (path, required); required by API
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
   -h, --help                    help for allocation-table
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --sequence-number int     sequence_number (query)
+      --sequence-number int     sequence_number (query); The version sequence number
       --yes                     confirm the operation (required for destructive ops)
 ```
 

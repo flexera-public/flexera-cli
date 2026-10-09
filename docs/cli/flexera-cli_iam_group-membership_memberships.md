@@ -2,6 +2,12 @@
 
 Add users to a group
 
+### Synopsis
+
+Add users to a group
+
+Add users to a group.
+
 ```
 flexera-cli iam group-membership memberships [flags]
 ```
@@ -21,7 +27,7 @@ Validated illustrative body, when available (review before use):
 ```
       --body string    raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run        print the planned operation as JSON and exit without calling the API
-      --group-id int   groupId (path, required)
+      --group-id int   groupId (path, required); The ID of the Group; required by API; illustrative example: 1234
   -h, --help           help for memberships
   -i, --interactive    edit inputs in a terminal form, review a plan and approve with typed yes
       --yes            confirm the operation (required for destructive ops)

@@ -2,6 +2,12 @@
 
 Validate a Snowflake bill connect
 
+### Synopsis
+
+Validate a Snowflake bill connect
+
+Validates the credentials of a Snowflake bill connect by verifying connectivity to the Snowflake platform.
+
 ```
 flexera-cli finops-onboarding bill-connect snowflake list [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for list
-      --id string   id (path, required)
+      --id string   id (path, required); Identifies a bill connect; required by API; illustrative example: "paas-snowflake-TYTMXEN-RS68134"
 ```
 
 ### Options inherited from parent commands

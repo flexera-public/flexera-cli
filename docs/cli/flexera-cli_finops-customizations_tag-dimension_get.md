@@ -2,6 +2,12 @@
 
 Show a tag dimension
 
+### Synopsis
+
+Show a tag dimension
+
+Shows a specified tag dimension in the organization.
+
 ```
 flexera-cli finops-customizations tag-dimension get [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); Identifier of the tag dimension.; required by API; illustrative example: "tag_environment"
 ```
 
 ### Options inherited from parent commands

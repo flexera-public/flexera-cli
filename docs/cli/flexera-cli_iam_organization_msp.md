@@ -2,6 +2,12 @@
 
 Show an MSP org
 
+### Synopsis
+
+Show an MSP org
+
+Returns details for a specific org only if it is an MSP org
+
 ```
 flexera-cli iam organization msp [flags]
 ```
@@ -17,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                help for msp
-      --target-org-id int   targetOrgId (path, required)
+      --target-org-id int   targetOrgId (path, required); The intended organization to check whether it's MSP or not; required by API; minimum: 1; illustrative example: 456
 ```
 
 ### Options inherited from parent commands

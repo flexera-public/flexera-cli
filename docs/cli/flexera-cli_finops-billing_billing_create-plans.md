@@ -2,6 +2,12 @@
 
 Create an adjustment plan rule
 
+### Synopsis
+
+Create an adjustment plan rule
+
+Create an adjustment plan rule and return its unique identifier.
+
 ```
 flexera-cli finops-billing billing create-plans [flags]
 ```
@@ -21,14 +27,14 @@ Validated illustrative body, when available (review before use):
 ```
       --body string        raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run            print the planned operation as JSON and exit without calling the API
-      --enabled            enabled (body)
-      --end-after string   endAfter (body)
+      --enabled            enabled (body); required by API; A rule that is not enabled will not run.; illustrative example: true
+      --end-after string   endAfter (body); The last date this rule applies.; format: date; illustrative example: "2023-05-17"
   -h, --help               help for create-plans
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string        name (body)
-      --plan-id string     planId (path, required)
-      --start-on string    startOn (body)
-      --type string        type (body)
+      --name string        name (body); required by API; Name of the rule.; illustrative example: "Margin"
+      --plan-id string     planId (path, required); Unique identifier for the plan this rule is part of.; required by API; format: uuid; illustrative example: "c6671c74-513a-4127-b8df-81adfb65bf7f"
+      --start-on string    startOn (body); The first date this rule applies.; format: date; illustrative example: "2020-03-15"
+      --type string        type (body); required by API; type controls what an adjustment plan rule does. The matching field (if any) can be populated with type-specific configuration. Current types include: - azureReservationReallocation - azureSavingsPlanReallocation - creditMemo - customUsageRate - fixedAmount - generateTax - hideCredits - markupMarkdown - removeAzureLicenseCosts - removeTax - reservationReallo... (see cli schema); illustrative example: "markupMarkdown"
       --yes                confirm the operation (required for destructive ops)
 ```
 

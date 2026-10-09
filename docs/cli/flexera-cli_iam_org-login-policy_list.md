@@ -2,6 +2,12 @@
 
 Show an org's login policy
 
+### Synopsis
+
+Show an org's login policy
+
+Show an org's login policy.
+
 ```
 flexera-cli iam org-login-policy list [flags]
 ```

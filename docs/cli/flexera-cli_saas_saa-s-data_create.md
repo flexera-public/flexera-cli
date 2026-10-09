@@ -2,6 +2,12 @@
 
 Create SaaS data entry
 
+### Synopsis
+
+Create SaaS data entry
+
+Resource to create a SaaS data entry in order to load data files.
+
 ```
 flexera-cli saas saa-s-data create [flags]
 ```
@@ -21,7 +27,7 @@ Validated illustrative body, when available (review before use):
 ```
       --body string        raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run            print the planned operation as JSON and exit without calling the API
-      --file-name string   fileName (body)
+      --file-name string   fileName (body); required by API; The name of the file tobe uploaded. The file name must be unique.One way to create an unique file name is to include the timestamp in the name.; illustrative example: "user-roster-1610923829.json"
   -h, --help               help for create
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
       --yes                confirm the operation (required for destructive ops)

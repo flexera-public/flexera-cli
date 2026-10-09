@@ -2,6 +2,12 @@
 
 search bill-months
 
+### Synopsis
+
+search bill-months
+
+Search bill months with filters and sorting
+
 ```
 flexera-cli bill-analysis bill-months list [flags]
 ```
@@ -16,12 +22,12 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --filter string             filter (query)
+      --filter string             filter (query); Supports operators: eq, ne, sw (starts with), ge, le, and, or. Use parentheses for grouping.; illustrative example: "(billSource sw 'cbi-oi-gcp') and (billMonth eq '202507' or billMonth eq '202506') and (status eq 'processing' or status eq 'locked')"
   -h, --help                      help for list
-      --limit int                 limit (query)
-      --offset int                offset (query)
-      --order-by string           orderBy (query)
-      --query-skip-token string   skip_token (query)
+      --limit int                 limit (query); Maximum number of records to return; format: int64; minimum: 1; maximum: 1000; API default: 100; illustrative example: 250
+      --offset int                offset (query); Starting offset for pagination (if provided, uses offset-based pagination; if omitted, uses cursor-based). Ignored if skipToken is present.; format: int64; minimum: 0; maximum: 10000; illustrative example: 0
+      --order-by string           orderBy (query); Format: field=direction [and field=direction]. Directions: asc, desc; illustrative example: "billMonth=asc and billSource=desc"
+      --query-skip-token string   skip_token (query); Base64-encoded pagination token returned from previous search response
 ```
 
 ### Options inherited from parent commands

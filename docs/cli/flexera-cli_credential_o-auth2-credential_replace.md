@@ -2,6 +2,12 @@
 
 Create a Credential
 
+### Synopsis
+
+Create a Credential
+
+Create a Credential that uses the 'OAuth2' scheme.
+
 ```
 flexera-cli credential o-auth2-credential replace [flags]
 ```
@@ -20,14 +26,14 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --description string   description (body)
+      --description string   description (body); Credentials description; illustrative example: "The AWS Oregon region (us-west-2) development credentials."
       --dry-run              print the planned operation as JSON and exit without calling the API
-      --grant-type string    grantType (body)
+      --grant-type string    grantType (body); required by API; The type of OAuth2 grant; enum: ["refresh_token","jwt_bearer","client_credentials"]; illustrative example: "client_credentials"
   -h, --help                 help for replace
-      --id string            id (path, required)
+      --id string            id (path, required); Credentials id; required by API; pattern: "^[_a-zA-Z0-9][-_a-zA-Z0-9]{0,127}$"; illustrative example: "abcdefghij-123456790"
   -i, --interactive          edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string          name (body)
-      --token-url string     tokenUrl (body)
+      --name string          name (body); required by API; Credentials name used in UI; illustrative example: "Development Credentials"
+      --token-url string     tokenUrl (body); required by API; Token POST URL, request body is "grant_type=$grant_type&other=params"
       --yes                  confirm the operation (required for destructive ops)
 ```
 

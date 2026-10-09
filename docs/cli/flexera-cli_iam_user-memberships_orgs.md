@@ -2,6 +2,12 @@
 
 List organizations the authenticated user (or --id) can access
 
+### Synopsis
+
+List organizations the authenticated user (or --id) can access
+
+Returns the list of organizations that the user belongs to.
+
 ```
 flexera-cli iam user-memberships orgs [flags]
 ```
@@ -16,7 +22,7 @@ flexera-cli iam user-memberships orgs --refresh-token <token>   # discover orgs 
 
 ```
   -h, --help     help for orgs
-      --id int   Flexera user ID (auto-detected from the access-token JWT when omitted)
+      --id int   Flexera user ID (auto-detected from the access-token JWT when omitted); ID of the user; required by API; minimum: 1; illustrative example: 12345
 ```
 
 ### Options inherited from parent commands

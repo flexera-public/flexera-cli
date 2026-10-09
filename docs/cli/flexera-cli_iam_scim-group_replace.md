@@ -2,6 +2,12 @@
 
 Replace a group's attributes
 
+### Synopsis
+
+Replace a group's attributes
+
+Replaces a group's attributes in an org.
+
 ```
 flexera-cli iam scim-group replace [flags]
 ```
@@ -20,12 +26,12 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --display-name string   displayName (body)
+      --display-name string   displayName (body); required by API; The display name of the group.; illustrative example: "Administrators"
       --dry-run               print the planned operation as JSON and exit without calling the API
   -h, --help                  help for replace
-      --id string             id (path, required)
+      --id string             id (path, required); Unique identifier for the group.; required by API; illustrative example: "12345"
   -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --schemas strings       schemas (body)
+      --schemas strings       schemas (body); List of URIs of the SCIM schemas supported.; CLI: comma-separated values or repeated flag; illustrative example: ["urn:ietf:params:scim:schemas:core:2.0:Group"]
       --yes                   confirm the operation (required for destructive ops)
 ```
 

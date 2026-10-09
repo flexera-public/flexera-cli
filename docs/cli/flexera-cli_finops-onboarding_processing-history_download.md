@@ -2,6 +2,12 @@
 
 Download enterprise bill months in CSV
 
+### Synopsis
+
+Download enterprise bill months in CSV
+
+Download enterprise bill months in CSV format. Currently only CSV format is supported.
+
 ```
 flexera-cli finops-onboarding processing-history download [flags]
 ```
@@ -16,8 +22,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --download-token string   downloadToken (query)
-      --format string           format (query)
+      --download-token string   downloadToken (query); Download token for enterprise bill months.; required by API
+      --format string           format (query); Download format (default: csv); enum: ["csv"]; API default: "csv"; illustrative example: "csv"
   -h, --help                    help for download
 ```
 

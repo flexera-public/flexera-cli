@@ -2,6 +2,12 @@
 
 Create a usage cost for the specified usage group
 
+### Synopsis
+
+Create a usage cost for the specified usage group
+
+Create a usage cost for the specified Usage Group
+
 ```
 flexera-cli saas usage-group costs-all [flags]
 ```
@@ -21,13 +27,13 @@ Validated illustrative body, when available (review before use):
 ```
       --body string             raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run                 print the planned operation as JSON and exit without calling the API
-      --ends-at string          endsAt (body)
+      --ends-at string          endsAt (body); required by API; End date of the consumption period; format: date-time; illustrative example: "2022-02-01T00:00:00.000Z"
   -h, --help                    help for costs-all
   -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --overage-cost float      overageCost (body)
-      --starts-at string        startsAt (body)
-      --total-purchased int     totalPurchased (body)
-      --usage-group-id string   usageGroupID (path, required)
+      --overage-cost float      overageCost (body); required by API; Cost per consumption incurred after exceeding the total within the date range defined; format: double; illustrative example: 0.00075
+      --starts-at string        startsAt (body); required by API; Start date of the consumption period; format: date-time; illustrative example: "2021-02-01T00:00:00.000Z"
+      --total-purchased int     totalPurchased (body); required by API; Total amount of consumption allocated; format: int64; illustrative example: 15000
+      --usage-group-id string   usageGroupID (path, required); ID of the usage group to which cost is associated; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "1105"
       --yes                     confirm the operation (required for destructive ops)
 ```
 

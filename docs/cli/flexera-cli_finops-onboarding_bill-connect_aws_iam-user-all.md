@@ -2,6 +2,15 @@
 
 Create an AWS bill connect using legacy IAM User-based authorization method
 
+### Synopsis
+
+Create an AWS bill connect using legacy IAM User-based authorization method
+
+Creates an AWS bill connect using the legacy IAM User-based authorization method.
+
+See here to configure
+[IAM user](https://docs.flexera.com/flexera/EN/Administration/BillConnectConfigsAWS.htm#cloudsettings_2940581292_1190159)
+
 ```
 flexera-cli finops-onboarding bill-connect aws iam-user-all [flags]
 ```
@@ -19,17 +28,17 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --access-key string          accessKey (body)
-      --bill-account-id string     billAccountId (body)
+      --access-key string          accessKey (body); required by API; The AWS IAM user's access key, to access the billAccountId; minLength: 1; illustrative example: "AKIAIOSFODNN7EXAMPLE"
+      --bill-account-id string     billAccountId (body); required by API; Aws account ID of the billing account; minLength: 1; illustrative example: "20194320903"
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
-      --bucket-name string         bucketName (body)
-      --bucket-path string         bucketPath (body)
+      --bucket-name string         bucketName (body); required by API; Name of the S3 bucket where bill files are saved; minLength: 1; illustrative example: "bills-bucket"
+      --bucket-path string         bucketPath (body); required by API; Path to the bill files from the AWS S3 bucket root; minLength: 1; illustrative example: "billing/path/"
       --dry-run                    print the planned operation as JSON and exit without calling the API
-      --effective-from string      effectiveFrom (body)
+      --effective-from string      effectiveFrom (body); The earliest billing month (UTC) from which to start processing data, formatted YYYY-MM. If omitted when creating an AWS bill connect, the current UTC month is used. If omitted when updating, the existing value is unchanged.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-10"
   -h, --help                       help for iam-user-all
   -i, --interactive                edit inputs in a terminal form, review a plan and approve with typed yes
-      --partition string           partition (body)
-      --secret-access-key string   secretAccessKey (body)
+      --partition string           partition (body); Indicates the partition in which the resource is located. A partition is a group of AWS Regions.; enum: ["aws","aws-cn"]; API default: "aws"; illustrative example: "aws"
+      --secret-access-key string   secretAccessKey (body); required by API; The AWS IAM user's secret access key, to access the billAccountId
       --yes                        confirm the operation (required for destructive ops)
 ```
 

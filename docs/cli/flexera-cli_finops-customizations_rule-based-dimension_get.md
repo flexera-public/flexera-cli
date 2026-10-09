@@ -2,6 +2,10 @@
 
 Shows a rule-based dimension
 
+### Synopsis
+
+Shows a rule-based dimension
+
 ```
 flexera-cli finops-customizations rule-based-dimension get [flags]
 ```
@@ -17,7 +21,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required)
+      --id string   id (path, required); ID of the rule-based dimension; required by API; pattern: "^rbd_[\\S]*$"; illustrative example: "rbd_department"
 ```
 
 ### Options inherited from parent commands

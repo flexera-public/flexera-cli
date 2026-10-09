@@ -2,6 +2,14 @@
 
 Overwrite enterprise adjustment rules
 
+### Synopsis
+
+Overwrite enterprise adjustment rules
+
+Overwrite all enterprise adjustment rules, including the rule order.
+
+Use this endpoint to reorder rules and/or apply bulk updates in one request. This may not add or remove rules.
+
 ```
 flexera-cli finops-billing billing replace-all [flags]
 ```

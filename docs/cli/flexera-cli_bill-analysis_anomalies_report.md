@@ -2,6 +2,12 @@
 
 report anomalies
 
+### Synopsis
+
+report anomalies
+
+Generate an anomaly report for the provided dimensions
+
 ```
 flexera-cli bill-analysis anomalies report [flags]
 ```
@@ -18,18 +24,18 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --billing-center-ids strings   billingCenterIds (body)
+      --billing-center-ids strings   billingCenterIds (body); required by API; IDs of BillingCenters to get data for. It is not allowed for any of the BillingCenterIDs to be an ancestor of another specified BillingCenterID.; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["unallocated"]
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --detection-method string      detectionMethod (body)
-      --dimensions strings           dimensions (body)
-      --end-at string                endAt (body)
-      --granularity string           granularity (body)
+      --detection-method string      detectionMethod (body); Specifies the detection method to use: either Bollinger Band or AI Model.; enum: ["bollinger_band","ai_model"]; API default: "bollinger_band"; illustrative example: "bollinger_band"
+      --dimensions strings           dimensions (body); The list of supported dimensions by which to roll up the costs.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["vendor","category","service","instance_type","billing_center_id"]
+      --end-at string                endAt (body); required by API; Latest timestamp (exclusive) of the costs. For month granularity: consists of a year and month in YYYY-MM format. For day granularity: consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries. No records will be returned on or after this timestamp.; pattern: "^\\d{4}-\\d{2}(-\\d{2})?$"; illustrative example: "2019-01"
+      --granularity string           granularity (body); Indicates which data source to query, having costs already aggregated up to this granularity. Choosing this granularity wisely can improve performance, as choosing to fetch 1 month of costs with 'month' granularity will be faster than fetching the same 31 days at 'day' granularity.; enum: ["day","month"]; API default: "month"; illustrative example: "month"
   -h, --help                         help for report
-      --limit int                    limit (body)
-      --metric string                metric (body)
-      --standard-deviations float    standardDeviations (body)
-      --start-at string              startAt (body)
-      --window-size int              windowSize (body)
+      --limit int                    limit (body); limit number of records to return.; format: int32; minimum: 1; illustrative example: 10
+      --metric string                metric (body); required by API; Metric to perform anomaly detection on. Currently only cost metrics supported.; enum: ["cost_nonamortized_unblended_adj","cost_amortized_unblended_adj","cost_nonamortized_blended_adj","cost_amortized_blended_adj","BilledCost","ModifiedBilledCost","EffectiveCost","Mo... (see cli schema); illustrative example: "cost_amortized_blended_adj"
+      --standard-deviations float    standardDeviations (body); required by API; number of standard deviations to use for bollinger band calculations; format: double; minimum: 0; API default: 2; illustrative example: 2
+      --start-at string              startAt (body); required by API; Earliest timestamp (inclusive) of the returned costs. For month granularity: consists of a year and month in YYYY-MM format. For day granularity: consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries.; pattern: "^\\d{4}-\\d{2}(-\\d{2})?$"; illustrative example: "2018-01"
+      --window-size int              windowSize (body); required by API; window size to use for bollinger bands; format: int64; minimum: 1; API default: 10; illustrative example: 10
 ```
 
 ### Options inherited from parent commands

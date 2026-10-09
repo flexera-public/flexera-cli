@@ -2,6 +2,10 @@
 
 Updates the last seen date of the contract
 
+### Synopsis
+
+Updates the last seen date of the contract
+
 ```
 flexera-cli iam contracts update [flags]
 ```
@@ -22,9 +26,9 @@ Validated illustrative body, when available (review before use):
       --body string        raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run            print the planned operation as JSON and exit without calling the API
   -h, --help               help for update
-      --id int             id (path, required)
+      --id int             id (path, required); Contract ID; required by API; illustrative example: 12345
   -i, --interactive        edit inputs in a terminal form, review a plan and approve with typed yes
-      --last-seen string   last_seen (body)
+      --last-seen string   last_seen (body); Timestamp of last seen; format: date-time; illustrative example: "2020-11-26T12:17:38.369Z"
       --yes                confirm the operation (required for destructive ops)
 ```
 

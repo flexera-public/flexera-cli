@@ -2,6 +2,12 @@
 
 Show an incident aggregate.
 
+### Synopsis
+
+Show an incident aggregate.
+
+Show retrieves the details of an incident aggregate.
+
 ```
 flexera-cli policy incident-aggregate get [flags]
 ```
@@ -17,8 +23,8 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help                           help for get
-      --incident-aggregate-id string   incidentAggregateId (path, required)
-      --view string                    view (query)
+      --incident-aggregate-id string   incidentAggregateId (path, required); The unique identifier for the incident aggregate.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
+      --view string                    view (query); View used to render incident aggregates.; enum: ["default"]; illustrative example: "default"
 ```
 
 ### Options inherited from parent commands

@@ -2,6 +2,12 @@
 
 On-Prem BPC Misconfiguration Overview
 
+### Synopsis
+
+On-Prem BPC Misconfiguration Overview
+
+Returns the BPC misconfiguration overview with findings count by severity (high, medium, low) for the latest run.
+
 ```
 flexera-cli risk regulatory-compliance overview [flags]
 ```
@@ -20,7 +26,7 @@ Validated illustrative body, when available (review before use):
 ```
       --body string         raw JSON body (inline | @file | @-); overrides body field flags
   -h, --help                help for overview
-      --providers strings   providers (body)
+      --providers strings   providers (body); List of providers to filter. Use ['onprem'] for on-prem findings.; CLI: comma-separated values or repeated flag
 ```
 
 ### Options inherited from parent commands

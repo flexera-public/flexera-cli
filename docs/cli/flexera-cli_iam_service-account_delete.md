@@ -2,6 +2,12 @@
 
 Delete a service account
 
+### Synopsis
+
+Delete a service account
+
+Delete removes a service account, invalidating all the service account's clients.
+
 ```
 flexera-cli iam service-account delete [flags]
 ```
@@ -19,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run   print the planned operation as JSON and exit without calling the API
   -h, --help      help for delete
-      --id int    id (path, required)
+      --id int    id (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
       --yes       confirm the operation (required for destructive ops)
 ```
 

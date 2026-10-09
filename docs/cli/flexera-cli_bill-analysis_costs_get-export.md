@@ -2,6 +2,13 @@
 
 exportSelectStatus costs
 
+### Synopsis
+
+exportSelectStatus costs
+
+Checks the status of an export initiated by the `costs/exportSelect` action.
+Returns the status of the export, and if it is complete, a link to download the results.
+
 ```
 flexera-cli bill-analysis costs get-export [flags]
 ```
@@ -16,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --export-id string   exportId (path, required)
+      --export-id string   exportId (path, required); The ID of the export to check status for; required by API; illustrative example: "SGVsbG8gV29ybGQh"
   -h, --help               help for get-export
 ```
 

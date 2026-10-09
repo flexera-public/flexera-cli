@@ -2,6 +2,13 @@
 
 update currency_setting
 
+### Synopsis
+
+update currency_setting
+
+Update the [ISO-4217 currency code](https://en.wikipedia.org/wiki/ISO_4217) for the org.
+See the [currency setting documentation](https://docs.flexera.com/flexera/EN/Optima/Currency_Support.htm) for more details.
+
 ```
 flexera-cli bill-analysis currency-setting replace [flags]
 ```
@@ -23,7 +30,7 @@ Validated illustrative body, when available (review before use):
       --dry-run        print the planned operation as JSON and exit without calling the API
   -h, --help           help for replace
   -i, --interactive    edit inputs in a terminal form, review a plan and approve with typed yes
-      --value string   value (body)
+      --value string   value (body); required by API; Setting value; illustrative example: "USD"
       --yes            confirm the operation (required for destructive ops)
 ```
 

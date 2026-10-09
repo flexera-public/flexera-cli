@@ -2,6 +2,15 @@
 
 List user's roles in every BillingCenter.
 
+### Synopsis
+
+List user's roles in every BillingCenter.
+
+List every BillingCenter the user has access to, and their directly-assigned roles in each.
+
+**Required security scopes for GlobalSession**:
+  * `iam:access_rule:index+optima:access_rule:index+common:org:own`
+
 ```
 flexera-cli billing-center access-rules list-users [flags]
 ```
@@ -17,7 +26,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help       help for list-users
-      --user int   user (path, required)
+      --user int   user (path, required); user ID; required by API
 ```
 
 ### Options inherited from parent commands
