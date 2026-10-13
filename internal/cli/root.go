@@ -26,6 +26,8 @@ type RootOptions struct {
 	BaseHTTP flexera.HttpRequestDoer
 	// Version string reported by `--version`.
 	Version string
+	// UserAgentVersion identifies the CLI version in API requests.
+	UserAgentVersion string
 	// Getenv reads environment variables (default os.Getenv). Injected for
 	// tests so curated commands honoring ad-hoc env vars stay testable.
 	Getenv func(string) string
@@ -44,7 +46,7 @@ func NewRootCmd(opts RootOptions) (*cobra.Command, *Deps) {
 	if use == "" {
 		use = "flexera-cli"
 	}
-	deps := &Deps{}
+	deps := &Deps{UserAgentVersion: opts.UserAgentVersion}
 
 	root := &cobra.Command{
 		Use:           use,

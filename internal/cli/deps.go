@@ -28,6 +28,8 @@ type Deps struct {
 	OrgIDPresent bool
 	// HTTP is the (optionally debug-wrapped) low-level request doer.
 	HTTP flexera.HttpRequestDoer
+	// UserAgentVersion identifies this CLI version in API requests.
+	UserAgentVersion string
 	// Stdout/Stderr are the command's output streams (cobra-injected so
 	// tests can capture them).
 	Stdout io.Writer
@@ -48,7 +50,7 @@ func (d *Deps) APIClient() (*flexera.ClientWithResponses, error) {
 	if d == nil {
 		return nil, fmt.Errorf("cli: nil deps")
 	}
-	factory := cliflexera.Factory{HTTPClient: d.HTTP}
+	factory := d.Factory()
 	// Generated Optima operations (bill-analysis, recommendations, ...) honor
 	// the same host override as the curated Optima workflows.
 	if d.Getenv != nil && strings.TrimSpace(d.Getenv(cliflexera.EnvOptimaBaseURL)) != "" {
@@ -60,7 +62,7 @@ func (d *Deps) APIClient() (*flexera.ClientWithResponses, error) {
 // Factory exposes the lower-level client factory for curated commands that
 // need auth-token flows or custom (Optima/GRS) base URLs.
 func (d *Deps) Factory() cliflexera.Factory {
-	return cliflexera.Factory{HTTPClient: d.HTTP}
+	return cliflexera.Factory{HTTPClient: d.HTTP, UserAgentVersion: d.UserAgentVersion}
 }
 
 type depsKey struct{}

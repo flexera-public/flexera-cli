@@ -31,13 +31,20 @@ import (
 // It is the single source of truth for the command tree, shared by the binary
 // (package main) and the docs generator (cmd/gendocs).
 func NewRootCmd(stdout, stderr io.Writer, getenv func(string) string, base flexera.HttpRequestDoer, version string) (*cobra.Command, *clipkg.Deps) {
+	return NewRootCmdWithUserAgentVersion(stdout, stderr, getenv, base, version, version)
+}
+
+// NewRootCmdWithUserAgentVersion constructs the command tree while allowing
+// the API user agent to use the raw CLI version without build metadata.
+func NewRootCmdWithUserAgentVersion(stdout, stderr io.Writer, getenv func(string) string, base flexera.HttpRequestDoer, version, userAgentVersion string) (*cobra.Command, *clipkg.Deps) {
 	root, deps := clipkg.NewRootCmd(clipkg.RootOptions{
-		Use:      "flexera-cli",
-		Short:    "Flexera One unified API command-line client",
-		Long:     "Flexera One unified API command-line client.\n\nFind commands for a task: flexera-cli cli search \"<what you want to do>\"",
-		BaseHTTP: base,
-		Version:  version,
-		Getenv:   getenv,
+		Use:              "flexera-cli",
+		Short:            "Flexera One unified API command-line client",
+		Long:             "Flexera One unified API command-line client.\n\nFind commands for a task: flexera-cli cli search \"<what you want to do>\"",
+		BaseHTTP:         base,
+		Version:          version,
+		UserAgentVersion: userAgentVersion,
+		Getenv:           getenv,
 	})
 	root.SetOut(stdout)
 	root.SetErr(stderr)

@@ -38,7 +38,7 @@ func main() {
 // run builds the cobra root and executes it. It is the testable entrypoint:
 // args/streams/getenv/httpClient are injected.
 func run(ctx context.Context, args []string, stdout, stderr io.Writer, getenv func(string) string, httpClient flexera.HttpRequestDoer) int {
-	root, deps := app.NewRootCmd(stdout, stderr, getenv, httpClient, versionString())
+	root, deps := app.NewRootCmdWithUserAgentVersion(stdout, stderr, getenv, httpClient, versionString(), version)
 	root.SetArgs(args)
 	return clipkg.Execute(ctx, root, deps, args)
 }

@@ -11,7 +11,8 @@ import (
 )
 
 type Factory struct {
-	HTTPClient flexera.HttpRequestDoer
+	HTTPClient       flexera.HttpRequestDoer
+	UserAgentVersion string
 }
 
 // tokenSources caches *flexera.SharedTokenSource per credential tuple
@@ -129,10 +130,13 @@ func (f Factory) NewAPIClientForBaseURL(cfg cliconfig.CommonConfig, baseURL stri
 		}
 		auth.SharedTokenSource = src
 	}
-	if strings.TrimSpace(baseURL) != "" {
-		return flexera.NewClientWithResponsesForAuth(auth, flexera.WithBaseURL(baseURL))
+	opts := []flexera.ClientOption{
+		flexera.WithUserAgentProduct("flexera-cli", f.UserAgentVersion),
 	}
-	return flexera.NewClientWithResponsesForAuth(auth)
+	if strings.TrimSpace(baseURL) != "" {
+		opts = append(opts, flexera.WithBaseURL(baseURL))
+	}
+	return flexera.NewClientWithResponsesForAuth(auth, opts...)
 }
 
 // ProjectResolverOptions returns the flexera.ProjectResolverOption(s) that

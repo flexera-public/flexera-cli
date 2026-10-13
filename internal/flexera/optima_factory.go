@@ -50,5 +50,8 @@ func (f Factory) NewOptimaClient(cfg cliconfig.CommonConfig, getenv func(string)
 		}
 		auth.SharedTokenSource = src
 	}
-	return flexera.NewClientWithResponsesForAuth(auth)
+	opts := []flexera.ClientOption{
+		flexera.WithUserAgentProduct("flexera-cli", f.UserAgentVersion),
+	}
+	return flexera.NewClientWithResponsesForAuth(auth, opts...)
 }
