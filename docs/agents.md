@@ -12,6 +12,7 @@ only `SKILL.md`, into a supported location. CLI installation does not install it
 | GitHub Copilot in VS Code | `.github/skills/flexera-cli/` | `~/.copilot/skills/flexera-cli/` |
 | Agents supporting `.agents/skills` | `.agents/skills/flexera-cli/` | Agent-specific |
 | Claude Code | `.claude/skills/flexera-cli/` | `~/.claude/skills/flexera-cli/` |
+| Pi agent | `.pi/agent/skills/flexera-cli/` | `~/.pi/agent/skills/flexera-cli/` |
 
 Keep the folder and filename unchanged. In VS Code, invoke `/flexera-cli` from
 chat; this checkout already includes the project skill.
@@ -20,7 +21,8 @@ chat; this checkout already includes the project skill.
 
 Use this task instruction:
 
-> Discover commands with `flexera-cli cli search`; use `--read-only` for reads.
+> Discover commands with `flexera-cli cli search`; use `--read-only` for reads
+> and `--service <name>` to narrow. Paths are `<service> <resource> <action>`.
 > Inspect help/schema and confirm organization and zone. Use local credentials;
 > never expose secrets. Preview writes with `--dry-run` where supported and obtain
 > approval of the target and payload before execution. Do not blindly retry writes.

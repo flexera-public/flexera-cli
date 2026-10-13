@@ -1,25 +1,5 @@
 [
   {
-    "symbol": ".#APIOperation",
-    "status": "excluded",
-    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
-  },
-  {
-    "symbol": ".#ComponentMetadata",
-    "status": "excluded",
-    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
-  },
-  {
-    "symbol": ".#OperationIDs",
-    "status": "excluded",
-    "reason": "offline API metadata infrastructure; CLI search/schema use the sanitized spec-derived catalog"
-  },
-  {
-    "symbol": ".#OperationMetadata",
-    "status": "excluded",
-    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
-  },
-  {
     "symbol": ".#(APIError).Error",
     "status": "excluded",
     "reason": "response/error-parsing helpers used internally by every command"
@@ -85,6 +65,16 @@
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
   },
   {
+    "symbol": ".#(BillAnalysisCostsQuery).Query",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
+    "symbol": ".#(BillAnalysisCostsQuery).QueryWithBody",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
     "symbol": ".#(BillUploadPushTool).Description",
     "status": "covered",
     "command": "bill-upload push"
@@ -115,6 +105,11 @@
     "reason": "internal resolver consumed by finops/anomaly/workflows curated commands, not exposed directly"
   },
   {
+    "symbol": ".#(Client).GenerateQuery",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
     "symbol": ".#(Client).GraphQL",
     "status": "covered",
     "command": "graphql query"
@@ -125,14 +120,9 @@
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
   },
   {
-    "symbol": ".#(Helper).GetCost",
+    "symbol": ".#(ClientWithResponses).GenerateQuery",
     "status": "covered",
-    "command": "finops cost get"
-  },
-  {
-    "symbol": ".#LookupService",
-    "status": "excluded",
-    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
+    "command": "graphql generate"
   },
   {
     "symbol": ".#(OAuth2Doer).AccessToken",
@@ -250,26 +240,6 @@
     "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
   },
   {
-    "symbol": ".#Service",
-    "status": "excluded",
-    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
-  },
-  {
-    "symbol": ".#ServiceInfo",
-    "status": "excluded",
-    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
-  },
-  {
-    "symbol": ".#ServiceOf",
-    "status": "excluded",
-    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
-  },
-  {
-    "symbol": ".#Services",
-    "status": "excluded",
-    "reason": "service registry metadata listing for client tooling; it does not perform a standalone API operation"
-  },
-  {
     "symbol": ".#(RuleBasedDimensionBulkTool).Description",
     "status": "covered",
     "command": "rule-based-dimension bulk"
@@ -325,6 +295,11 @@
     "reason": "response/error-parsing helpers used internally by every command"
   },
   {
+    "symbol": ".#APIOperation",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
+  },
+  {
     "symbol": ".#AppliedPolicyRelationship",
     "status": "covered",
     "command": "policy meta discover"
@@ -343,6 +318,36 @@
     "symbol": ".#BearerTokenRequestEditor",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsEndpoint",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsGranularity",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsQuery",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsQueryClient",
+    "status": "excluded",
+    "reason": "internal client interface consumed by BillAnalysisCostsQuery, not exposed directly"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsQueryRequest",
+    "status": "covered",
+    "command": "bill-analysis costs query"
+  },
+  {
+    "symbol": ".#BillAnalysisCostsQueryResponse",
+    "status": "covered",
+    "command": "bill-analysis costs query"
   },
   {
     "symbol": ".#BillUploadPushClient",
@@ -405,14 +410,64 @@
     "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
-    "symbol": ".#CostClient",
-    "status": "covered",
-    "command": "finops cost get"
+    "symbol": ".#ComponentMetadata",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
   },
   {
-    "symbol": ".#CostResponse",
+    "symbol": ".#CostsDefaultExportPollInterval",
+    "status": "excluded",
+    "reason": "default poll interval constant for export queries; configurable via CLI flags"
+  },
+  {
+    "symbol": ".#CostsDefaultProgressInterval",
+    "status": "excluded",
+    "reason": "default progress interval constant for cost queries; configurable via CLI flags"
+  },
+  {
+    "symbol": ".#CostsEndpointAggregated",
     "status": "covered",
-    "command": "finops cost get"
+    "command": "bill-analysis costs query --endpoint"
+  },
+  {
+    "symbol": ".#CostsEndpointAuto",
+    "status": "covered",
+    "command": "bill-analysis costs query --endpoint"
+  },
+  {
+    "symbol": ".#CostsEndpointExport",
+    "status": "covered",
+    "command": "bill-analysis costs query --endpoint"
+  },
+  {
+    "symbol": ".#CostsEndpointSelect",
+    "status": "covered",
+    "command": "bill-analysis costs query --endpoint"
+  },
+  {
+    "symbol": ".#CostsGranularityDay",
+    "status": "covered",
+    "command": "bill-analysis costs query --granularity"
+  },
+  {
+    "symbol": ".#CostsGranularityMonth",
+    "status": "covered",
+    "command": "bill-analysis costs query --granularity"
+  },
+  {
+    "symbol": ".#CostsMaxAggregatedDimensions",
+    "status": "excluded",
+    "reason": "internal auto-routing threshold constant used by BillAnalysisCostsQuery; not user-configurable"
+  },
+  {
+    "symbol": ".#CostsMaxPeriodMonths",
+    "status": "excluded",
+    "reason": "internal chunking constant used by the cost-report client helper; not user-configurable"
+  },
+  {
+    "symbol": ".#CostsMaxSelectRows",
+    "status": "excluded",
+    "reason": "internal row cap constant for select queries; not user-configurable"
   },
   {
     "symbol": ".#DebugOptions",
@@ -433,26 +488,6 @@
     "symbol": ".#DefaultZone",
     "status": "covered",
     "command": "--zone flag (internal/config)"
-  },
-  {
-    "symbol": ".#Endpoint",
-    "status": "covered",
-    "command": "finops cost get"
-  },
-  {
-    "symbol": ".#EndpointAggregated",
-    "status": "covered",
-    "command": "finops cost report --endpoint"
-  },
-  {
-    "symbol": ".#EndpointAuto",
-    "status": "covered",
-    "command": "finops cost report --endpoint"
-  },
-  {
-    "symbol": ".#EndpointSelect",
-    "status": "covered",
-    "command": "finops cost report --endpoint"
   },
   {
     "symbol": ".#Entry",
@@ -497,7 +532,17 @@
   {
     "symbol": ".#FilterRecommendationsByCategory",
     "status": "covered",
-    "command": "finops recommendation list-*"
+    "command": "recommendations list-*"
+  },
+  {
+    "symbol": ".#GenerateQueryRequestBody",
+    "status": "covered",
+    "command": "graphql generate"
+  },
+  {
+    "symbol": ".#GenerateQueryResponse",
+    "status": "covered",
+    "command": "graphql generate"
   },
   {
     "symbol": ".#GenerateRuleBasedDimensionsFromCSV",
@@ -515,21 +560,6 @@
     "reason": "response-parsing constant used internally to detect Goa-formatted error bodies"
   },
   {
-    "symbol": ".#Granularity",
-    "status": "covered",
-    "command": "finops cost get"
-  },
-  {
-    "symbol": ".#GranularityDay",
-    "status": "covered",
-    "command": "finops cost report --granularity"
-  },
-  {
-    "symbol": ".#GranularityMonth",
-    "status": "covered",
-    "command": "finops cost report --granularity"
-  },
-  {
     "symbol": ".#GraphQLRequest",
     "status": "covered",
     "command": "graphql query"
@@ -543,11 +573,6 @@
     "symbol": ".#GrsBaseURLForZone",
     "status": "excluded",
     "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
-  },
-  {
-    "symbol": ".#Helper",
-    "status": "covered",
-    "command": "finops cost get"
   },
   {
     "symbol": ".#IsCanonicalZone",
@@ -565,24 +590,24 @@
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
   },
   {
+    "symbol": ".#LookupService",
+    "status": "excluded",
+    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
+  },
+  {
     "symbol": ".#MaxBillUploadFiles",
     "status": "excluded",
     "reason": "internal validation limit enforced by bill-upload push; not user-configurable"
   },
   {
-    "symbol": ".#MaxPeriodMonths",
-    "status": "excluded",
-    "reason": "internal chunking constant used by the cost-report client helper; not user-configurable"
-  },
-  {
-    "symbol": ".#New",
-    "status": "covered",
-    "command": "finops cost get"
-  },
-  {
     "symbol": ".#NewAuthHelper",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#NewBillAnalysisCostsQuery",
+    "status": "covered",
+    "command": "bill-analysis costs query"
   },
   {
     "symbol": ".#NewBillUploadPushTool",
@@ -648,6 +673,16 @@
     "symbol": ".#OAuthConfig",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#OperationIDs",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI search/schema use the sanitized spec-derived catalog"
+  },
+  {
+    "symbol": ".#OperationMetadata",
+    "status": "excluded",
+    "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
   },
   {
     "symbol": ".#OptimaBaseURL",
@@ -745,11 +780,6 @@
     "reason": "generic Tool[I,O] interface/registry framework; infrastructure used by BillUploadPushTool, not a CLI-facing symbol itself"
   },
   {
-    "symbol": ".#Request",
-    "status": "covered",
-    "command": "finops cost get"
-  },
-  {
     "symbol": ".#ResponseError",
     "status": "excluded",
     "reason": "response/error-parsing helpers used internally by every command"
@@ -808,6 +838,26 @@
     "symbol": ".#RuleBasedDimensionSpec",
     "status": "covered",
     "command": "rule-based-dimension bulk"
+  },
+  {
+    "symbol": ".#Service",
+    "status": "excluded",
+    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
+  },
+  {
+    "symbol": ".#ServiceInfo",
+    "status": "excluded",
+    "reason": "service registry metadata type used by client tooling; it does not represent a standalone API operation"
+  },
+  {
+    "symbol": ".#ServiceOf",
+    "status": "excluded",
+    "reason": "service registry metadata lookup for client tooling; it does not perform a standalone API operation"
+  },
+  {
+    "symbol": ".#Services",
+    "status": "excluded",
+    "reason": "service registry metadata listing for client tooling; it does not perform a standalone API operation"
   },
   {
     "symbol": ".#SharedTokenSource",
@@ -1283,25 +1333,5 @@
     "symbol": "service/billconnect#Service",
     "status": "excluded",
     "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
-  },
-  {
-    "symbol": ".#(Client).GenerateQuery",
-    "status": "covered",
-    "command": "graphql generate"
-  },
-  {
-    "symbol": ".#(ClientWithResponses).GenerateQuery",
-    "status": "covered",
-    "command": "graphql generate"
-  },
-  {
-    "symbol": ".#GenerateQueryRequestBody",
-    "status": "covered",
-    "command": "graphql generate"
-  },
-  {
-    "symbol": ".#GenerateQueryResponse",
-    "status": "covered",
-    "command": "graphql generate"
   }
 ]

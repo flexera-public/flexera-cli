@@ -82,6 +82,8 @@ github.com/flexera-public/unified-go-client v0.0.0-20261008235935-ec68a8bcd7e8 h
 github.com/flexera-public/unified-go-client v0.0.0-20261008235935-ec68a8bcd7e8/go.mod h1:oZos/sF14rmH/hPyicmTSgq0jSN/FwBIyJ/uq4etij8=
 github.com/flexera-public/unified-go-client v0.0.0-20261012173730-347faef2d3cf h1:AUSjSkQbtu5kOpJT14+X1STr8G4HTWW8PltOT+f65eQ=
 github.com/flexera-public/unified-go-client v0.0.0-20261012173730-347faef2d3cf/go.mod h1:oZos/sF14rmH/hPyicmTSgq0jSN/FwBIyJ/uq4etij8=
+github.com/flexera-public/unified-go-client v0.0.0-20261013174505-074864c5326a h1:tH/RvyZ334wxI/oz30EIyA27Wz9lJzHFWSXJDlCf5PA=
+github.com/flexera-public/unified-go-client v0.0.0-20261013174505-074864c5326a/go.mod h1:oZos/sF14rmH/hPyicmTSgq0jSN/FwBIyJ/uq4etij8=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
