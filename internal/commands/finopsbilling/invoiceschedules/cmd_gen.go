@@ -364,7 +364,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 		customerID   int
 		status       string
 		scheduleName string
-		filter       string
 		noPaginate   bool
 		skipToken    string
 	)
@@ -402,10 +401,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 			if cmd.Flags().Changed("schedule-name") {
 				v := scheduleName
 				params.ScheduleName = &v
-			}
-			if cmd.Flags().Changed("filter") {
-				v := filter
-				params.Filter = &v
 			}
 			client, err := deps.APIClient()
 			if err != nil {
@@ -445,7 +440,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (query)")
 	c.Flags().StringVar(&status, "status", "", "status (query)")
 	c.Flags().StringVar(&scheduleName, "schedule-name", "", "scheduleName (query)")
-	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 	return c

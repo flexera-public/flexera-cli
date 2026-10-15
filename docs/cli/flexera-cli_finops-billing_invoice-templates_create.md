@@ -30,6 +30,7 @@ Validated illustrative body, when available (review before use):
       --dimensions strings        dimensions (body); Optional grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["service","account","region"]
       --display-logo-within-pdf   displayLogoWithinPdf (body); required by API; Whether the logo is rendered within PDF exports.; illustrative example: true
       --dry-run                   print the planned operation as JSON and exit without calling the API
+      --export-layout string      exportLayout (body); PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "flatten"
       --export-type string        exportType (body); required by API; Invoice export type.; enum: ["pdf","csv"]; illustrative example: "pdf"
       --free-text string          freeText (body); Optional free-text company/address block.; illustrative example: "Aut accusamus."
   -h, --help                      help for create

@@ -38,8 +38,12 @@ Service id: optima_recommendations
 ### SEE ALSO
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
+* [flexera-cli recommendations export](flexera-cli_recommendations_export.md)	 - Export recommendations as CSV
+* [flexera-cli recommendations groups](flexera-cli_recommendations_groups.md)	 - Group recommendations into a tree
 * [flexera-cli recommendations list](flexera-cli_recommendations_list.md)	 - List all recommendations
 * [flexera-cli recommendations list-rate-reduction](flexera-cli_recommendations_list-rate-reduction.md)	 - List rate-reduction recommendations (auto-resolves billing centers)
 * [flexera-cli recommendations list-usage-reduction](flexera-cli_recommendations_list-usage-reduction.md)	 - List usage-reduction recommendations (auto-resolves billing centers)
+* [flexera-cli recommendations paged](flexera-cli_recommendations_paged.md)	 - List recommendations (filtered, sorted, cursor-paginated)
 * [flexera-cli recommendations replace](flexera-cli_recommendations_replace.md)	 - updateStatus Recommendations
+* [flexera-cli recommendations savings-summary](flexera-cli_recommendations_savings-summary.md)	 - Summary data for the Optimization overview page widgets
 

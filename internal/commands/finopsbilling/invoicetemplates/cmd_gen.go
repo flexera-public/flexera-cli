@@ -44,6 +44,7 @@ func newInvoiceTemplatesCreateCmd() *cobra.Command {
 		fCostMetric           string
 		fDimensions           []string
 		fDisplayLogoWithinPdf bool
+		fExportLayout         string
 		fExportType           string
 		fFreeText             string
 		fLogo                 string
@@ -83,6 +84,9 @@ func newInvoiceTemplatesCreateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("display-logo-within-pdf") {
 				fields["displayLogoWithinPdf"] = fDisplayLogoWithinPdf
+			}
+			if cmd.Flags().Changed("export-layout") {
+				fields["exportLayout"] = fExportLayout
 			}
 			if cmd.Flags().Changed("export-type") {
 				fields["exportType"] = fExportType
@@ -173,6 +177,7 @@ func newInvoiceTemplatesCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fCostMetric, "cost-metric", "", "costMetric (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().BoolVar(&fDisplayLogoWithinPdf, "display-logo-within-pdf", false, "displayLogoWithinPdf (body)")
+	c.Flags().StringVar(&fExportLayout, "export-layout", "", "exportLayout (body)")
 	c.Flags().StringVar(&fExportType, "export-type", "", "exportType (body)")
 	c.Flags().StringVar(&fFreeText, "free-text", "", "freeText (body)")
 	c.Flags().StringVar(&fLogo, "logo", "", "logo (body)")
@@ -322,6 +327,7 @@ func newInvoiceTemplatesUpdateCmd() *cobra.Command {
 		fCostMetric           string
 		fDimensions           []string
 		fDisplayLogoWithinPdf bool
+		fExportLayout         string
 		fExportType           string
 		fFreeText             string
 		fLogo                 string
@@ -365,6 +371,9 @@ func newInvoiceTemplatesUpdateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("display-logo-within-pdf") {
 				fields["displayLogoWithinPdf"] = fDisplayLogoWithinPdf
+			}
+			if cmd.Flags().Changed("export-layout") {
+				fields["exportLayout"] = fExportLayout
 			}
 			if cmd.Flags().Changed("export-type") {
 				fields["exportType"] = fExportType
@@ -456,6 +465,7 @@ func newInvoiceTemplatesUpdateCmd() *cobra.Command {
 	c.Flags().StringVar(&fCostMetric, "cost-metric", "", "costMetric (body)")
 	c.Flags().StringSliceVar(&fDimensions, "dimensions", nil, "dimensions (body)")
 	c.Flags().BoolVar(&fDisplayLogoWithinPdf, "display-logo-within-pdf", false, "displayLogoWithinPdf (body)")
+	c.Flags().StringVar(&fExportLayout, "export-layout", "", "exportLayout (body)")
 	c.Flags().StringVar(&fExportType, "export-type", "", "exportType (body)")
 	c.Flags().StringVar(&fFreeText, "free-text", "", "freeText (body)")
 	c.Flags().StringVar(&fLogo, "logo", "", "logo (body)")
