@@ -23,7 +23,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ```
   -h, --help        help for get
-      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Voluptates et."
+      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Repellat est et molestias molestiae voluptatem."
 ```
 
 ### Options inherited from parent commands

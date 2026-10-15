@@ -8,7 +8,7 @@ go 1.26.0
 
 require (
 	github.com/charmbracelet/huh v1.0.0
-	github.com/flexera-public/unified-go-client v0.0.0-20261013214425-5c0fc4b6d887
+	github.com/flexera-public/unified-go-client v0.0.0-20261015205501-e93ea0b3348f
 	github.com/getkin/kin-openapi v0.150.0
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.19

@@ -22,19 +22,18 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-month string              billMonth (query); Optional bill month filter.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "Mr. Corine Metz"
-      --cost-metric string             costMetric (query); Optional cost metric filter.; illustrative example: "Ut quae doloremque."
-      --customer-billing-plan string   customerBillingPlan (query); Optional billing plan filter.; illustrative example: "Iusto qui sequi esse voluptatem."
-      --customer-name string           customerName (query); Optional customer name filter.; illustrative example: "Et facere assumenda voluptatem voluptatem illum."
+      --bill-month string              billMonth (query); Optional bill month filter.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "Brenda Senger I"
+      --cost-metric string             costMetric (query); Optional cost metric filter.; illustrative example: "Ullam et praesentium est."
+      --customer-billing-plan string   customerBillingPlan (query); Optional billing plan filter.; illustrative example: "Voluptatum numquam dolores."
+      --customer-name string           customerName (query); Optional customer name filter.; illustrative example: "Sit amet nesciunt ut sint nulla."
       --export-type string             exportType (query); Optional export type filter.; enum: ["pdf","csv"]; illustrative example: "csv"
-      --filter string                  filter (query); OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fiel... (see cli schema); illustrative example: "deliveryStatus eq 'success' and billMonth eq '2026-09'"
   -h, --help                           help for list
-      --limit int                      limit (query); Page size (default 10, max 200).; minimum: 1; maximum: 200; API default: 10; illustrative example: 165
+      --limit int                      limit (query); Page size (default 10, max 200).; minimum: 1; maximum: 200; API default: 10; illustrative example: 125
       --no-paginate                    return only the first page (do not follow nextPage)
       --order-by string                orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "updatedAt desc"
       --schedule-id string             scheduleId (path, required); Identifier of the invoice schedule.; required by API; illustrative example: "sch_1"
       --skip-token string              resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
-      --status string                  status (query); Optional generation status filter.; illustrative example: "Veniam harum corrupti nemo."
+      --status string                  status (query); Optional generation status filter.; illustrative example: "Voluptatem tempora distinctio."
 ```
 
 ### Options inherited from parent commands
