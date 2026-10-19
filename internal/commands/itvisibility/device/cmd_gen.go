@@ -46,7 +46,7 @@ func newDeviceSubmitCmd() *cobra.Command {
 	)
 	c := &cobra.Command{
 		Use:         "submit",
-		Short:       "delete the device evidence for the given device ids using the query",
+		Short:       "Delete device evidence",
 		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device submit --org-id ORG_ID --body @request.json\n  flexera-cli it-visibility device submit --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device submit --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Device_delete", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
@@ -156,7 +156,7 @@ func newDeviceGetCmd() *cobra.Command {
 	)
 	c := &cobra.Command{
 		Use:         "get",
-		Short:       "Estimate device evidence that would be deleted using the query",
+		Short:       "Estimate device evidence deletion",
 		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device get --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device get --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Device_estimateDelete", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,

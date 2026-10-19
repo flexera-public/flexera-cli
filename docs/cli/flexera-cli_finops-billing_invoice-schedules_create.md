@@ -16,6 +16,8 @@ The schedule's invoice template is selected one of three ways:
 
 Any other combination is rejected with 422.
 
+Automatic invoice numbering is optional. Supply invoiceNumberBase, with an optional invoiceNumberPrefix, to number every invoice the schedule generates; an invoiceNumberPrefix without an invoiceNumberBase is rejected with 400 invoice_number_prefix_requires_base. A number is allocated only after bill-lock passes: a failed generation keeps its number and a retry reuses it. If the sequence is exhausted the whole call fails with 409 invoice_number_sequence_exhausted (not retryable) and work already completed for earlier customers is retained. The schedule's counter is retained when the schedule is soft-deleted.
+
 ```
 flexera-cli finops-billing invoice-schedules create [flags]
 ```
@@ -33,14 +35,16 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run                      print the planned operation as JSON and exit without calling the API
-  -h, --help                         help for create
-  -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
-      --invoice-template-id string   invoiceTemplateId (body); Identifier of an existing invoice template to share across every customer on this schedule. Omit both this and template to create a schedule with no template.; illustrative example: "tmpl_9001"
-      --is-create-template           isCreateTemplate (body); Whether to create a new invoice template from the template properties in this request, rather than link an existing one.; API default: false; illustrative example: false
-      --schedule-name string         scheduleName (body); required by API; Human-readable name for the schedule.; maxLength: 255; illustrative example: "Monthly Q3 Invoice"
-      --yes                          confirm the operation (required for destructive ops)
+      --body string                    raw JSON body (inline | @file | @-); overrides body field flags
+      --dry-run                        print the planned operation as JSON and exit without calling the API
+  -h, --help                           help for create
+  -i, --interactive                    edit inputs in a terminal form, review a plan and approve with typed yes
+      --invoice-number-base string     invoiceNumberBase (body); Optional first sequence number for the invoice numbers this schedule generates.; maxLength: 9; pattern: "^0*[1-9][0-9]*$"; illustrative example: "uf4"
+      --invoice-number-prefix string   invoiceNumberPrefix (body); Optional prefix for the invoice numbers this schedule generates. Requires invoiceNumberBase.; maxLength: 20; pattern: "^[A-Za-z0-9_-]*$"; illustrative example: "zel"
+      --invoice-template-id string     invoiceTemplateId (body); Identifier of an existing invoice template to share across every customer on this schedule. Omit both this and template to create a schedule with no template.; illustrative example: "tmpl_9001"
+      --is-create-template             isCreateTemplate (body); Whether to create a new invoice template from the template properties in this request, rather than link an existing one.; API default: false; illustrative example: false
+      --schedule-name string           scheduleName (body); required by API; Human-readable name for the schedule.; maxLength: 255; illustrative example: "Monthly Q3 Invoice"
+      --yes                            confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands

@@ -6,7 +6,7 @@ Activate an invoice schedule
 
 Activate an invoice schedule
 
-Activates an invoice schedule (reactivating a previously deactivated schedule) and restores its future runs. Supply endMonthYear to bound the reactivated schedule; omit it to make the schedule open-ended. While inactive, schedules cannot be modified via PATCH; activate first. Supports optimistic locking through If-Match.
+Activates an invoice schedule (reactivating a previously deactivated schedule) and restores its future runs. Supply endMonthYear to bound the reactivated schedule; omit it to make the schedule open-ended. While inactive, a schedule accepts exactly status, invoiceNumberPrefix and invoiceNumberBase through PATCH; any other change requires activating it first. Supports optimistic locking through If-Match.
 
 ```
 flexera-cli finops-billing invoice-schedules activate [flags]

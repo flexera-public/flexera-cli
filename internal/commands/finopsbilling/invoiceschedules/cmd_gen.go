@@ -184,13 +184,15 @@ func newInvoiceSchedulesDeactivateCmd() *cobra.Command {
 // newInvoiceSchedulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/invoice-schedules (operationId: FinopsBilling_Invoice_Schedules_create)
 func newInvoiceSchedulesCreateCmd() *cobra.Command {
 	var (
-		bodyRaw            string
-		fInvoiceTemplateID string
-		fIsCreateTemplate  bool
-		fScheduleName      string
-		dryRun             bool
-		yes                bool
-		interactive        bool
+		bodyRaw              string
+		fInvoiceNumberBase   string
+		fInvoiceNumberPrefix string
+		fInvoiceTemplateID   string
+		fIsCreateTemplate    bool
+		fScheduleName        string
+		dryRun               bool
+		yes                  bool
+		interactive          bool
 	)
 	c := &cobra.Command{
 		Use:         "create",
@@ -214,6 +216,12 @@ func newInvoiceSchedulesCreateCmd() *cobra.Command {
 				return err
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("invoice-number-base") {
+				fields["invoiceNumberBase"] = fInvoiceNumberBase
+			}
+			if cmd.Flags().Changed("invoice-number-prefix") {
+				fields["invoiceNumberPrefix"] = fInvoiceNumberPrefix
+			}
 			if cmd.Flags().Changed("invoice-template-id") {
 				fields["invoiceTemplateId"] = fInvoiceTemplateID
 			}
@@ -294,6 +302,8 @@ func newInvoiceSchedulesCreateCmd() *cobra.Command {
 			}
 		},
 	}
+	c.Flags().StringVar(&fInvoiceNumberBase, "invoice-number-base", "", "invoiceNumberBase (body)")
+	c.Flags().StringVar(&fInvoiceNumberPrefix, "invoice-number-prefix", "", "invoiceNumberPrefix (body)")
 	c.Flags().StringVar(&fInvoiceTemplateID, "invoice-template-id", "", "invoiceTemplateId (body)")
 	c.Flags().BoolVar(&fIsCreateTemplate, "is-create-template", false, "isCreateTemplate (body)")
 	c.Flags().StringVar(&fScheduleName, "schedule-name", "", "scheduleName (body)")
@@ -364,7 +374,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 		customerID   int
 		status       string
 		scheduleName string
-		filter       string
 		noPaginate   bool
 		skipToken    string
 	)
@@ -402,10 +411,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 			if cmd.Flags().Changed("schedule-name") {
 				v := scheduleName
 				params.ScheduleName = &v
-			}
-			if cmd.Flags().Changed("filter") {
-				v := filter
-				params.Filter = &v
 			}
 			client, err := deps.APIClient()
 			if err != nil {
@@ -445,7 +450,6 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 	c.Flags().IntVar(&customerID, "customer-id", 0, "customerId (query)")
 	c.Flags().StringVar(&status, "status", "", "status (query)")
 	c.Flags().StringVar(&scheduleName, "schedule-name", "", "scheduleName (query)")
-	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 	return c
@@ -454,14 +458,17 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 // newInvoiceSchedulesUpdateCmd — PATCH /finops-billing/v1/orgs/{orgId}/invoice-schedules/{id} (operationId: FinopsBilling_Invoice_Schedules_update)
 func newInvoiceSchedulesUpdateCmd() *cobra.Command {
 	var (
-		id                 string
-		bodyRaw            string
-		fInvoiceTemplateID string
-		fIsCreateTemplate  bool
-		fScheduleName      string
-		dryRun             bool
-		yes                bool
-		interactive        bool
+		id                   string
+		bodyRaw              string
+		fInvoiceNumberBase   string
+		fInvoiceNumberPrefix string
+		fInvoiceTemplateID   string
+		fIsCreateTemplate    bool
+		fScheduleName        string
+		fStatus              string
+		dryRun               bool
+		yes                  bool
+		interactive          bool
 	)
 	c := &cobra.Command{
 		Use:         "update",
@@ -489,6 +496,12 @@ func newInvoiceSchedulesUpdateCmd() *cobra.Command {
 			}
 			params := flexera.FinopsBillingInvoiceSchedulesUpdateParams{}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("invoice-number-base") {
+				fields["invoiceNumberBase"] = fInvoiceNumberBase
+			}
+			if cmd.Flags().Changed("invoice-number-prefix") {
+				fields["invoiceNumberPrefix"] = fInvoiceNumberPrefix
+			}
 			if cmd.Flags().Changed("invoice-template-id") {
 				fields["invoiceTemplateId"] = fInvoiceTemplateID
 			}
@@ -497,6 +510,9 @@ func newInvoiceSchedulesUpdateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("schedule-name") {
 				fields["scheduleName"] = fScheduleName
+			}
+			if cmd.Flags().Changed("status") {
+				fields["status"] = fStatus
 			}
 			var typed any
 			if len(fields) > 0 {
@@ -570,9 +586,12 @@ func newInvoiceSchedulesUpdateCmd() *cobra.Command {
 		},
 	}
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
+	c.Flags().StringVar(&fInvoiceNumberBase, "invoice-number-base", "", "invoiceNumberBase (body)")
+	c.Flags().StringVar(&fInvoiceNumberPrefix, "invoice-number-prefix", "", "invoiceNumberPrefix (body)")
 	c.Flags().StringVar(&fInvoiceTemplateID, "invoice-template-id", "", "invoiceTemplateId (body)")
 	c.Flags().BoolVar(&fIsCreateTemplate, "is-create-template", false, "isCreateTemplate (body)")
 	c.Flags().StringVar(&fScheduleName, "schedule-name", "", "scheduleName (body)")
+	c.Flags().StringVar(&fStatus, "status", "", "status (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

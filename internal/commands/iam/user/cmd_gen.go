@@ -272,6 +272,9 @@ func newUserListCmd() *cobra.Command {
 		filter       string
 		orderBy      string
 		accessSource string
+		limit        int
+		noPaginate   bool
+		skipToken    string
 	)
 	c := &cobra.Command{
 		Use:         "list",
@@ -300,35 +303,49 @@ func newUserListCmd() *cobra.Command {
 				ev := flexera.IamUserIndexParamsAccessSource(accessSource)
 				params.AccessSource = &ev
 			}
+			if cmd.Flags().Changed("limit") {
+				v := limit
+				params.Limit = &v
+			}
 			client, err := deps.APIClient()
 			if err != nil {
 				return err
 			}
-			resp, err := client.IamUserIndexWithResponse(cmd.Context(), deps.Config.OrgID, &params)
+			var initialSkipToken *string
+			if t := strings.TrimSpace(skipToken); t != "" {
+				initialSkipToken = &t
+			}
+			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+				func(ctx context.Context, st *string) (any, error) {
+					p := params
+					p.SkipToken = st
+					resp, callErr := client.IamUserIndexWithResponse(ctx, deps.Config.OrgID, &p)
+					if callErr != nil {
+						return nil, callErr
+					}
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
+					}
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+				})
 			if err != nil {
 				return err
 			}
-			switch resp.StatusCode() {
-			case 200:
-				if resp.JSON200 == nil {
-					return flexera.ResponseError(resp.StatusCode(), resp.Body)
-				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
-					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
-				}
-				result, err := clipkg.DecodeResponseJSON(resp.Body)
-				if err != nil {
-					return err
-				}
-				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
-			default:
-				return flexera.ResponseError(resp.StatusCode(), resp.Body)
-			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 		},
 	}
 	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
 	c.Flags().StringVar(&orderBy, "order-by", "", "orderBy (query)")
 	c.Flags().StringVar(&accessSource, "access-source", "", "accessSource (query)")
+	c.Flags().IntVar(&limit, "limit", 0, "limit (query)")
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
+	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 	return c
 }
 
