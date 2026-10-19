@@ -84,7 +84,7 @@ docs:
 	go run ./cmd/gendocs
 	@echo "wrote docs/cli/"
 
-test:
+test: generate
 	go test $(PKG)
 
 test-integration:
