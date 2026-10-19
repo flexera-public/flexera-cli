@@ -1,12 +1,22 @@
 ## flexera-cli it-visibility device get
 
-Estimate device evidence that would be deleted using the query
+Estimate device evidence deletion
 
 ### Synopsis
 
-Estimate device evidence that would be deleted using the query
+Estimate device evidence deletion
 
-Returns an estimated number of device evidences associated with the datasource data that would be deleted using the query.
+Estimates the device evidence that would be deleted for the specified device IDs, grouped by datasource.
+
+A datasource is included if it matches any datasource selector. If no datasource selectors are provided, evidence from every datasource associated with the specified devices is included.
+
+The estimate reflects the inventory available when the request is made. Because inventory may change, it does not guarantee that a later request will delete the same evidence.
+
+### Client guidance
+* Submit no more than 500 unique device IDs per request. This recommendation is not enforced, but larger requests provide no processing benefit and may increase latency or timeout risk.
+* Split larger workloads into batches and process them sequentially. Use the same datasource selectors for every batch in one logical operation.
+* There is currently no specific concurrency limit or hard cap in place. We recommend that customers test and tune their request volume based on their network conditions, performance requirements, and business needs.
+* The API does not automatically retry failed estimate requests. Clients may retry transient failures using exponential backoff with jitter.
 
 ```
 flexera-cli it-visibility device get [flags]
@@ -25,7 +35,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string          raw JSON body (inline | @file | @-); overrides body field flags
-      --device-ids strings   deviceIds (body); required by API; List of device IDs to delete; CLI: comma-separated values or repeated flag; illustrative example: ["Quasi cum itaque fugiat.","Voluptatibus aliquam iste ipsa.","Aliquid nam.","Enim laboriosam tempore."]
+      --device-ids strings   deviceIds (body); required by API; Device IDs whose evidence should be included. Send no more than 500 unique IDs per request; this recommendation is not enforced by the API.; CLI: comma-separated values or repeated flag; illustrative example: ["4e0e3471-ccbc-41c7-a21e-c384f2eb5669"]
   -h, --help                 help for get
 ```
 

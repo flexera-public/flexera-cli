@@ -99,12 +99,12 @@ func newInvoiceScheduleInvoicesListCmd() *cobra.Command {
 		limit               int
 		status              string
 		orderBy             string
+		invoiceNumber       string
 		billMonth           string
 		exportType          string
 		customerName        string
 		costMetric          string
 		customerBillingPlan string
-		filter              string
 		noPaginate          bool
 		skipToken           string
 	)
@@ -138,6 +138,10 @@ func newInvoiceScheduleInvoicesListCmd() *cobra.Command {
 				v := orderBy
 				params.OrderBy = &v
 			}
+			if cmd.Flags().Changed("invoice-number") {
+				v := invoiceNumber
+				params.InvoiceNumber = &v
+			}
 			if cmd.Flags().Changed("bill-month") {
 				v := billMonth
 				params.BillMonth = &v
@@ -157,10 +161,6 @@ func newInvoiceScheduleInvoicesListCmd() *cobra.Command {
 			if cmd.Flags().Changed("customer-billing-plan") {
 				v := customerBillingPlan
 				params.CustomerBillingPlan = &v
-			}
-			if cmd.Flags().Changed("filter") {
-				v := filter
-				params.Filter = &v
 			}
 			client, err := deps.APIClient()
 			if err != nil {
@@ -199,12 +199,12 @@ func newInvoiceScheduleInvoicesListCmd() *cobra.Command {
 	c.Flags().IntVar(&limit, "limit", 0, "limit (query)")
 	c.Flags().StringVar(&status, "status", "", "status (query)")
 	c.Flags().StringVar(&orderBy, "order-by", "", "orderBy (query)")
+	c.Flags().StringVar(&invoiceNumber, "invoice-number", "", "invoiceNumber (query)")
 	c.Flags().StringVar(&billMonth, "bill-month", "", "billMonth (query)")
 	c.Flags().StringVar(&exportType, "export-type", "", "exportType (query)")
 	c.Flags().StringVar(&customerName, "customer-name", "", "customerName (query)")
 	c.Flags().StringVar(&costMetric, "cost-metric", "", "costMetric (query)")
 	c.Flags().StringVar(&customerBillingPlan, "customer-billing-plan", "", "customerBillingPlan (query)")
-	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 	return c

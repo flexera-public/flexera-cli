@@ -15,7 +15,9 @@ The invoice configuration can be supplied in one of four ways:
 - create saved template: provide isCreateTemplate=true and template with templateName; the new template is used and its ID is returned
 - one-time template: provide template without templateName and with isCreateTemplate=false (or omitted); it supplies omitted root configuration fields but is not saved
 
-Root configuration fields always override their corresponding template value when present. template cannot be combined with invoiceTemplateId. The four root configuration fields (exportType, periodType, costMetric, displayLogoWithinPdf) are required only when neither invoiceTemplateId nor template is supplied.
+Each customer may carry an optional invoiceNumber. It is immutable after creation, and duplicates are allowed. The number of a generated invoice is allocated only after bill-lock passes; a failed generation keeps its number and a retry reuses it. If the invoice number sequence is exhausted the whole call fails with 409 invoice_number_sequence_exhausted (not retryable) and work already completed for earlier customers in the call is retained.
+
+Root configuration fields always override their corresponding template value when present. template cannot be combined with invoiceTemplateId. The four required root configuration fields (exportType, periodType, costMetric, displayLogoWithinPdf) are required only when neither invoiceTemplateId nor template is supplied. exportLayout is optional: PDF exports default to flatten, while nested selects the nested layout. Values are exact lowercase flatten or nested; omit exportLayout for CSV exports.
 
 ```
 flexera-cli finops-billing invoices create [flags]
@@ -35,22 +37,23 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                  raw JSON body (inline | @file | @-); overrides body field flags
-      --cost-metric string           costMetric (body); Cost metric to use for export. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "modifiedEffectiveCost"
-      --dimensions strings           dimensions (body); Dimensions to include in export.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Expedita consequatur labore voluptatum non et.","Accusamus consequatur.","Voluptate beatae illo."]
+      --cost-metric string           costMetric (body); Cost metric to use for export. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "effectiveCost"
+      --dimensions strings           dimensions (body); Dimensions to include in export.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Eius porro tempore nemo quidem voluptas.","Et distinctio eum.","Eos eveniet eaque fuga iste et ratione."]
       --display-logo-within-pdf      displayLogoWithinPdf (body); Whether to show logo in PDF export. Required only when neither invoiceTemplateId nor template is supplied.; illustrative example: false
       --dry-run                      print the planned operation as JSON and exit without calling the API
-      --due-date string              dueDate (body); Invoice due date.; format: date; illustrative example: "1993-12-03"
-      --end-date string              endDate (body); required by API; Invoice range end date.; format: date; illustrative example: "1990-10-28"
+      --due-date string              dueDate (body); Invoice due date.; format: date; illustrative example: "1988-11-28"
+      --end-date string              endDate (body); required by API; Invoice range end date.; format: date; illustrative example: "1988-05-11"
+      --export-layout string         exportLayout (body); PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "flatten"
       --export-type string           exportType (body); Export type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["pdf","csv"]; illustrative example: "pdf"
-      --free-text string             freeText (body); Optional free text.; illustrative example: "Nulla numquam architecto eius pariatur."
+      --free-text string             freeText (body); Optional free text.; illustrative example: "Est est illo nisi."
   -h, --help                         help for create
   -i, --interactive                  edit inputs in a terminal form, review a plan and approve with typed yes
-      --invoice-template-id string   invoiceTemplateId (body); Optional saved invoice template to source default field values from. Cannot be combined with template. Opaque ID; resolved server-side and snapshotted into the invoice.; illustrative example: "Eius voluptatem et rerum minus."
+      --invoice-template-id string   invoiceTemplateId (body); Optional saved invoice template to source default field values from. Cannot be combined with template. Opaque ID; resolved server-side and snapshotted into the invoice.; illustrative example: "Quo dolorum adipisci est cumque dolor."
       --is-create-template           isCreateTemplate (body); Whether to create and use a reusable invoice template from template properties.; API default: false; illustrative example: false
-      --issue-date string            issueDate (body); Invoice issue date.; format: date; illustrative example: "1982-03-16"
-      --logo string                  logo (body); Optional logo payload.; illustrative example: "Iure dolorem animi atque quos."
-      --period-type string           periodType (body); Configured period type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "billPeriod"
-      --start-date string            startDate (body); required by API; Invoice range start date.; format: date; illustrative example: "2005-03-29"
+      --issue-date string            issueDate (body); Invoice issue date.; format: date; illustrative example: "1995-07-16"
+      --logo string                  logo (body); Optional logo payload.; illustrative example: "Sunt sunt mollitia tenetur."
+      --period-type string           periodType (body); Configured period type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "chargePeriod"
+      --start-date string            startDate (body); required by API; Invoice range start date.; format: date; illustrative example: "1979-06-22"
       --yes                          confirm the operation (required for destructive ops)
 ```
 

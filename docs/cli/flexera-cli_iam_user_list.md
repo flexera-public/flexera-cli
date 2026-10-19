@@ -25,7 +25,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
       --access-source string   accessSource (query); Filter users by access source type; enum: ["org_member","external_access_policy"]; illustrative example: "org_member"
       --filter string          filter (query); A filter to narrow the number of users to return. Supported fields in the filter are [email, firstName, lastName, lastUILogin, lastAPILogin, hasActiveRefreshToken] The following filters are supported: | Filter | Description | Allowed Operator | Behavior | Example | | --- | ---| --- | --- | --- | | email | Filters on the user's email | co | Contains - The ent... (see cli schema); illustrative example: "email co 'flexera.com' and lastUILogin ge '2021-05-16T16:31:52.1000Z'"
   -h, --help                   help for list
+      --limit int              limit (query); The maximum number of users to return per page. If a partial page is returned, the response includes a nextPage link carrying the skipToken.; illustrative example: 100
+      --no-paginate            return only the first page (do not follow nextPage)
       --order-by string        orderBy (query); The order by which to sort the users. Supported fields in the orderBy are [firstName, lastName, email, lastUILogin, lastAPILogin]; API default: "firstName asc"; illustrative example: "firstName, lastUILogin desc"
+      --skip-token string      resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
 ```
 
 ### Options inherited from parent commands

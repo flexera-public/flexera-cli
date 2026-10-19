@@ -3527,10 +3527,42 @@
     "ownership": "generated"
   },
   {
+    "operationId": "OptimaRecommendations_Recommendations_export",
+    "command": [
+      "recommendations",
+      "export"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "OptimaRecommendations_Recommendations_groupTree",
+    "command": [
+      "recommendations",
+      "groups"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "OptimaRecommendations_Recommendations_index",
     "command": [
       "recommendations",
       "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "OptimaRecommendations_Recommendations_recommendationsPaged",
+    "command": [
+      "recommendations",
+      "paged"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "OptimaRecommendations_Recommendations_savingsSummary",
+    "command": [
+      "recommendations",
+      "savings-summary"
     ],
     "ownership": "generated"
   },

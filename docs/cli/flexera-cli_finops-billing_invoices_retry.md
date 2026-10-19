@@ -25,7 +25,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --dry-run     print the planned operation as JSON and exit without calling the API
   -h, --help        help for retry
-      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Fuga iste et ratione aut."
+      --id string   id (path, required); Invoice export identifier; required by API; illustrative example: "Veritatis atque pariatur accusantium corrupti aut."
       --yes         confirm the operation (required for destructive ops)
 ```
 

@@ -30,6 +30,10 @@ func NewCmd() *cobra.Command {
 	}
 	c.AddCommand(
 		newRecommendationsListCmd(),
+		newRecommendationsExportCmd(),
+		newRecommendationsGroupsCmd(),
+		newRecommendationsPagedCmd(),
+		newRecommendationsSavingsSummaryCmd(),
 		newRecommendationsReplaceCmd(),
 	)
 	return c
@@ -104,10 +108,263 @@ func newRecommendationsListCmd() *cobra.Command {
 	return c
 }
 
+// newRecommendationsExportCmd — GET /recommendations/orgs/{orgId}/recommendations/export (operationId: OptimaRecommendations_Recommendations_export)
+func newRecommendationsExportCmd() *cobra.Command {
+	var (
+		filter  string
+		orderBy string
+		columns []string
+	)
+	c := &cobra.Command{
+		Use:         "export",
+		Short:       "Export recommendations as CSV",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations export --org-id ORG_ID --columns COLUMNS",
+		Annotations: map[string]string{"flexera.operationId": "OptimaRecommendations_Recommendations_export", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "OptimaRecommendations_Recommendations_export")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			params := flexera.OptimaRecommendationsRecommendationsExportParams{}
+			if cmd.Flags().Changed("filter") {
+				v := filter
+				params.Filter = &v
+			}
+			if cmd.Flags().Changed("order-by") {
+				v := orderBy
+				params.OrderBy = &v
+			}
+			if cmd.Flags().Changed("columns") {
+				params.Columns = columns
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.OptimaRecommendationsRecommendationsExportWithResponse(cmd.Context(), deps.Config.OrgID, &params)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
+	c.Flags().StringVar(&orderBy, "order-by", "", "orderBy (query)")
+	c.Flags().StringSliceVar(&columns, "columns", nil, "columns (query)")
+	return c
+}
+
+// newRecommendationsGroupsCmd — GET /recommendations/orgs/{orgId}/recommendations/groups (operationId: OptimaRecommendations_Recommendations_groupTree)
+func newRecommendationsGroupsCmd() *cobra.Command {
+	var (
+		filter  string
+		groupBy string
+	)
+	c := &cobra.Command{
+		Use:         "groups",
+		Short:       "Group recommendations into a tree",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations groups --org-id ORG_ID --group-by GROUP_BY",
+		Annotations: map[string]string{"flexera.operationId": "OptimaRecommendations_Recommendations_groupTree", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "OptimaRecommendations_Recommendations_groupTree")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			params := flexera.OptimaRecommendationsRecommendationsGroupTreeParams{}
+			if cmd.Flags().Changed("filter") {
+				v := filter
+				params.Filter = &v
+			}
+			if cmd.Flags().Changed("group-by") {
+				params.GroupBy = groupBy
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.OptimaRecommendationsRecommendationsGroupTreeWithResponse(cmd.Context(), deps.Config.OrgID, &params)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
+	c.Flags().StringVar(&groupBy, "group-by", "", "groupBy (query)")
+	return c
+}
+
+// newRecommendationsPagedCmd — GET /recommendations/orgs/{orgId}/recommendations/paged (operationId: OptimaRecommendations_Recommendations_recommendationsPaged)
+func newRecommendationsPagedCmd() *cobra.Command {
+	var (
+		view       string
+		filter     string
+		orderBy    string
+		limit      int
+		noPaginate bool
+		skipToken  string
+	)
+	c := &cobra.Command{
+		Use:         "paged",
+		Short:       "List recommendations (filtered, sorted, cursor-paginated)",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations paged --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "OptimaRecommendations_Recommendations_recommendationsPaged", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "OptimaRecommendations_Recommendations_recommendationsPaged")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			params := flexera.OptimaRecommendationsRecommendationsRecommendationsPagedParams{}
+			if cmd.Flags().Changed("view") {
+				ev := flexera.OptimaRecommendationsRecommendationsRecommendationsPagedParamsView(view)
+				params.View = &ev
+			}
+			if cmd.Flags().Changed("filter") {
+				v := filter
+				params.Filter = &v
+			}
+			if cmd.Flags().Changed("order-by") {
+				v := orderBy
+				params.OrderBy = &v
+			}
+			if cmd.Flags().Changed("limit") {
+				v := limit
+				params.Limit = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			var initialSkipToken *string
+			if t := strings.TrimSpace(skipToken); t != "" {
+				initialSkipToken = &t
+			}
+			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+				func(ctx context.Context, st *string) (any, error) {
+					p := params
+					p.SkipToken = st
+					resp, callErr := client.OptimaRecommendationsRecommendationsRecommendationsPagedWithResponse(ctx, deps.Config.OrgID, &p)
+					if callErr != nil {
+						return nil, callErr
+					}
+					switch resp.StatusCode() {
+					case 200:
+						if resp.JSON200 != nil {
+							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+								return resp.JSON200, nil
+							}
+							return clipkg.DecodeResponseJSON(resp.Body)
+						}
+					}
+					return nil, flexera.ResponseError(resp.StatusCode(), resp.Body)
+				})
+			if err != nil {
+				return err
+			}
+			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+		},
+	}
+	c.Flags().StringVar(&view, "view", "", "view (query)")
+	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
+	c.Flags().StringVar(&orderBy, "order-by", "", "orderBy (query)")
+	c.Flags().IntVar(&limit, "limit", 0, "limit (query)")
+	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
+	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
+	return c
+}
+
+// newRecommendationsSavingsSummaryCmd — GET /recommendations/orgs/{orgId}/recommendations/savings-summary (operationId: OptimaRecommendations_Recommendations_savingsSummary)
+func newRecommendationsSavingsSummaryCmd() *cobra.Command {
+	var (
+		billingCenterIDs []string
+	)
+	c := &cobra.Command{
+		Use:         "savings-summary",
+		Short:       "Summary data for the Optimization overview page widgets",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations savings-summary --org-id ORG_ID",
+		Annotations: map[string]string{"flexera.operationId": "OptimaRecommendations_Recommendations_savingsSummary", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "OptimaRecommendations_Recommendations_savingsSummary")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			params := flexera.OptimaRecommendationsRecommendationsSavingsSummaryParams{}
+			if cmd.Flags().Changed("billing-center-i-ds") {
+				v := billingCenterIDs
+				params.BillingCenterIDs = &v
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.OptimaRecommendationsRecommendationsSavingsSummaryWithResponse(cmd.Context(), deps.Config.OrgID, &params)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringSliceVar(&billingCenterIDs, "billing-center-i-ds", nil, "billingCenterIDs (query)")
+	return c
+}
+
 // newRecommendationsReplaceCmd — PUT /recommendations/orgs/{orgId}/recommendations/updatestatus (operationId: OptimaRecommendations_Recommendations_updateStatus)
 func newRecommendationsReplaceCmd() *cobra.Command {
 	var (
 		bodyRaw            string
+		fGenerationID      string
 		fId                string
 		fSnoozedTargetDate string
 		fStatus            string
@@ -138,6 +395,9 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 				return err
 			}
 			fields := map[string]any{}
+			if cmd.Flags().Changed("generation-id") {
+				fields["generationId"] = fGenerationID
+			}
 			if cmd.Flags().Changed("id") {
 				fields["id"] = fId
 			}
@@ -212,6 +472,7 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 			}
 		},
 	}
+	c.Flags().StringVar(&fGenerationID, "generation-id", "", "generationId (body)")
 	c.Flags().StringVar(&fId, "id", "", "id (body)")
 	c.Flags().StringVar(&fSnoozedTargetDate, "snoozed-target-date", "", "snoozedTargetDate (body)")
 	c.Flags().StringVar(&fStatus, "status", "", "status (body)")

@@ -24,7 +24,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ```
       --filter string       filter (query); OData-style filter expression used to filter invoice templates.; illustrative example: "templateName co 'summary'"
   -h, --help                help for list
-      --limit int           limit (query); Page size (default 50, max 200); minimum: 1; maximum: 200; API default: 50; illustrative example: 189
+      --limit int           limit (query); Page size (default 50, max 200); minimum: 1; maximum: 200; API default: 50; illustrative example: 94
       --no-paginate         return only the first page (do not follow nextPage)
       --order-by string     orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "updatedAt desc"
       --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
