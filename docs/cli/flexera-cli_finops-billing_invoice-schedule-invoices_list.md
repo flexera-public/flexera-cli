@@ -29,6 +29,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
       --customer-billing-plan string   customerBillingPlan (query); Optional billing plan filter.; illustrative example: "Quia exercitationem."
       --customer-name string           customerName (query); Optional customer name filter.; illustrative example: "Quo aut qui atque."
       --export-type string             exportType (query); Optional export type filter.; enum: ["pdf","csv"]; illustrative example: "pdf"
+      --filter string                  filter (query); OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fiel... (see cli schema); illustrative example: "deliveryStatus eq 'success' and billMonth eq '2026-09'"
   -h, --help                           help for list
       --invoice-number string          invoiceNumber (query); Optional exact, case-sensitive invoice number filter.; maxLength: 29; pattern: "^[A-Za-z0-9_-]+$"; illustrative example: "INV-000042"
       --limit int                      limit (query); Page size (default 10, max 200).; minimum: 1; maximum: 200; API default: 10; illustrative example: 154

@@ -8,7 +8,7 @@ go 1.26.0
 
 require (
 	github.com/charmbracelet/huh v1.0.0
-	github.com/flexera-public/unified-go-client v0.0.0-20261019170818-8c09ba3ec5ca
+	github.com/flexera-public/unified-go-client v0.0.0-20261026190825-bd1871c0a11c
 	github.com/getkin/kin-openapi v0.150.0
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.19
@@ -50,7 +50,7 @@ require (
 	github.com/muesli/ansi v0.0.0-20230316100256-276c6243b2f6 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect
 	github.com/muesli/termenv v0.16.0 // indirect
-	github.com/oapi-codegen/runtime v1.7.0 // indirect
+	github.com/oapi-codegen/runtime v1.8.0 // indirect
 	github.com/oasdiff/yaml v0.1.1 // indirect
 	github.com/oasdiff/yaml3 v0.0.14 // indirect
 	github.com/pelletier/go-toml/v2 v2.4.3 // indirect

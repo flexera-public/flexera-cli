@@ -337,17 +337,18 @@ func newInvoicesGetCmd() *cobra.Command {
 // newInvoicesListCmd — GET /finops-billing/v1/orgs/{orgId}/invoices (operationId: FinopsBilling_Invoices_index)
 func newInvoicesListCmd() *cobra.Command {
 	var (
-		limit         int
-		status        string
-		orderBy       string
-		invoiceNumber string
-		billMonth     string
-		exportType    string
-		customerName  string
-		filter        string
-		groupByCount  int
-		noPaginate    bool
-		skipToken     string
+		limit            int
+		status           string
+		orderBy          string
+		invoiceNumber    string
+		billMonth        string
+		exportType       string
+		customerName     string
+		filter           string
+		expressionFilter string
+		groupByCount     int
+		noPaginate       bool
+		skipToken        string
 	)
 	c := &cobra.Command{
 		Use:         "list",
@@ -396,6 +397,10 @@ func newInvoicesListCmd() *cobra.Command {
 				v := filter
 				params.Filter = &v
 			}
+			if cmd.Flags().Changed("expression-filter") {
+				v := expressionFilter
+				params.ExpressionFilter = &v
+			}
 			if cmd.Flags().Changed("group-by-count") {
 				v := groupByCount
 				params.GroupByCount = &v
@@ -441,6 +446,7 @@ func newInvoicesListCmd() *cobra.Command {
 	c.Flags().StringVar(&exportType, "export-type", "", "exportType (query)")
 	c.Flags().StringVar(&customerName, "customer-name", "", "customerName (query)")
 	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
+	c.Flags().StringVar(&expressionFilter, "expression-filter", "", "expressionFilter (query)")
 	c.Flags().IntVar(&groupByCount, "group-by-count", 0, "groupByCount (query)")
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
