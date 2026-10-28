@@ -482,7 +482,7 @@
   {
     "symbol": ".#DefaultRuleBasedDimensionCSVOptions",
     "status": "covered",
-    "command": "rule-based-dimension from_csv"
+    "command": "rule-based-dimension from-csv"
   },
   {
     "symbol": ".#DefaultZone",
@@ -547,12 +547,12 @@
   {
     "symbol": ".#GenerateRuleBasedDimensionsFromCSV",
     "status": "covered",
-    "command": "rule-based-dimension from_csv"
+    "command": "rule-based-dimension from-csv"
   },
   {
     "symbol": ".#GenerateRuleBasedDimensionsFromCSVFile",
     "status": "covered",
-    "command": "rule-based-dimension from_csv"
+    "command": "rule-based-dimension from-csv"
   },
   {
     "symbol": ".#GoaErrorMediaType",
@@ -817,7 +817,7 @@
   {
     "symbol": ".#RuleBasedDimensionCSVColumnOverride",
     "status": "covered",
-    "command": "rule-based-dimension from_csv"
+    "command": "rule-based-dimension from-csv"
   },
   {
     "symbol": ".#RuleBasedDimensionCSVDescriptionColumnPrefix",
@@ -827,7 +827,7 @@
   {
     "symbol": ".#RuleBasedDimensionCSVOptions",
     "status": "covered",
-    "command": "rule-based-dimension from_csv"
+    "command": "rule-based-dimension from-csv"
   },
   {
     "symbol": ".#RuleBasedDimensionCSVTemplateData",

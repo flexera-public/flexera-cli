@@ -112,6 +112,29 @@ func TestPrecisionGeneratedPagination(t *testing.T) {
 // lost before the CLI printer sees them. The pagination-only SDK fix does not
 // fix this path. Either preserve the number or explicitly reject it; silently
 // rounded success is never accepted, including for scalar JSON responses.
+// Table output must render every merged page, even when the response kind
+// alone does not identify the SDK type.
+func TestGeneratedPaginationTableRendersAllPages(t *testing.T) {
+	pages := []string{
+		`{"kind":"policy#published_template_list","nextPage":"https://example.invalid/next?skipToken=second","values":[{"id":"template-1","kind":"policy#published_template","name":"first","fingerprint":"fp-1","ref":"ref-1"}]}`,
+		`{"kind":"policy#published_template_list","values":[{"id":"template-2","kind":"policy#published_template","name":"second","fingerprint":"fp-2","ref":"ref-2"}]}`,
+	}
+	calls := 0
+	doer := precisionDoer(func(r *http.Request) (*http.Response, error) {
+		calls++
+		precisionCheckRequest(t, r, http.MethodGet, "/policy/v1/orgs/123/published-templates")
+		return precisionResponse(r, pages[calls-1]), nil
+	})
+	var out, stderr bytes.Buffer
+	args := []string{"policy", "published-template", "list", "--org-id", "123", "--access-token", "precision-token", "-o", "table"}
+	if code := run(context.Background(), args, &out, &stderr, func(string) string { return "" }, doer); code != 0 {
+		t.Fatalf("exit=%d stderr=%s", code, &stderr)
+	}
+	if calls != 2 || !strings.Contains(out.String(), "template-1") || !strings.Contains(out.String(), "template-2") {
+		t.Fatalf("calls=%d table:\n%s", calls, &out)
+	}
+}
+
 func TestPrecisionGeneratedUntypedResponse(t *testing.T) {
 	precisionLogSDK(t)
 	for _, tc := range []struct {

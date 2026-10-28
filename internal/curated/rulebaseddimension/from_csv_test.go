@@ -8,7 +8,7 @@ import (
 
 func TestNewFromCSVCommand(t *testing.T) {
 	cmd := NewFromCSVCommand()
-	if cmd.Name() != "from_csv" {
+	if cmd.Name() != "from-csv" {
 		t.Fatalf("unexpected command name %q", cmd.Name())
 	}
 	for _, name := range []string{"generate", "create", "update"} {
@@ -61,7 +61,10 @@ func TestCommandCanBeAddedToRoot(t *testing.T) {
 	if err := Attach(root); err != nil {
 		t.Fatalf("attach: %v", err)
 	}
-	if _, _, err := root.Find([]string{"finops-customizations", "rule-based-dimension", "from_csv", "generate"}); err != nil {
-		t.Fatalf("find command: %v", err)
+	for _, name := range []string{"from-csv", "from_csv"} {
+		found, _, err := root.Find([]string{"finops-customizations", "rule-based-dimension", name, "generate"})
+		if err != nil || found.CommandPath() != "root finops-customizations rule-based-dimension from-csv generate" {
+			t.Fatalf("find %s: %v %v", name, found, err)
+		}
 	}
 }

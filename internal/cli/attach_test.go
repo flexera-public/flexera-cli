@@ -27,3 +27,19 @@ func TestAttachCommands(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 }
+
+func TestAddCommandAtCreatesAndReusesGroups(t *testing.T) {
+	root := &cobra.Command{Use: "license"}
+	list := &cobra.Command{Use: "list"}
+	get := &cobra.Command{Use: "get"}
+	AddCommandAt(root, []string{"fees"}, list)
+	AddCommandAt(root, []string{"fees"}, get)
+	AddCommandAt(root, nil, &cobra.Command{Use: "delete"})
+
+	if list.Parent() != get.Parent() || list.Parent().Name() != "fees" || list.Parent().Parent() != root {
+		t.Fatal("leaves must share one fees group under root")
+	}
+	if got := len(root.Commands()); got != 2 {
+		t.Fatalf("root has %d children, want fees and delete", got)
+	}
+}

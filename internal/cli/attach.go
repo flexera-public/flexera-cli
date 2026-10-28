@@ -37,3 +37,19 @@ func AttachCommands(root *cobra.Command, path []string, children ...*cobra.Comma
 	parent.AddCommand(children...)
 	return nil
 }
+
+// AddCommandAt adds leaf beneath root, creating any missing group commands
+// along groups. Generated tag commands use it to nest sub-resource commands
+// (saas license fees list).
+func AddCommandAt(root *cobra.Command, groups []string, leaf *cobra.Command) {
+	parent := root
+	for _, name := range groups {
+		group, err := FindCommand(parent, name)
+		if err != nil {
+			group = &cobra.Command{Use: name, Short: name + " operations"}
+			parent.AddCommand(group)
+		}
+		parent = group
+	}
+	parent.AddCommand(leaf)
+}

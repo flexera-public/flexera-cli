@@ -53,7 +53,13 @@ The Cobra command tree calls the [unified Go SDK](https://github.com/flexera-pub
 The CLI handles configuration, discovery, validation, output, and interactive input.
 Generated commands mirror APIs and are grouped by the `x-flexera-service` metadata in
 the unified spec (`internal/commands/<service>/<tag>/`; CLI names, aliases, hoisting,
-and renames live in `cmd/regencli/services.go`). Curated commands add behavior beyond a
+and renames live in `cmd/regencli/services.go`). Operations beneath a tag are named
+`[<sub-resource>...] <action>` from their HTTP path by `cmd/gencli/naming.go`; generation fails
+rather than guess when names collide, so resolve conflicts there with `commandOverrides`.
+Also use `commandOverrides` when a derived CRUD verb misdescribes an operation (for example
+`resend` or `reprocess` instead of `update`). When renaming an existing command, keep the old
+spelling working: add it to `commandAliases` (leaves) or `TagAliases` (tag commands);
+generation rejects aliases that collide with sibling commands. Curated commands add behavior beyond a
 single API call (auth, FinOps cost queries, policy resolution, GRS, organization
 discovery, anomalies) and attach beneath their service via `Attach` in
 `internal/app/root.go`; do not add curated commands that only duplicate a generated one. Use the SDK directly for other integrations.
