@@ -285,6 +285,11 @@
     "reason": "internal http.RoundTripper wrapper (unexported type) implementing request retries, not a standalone API"
   },
   {
+    "symbol": ".#(userAgentDoer).Do",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
+  },
+  {
     "symbol": ".#APIBaseURLForZone",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
@@ -410,6 +415,11 @@
     "reason": "generic pagination helper used internally by generated/curated commands"
   },
   {
+    "symbol": ".#CollectPagesAs",
+    "status": "excluded",
+    "reason": "generic typed pagination helper used internally by generated/curated commands"
+  },
+  {
     "symbol": ".#ComponentMetadata",
     "status": "excluded",
     "reason": "offline API metadata infrastructure; CLI schema uses its own sanitized spec-derived catalog"
@@ -470,6 +480,11 @@
     "reason": "internal row cap constant for select queries; not user-configurable"
   },
   {
+    "symbol": ".#CostsSliceListMetric",
+    "status": "excluded",
+    "reason": "internal metric constant used by BillAnalysisCostsQuery auto-slicing (bill-analysis costs query)"
+  },
+  {
     "symbol": ".#DebugOptions",
     "status": "excluded",
     "reason": "--debug HTTP tracing plumbing wired automatically"
@@ -483,6 +498,11 @@
     "symbol": ".#DefaultRuleBasedDimensionCSVOptions",
     "status": "covered",
     "command": "rule-based-dimension from-csv"
+  },
+  {
+    "symbol": ".#DefaultUserAgent",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
   },
   {
     "symbol": ".#DefaultZone",
@@ -663,6 +683,11 @@
     "symbol": ".#NewSharedTokenSource",
     "status": "excluded",
     "reason": "shared OAuth token-source plumbing used internally by the client factory"
+  },
+  {
+    "symbol": ".#NewUserAgentDoer",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
   },
   {
     "symbol": ".#OAuth2Doer",
@@ -895,9 +920,19 @@
     "command": "bill-upload verify"
   },
   {
+    "symbol": ".#Version",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
+  },
+  {
     "symbol": ".#WithBearerToken",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#WithDefaultUserAgent",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
   },
   {
     "symbol": ".#WithHTTPDebug",
@@ -938,6 +973,16 @@
     "symbol": ".#WithSharedTokenSource",
     "status": "excluded",
     "reason": "client/auth constructors and options; CLI auth flags (--access-token/--client-id/...) already drive these"
+  },
+  {
+    "symbol": ".#WithUserAgent",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
+  },
+  {
+    "symbol": ".#WithUserAgentProduct",
+    "status": "excluded",
+    "reason": "User-Agent transport plumbing wired automatically into every client (flexera-cli/<version> product token)"
   },
   {
     "symbol": ".#Wrap",
