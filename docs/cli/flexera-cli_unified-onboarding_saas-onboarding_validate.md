@@ -1,0 +1,61 @@
+## flexera-cli unified-onboarding saas-onboarding validate
+
+SaaS Onboarding: Validate connection
+
+### Synopsis
+
+SaaS Onboarding: Validate connection
+
+Synchronously test a SaaS connector's **submitted** credentials against the vendor. Unlike create/update this is not fire-and-forget: it returns a verdict at HTTP 200 for every outcome — `success:true` when the vendor accepts the credentials, otherwise `success:false` with the vendor's HTTP `code` (or 502 unreachable / 504 timeout), a normalized `reason` and a specific `detail`. A malformed/missing body is a 422. Keyed on `provider`; tests submitted values only (no stored-credential testing).
+
+```
+flexera-cli unified-onboarding saas-onboarding validate [flags]
+```
+
+### Examples
+
+```
+Illustrative only: replace uppercase tokens; provide your own request.json for body input.
+  flexera-cli unified-onboarding saas-onboarding validate --org-id ORG_ID --body @request.json
+  flexera-cli unified-onboarding saas-onboarding validate --org-id ORG_ID --body @request.json --dry-run
+Validated illustrative body, when available (review before use):
+  flexera-cli cli schema unified-onboarding saas-onboarding validate --example > request.json
+```
+
+### Options
+
+```
+      --body string             raw JSON body (inline | @file | @-); overrides body field flags
+      --connector-name string   connectorName (body); required by API; Human-readable connector name.; minLength: 1
+      --dry-run                 print the planned operation as JSON and exit without calling the API
+  -h, --help                    help for validate
+  -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
+      --provider string         provider (body); required by API; Connector provider discriminator (e.g. n8n).; minLength: 1
+      --yes                     confirm the operation (required for destructive ops)
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string     static bearer access token
+      --api-base-url string     override API base URL
+      --client-id string        OAuth client ID
+      --client-secret string    OAuth client secret
+      --config string           config file (default $HOME/.flexera/config.yaml)
+  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string   override login base URL
+      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int              organization ID
+      --out-fields string       project JSON output fields (comma-separated paths)
+      --out-jq string           shape JSON output with a jq expression
+  -o, --output string           output format (json|table)
+  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string    OAuth refresh token
+      --zone string             API zone (nam|eu|apac|test)
+```
+
+### SEE ALSO
+
+* [flexera-cli unified-onboarding saas-onboarding](flexera-cli_unified-onboarding_saas-onboarding.md)	 - SaaS Onboarding operations (generated from the unified OpenAPI spec)
+

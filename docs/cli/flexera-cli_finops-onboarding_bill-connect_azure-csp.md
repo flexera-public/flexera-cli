@@ -35,6 +35,6 @@ Bill Connect - Azure CSP operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect azure-csp create](flexera-cli_finops-onboarding_bill-connect_azure-csp_create.md)	 - Create an Azure CSP bill connect
 * [flexera-cli finops-onboarding bill-connect azure-csp delete](flexera-cli_finops-onboarding_bill-connect_azure-csp_delete.md)	 - Delete an Azure CSP bill connect
 * [flexera-cli finops-onboarding bill-connect azure-csp get](flexera-cli_finops-onboarding_bill-connect_azure-csp_get.md)	 - Show an Azure CSP bill connect
-* [flexera-cli finops-onboarding bill-connect azure-csp list](flexera-cli_finops-onboarding_bill-connect_azure-csp_list.md)	 - Validate the credentials stored for an Azure CSP bill connect
 * [flexera-cli finops-onboarding bill-connect azure-csp update](flexera-cli_finops-onboarding_bill-connect_azure-csp_update.md)	 - Update an Azure CSP bill connect
+* [flexera-cli finops-onboarding bill-connect azure-csp validate](flexera-cli_finops-onboarding_bill-connect_azure-csp_validate.md)	 - Validate the credentials stored for an Azure CSP bill connect
 

@@ -28,9 +28,7 @@ func NewCmd() *cobra.Command {
 		Use:   "saml2-single-identity-provider",
 		Short: "SAML2 Single Identity Provider operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSAML2SingleIdentityProviderListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSAML2SingleIdentityProviderListCmd())
 	return c
 }
 
@@ -63,7 +61,7 @@ func newSAML2SingleIdentityProviderListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

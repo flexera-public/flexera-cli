@@ -28,15 +28,13 @@ func NewCmd() *cobra.Command {
 		Use:   "compliance",
 		Short: "compliance operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newComplianceCisCmd(),
-		newComplianceExportCmd(),
-		newComplianceStandardCmd(),
-		newComplianceTrendCmd(),
-		newComplianceControlCmd(),
-		newComplianceCompliancesCmd(),
-		newComplianceUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newComplianceCisCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceExportCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceStandardCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceTrendCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceControlCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceCompliancesCmd())
+	clipkg.AddCommandAt(c, nil, newComplianceFavoriteCmd())
 	return c
 }
 
@@ -122,7 +120,7 @@ func newComplianceCisCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -240,7 +238,7 @@ func newComplianceExportCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -341,7 +339,7 @@ func newComplianceStandardCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -437,7 +435,7 @@ func newComplianceTrendCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -553,7 +551,7 @@ func newComplianceControlCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -621,7 +619,7 @@ func newComplianceCompliancesCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -639,8 +637,8 @@ func newComplianceCompliancesCmd() *cobra.Command {
 	return c
 }
 
-// newComplianceUpdateCmd — PATCH /risk/v1/orgs/{orgId}/compliance/favorite (operationId: Risk_toggle_compliance_favorite_risk_v1_orgs_orgId_compliance_favorite_patch)
-func newComplianceUpdateCmd() *cobra.Command {
+// newComplianceFavoriteCmd — PATCH /risk/v1/orgs/{orgId}/compliance/favorite (operationId: Risk_toggle_compliance_favorite_risk_v1_orgs_orgId_compliance_favorite_patch)
+func newComplianceFavoriteCmd() *cobra.Command {
 	var (
 		bodyRaw             string
 		fComplianceStandard string
@@ -649,9 +647,9 @@ func newComplianceUpdateCmd() *cobra.Command {
 		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:         "update",
+		Use:         "favorite",
 		Short:       "Toggle Compliance Standard Favorite Status.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk compliance update --org-id ORG_ID --body @request.json\n  flexera-cli risk compliance update --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk compliance update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk compliance favorite --org-id ORG_ID --body @request.json\n  flexera-cli risk compliance favorite --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk compliance favorite --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_toggle_compliance_favorite_risk_v1_orgs_orgId_compliance_favorite_patch", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -731,7 +729,7 @@ func newComplianceUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

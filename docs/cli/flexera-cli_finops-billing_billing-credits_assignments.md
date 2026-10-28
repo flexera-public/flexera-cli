@@ -1,36 +1,11 @@
 ## flexera-cli finops-billing billing-credits assignments
 
-Index credit assignments
-
-### Synopsis
-
-Index credit assignments
-
-Lists credit assignment summaries for an organization.
-
-A credit assignment reassigns, hides, or shows a set of credits as matched by its
-CreditDescriptor entries.
-
-```
-flexera-cli finops-billing billing-credits assignments [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli finops-billing billing-credits assignments --org-id ORG_ID
-```
+assignments operations
 
 ### Options
 
 ```
-      --filter string       filter (query); Optional filter for returning credit assignments matching specific criteria. Filter parameters may be combined with 'and' and 'or' logical operators. ### Credit Assignment Filter Attributes - billMonth, the bill month (YYYYMM) the assignment applies to - action, the assignment action: reassign, show, or hide - name, the name of the credit assignment - provid... (see cli schema); illustrative example: "billMonth eq '202601' and action eq 'reassign'"
-  -h, --help                help for assignments
-      --limit int           limit (query); Return no more than limit values per page; maximum: 200; API default: 20; illustrative example: 20
-      --no-paginate         return only the first page (do not follow nextPage)
-      --order-by string     orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "action desc, name asc"
-      --skip-token string   resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+  -h, --help   help for assignments
 ```
 
 ### Options inherited from parent commands
@@ -57,4 +32,9 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli finops-billing billing-credits](flexera-cli_finops-billing_billing-credits.md)	 - Billing Credits operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-billing billing-credits assignments create](flexera-cli_finops-billing_billing-credits_assignments_create.md)	 - Create a credit assignment
+* [flexera-cli finops-billing billing-credits assignments delete](flexera-cli_finops-billing_billing-credits_assignments_delete.md)	 - Remove a credit assignment
+* [flexera-cli finops-billing billing-credits assignments get](flexera-cli_finops-billing_billing-credits_assignments_get.md)	 - Show a credit assignment
+* [flexera-cli finops-billing billing-credits assignments list](flexera-cli_finops-billing_billing-credits_assignments_list.md)	 - Index credit assignments
+* [flexera-cli finops-billing billing-credits assignments replace](flexera-cli_finops-billing_billing-credits_assignments_replace.md)	 - Overwrite a credit assignment
 

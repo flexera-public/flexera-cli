@@ -35,6 +35,6 @@ Bill Connect - Azure MCA operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect azure-mca create](flexera-cli_finops-onboarding_bill-connect_azure-mca_create.md)	 - Create an Azure MCA bill connect
 * [flexera-cli finops-onboarding bill-connect azure-mca delete](flexera-cli_finops-onboarding_bill-connect_azure-mca_delete.md)	 - Delete an Azure MCA bill connect
 * [flexera-cli finops-onboarding bill-connect azure-mca get](flexera-cli_finops-onboarding_bill-connect_azure-mca_get.md)	 - Show an Azure MCA bill connect
-* [flexera-cli finops-onboarding bill-connect azure-mca list](flexera-cli_finops-onboarding_bill-connect_azure-mca_list.md)	 - Validate the credentials stored for an Azure MCA bill connect
 * [flexera-cli finops-onboarding bill-connect azure-mca update](flexera-cli_finops-onboarding_bill-connect_azure-mca_update.md)	 - Update an Azure MCA bill connect
+* [flexera-cli finops-onboarding bill-connect azure-mca validate](flexera-cli_finops-onboarding_bill-connect_azure-mca_validate.md)	 - Validate the credentials stored for an Azure MCA bill connect
 

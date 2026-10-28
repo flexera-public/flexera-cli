@@ -28,15 +28,13 @@ func NewCmd() *cobra.Command {
 		Use:   "msp-customer-v2",
 		Short: "MSP Customer V2 operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMSPCustomerV2CreateCmd(),
-		newMSPCustomerV2BulkCmd(),
-		newMSPCustomerV2BulkDeleteCmd(),
-		newMSPCustomerV2DeleteCmd(),
-		newMSPCustomerV2GetCmd(),
-		newMSPCustomerV2ListCmd(),
-		newMSPCustomerV2UpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2CreateCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2BulkCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2BulkDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2DeleteCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2GetCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2ListCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerV2UpdateCmd())
 	return c
 }
 
@@ -248,7 +246,7 @@ func newMSPCustomerV2BulkCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -334,7 +332,7 @@ func newMSPCustomerV2BulkDeleteCmd() *cobra.Command {
 				return err
 			}
 			planParams := effectiveParams
-			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/msp/v2/orgs/{orgId}/customers/bulk-delete", Params: planParams, Destructive: false}
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/msp/v2/orgs/{orgId}/customers/bulk-delete", Params: planParams, Destructive: true}
 			writePlan.OrgID = deps.Config.OrgID
 			planParams["org-id"] = deps.Config.OrgID
 			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
@@ -363,7 +361,7 @@ func newMSPCustomerV2BulkDeleteCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -477,7 +475,7 @@ func newMSPCustomerV2GetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -532,7 +530,7 @@ func newMSPCustomerV2ListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

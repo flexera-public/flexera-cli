@@ -28,12 +28,10 @@ func NewCmd() *cobra.Command {
 		Use:   "metric-query",
 		Short: "Metric Query operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMetricQueryGetCmd(),
-		newMetricQueryEventCountsByTypeCmd(),
-		newMetricQueryTotalEventCountsCmd(),
-		newMetricQueryUserCountsByEventsPerformedCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newMetricQueryGetCmd())
+	clipkg.AddCommandAt(c, nil, newMetricQueryEventCountsByTypeCmd())
+	clipkg.AddCommandAt(c, nil, newMetricQueryTotalEventCountsCmd())
+	clipkg.AddCommandAt(c, nil, newMetricQueryUserCountsByEventsPerformedCmd())
 	return c
 }
 
@@ -115,7 +113,7 @@ func newMetricQueryGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -187,7 +185,7 @@ func newMetricQueryEventCountsByTypeCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -247,7 +245,7 @@ func newMetricQueryTotalEventCountsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -309,7 +307,7 @@ func newMetricQueryUserCountsByEventsPerformedCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

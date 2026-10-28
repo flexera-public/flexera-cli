@@ -44,6 +44,6 @@ Service id: optima_recommendations
 * [flexera-cli recommendations list-rate-reduction](flexera-cli_recommendations_list-rate-reduction.md)	 - List rate-reduction recommendations (auto-resolves billing centers)
 * [flexera-cli recommendations list-usage-reduction](flexera-cli_recommendations_list-usage-reduction.md)	 - List usage-reduction recommendations (auto-resolves billing centers)
 * [flexera-cli recommendations paged](flexera-cli_recommendations_paged.md)	 - List recommendations (filtered, sorted, cursor-paginated)
-* [flexera-cli recommendations replace](flexera-cli_recommendations_replace.md)	 - updateStatus Recommendations
 * [flexera-cli recommendations savings-summary](flexera-cli_recommendations_savings-summary.md)	 - Summary data for the Optimization overview page widgets
+* [flexera-cli recommendations update-status](flexera-cli_recommendations_update-status.md)	 - updateStatus Recommendations
 

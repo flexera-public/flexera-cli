@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "access-policy",
 		Short: "Access Policy operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAccessPolicyCreateCmd(),
-		newAccessPolicyDeleteCmd(),
-		newAccessPolicyUsersCmd(),
-		newAccessPolicyGetCmd(),
-		newAccessPolicyListCmd(),
-		newAccessPolicyReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAccessPolicyCreateCmd())
+	clipkg.AddCommandAt(c, nil, newAccessPolicyDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"users"}, newAccessPolicyUsersGetCmd())
+	clipkg.AddCommandAt(c, nil, newAccessPolicyGetCmd())
+	clipkg.AddCommandAt(c, nil, newAccessPolicyListCmd())
+	clipkg.AddCommandAt(c, nil, newAccessPolicyReplaceCmd())
 	return c
 }
 
@@ -135,7 +133,7 @@ func newAccessPolicyCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -215,16 +213,16 @@ func newAccessPolicyDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newAccessPolicyUsersCmd — GET /iam/v1/orgs/{orgId}/access-policies/users/{userId} (operationId: Iam_Access_Policy_getUserAccessPolicies)
-func newAccessPolicyUsersCmd() *cobra.Command {
+// newAccessPolicyUsersGetCmd — GET /iam/v1/orgs/{orgId}/access-policies/users/{userId} (operationId: Iam_Access_Policy_getUserAccessPolicies)
+func newAccessPolicyUsersGetCmd() *cobra.Command {
 	var (
 		userID int
 		view   string
 	)
 	c := &cobra.Command{
-		Use:         "users",
+		Use:         "get",
 		Short:       "Get all access policies for a specific user",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam access-policy users --org-id ORG_ID --user-id USER_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam access-policy users get --org-id ORG_ID --user-id USER_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Access_Policy_getUserAccessPolicies", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -253,7 +251,7 @@ func newAccessPolicyUsersCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -312,7 +310,7 @@ func newAccessPolicyGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -372,7 +370,7 @@ func newAccessPolicyListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

@@ -1,29 +1,11 @@
 ## flexera-cli iam scim-config resource-types
 
-Shows a supported resource type for an org.
-
-### Synopsis
-
-Shows a supported resource type for an org.
-
-Show returns a supported resource type for an org.
-
-```
-flexera-cli iam scim-config resource-types [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam scim-config resource-types --org-id ORG_ID --id ID
-```
+resource-types operations
 
 ### Options
 
 ```
-  -h, --help        help for resource-types
-      --id string   id (path, required); Unique identifier for the configuration.; required by API; illustrative example: "orgName"
+  -h, --help   help for resource-types
 ```
 
 ### Options inherited from parent commands
@@ -50,4 +32,6 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli iam scim-config](flexera-cli_iam_scim-config.md)	 - SCIM Config operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam scim-config resource-types get](flexera-cli_iam_scim-config_resource-types_get.md)	 - Shows a supported resource type for an org.
+* [flexera-cli iam scim-config resource-types list](flexera-cli_iam_scim-config_resource-types_list.md)	 - Returns a list of supported resource types for an org.
 

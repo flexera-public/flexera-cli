@@ -34,9 +34,7 @@ Bill Connect - AWS operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect](flexera-cli_finops-onboarding_bill-connect.md)	 - Bill Connect operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect aws delete](flexera-cli_finops-onboarding_bill-connect_aws_delete.md)	 - Delete an AWS bill connect
 * [flexera-cli finops-onboarding bill-connect aws get](flexera-cli_finops-onboarding_bill-connect_aws_get.md)	 - Show an AWS bill connect
-* [flexera-cli finops-onboarding bill-connect aws iam-role](flexera-cli_finops-onboarding_bill-connect_aws_iam-role.md)	 - Update an AWS bill connect that was created using AWS IAM Role-based create method
-* [flexera-cli finops-onboarding bill-connect aws iam-role-all](flexera-cli_finops-onboarding_bill-connect_aws_iam-role-all.md)	 - Creates an AWS bill connect using the IAM Role-based authorization method
-* [flexera-cli finops-onboarding bill-connect aws iam-user](flexera-cli_finops-onboarding_bill-connect_aws_iam-user.md)	 - Update an AWS bill connect that was created using legacy AWS IAM User-based create method
-* [flexera-cli finops-onboarding bill-connect aws iam-user-all](flexera-cli_finops-onboarding_bill-connect_aws_iam-user-all.md)	 - Create an AWS bill connect using legacy IAM User-based authorization method
-* [flexera-cli finops-onboarding bill-connect aws list](flexera-cli_finops-onboarding_bill-connect_aws_list.md)	 - Validate credentials stored for AWS Bill Connect
+* [flexera-cli finops-onboarding bill-connect aws iam-role](flexera-cli_finops-onboarding_bill-connect_aws_iam-role.md)	 - iam-role operations
+* [flexera-cli finops-onboarding bill-connect aws iam-user](flexera-cli_finops-onboarding_bill-connect_aws_iam-user.md)	 - iam-user operations
+* [flexera-cli finops-onboarding bill-connect aws validate](flexera-cli_finops-onboarding_bill-connect_aws_validate.md)	 - Validate credentials stored for AWS Bill Connect
 

@@ -28,12 +28,10 @@ func NewCmd() *cobra.Command {
 		Use:   "credential",
 		Short: "Credential operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCredentialDeleteCmd(),
-		newCredentialDeleteProjectCmd(),
-		newCredentialListCmd(),
-		newCredentialListProjectCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCredentialDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newCredentialProjectDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newCredentialListCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newCredentialProjectListCmd())
 	return c
 }
 
@@ -100,8 +98,8 @@ func newCredentialDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newCredentialDeleteProjectCmd — DELETE /cred/v2/projects/{projectId}/credentials/{scheme}/{id} (operationId: Cred_Credential_delete_project)
-func newCredentialDeleteProjectCmd() *cobra.Command {
+// newCredentialProjectDeleteCmd — DELETE /cred/v2/projects/{projectId}/credentials/{scheme}/{id} (operationId: Cred_Credential_delete_project)
+func newCredentialProjectDeleteCmd() *cobra.Command {
 	var (
 		projectID int64
 		scheme    string
@@ -110,9 +108,9 @@ func newCredentialDeleteProjectCmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:         "delete-project",
+		Use:         "delete",
 		Short:       "Delete a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential delete-project --project-id PROJECT_ID --scheme SCHEME --id ID\n  flexera-cli credential delete-project --project-id PROJECT_ID --scheme SCHEME --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential project delete --project-id PROJECT_ID --scheme SCHEME --id ID\n  flexera-cli credential project delete --project-id PROJECT_ID --scheme SCHEME --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_delete_project", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -200,7 +198,7 @@ func newCredentialListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -217,16 +215,16 @@ func newCredentialListCmd() *cobra.Command {
 	return c
 }
 
-// newCredentialListProjectCmd — GET /cred/v2/projects/{projectId}/credentials (operationId: Cred_Credential_index_project)
-func newCredentialListProjectCmd() *cobra.Command {
+// newCredentialProjectListCmd — GET /cred/v2/projects/{projectId}/credentials (operationId: Cred_Credential_index_project)
+func newCredentialProjectListCmd() *cobra.Command {
 	var (
 		projectID int64
 		filter    string
 	)
 	c := &cobra.Command{
-		Use:         "list-project",
+		Use:         "list",
 		Short:       "Index a list of Credentials",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential list-project --project-id PROJECT_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential project list --project-id PROJECT_ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_Credential_index_project", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -255,7 +253,7 @@ func newCredentialListProjectCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

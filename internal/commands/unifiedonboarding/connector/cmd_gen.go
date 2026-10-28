@@ -28,12 +28,10 @@ func NewCmd() *cobra.Command {
 		Use:   "connector",
 		Short: "Connector operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newConnectorGetCmd(),
-		newConnectorListCmd(),
-		newConnectorCountCmd(),
-		newConnectorStatusCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newConnectorGetCmd())
+	clipkg.AddCommandAt(c, nil, newConnectorListCmd())
+	clipkg.AddCommandAt(c, nil, newConnectorCountCmd())
+	clipkg.AddCommandAt(c, nil, newConnectorStatusCmd())
 	return c
 }
 
@@ -72,7 +70,7 @@ func newConnectorGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -136,7 +134,7 @@ func newConnectorListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -184,7 +182,7 @@ func newConnectorCountCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -241,7 +239,7 @@ func newConnectorStatusCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

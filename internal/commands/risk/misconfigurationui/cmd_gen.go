@@ -28,20 +28,18 @@ func NewCmd() *cobra.Command {
 		Use:   "misconfiguration-ui",
 		Short: "misconfiguration-ui operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMisconfigurationUiSuppressCmd(),
-		newMisconfigurationUiExportCmd(),
-		newMisconfigurationUiRemediationStepsCmd(),
-		newMisconfigurationUiDetailsCmd(),
-		newMisconfigurationUiFailedAssetCmd(),
-		newMisconfigurationUiListCmd(),
-		newMisconfigurationUiOverviewCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newMisconfigurationUiRuleSuppressCmd())
+	clipkg.AddCommandAt(c, nil, newMisconfigurationUiFailedAssetExportCmd())
+	clipkg.AddCommandAt(c, []string{"remediation-steps"}, newMisconfigurationUiRemediationStepsGetCmd())
+	clipkg.AddCommandAt(c, []string{"risk"}, newMisconfigurationUiRiskDetailsCmd())
+	clipkg.AddCommandAt(c, nil, newMisconfigurationUiFailedAssetCmd())
+	clipkg.AddCommandAt(c, nil, newMisconfigurationUiListCmd())
+	clipkg.AddCommandAt(c, nil, newMisconfigurationUiOverviewCmd())
 	return c
 }
 
-// newMisconfigurationUiSuppressCmd — POST /risk/v1/orgs/{orgId}/misconfiguration/rule/suppress (operationId: Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post)
-func newMisconfigurationUiSuppressCmd() *cobra.Command {
+// newMisconfigurationUiRuleSuppressCmd — POST /risk/v1/orgs/{orgId}/misconfiguration/rule/suppress (operationId: Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post)
+func newMisconfigurationUiRuleSuppressCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fUserName   string
@@ -50,9 +48,9 @@ func newMisconfigurationUiSuppressCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "suppress",
+		Use:         "rule-suppress",
 		Short:       "Suppress API for Rule and Failed Asset",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui suppress --org-id ORG_ID --body @request.json\n  flexera-cli risk misconfiguration-ui suppress --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk misconfiguration-ui suppress --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui rule-suppress --org-id ORG_ID --body @request.json\n  flexera-cli risk misconfiguration-ui rule-suppress --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk misconfiguration-ui rule-suppress --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_suppress_rule_or_asset_risk_v1_orgs_orgId_misconfiguration_rule_suppress_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -132,7 +130,7 @@ func newMisconfigurationUiSuppressCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -153,8 +151,8 @@ func newMisconfigurationUiSuppressCmd() *cobra.Command {
 	return c
 }
 
-// newMisconfigurationUiExportCmd — POST /risk/v1/orgs/{orgId}/misconfiguration/failed-asset/export (operationId: Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post)
-func newMisconfigurationUiExportCmd() *cobra.Command {
+// newMisconfigurationUiFailedAssetExportCmd — POST /risk/v1/orgs/{orgId}/misconfiguration/failed-asset/export (operationId: Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post)
+func newMisconfigurationUiFailedAssetExportCmd() *cobra.Command {
 	var (
 		bodyRaw         string
 		fAccounts       []string
@@ -167,9 +165,9 @@ func newMisconfigurationUiExportCmd() *cobra.Command {
 		fSkipToken      string
 	)
 	c := &cobra.Command{
-		Use:         "export",
+		Use:         "failed-asset-export",
 		Short:       "Export Failed Assets List.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui export --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk misconfiguration-ui export --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui failed-asset-export --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk misconfiguration-ui failed-asset-export --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_export_failed_assets_risk_v1_orgs_orgId_misconfiguration_failed_asset_export_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -239,7 +237,7 @@ func newMisconfigurationUiExportCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -264,16 +262,16 @@ func newMisconfigurationUiExportCmd() *cobra.Command {
 	return c
 }
 
-// newMisconfigurationUiRemediationStepsCmd — GET /risk/v1/orgs/{orgId}/misconfiguration/remediation-steps/{riskId}/{remediationMethod} (operationId: Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get)
-func newMisconfigurationUiRemediationStepsCmd() *cobra.Command {
+// newMisconfigurationUiRemediationStepsGetCmd — GET /risk/v1/orgs/{orgId}/misconfiguration/remediation-steps/{riskId}/{remediationMethod} (operationId: Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get)
+func newMisconfigurationUiRemediationStepsGetCmd() *cobra.Command {
 	var (
 		riskID            string
 		remediationMethod string
 	)
 	c := &cobra.Command{
-		Use:         "remediation-steps",
+		Use:         "get",
 		Short:       "Remediation Steps for Risk.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui remediation-steps --org-id ORG_ID --risk-id RISK_ID --remediation-method REMEDIATION_METHOD",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui remediation-steps get --org-id ORG_ID --risk-id RISK_ID --remediation-method REMEDIATION_METHOD",
 		Annotations: map[string]string{"flexera.operationId": "Risk_get_remediation_steps_risk_v1_orgs_orgId_misconfiguration_remediation_steps_riskId_remediationMethod_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -303,7 +301,7 @@ func newMisconfigurationUiRemediationStepsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -321,8 +319,8 @@ func newMisconfigurationUiRemediationStepsCmd() *cobra.Command {
 	return c
 }
 
-// newMisconfigurationUiDetailsCmd — GET /risk/v1/orgs/{orgId}/misconfiguration/risk/{riskId}/details (operationId: Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get)
-func newMisconfigurationUiDetailsCmd() *cobra.Command {
+// newMisconfigurationUiRiskDetailsCmd — GET /risk/v1/orgs/{orgId}/misconfiguration/risk/{riskId}/details (operationId: Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get)
+func newMisconfigurationUiRiskDetailsCmd() *cobra.Command {
 	var (
 		riskID   string
 		provider string
@@ -330,7 +328,7 @@ func newMisconfigurationUiDetailsCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "details",
 		Short:       "Risk Details",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui details --org-id ORG_ID --risk-id RISK_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk misconfiguration-ui risk details --org-id ORG_ID --risk-id RISK_ID",
 		Annotations: map[string]string{"flexera.operationId": "Risk_get_risk_details_risk_v1_orgs_orgId_misconfiguration_risk_riskId_details_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -362,7 +360,7 @@ func newMisconfigurationUiDetailsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -466,7 +464,7 @@ func newMisconfigurationUiFailedAssetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -585,7 +583,7 @@ func newMisconfigurationUiListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -682,7 +680,7 @@ func newMisconfigurationUiOverviewCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

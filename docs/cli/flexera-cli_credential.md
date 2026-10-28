@@ -40,14 +40,13 @@ Service id: cred
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli credential api-key-credential](flexera-cli_credential_api-key-credential.md)	 - API Key Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli credential aws-credential](flexera-cli_credential_aws-credential.md)	 - AWS Credential operations (generated from the unified OpenAPI spec)
-* [flexera-cli credential awssts-credential](flexera-cli_credential_awssts-credential.md)	 - AWS STS Credential operations (generated from the unified OpenAPI spec)
+* [flexera-cli credential aws-sts-credential](flexera-cli_credential_aws-sts-credential.md)	 - AWS STS Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli credential basic-credential](flexera-cli_credential_basic-credential.md)	 - Basic Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli credential delete](flexera-cli_credential_delete.md)	 - Delete a Credential
-* [flexera-cli credential delete-project](flexera-cli_credential_delete-project.md)	 - Delete a Credential
 * [flexera-cli credential digest-credential](flexera-cli_credential_digest-credential.md)	 - Digest Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli credential list](flexera-cli_credential_list.md)	 - Index a list of Credentials
-* [flexera-cli credential list-project](flexera-cli_credential_list-project.md)	 - Index a list of Credentials
 * [flexera-cli credential ntlm-credential](flexera-cli_credential_ntlm-credential.md)	 - NTLM Credential operations (generated from the unified OpenAPI spec)
-* [flexera-cli credential o-auth2-credential](flexera-cli_credential_o-auth2-credential.md)	 - OAuth2 Credential operations (generated from the unified OpenAPI spec)
+* [flexera-cli credential oauth2-credential](flexera-cli_credential_oauth2-credential.md)	 - OAuth2 Credential operations (generated from the unified OpenAPI spec)
 * [flexera-cli credential oracle-credential](flexera-cli_credential_oracle-credential.md)	 - Oracle Credential operations (generated from the unified OpenAPI spec)
+* [flexera-cli credential project](flexera-cli_credential_project.md)	 - project operations
 

@@ -35,6 +35,6 @@ Bill Connect - Common Bill Ingestion operations (generated from the unified Open
 * [flexera-cli finops-onboarding bill-connect common-bill-ingestion create](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_create.md)	 - Create a CBI bill connect
 * [flexera-cli finops-onboarding bill-connect common-bill-ingestion delete](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_delete.md)	 - Delete a CBI bill connect
 * [flexera-cli finops-onboarding bill-connect common-bill-ingestion get](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_get.md)	 - Show an CBI bill connect
-* [flexera-cli finops-onboarding bill-connect common-bill-ingestion list](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_list.md)	 - Validate the credentials stored for an cbi bill connect
 * [flexera-cli finops-onboarding bill-connect common-bill-ingestion update](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_update.md)	 - Update a CBI bill connect
+* [flexera-cli finops-onboarding bill-connect common-bill-ingestion validate](flexera-cli_finops-onboarding_bill-connect_common-bill-ingestion_validate.md)	 - Validate the credentials stored for an cbi bill connect
 

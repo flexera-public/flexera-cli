@@ -32,10 +32,7 @@ Usage Group operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli saas](flexera-cli_saas.md)	 - SaaS API
-* [flexera-cli saas usage-group costs](flexera-cli_saas_usage-group_costs.md)	 - Update an existing cost for the specified usage group
-* [flexera-cli saas usage-group costs-all](flexera-cli_saas_usage-group_costs-all.md)	 - Create a usage cost for the specified usage group
-* [flexera-cli saas usage-group costs-all-2](flexera-cli_saas_usage-group_costs-all-2.md)	 - Delete an existing usage cost for the specified Usage Cost object
-* [flexera-cli saas usage-group costs-all-3](flexera-cli_saas_usage-group_costs-all-3.md)	 - Show an existing usage cost for the specified Usage group object
+* [flexera-cli saas usage-group costs](flexera-cli_saas_usage-group_costs.md)	 - costs operations
 * [flexera-cli saas usage-group create](flexera-cli_saas_usage-group_create.md)	 - Create Usage group for the specified SaaS object
 * [flexera-cli saas usage-group delete](flexera-cli_saas_usage-group_delete.md)	 - Delete an existing usage group for the specified SaaS object
 * [flexera-cli saas usage-group get](flexera-cli_saas_usage-group_get.md)	 - Show an existing usage group for the specified SaaS object

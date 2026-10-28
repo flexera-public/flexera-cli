@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "budget",
 		Short: "Budget operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBudgetCreateCmd(),
-		newBudgetDeleteCmd(),
-		newBudgetGetCmd(),
-		newBudgetListCmd(),
-		newBudgetReportCmd(),
-		newBudgetReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBudgetCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBudgetDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBudgetGetCmd())
+	clipkg.AddCommandAt(c, nil, newBudgetListCmd())
+	clipkg.AddCommandAt(c, nil, newBudgetReportCmd())
+	clipkg.AddCommandAt(c, nil, newBudgetReplaceCmd())
 	return c
 }
 
@@ -143,7 +141,7 @@ func newBudgetCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -260,7 +258,7 @@ func newBudgetGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -306,7 +304,7 @@ func newBudgetListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -381,7 +379,7 @@ func newBudgetReportCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

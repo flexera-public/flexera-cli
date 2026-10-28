@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "invoice-schedules",
 		Short: "Invoice Schedules operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newInvoiceSchedulesActivateCmd(),
-		newInvoiceSchedulesDeactivateCmd(),
-		newInvoiceSchedulesCreateCmd(),
-		newInvoiceSchedulesGetCmd(),
-		newInvoiceSchedulesListCmd(),
-		newInvoiceSchedulesUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesActivateCmd())
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesDeactivateCmd())
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesCreateCmd())
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesGetCmd())
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesListCmd())
+	clipkg.AddCommandAt(c, nil, newInvoiceSchedulesUpdateCmd())
 	return c
 }
 
@@ -93,7 +91,7 @@ func newInvoiceSchedulesActivateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -162,7 +160,7 @@ func newInvoiceSchedulesDeactivateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -289,7 +287,7 @@ func newInvoiceSchedulesCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -349,7 +347,7 @@ func newInvoiceSchedulesGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -425,7 +423,7 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingInvoiceSchedulesIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -436,7 +434,7 @@ func newInvoiceSchedulesListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -578,7 +576,7 @@ func newInvoiceSchedulesUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

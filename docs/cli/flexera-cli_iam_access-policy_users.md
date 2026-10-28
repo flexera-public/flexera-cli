@@ -1,30 +1,11 @@
 ## flexera-cli iam access-policy users
 
-Get all access policies for a specific user
-
-### Synopsis
-
-Get all access policies for a specific user
-
-Retrieve all access policies for a specific user based on their group memberships. Only returns policies with DataAccess permissions.
-
-```
-flexera-cli iam access-policy users [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam access-policy users --org-id ORG_ID --user-id USER_ID
-```
+users operations
 
 ### Options
 
 ```
-  -h, --help          help for users
-      --user-id int   userId (path, required); User ID whose policies should be retrieved; required by API; minimum: 1; illustrative example: 12345
-      --view string   view (query); View used to render access policies; enum: ["default","extended"]; illustrative example: "extended"
+  -h, --help   help for users
 ```
 
 ### Options inherited from parent commands
@@ -51,4 +32,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli iam access-policy](flexera-cli_iam_access-policy.md)	 - Access Policy operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam access-policy users get](flexera-cli_iam_access-policy_users_get.md)	 - Get all access policies for a specific user
 

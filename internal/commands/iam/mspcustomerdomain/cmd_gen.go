@@ -28,9 +28,7 @@ func NewCmd() *cobra.Command {
 		Use:   "msp-customer-domain",
 		Short: "MSP Customer Domain operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMSPCustomerDomainVerifyCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newMSPCustomerDomainVerifyCmd())
 	return c
 }
 
@@ -87,7 +85,7 @@ func newMSPCustomerDomainVerifyCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

@@ -28,22 +28,20 @@ func NewCmd() *cobra.Command {
 		Use:   "access-rules",
 		Short: "AccessRules operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAccessRulesListGroupsCmd(),
-		newAccessRulesListUsersCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"groups"}, newAccessRulesGroupsReportCmd())
+	clipkg.AddCommandAt(c, []string{"users"}, newAccessRulesUsersReportCmd())
 	return c
 }
 
-// newAccessRulesListGroupsCmd — GET /analytics/orgs/{org_id}/groups/{group}/access_rules/report (operationId: BillingCenterService_AccessRules_group_report)
-func newAccessRulesListGroupsCmd() *cobra.Command {
+// newAccessRulesGroupsReportCmd — GET /analytics/orgs/{org_id}/groups/{group}/access_rules/report (operationId: BillingCenterService_AccessRules_group_report)
+func newAccessRulesGroupsReportCmd() *cobra.Command {
 	var (
 		group int
 	)
 	c := &cobra.Command{
-		Use:         "list-groups",
+		Use:         "report",
 		Short:       "List group's roles in every BillingCenter.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center access-rules list-groups --org-id ORG_ID --group GROUP",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center access-rules groups report --org-id ORG_ID --group GROUP",
 		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_AccessRules_group_report", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -68,7 +66,7 @@ func newAccessRulesListGroupsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -85,15 +83,15 @@ func newAccessRulesListGroupsCmd() *cobra.Command {
 	return c
 }
 
-// newAccessRulesListUsersCmd — GET /analytics/orgs/{org_id}/users/{user}/access_rules/report (operationId: BillingCenterService_AccessRules_user_report)
-func newAccessRulesListUsersCmd() *cobra.Command {
+// newAccessRulesUsersReportCmd — GET /analytics/orgs/{org_id}/users/{user}/access_rules/report (operationId: BillingCenterService_AccessRules_user_report)
+func newAccessRulesUsersReportCmd() *cobra.Command {
 	var (
 		user int
 	)
 	c := &cobra.Command{
-		Use:         "list-users",
+		Use:         "report",
 		Short:       "List user's roles in every BillingCenter.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center access-rules list-users --org-id ORG_ID --user USER",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center access-rules users report --org-id ORG_ID --user USER",
 		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_AccessRules_user_report", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -118,7 +116,7 @@ func newAccessRulesListUsersCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

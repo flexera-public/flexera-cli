@@ -28,11 +28,9 @@ func NewCmd() *cobra.Command {
 		Use:   "processing-history",
 		Short: "Processing History operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newProcessingHistoryListCmd(),
-		newProcessingHistoryDownloadCmd(),
-		newProcessingHistoryUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newProcessingHistoryListCmd())
+	clipkg.AddCommandAt(c, nil, newProcessingHistoryDownloadCmd())
+	clipkg.AddCommandAt(c, nil, newProcessingHistoryReprocessCmd())
 	return c
 }
 
@@ -80,7 +78,7 @@ func newProcessingHistoryListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsOnboardingProcessingHistoryIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -91,7 +89,7 @@ func newProcessingHistoryListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -163,8 +161,8 @@ func newProcessingHistoryDownloadCmd() *cobra.Command {
 	return c
 }
 
-// newProcessingHistoryUpdateCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/processing/bill-months (operationId: FinopsOnboarding_Processing_History_reprocess)
-func newProcessingHistoryUpdateCmd() *cobra.Command {
+// newProcessingHistoryReprocessCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/processing/bill-months (operationId: FinopsOnboarding_Processing_History_reprocess)
+func newProcessingHistoryReprocessCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fAction     string
@@ -173,9 +171,10 @@ func newProcessingHistoryUpdateCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "update",
+		Use:         "reprocess",
+		Aliases:     []string{"update"},
 		Short:       "Reprocess one or more enterprise bill months",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history update --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding processing-history update --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding processing-history update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history reprocess --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding processing-history reprocess --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding processing-history reprocess --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_reprocess", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -255,7 +254,7 @@ func newProcessingHistoryUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

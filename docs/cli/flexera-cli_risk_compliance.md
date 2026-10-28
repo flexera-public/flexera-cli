@@ -36,7 +36,7 @@ compliance operations (generated from the unified OpenAPI spec)
 * [flexera-cli risk compliance compliances](flexera-cli_risk_compliance_compliances.md)	 - Security Compliance.
 * [flexera-cli risk compliance control](flexera-cli_risk_compliance_control.md)	 - Get Standard Control Details.
 * [flexera-cli risk compliance export](flexera-cli_risk_compliance_export.md)	 - Export Compliance Chart Data.
+* [flexera-cli risk compliance favorite](flexera-cli_risk_compliance_favorite.md)	 - Toggle Compliance Standard Favorite Status.
 * [flexera-cli risk compliance standard](flexera-cli_risk_compliance_standard.md)	 - Compliance Standards.
 * [flexera-cli risk compliance trend](flexera-cli_risk_compliance_trend.md)	 - Compliance Favorites.
-* [flexera-cli risk compliance update](flexera-cli_risk_compliance_update.md)	 - Toggle Compliance Standard Favorite Status.
 

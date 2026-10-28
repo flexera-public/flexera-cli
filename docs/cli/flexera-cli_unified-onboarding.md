@@ -40,6 +40,6 @@ Service id: uobs
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli unified-onboarding connector](flexera-cli_unified-onboarding_connector.md)	 - Connector operations (generated from the unified OpenAPI spec)
 * [flexera-cli unified-onboarding onboarding](flexera-cli_unified-onboarding_onboarding.md)	 - Onboarding operations (generated from the unified OpenAPI spec)
-* [flexera-cli unified-onboarding saa-s-connector](flexera-cli_unified-onboarding_saa-s-connector.md)	 - SaaS Connector operations (generated from the unified OpenAPI spec)
-* [flexera-cli unified-onboarding saa-s-onboarding](flexera-cli_unified-onboarding_saa-s-onboarding.md)	 - SaaS Onboarding operations (generated from the unified OpenAPI spec)
+* [flexera-cli unified-onboarding saas-connector](flexera-cli_unified-onboarding_saas-connector.md)	 - SaaS Connector operations (generated from the unified OpenAPI spec)
+* [flexera-cli unified-onboarding saas-onboarding](flexera-cli_unified-onboarding_saas-onboarding.md)	 - SaaS Onboarding operations (generated from the unified OpenAPI spec)
 

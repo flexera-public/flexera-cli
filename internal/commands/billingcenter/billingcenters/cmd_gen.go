@@ -28,15 +28,13 @@ func NewCmd() *cobra.Command {
 		Use:   "billing-centers",
 		Short: "BillingCenters operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillingCentersCreateCmd(),
-		newBillingCentersDeleteCmd(),
-		newBillingCentersGetCmd(),
-		newBillingCentersListCmd(),
-		newBillingCentersAllocationTableAllCmd(),
-		newBillingCentersReplaceCmd(),
-		newBillingCentersAllocationTableCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillingCentersCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCentersDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCentersGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCentersListCmd())
+	clipkg.AddCommandAt(c, []string{"allocation-table"}, newBillingCentersAllocationTableListCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCentersReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"allocation-table"}, newBillingCentersAllocationTableReplaceCmd())
 	return c
 }
 
@@ -141,7 +139,7 @@ func newBillingCentersCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -259,7 +257,7 @@ func newBillingCentersGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -313,7 +311,7 @@ func newBillingCentersListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -330,15 +328,15 @@ func newBillingCentersListCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCentersAllocationTableAllCmd — GET /analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table (operationId: BillingCenterService_BillingCenters_show_allocation_table)
-func newBillingCentersAllocationTableAllCmd() *cobra.Command {
+// newBillingCentersAllocationTableListCmd — GET /analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table (operationId: BillingCenterService_BillingCenters_show_allocation_table)
+func newBillingCentersAllocationTableListCmd() *cobra.Command {
 	var (
 		billingCenter string
 	)
 	c := &cobra.Command{
-		Use:         "allocation-table-all",
+		Use:         "list",
 		Short:       "List the AllocationTable rules for a given BC",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center allocation-table-all --org-id ORG_ID --billing-center BILLING_CENTER",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center allocation-table list --org-id ORG_ID --billing-center BILLING_CENTER",
 		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_show_allocation_table", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -366,7 +364,7 @@ func newBillingCentersAllocationTableAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -498,8 +496,8 @@ func newBillingCentersReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCentersAllocationTableCmd — PUT /analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table (operationId: BillingCenterService_BillingCenters_upsert_allocation_table)
-func newBillingCentersAllocationTableCmd() *cobra.Command {
+// newBillingCentersAllocationTableReplaceCmd — PUT /analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table (operationId: BillingCenterService_BillingCenters_upsert_allocation_table)
+func newBillingCentersAllocationTableReplaceCmd() *cobra.Command {
 	var (
 		billingCenter  string
 		sequenceNumber int
@@ -509,9 +507,9 @@ func newBillingCentersAllocationTableCmd() *cobra.Command {
 		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:         "allocation-table",
+		Use:         "replace",
 		Short:       "Update a BC AllocationTable or create it if it doesn't exist",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json\n  flexera-cli billing-center allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing-center allocation-table --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center allocation-table replace --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json\n  flexera-cli billing-center allocation-table replace --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema billing-center allocation-table replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenters_upsert_allocation_table", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

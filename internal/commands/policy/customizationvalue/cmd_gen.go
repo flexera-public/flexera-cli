@@ -28,12 +28,10 @@ func NewCmd() *cobra.Command {
 		Use:   "customization-value",
 		Short: "Customization Value operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomizationValueDeleteCmd(),
-		newCustomizationValueGetCmd(),
-		newCustomizationValueListCmd(),
-		newCustomizationValueReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomizationValueDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newCustomizationValueGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomizationValueListCmd())
+	clipkg.AddCommandAt(c, nil, newCustomizationValueReplaceCmd())
 	return c
 }
 
@@ -130,7 +128,7 @@ func newCustomizationValueGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -177,7 +175,7 @@ func newCustomizationValueListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

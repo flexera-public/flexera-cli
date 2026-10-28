@@ -33,9 +33,7 @@ NTLM Credential operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli credential](flexera-cli_credential.md)	 - Credential API
 * [flexera-cli credential ntlm-credential get](flexera-cli_credential_ntlm-credential_get.md)	 - Show a Credential
-* [flexera-cli credential ntlm-credential get-project](flexera-cli_credential_ntlm-credential_get-project.md)	 - Show a Credential
+* [flexera-cli credential ntlm-credential project](flexera-cli_credential_ntlm-credential_project.md)	 - project operations
 * [flexera-cli credential ntlm-credential replace](flexera-cli_credential_ntlm-credential_replace.md)	 - Create a Credential
-* [flexera-cli credential ntlm-credential replace-project](flexera-cli_credential_ntlm-credential_replace-project.md)	 - Create a Credential
 * [flexera-cli credential ntlm-credential update](flexera-cli_credential_ntlm-credential_update.md)	 - Update a Credential
-* [flexera-cli credential ntlm-credential update-project](flexera-cli_credential_ntlm-credential_update-project.md)	 - Update a Credential
 

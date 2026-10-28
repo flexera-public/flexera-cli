@@ -36,5 +36,5 @@ Organization Invitation operations (generated from the unified OpenAPI spec)
 * [flexera-cli iam organization-invitation delete](flexera-cli_iam_organization-invitation_delete.md)	 - Delete an invitation to an org
 * [flexera-cli iam organization-invitation get](flexera-cli_iam_organization-invitation_get.md)	 - Show an invitation
 * [flexera-cli iam organization-invitation list](flexera-cli_iam_organization-invitation_list.md)	 - Index invitations to an org
-* [flexera-cli iam organization-invitation update](flexera-cli_iam_organization-invitation_update.md)	 - Resend an invitation to an org
+* [flexera-cli iam organization-invitation resend](flexera-cli_iam_organization-invitation_resend.md)	 - Resend an invitation to an org
 

@@ -28,19 +28,17 @@ func NewCmd() *cobra.Command {
 		Use:   "costs",
 		Short: "costs operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCostsCreateCmd(),
-		newCostsAggregatedCmd(),
-		newCostsGetExportCmd(),
-		newCostsGetSelectCmd(),
-		newCostsDimensionsCmd(),
-		newCostsMetricsCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"export-select"}, newCostsExportSelectCreateCmd())
+	clipkg.AddCommandAt(c, nil, newCostsAggregatedCmd())
+	clipkg.AddCommandAt(c, []string{"export-select"}, newCostsExportSelectGetCmd())
+	clipkg.AddCommandAt(c, nil, newCostsSelectCmd())
+	clipkg.AddCommandAt(c, nil, newCostsDimensionsCmd())
+	clipkg.AddCommandAt(c, nil, newCostsMetricsCmd())
 	return c
 }
 
-// newCostsCreateCmd — POST /bill-analysis/orgs/{orgId}/costs/export/select (operationId: BillAnalysis_costs_exportSelect)
-func newCostsCreateCmd() *cobra.Command {
+// newCostsExportSelectCreateCmd — POST /bill-analysis/orgs/{orgId}/costs/export/select (operationId: BillAnalysis_costs_exportSelect)
+func newCostsExportSelectCreateCmd() *cobra.Command {
 	var (
 		bodyRaw                         string
 		fAdjDimensionGranularity        string
@@ -59,7 +57,7 @@ func newCostsCreateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "create",
 		Short:       "exportSelect costs",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs create --org-id ORG_ID --body @request.json\n  flexera-cli bill-analysis costs create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-analysis costs create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs export-select create --org-id ORG_ID --body @request.json\n  flexera-cli bill-analysis costs export-select create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-analysis costs export-select create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_costs_exportSelect", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -163,7 +161,7 @@ func newCostsCreateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -175,7 +173,7 @@ func newCostsCreateCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -294,7 +292,7 @@ func newCostsAggregatedCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -306,7 +304,7 @@ func newCostsAggregatedCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -332,15 +330,15 @@ func newCostsAggregatedCmd() *cobra.Command {
 	return c
 }
 
-// newCostsGetExportCmd — GET /bill-analysis/orgs/{orgId}/costs/export/select/{exportId} (operationId: BillAnalysis_costs_exportSelectStatus)
-func newCostsGetExportCmd() *cobra.Command {
+// newCostsExportSelectGetCmd — GET /bill-analysis/orgs/{orgId}/costs/export/select/{exportId} (operationId: BillAnalysis_costs_exportSelectStatus)
+func newCostsExportSelectGetCmd() *cobra.Command {
 	var (
 		exportID string
 	)
 	c := &cobra.Command{
-		Use:         "get-export",
+		Use:         "get",
 		Short:       "exportSelectStatus costs",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs get-export --org-id ORG_ID --export-id EXPORT_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs export-select get --org-id ORG_ID --export-id EXPORT_ID",
 		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_costs_exportSelectStatus", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -367,7 +365,7 @@ func newCostsGetExportCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -379,7 +377,7 @@ func newCostsGetExportCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -396,8 +394,8 @@ func newCostsGetExportCmd() *cobra.Command {
 	return c
 }
 
-// newCostsGetSelectCmd — POST /bill-analysis/orgs/{orgId}/costs/select (operationId: BillAnalysis_costs_select)
-func newCostsGetSelectCmd() *cobra.Command {
+// newCostsSelectCmd — POST /bill-analysis/orgs/{orgId}/costs/select (operationId: BillAnalysis_costs_select)
+func newCostsSelectCmd() *cobra.Command {
 	var (
 		bodyRaw           string
 		fBillingCenterIDs []string
@@ -410,9 +408,9 @@ func newCostsGetSelectCmd() *cobra.Command {
 		fStartAt          string
 	)
 	c := &cobra.Command{
-		Use:         "get-select",
+		Use:         "select",
 		Short:       "select costs",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs get-select --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-analysis costs get-select --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis costs select --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema bill-analysis costs select --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_costs_select", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -482,7 +480,7 @@ func newCostsGetSelectCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -494,7 +492,7 @@ func newCostsGetSelectCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -548,7 +546,7 @@ func newCostsDimensionsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -560,7 +558,7 @@ func newCostsDimensionsCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -605,7 +603,7 @@ func newCostsMetricsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -617,7 +615,7 @@ func newCostsMetricsCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

@@ -28,17 +28,15 @@ func NewCmd() *cobra.Command {
 		Use:   "group-membership",
 		Short: "Group Membership operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newGroupMembershipMembershipsCmd(),
-		newGroupMembershipDeleteCmd(),
-		newGroupMembershipListCmd(),
-		newGroupMembershipReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newGroupMembershipCreateCmd())
+	clipkg.AddCommandAt(c, nil, newGroupMembershipDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newGroupMembershipListCmd())
+	clipkg.AddCommandAt(c, nil, newGroupMembershipReplaceCmd())
 	return c
 }
 
-// newGroupMembershipMembershipsCmd — POST /iam/v1/orgs/{orgId}/groups/{groupId}/memberships (operationId: Iam_Group_Membership_create)
-func newGroupMembershipMembershipsCmd() *cobra.Command {
+// newGroupMembershipCreateCmd — POST /iam/v1/orgs/{orgId}/groups/{groupId}/memberships (operationId: Iam_Group_Membership_create)
+func newGroupMembershipCreateCmd() *cobra.Command {
 	var (
 		groupID     int
 		bodyRaw     string
@@ -47,9 +45,9 @@ func newGroupMembershipMembershipsCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "memberships",
+		Use:         "create",
 		Short:       "Add users to a group",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam group-membership memberships --org-id ORG_ID --group-id GROUP_ID --body @request.json\n  flexera-cli iam group-membership memberships --org-id ORG_ID --group-id GROUP_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam group-membership memberships --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam group-membership create --org-id ORG_ID --group-id GROUP_ID --body @request.json\n  flexera-cli iam group-membership create --org-id ORG_ID --group-id GROUP_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam group-membership create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Group_Membership_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -126,7 +124,7 @@ func newGroupMembershipMembershipsCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -245,7 +243,7 @@ func newGroupMembershipListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

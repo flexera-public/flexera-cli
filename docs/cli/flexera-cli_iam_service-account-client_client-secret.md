@@ -1,34 +1,11 @@
 ## flexera-cli iam service-account-client client-secret
 
-Delete old service account client secret
-
-### Synopsis
-
-Delete old service account client secret
-
-DeleteOldSecret removes the older active client secret for an existing service account client.
-The newest secret remains active.
-
-```
-flexera-cli iam service-account-client client-secret [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID
-  flexera-cli iam service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run
-```
+client-secret operations
 
 ### Options
 
 ```
-      --dry-run                   print the planned operation as JSON and exit without calling the API
-  -h, --help                      help for client-secret
-      --service-account-id int    serviceAccountId (path, required); Unique identifier for the service account; required by API; minimum: 1; illustrative example: 1234
-      --target-client-id string   clientId (path, required); Identifier for the client; required by API; minLength: 1; maxLength: 512; illustrative example: "1111aaaa2222bbbb3333cccc"
-      --yes                       confirm the operation (required for destructive ops)
+  -h, --help   help for client-secret
 ```
 
 ### Options inherited from parent commands
@@ -55,4 +32,6 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli iam service-account-client](flexera-cli_iam_service-account-client.md)	 - Service Account Client operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam service-account-client client-secret delete](flexera-cli_iam_service-account-client_client-secret_delete.md)	 - Delete old service account client secret
+* [flexera-cli iam service-account-client client-secret rotate](flexera-cli_iam_service-account-client_client-secret_rotate.md)	 - Rotate a service account client secret
 

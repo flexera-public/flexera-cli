@@ -28,37 +28,35 @@ func NewCmd() *cobra.Command {
 		Use:   "license",
 		Short: "License operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newLicenseCreateCmd(),
-		newLicenseFeesAllCmd(),
-		newLicenseNotesAllCmd(),
-		newLicenseTermsAllCmd(),
-		newLicensePurchasesAllCmd(),
-		newLicenseAllocationsAllCmd(),
-		newLicenseDeleteCmd(),
-		newLicenseFeesAll2Cmd(),
-		newLicenseNotesAll2Cmd(),
-		newLicenseTermsAll2Cmd(),
-		newLicensePurchasesAll2Cmd(),
-		newLicenseAllocationsAll2Cmd(),
-		newLicenseGetCmd(),
-		newLicenseFeesAll3Cmd(),
-		newLicenseNotesAll3Cmd(),
-		newLicenseTermsAll3Cmd(),
-		newLicensePurchasesAll3Cmd(),
-		newLicenseListCmd(),
-		newLicenseFeesAll4Cmd(),
-		newLicenseNotesAll4Cmd(),
-		newLicenseTermsAll4Cmd(),
-		newLicensePurchasesAll4Cmd(),
-		newLicenseAllocationsAll3Cmd(),
-		newLicenseNotesCmd(),
-		newLicenseAllocationsCmd(),
-		newLicenseUpdateCmd(),
-		newLicenseFeesCmd(),
-		newLicenseTermsCmd(),
-		newLicensePurchasesCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newLicenseCreateCmd())
+	clipkg.AddCommandAt(c, []string{"fees"}, newLicenseFeesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"notes"}, newLicenseNotesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"terms"}, newLicenseTermsCreateCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases"}, newLicenseTermsPurchasesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases", "allocations"}, newLicenseTermsPurchasesAllocationsCreateCmd())
+	clipkg.AddCommandAt(c, nil, newLicenseDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"fees"}, newLicenseFeesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"notes"}, newLicenseNotesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"terms"}, newLicenseTermsDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases"}, newLicenseTermsPurchasesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases", "allocations"}, newLicenseTermsPurchasesAllocationsDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newLicenseGetCmd())
+	clipkg.AddCommandAt(c, []string{"fees"}, newLicenseFeesGetCmd())
+	clipkg.AddCommandAt(c, []string{"notes"}, newLicenseNotesGetCmd())
+	clipkg.AddCommandAt(c, []string{"terms"}, newLicenseTermsGetCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases"}, newLicenseTermsPurchasesGetCmd())
+	clipkg.AddCommandAt(c, nil, newLicenseListCmd())
+	clipkg.AddCommandAt(c, []string{"fees"}, newLicenseFeesListCmd())
+	clipkg.AddCommandAt(c, []string{"notes"}, newLicenseNotesListCmd())
+	clipkg.AddCommandAt(c, []string{"terms"}, newLicenseTermsListCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases"}, newLicenseTermsPurchasesListCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases", "allocations"}, newLicenseTermsPurchasesAllocationsListCmd())
+	clipkg.AddCommandAt(c, []string{"notes"}, newLicenseNotesReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases", "allocations"}, newLicenseTermsPurchasesAllocationsReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newLicenseUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"fees"}, newLicenseFeesUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"terms"}, newLicenseTermsUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"terms", "purchases"}, newLicenseTermsPurchasesUpdateCmd())
 	return c
 }
 
@@ -162,7 +160,7 @@ func newLicenseCreateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -185,8 +183,8 @@ func newLicenseCreateCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseFeesAllCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees (operationId: Saas_License_fee_create)
-func newLicenseFeesAllCmd() *cobra.Command {
+// newLicenseFeesCreateCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees (operationId: Saas_License_fee_create)
+func newLicenseFeesCreateCmd() *cobra.Command {
 	var (
 		licenseID          string
 		bodyRaw            string
@@ -201,9 +199,9 @@ func newLicenseFeesAllCmd() *cobra.Command {
 		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:         "fees-all",
+		Use:         "create",
 		Short:       "Create license agreement fee",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license fees-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license fees-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees create --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license fees create --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license fees create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_fee_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -301,7 +299,7 @@ func newLicenseFeesAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -328,8 +326,8 @@ func newLicenseFeesAllCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseNotesAllCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes (operationId: Saas_License_note_create)
-func newLicenseNotesAllCmd() *cobra.Command {
+// newLicenseNotesCreateCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes (operationId: Saas_License_note_create)
+func newLicenseNotesCreateCmd() *cobra.Command {
 	var (
 		licenseID   string
 		bodyRaw     string
@@ -339,9 +337,9 @@ func newLicenseNotesAllCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "notes-all",
+		Use:         "create",
 		Short:       "Create note",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license notes-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license notes-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes create --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license notes create --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license notes create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_note_create", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -437,8 +435,8 @@ func newLicenseNotesAllCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseTermsAllCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms (operationId: Saas_License_term_create)
-func newLicenseTermsAllCmd() *cobra.Command {
+// newLicenseTermsCreateCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms (operationId: Saas_License_term_create)
+func newLicenseTermsCreateCmd() *cobra.Command {
 	var (
 		licenseID                    string
 		bodyRaw                      string
@@ -461,9 +459,9 @@ func newLicenseTermsAllCmd() *cobra.Command {
 		interactive                  bool
 	)
 	c := &cobra.Command{
-		Use:         "terms-all",
+		Use:         "create",
 		Short:       "Create license term",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license terms-all --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms create --org-id ORG_ID --license-id LICENSE_ID --body @request.json\n  flexera-cli saas license terms create --org-id ORG_ID --license-id LICENSE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_term_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -585,7 +583,7 @@ func newLicenseTermsAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -620,8 +618,8 @@ func newLicenseTermsAllCmd() *cobra.Command {
 	return c
 }
 
-// newLicensePurchasesAllCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases (operationId: Saas_License_purchase_create)
-func newLicensePurchasesAllCmd() *cobra.Command {
+// newLicenseTermsPurchasesCreateCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases (operationId: Saas_License_purchase_create)
+func newLicenseTermsPurchasesCreateCmd() *cobra.Command {
 	var (
 		licenseID      string
 		termID         string
@@ -639,9 +637,9 @@ func newLicensePurchasesAllCmd() *cobra.Command {
 		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:         "purchases-all",
+		Use:         "create",
 		Short:       "Create purchase",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license purchases-all --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json\n  flexera-cli saas license purchases-all --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license purchases-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases create --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json\n  flexera-cli saas license terms purchases create --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms purchases create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_purchase_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -748,7 +746,7 @@ func newLicensePurchasesAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -778,8 +776,8 @@ func newLicensePurchasesAllCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseAllocationsAllCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations (operationId: Saas_License_allocation_create)
-func newLicenseAllocationsAllCmd() *cobra.Command {
+// newLicenseTermsPurchasesAllocationsCreateCmd — POST /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations (operationId: Saas_License_allocation_create)
+func newLicenseTermsPurchasesAllocationsCreateCmd() *cobra.Command {
 	var (
 		licenseID   string
 		termID      string
@@ -791,9 +789,9 @@ func newLicenseAllocationsAllCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "allocations-all",
+		Use:         "create",
 		Short:       "Create allocation",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license allocations-all --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --body @request.json\n  flexera-cli saas license allocations-all --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license allocations-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases allocations create --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --body @request.json\n  flexera-cli saas license terms purchases allocations create --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms purchases allocations create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_allocation_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -882,7 +880,7 @@ func newLicenseAllocationsAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -964,8 +962,8 @@ func newLicenseDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseFeesAll2Cmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_delete)
-func newLicenseFeesAll2Cmd() *cobra.Command {
+// newLicenseFeesDeleteCmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_delete)
+func newLicenseFeesDeleteCmd() *cobra.Command {
 	var (
 		licenseID string
 		feeID     string
@@ -973,9 +971,9 @@ func newLicenseFeesAll2Cmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:         "fees-all-2",
+		Use:         "delete",
 		Short:       "Delete license agreement fee",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees-all-2 --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID\n  flexera-cli saas license fees-all-2 --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees delete --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID\n  flexera-cli saas license fees delete --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_fee_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1027,8 +1025,8 @@ func newLicenseFeesAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseNotesAll2Cmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_delete)
-func newLicenseNotesAll2Cmd() *cobra.Command {
+// newLicenseNotesDeleteCmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_delete)
+func newLicenseNotesDeleteCmd() *cobra.Command {
 	var (
 		licenseID string
 		id        string
@@ -1036,9 +1034,9 @@ func newLicenseNotesAll2Cmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:         "notes-all-2",
+		Use:         "delete",
 		Short:       "Delete note",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes-all-2 --org-id ORG_ID --license-id LICENSE_ID --id ID\n  flexera-cli saas license notes-all-2 --org-id ORG_ID --license-id LICENSE_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes delete --org-id ORG_ID --license-id LICENSE_ID --id ID\n  flexera-cli saas license notes delete --org-id ORG_ID --license-id LICENSE_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_note_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1090,8 +1088,8 @@ func newLicenseNotesAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseTermsAll2Cmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_delete)
-func newLicenseTermsAll2Cmd() *cobra.Command {
+// newLicenseTermsDeleteCmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_delete)
+func newLicenseTermsDeleteCmd() *cobra.Command {
 	var (
 		licenseID string
 		termID    string
@@ -1099,9 +1097,9 @@ func newLicenseTermsAll2Cmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:         "terms-all-2",
+		Use:         "delete",
 		Short:       "Delete license term",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID\n  flexera-cli saas license terms-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID\n  flexera-cli saas license terms delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_term_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1153,8 +1151,8 @@ func newLicenseTermsAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newLicensePurchasesAll2Cmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_delete)
-func newLicensePurchasesAll2Cmd() *cobra.Command {
+// newLicenseTermsPurchasesDeleteCmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_delete)
+func newLicenseTermsPurchasesDeleteCmd() *cobra.Command {
 	var (
 		licenseID string
 		termID    string
@@ -1163,9 +1161,9 @@ func newLicensePurchasesAll2Cmd() *cobra.Command {
 		yes       bool
 	)
 	c := &cobra.Command{
-		Use:         "purchases-all-2",
+		Use:         "delete",
 		Short:       "Delete purchase",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license purchases-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID\n  flexera-cli saas license purchases-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID\n  flexera-cli saas license terms purchases delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_purchase_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1221,8 +1219,8 @@ func newLicensePurchasesAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseAllocationsAll2Cmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id} (operationId: Saas_License_allocation_delete)
-func newLicenseAllocationsAll2Cmd() *cobra.Command {
+// newLicenseTermsPurchasesAllocationsDeleteCmd — DELETE /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id} (operationId: Saas_License_allocation_delete)
+func newLicenseTermsPurchasesAllocationsDeleteCmd() *cobra.Command {
 	var (
 		licenseID  string
 		termID     string
@@ -1232,9 +1230,9 @@ func newLicenseAllocationsAll2Cmd() *cobra.Command {
 		yes        bool
 	)
 	c := &cobra.Command{
-		Use:         "allocations-all-2",
+		Use:         "delete",
 		Short:       "Delete allocation",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license allocations-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID\n  flexera-cli saas license allocations-all-2 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases allocations delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID\n  flexera-cli saas license terms purchases allocations delete --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_allocation_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1329,7 +1327,7 @@ func newLicenseGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1346,16 +1344,16 @@ func newLicenseGetCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseFeesAll3Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_show)
-func newLicenseFeesAll3Cmd() *cobra.Command {
+// newLicenseFeesGetCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_show)
+func newLicenseFeesGetCmd() *cobra.Command {
 	var (
 		licenseID string
 		feeID     string
 	)
 	c := &cobra.Command{
-		Use:         "fees-all-3",
+		Use:         "get",
 		Short:       "Show license agreement fees",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees-all-3 --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees get --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_fee_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1385,7 +1383,7 @@ func newLicenseFeesAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1403,16 +1401,16 @@ func newLicenseFeesAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseNotesAll3Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_show)
-func newLicenseNotesAll3Cmd() *cobra.Command {
+// newLicenseNotesGetCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_show)
+func newLicenseNotesGetCmd() *cobra.Command {
 	var (
 		licenseID string
 		id        string
 	)
 	c := &cobra.Command{
-		Use:         "notes-all-3",
+		Use:         "get",
 		Short:       "Show note",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes-all-3 --org-id ORG_ID --license-id LICENSE_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes get --org-id ORG_ID --license-id LICENSE_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_note_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1442,7 +1440,7 @@ func newLicenseNotesAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1460,16 +1458,16 @@ func newLicenseNotesAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseTermsAll3Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_show)
-func newLicenseTermsAll3Cmd() *cobra.Command {
+// newLicenseTermsGetCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_show)
+func newLicenseTermsGetCmd() *cobra.Command {
 	var (
 		licenseID string
 		termID    string
 	)
 	c := &cobra.Command{
-		Use:         "terms-all-3",
+		Use:         "get",
 		Short:       "Show license term",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms-all-3 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms get --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_term_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1499,7 +1497,7 @@ func newLicenseTermsAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1517,17 +1515,17 @@ func newLicenseTermsAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newLicensePurchasesAll3Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_show)
-func newLicensePurchasesAll3Cmd() *cobra.Command {
+// newLicenseTermsPurchasesGetCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_show)
+func newLicenseTermsPurchasesGetCmd() *cobra.Command {
 	var (
 		licenseID string
 		termID    string
 		id        string
 	)
 	c := &cobra.Command{
-		Use:         "purchases-all-3",
+		Use:         "get",
 		Short:       "Show purchase",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license purchases-all-3 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases get --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_purchase_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1560,7 +1558,7 @@ func newLicensePurchasesAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1618,7 +1616,7 @@ func newLicenseListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasLicenseIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1629,7 +1627,7 @@ func newLicenseListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1650,8 +1648,8 @@ func newLicenseListCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseFeesAll4Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees (operationId: Saas_License_fee_index)
-func newLicenseFeesAll4Cmd() *cobra.Command {
+// newLicenseFeesListCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees (operationId: Saas_License_fee_index)
+func newLicenseFeesListCmd() *cobra.Command {
 	var (
 		licenseID  string
 		filter     string
@@ -1660,9 +1658,9 @@ func newLicenseFeesAll4Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "fees-all-4",
+		Use:         "list",
 		Short:       "List license agreement fees",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees-all-4 --org-id ORG_ID --license-id LICENSE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees list --org-id ORG_ID --license-id LICENSE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_fee_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1693,7 +1691,7 @@ func newLicenseFeesAll4Cmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasLicenseFeeIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1704,7 +1702,7 @@ func newLicenseFeesAll4Cmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1726,17 +1724,17 @@ func newLicenseFeesAll4Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseNotesAll4Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes (operationId: Saas_License_note_index)
-func newLicenseNotesAll4Cmd() *cobra.Command {
+// newLicenseNotesListCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes (operationId: Saas_License_note_index)
+func newLicenseNotesListCmd() *cobra.Command {
 	var (
 		licenseID string
 		filter    string
 		orderBy   string
 	)
 	c := &cobra.Command{
-		Use:         "notes-all-4",
+		Use:         "list",
 		Short:       "List notes",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes-all-4 --org-id ORG_ID --license-id LICENSE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes list --org-id ORG_ID --license-id LICENSE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_note_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1772,7 +1770,7 @@ func newLicenseNotesAll4Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1791,8 +1789,8 @@ func newLicenseNotesAll4Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseTermsAll4Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms (operationId: Saas_License_term_index)
-func newLicenseTermsAll4Cmd() *cobra.Command {
+// newLicenseTermsListCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms (operationId: Saas_License_term_index)
+func newLicenseTermsListCmd() *cobra.Command {
 	var (
 		licenseID  string
 		filter     string
@@ -1801,9 +1799,9 @@ func newLicenseTermsAll4Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "terms-all-4",
+		Use:         "list",
 		Short:       "List license terms",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms-all-4 --org-id ORG_ID --license-id LICENSE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms list --org-id ORG_ID --license-id LICENSE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_term_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1834,7 +1832,7 @@ func newLicenseTermsAll4Cmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasLicenseTermIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1845,7 +1843,7 @@ func newLicenseTermsAll4Cmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1867,16 +1865,16 @@ func newLicenseTermsAll4Cmd() *cobra.Command {
 	return c
 }
 
-// newLicensePurchasesAll4Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases (operationId: Saas_License_purchase_index)
-func newLicensePurchasesAll4Cmd() *cobra.Command {
+// newLicenseTermsPurchasesListCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases (operationId: Saas_License_purchase_index)
+func newLicenseTermsPurchasesListCmd() *cobra.Command {
 	var (
 		licenseID string
 		termID    string
 	)
 	c := &cobra.Command{
-		Use:         "purchases-all-4",
+		Use:         "list",
 		Short:       "List purchases",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license purchases-all-4 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases list --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_purchase_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1906,7 +1904,7 @@ func newLicensePurchasesAll4Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1924,17 +1922,17 @@ func newLicensePurchasesAll4Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseAllocationsAll3Cmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations (operationId: Saas_License_allocation_index)
-func newLicenseAllocationsAll3Cmd() *cobra.Command {
+// newLicenseTermsPurchasesAllocationsListCmd — GET /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations (operationId: Saas_License_allocation_index)
+func newLicenseTermsPurchasesAllocationsListCmd() *cobra.Command {
 	var (
 		licenseID  string
 		termID     string
 		purchaseID string
 	)
 	c := &cobra.Command{
-		Use:         "allocations-all-3",
+		Use:         "list",
 		Short:       "List allocations",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license allocations-all-3 --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases allocations list --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_allocation_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1967,7 +1965,7 @@ func newLicenseAllocationsAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1986,8 +1984,8 @@ func newLicenseAllocationsAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newLicenseNotesCmd — PUT /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_update)
-func newLicenseNotesCmd() *cobra.Command {
+// newLicenseNotesReplaceCmd — PUT /saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id} (operationId: Saas_License_note_update)
+func newLicenseNotesReplaceCmd() *cobra.Command {
 	var (
 		licenseID   string
 		id          string
@@ -1998,9 +1996,9 @@ func newLicenseNotesCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "notes",
+		Use:         "replace",
 		Short:       "Update note",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json\n  flexera-cli saas license notes --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license notes --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license notes replace --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json\n  flexera-cli saas license notes replace --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license notes replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_note_update", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2100,8 +2098,8 @@ func newLicenseNotesCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseAllocationsCmd — PUT /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id} (operationId: Saas_License_allocation_update)
-func newLicenseAllocationsCmd() *cobra.Command {
+// newLicenseTermsPurchasesAllocationsReplaceCmd — PUT /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id} (operationId: Saas_License_allocation_update)
+func newLicenseTermsPurchasesAllocationsReplaceCmd() *cobra.Command {
 	var (
 		licenseID   string
 		termID      string
@@ -2114,9 +2112,9 @@ func newLicenseAllocationsCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "allocations",
+		Use:         "replace",
 		Short:       "Update allocation",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license allocations --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --body @request.json\n  flexera-cli saas license allocations --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license allocations --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases allocations replace --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --body @request.json\n  flexera-cli saas license terms purchases allocations replace --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --purchase-id PURCHASE_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms purchases allocations replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_allocation_update", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2208,7 +2206,7 @@ func newLicenseAllocationsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -2347,8 +2345,8 @@ func newLicenseUpdateCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseFeesCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_update)
-func newLicenseFeesCmd() *cobra.Command {
+// newLicenseFeesUpdateCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId} (operationId: Saas_License_fee_update)
+func newLicenseFeesUpdateCmd() *cobra.Command {
 	var (
 		licenseID          string
 		feeID              string
@@ -2364,9 +2362,9 @@ func newLicenseFeesCmd() *cobra.Command {
 		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:         "fees",
+		Use:         "update",
 		Short:       "Update license agreement fee",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --body @request.json\n  flexera-cli saas license fees --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license fees --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license fees update --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --body @request.json\n  flexera-cli saas license fees update --org-id ORG_ID --license-id LICENSE_ID --fee-id FEE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license fees update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_fee_update", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2486,8 +2484,8 @@ func newLicenseFeesCmd() *cobra.Command {
 	return c
 }
 
-// newLicenseTermsCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_update)
-func newLicenseTermsCmd() *cobra.Command {
+// newLicenseTermsUpdateCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId} (operationId: Saas_License_term_update)
+func newLicenseTermsUpdateCmd() *cobra.Command {
 	var (
 		licenseID                    string
 		termID                       string
@@ -2510,9 +2508,9 @@ func newLicenseTermsCmd() *cobra.Command {
 		interactive                  bool
 	)
 	c := &cobra.Command{
-		Use:         "terms",
+		Use:         "update",
 		Short:       "Update license term",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json\n  flexera-cli saas license terms --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms update --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json\n  flexera-cli saas license terms update --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_term_update", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2660,8 +2658,8 @@ func newLicenseTermsCmd() *cobra.Command {
 	return c
 }
 
-// newLicensePurchasesCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_update)
-func newLicensePurchasesCmd() *cobra.Command {
+// newLicenseTermsPurchasesUpdateCmd — PATCH /saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id} (operationId: Saas_License_purchase_update)
+func newLicenseTermsPurchasesUpdateCmd() *cobra.Command {
 	var (
 		licenseID      string
 		termID         string
@@ -2679,9 +2677,9 @@ func newLicensePurchasesCmd() *cobra.Command {
 		interactive    bool
 	)
 	c := &cobra.Command{
-		Use:         "purchases",
+		Use:         "update",
 		Short:       "Update purchase",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license purchases --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --body @request.json\n  flexera-cli saas license purchases --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license purchases --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas license terms purchases update --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --body @request.json\n  flexera-cli saas license terms purchases update --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas license terms purchases update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_License_purchase_update", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

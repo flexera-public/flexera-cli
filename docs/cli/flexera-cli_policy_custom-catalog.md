@@ -33,6 +33,5 @@ CustomCatalog operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli policy](flexera-cli_policy.md)	 - Policy API
 * [flexera-cli policy custom-catalog list](flexera-cli_policy_custom-catalog_list.md)	 - Index published templates with applied custom catalog settings
-* [flexera-cli policy custom-catalog replace](flexera-cli_policy_custom-catalog_replace.md)	 - Create or update custom catalog tags for a published template under an MSP parent organization
-* [flexera-cli policy custom-catalog tag](flexera-cli_policy_custom-catalog_tag.md)	 - Retrieve custom catalog tags for a published template in an organization
+* [flexera-cli policy custom-catalog tag](flexera-cli_policy_custom-catalog_tag.md)	 - tag operations
 

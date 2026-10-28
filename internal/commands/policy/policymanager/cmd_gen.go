@@ -28,15 +28,13 @@ func NewCmd() *cobra.Command {
 		Use:   "policy-manager",
 		Short: "Policy Manager operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newPolicyManagerCreateCmd(),
-		newPolicyManagerDeleteCmd(),
-		newPolicyManagerGetCmd(),
-		newPolicyManagerListCmd(),
-		newPolicyManagerSummaryCmd(),
-		newPolicyManagerUpdateCmd(),
-		newPolicyManagerUpdateTemplateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newPolicyManagerCreateCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerGetCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerListCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerSummaryCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerUpdateCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyManagerUpdateTemplateCmd())
 	return c
 }
 
@@ -288,7 +286,7 @@ func newPolicyManagerGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -355,7 +353,7 @@ func newPolicyManagerListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.PolicyPolicyManagerIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -366,7 +364,7 @@ func newPolicyManagerListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -424,7 +422,7 @@ func newPolicyManagerSummaryCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

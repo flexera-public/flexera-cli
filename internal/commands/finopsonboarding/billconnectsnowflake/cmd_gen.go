@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-snowflake",
 		Short: "Bill Connect - Snowflake operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectSnowflakeCreateCmd(),
-		newBillConnectSnowflakeDeleteCmd(),
-		newBillConnectSnowflakeGetCmd(),
-		newBillConnectSnowflakeListCmd(),
-		newBillConnectSnowflakeUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectSnowflakeCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectSnowflakeDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectSnowflakeGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectSnowflakeValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectSnowflakeUpdateCmd())
 	return c
 }
 
@@ -146,7 +144,7 @@ func newBillConnectSnowflakeCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -264,7 +262,7 @@ func newBillConnectSnowflakeGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -281,15 +279,16 @@ func newBillConnectSnowflakeGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectSnowflakeListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/snowflake/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Snowflake_validate)
-func newBillConnectSnowflakeListCmd() *cobra.Command {
+// newBillConnectSnowflakeValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/snowflake/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Snowflake_validate)
+func newBillConnectSnowflakeValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate a Snowflake bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect snowflake list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect snowflake validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Snowflake_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -316,7 +315,7 @@ func newBillConnectSnowflakeListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

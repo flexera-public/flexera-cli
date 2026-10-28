@@ -1,29 +1,11 @@
 ## flexera-cli iam organization msp
 
-Show an MSP org
-
-### Synopsis
-
-Show an MSP org
-
-Returns details for a specific org only if it is an MSP org
-
-```
-flexera-cli iam organization msp [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam organization msp --org-id ORG_ID --target-org-id TARGET_ORG_ID
-```
+msp operations
 
 ### Options
 
 ```
-  -h, --help                help for msp
-      --target-org-id int   targetOrgId (path, required); The intended organization to check whether it's MSP or not; required by API; minimum: 1; illustrative example: 456
+  -h, --help   help for msp
 ```
 
 ### Options inherited from parent commands
@@ -50,4 +32,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli iam organization](flexera-cli_iam_organization.md)	 - Organization operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam organization msp get](flexera-cli_iam_organization_msp_get.md)	 - Show an MSP org
 

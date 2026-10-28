@@ -33,6 +33,6 @@ BillingCenterAccessRules operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli billing-center](flexera-cli_billing-center.md)	 - Billing Center API
 * [flexera-cli billing-center billing-center-access-rules grant](flexera-cli_billing-center_billing-center-access-rules_grant.md)	 - Create an AccessRule for the given BillingCenter
-* [flexera-cli billing-center billing-center-access-rules list](flexera-cli_billing-center_billing-center-access-rules_list.md)	 - List roles of users, groups or service accounts
+* [flexera-cli billing-center billing-center-access-rules report](flexera-cli_billing-center_billing-center-access-rules_report.md)	 - List roles of users, groups or service accounts
 * [flexera-cli billing-center billing-center-access-rules revoke](flexera-cli_billing-center_billing-center-access-rules_revoke.md)	 - Revoke a given Role from the Subject on this BillingCenter
 

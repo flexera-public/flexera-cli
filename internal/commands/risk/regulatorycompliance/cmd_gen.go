@@ -28,23 +28,21 @@ func NewCmd() *cobra.Command {
 		Use:   "regulatory-compliance",
 		Short: "regulatory-compliance operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newRegulatoryComplianceSuppressCmd(),
-		newRegulatoryComplianceAssetStatisticsCmd(),
-		newRegulatoryComplianceConformitySummaryCmd(),
-		newRegulatoryComplianceLifecycleForecastCmd(),
-		newRegulatoryComplianceLifecycleTrendCmd(),
-		newRegulatoryComplianceFilterCmd(),
-		newRegulatoryComplianceFailedAssetCmd(),
-		newRegulatoryComplianceListCmd(),
-		newRegulatoryComplianceOverviewCmd(),
-		newRegulatoryComplianceYearWiseAssetListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceRuleSuppressCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceAssetStatisticsCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceConformitySummaryCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceLifecycleForecastCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceLifecycleTrendCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceCatalogFilterCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceFailedAssetCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceListCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceMisconfigurationOverviewCmd())
+	clipkg.AddCommandAt(c, nil, newRegulatoryComplianceYearWiseAssetListCmd())
 	return c
 }
 
-// newRegulatoryComplianceSuppressCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress (operationId: Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post)
-func newRegulatoryComplianceSuppressCmd() *cobra.Command {
+// newRegulatoryComplianceRuleSuppressCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress (operationId: Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post)
+func newRegulatoryComplianceRuleSuppressCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fUserName   string
@@ -53,9 +51,9 @@ func newRegulatoryComplianceSuppressCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "suppress",
+		Use:         "rule-suppress",
 		Short:       "Suppress Rule or Failed Asset (Regulatory Compliance / On-Prem)",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance suppress --org-id ORG_ID --body @request.json\n  flexera-cli risk regulatory-compliance suppress --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance suppress --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance rule-suppress --org-id ORG_ID --body @request.json\n  flexera-cli risk regulatory-compliance rule-suppress --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance rule-suppress --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_suppress_regulatory_compliance_rule_or_asset_risk_v1_orgs_orgId_regulatory_compliance_rule_suppress_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -135,7 +133,7 @@ func newRegulatoryComplianceSuppressCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -214,7 +212,7 @@ func newRegulatoryComplianceAssetStatisticsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -290,7 +288,7 @@ func newRegulatoryComplianceConformitySummaryCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -366,7 +364,7 @@ func newRegulatoryComplianceLifecycleForecastCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -438,7 +436,7 @@ func newRegulatoryComplianceLifecycleTrendCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -455,16 +453,16 @@ func newRegulatoryComplianceLifecycleTrendCmd() *cobra.Command {
 	return c
 }
 
-// newRegulatoryComplianceFilterCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/catalog/filter (operationId: Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post)
-func newRegulatoryComplianceFilterCmd() *cobra.Command {
+// newRegulatoryComplianceCatalogFilterCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/catalog/filter (operationId: Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post)
+func newRegulatoryComplianceCatalogFilterCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fDimensions []string
 	)
 	c := &cobra.Command{
-		Use:         "filter",
+		Use:         "catalog-filter",
 		Short:       "Regulatory Compliance Catalog Filter",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance filter --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance filter --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance catalog-filter --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance catalog-filter --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_get_catalog_filter_risk_v1_orgs_orgId_regulatory_compliance_catalog_filter_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -513,7 +511,7 @@ func newRegulatoryComplianceFilterCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -607,7 +605,7 @@ func newRegulatoryComplianceFailedAssetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -699,7 +697,7 @@ func newRegulatoryComplianceListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -720,16 +718,16 @@ func newRegulatoryComplianceListCmd() *cobra.Command {
 	return c
 }
 
-// newRegulatoryComplianceOverviewCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview (operationId: Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post)
-func newRegulatoryComplianceOverviewCmd() *cobra.Command {
+// newRegulatoryComplianceMisconfigurationOverviewCmd — POST /risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview (operationId: Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post)
+func newRegulatoryComplianceMisconfigurationOverviewCmd() *cobra.Command {
 	var (
 		bodyRaw    string
 		fProviders []string
 	)
 	c := &cobra.Command{
-		Use:         "overview",
+		Use:         "misconfiguration-overview",
 		Short:       "On-Prem BPC Misconfiguration Overview",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance overview --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance overview --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli risk regulatory-compliance misconfiguration-overview --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema risk regulatory-compliance misconfiguration-overview --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Risk_get_misconfig_overview_risk_v1_orgs_orgId_regulatory_compliance_misconfiguration_overview_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -778,7 +776,7 @@ func newRegulatoryComplianceOverviewCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -862,7 +860,7 @@ func newRegulatoryComplianceYearWiseAssetListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

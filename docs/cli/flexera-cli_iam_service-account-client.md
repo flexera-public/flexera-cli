@@ -32,10 +32,9 @@ Service Account Client operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam service-account-client client-secret](flexera-cli_iam_service-account-client_client-secret.md)	 - Delete old service account client secret
-* [flexera-cli iam service-account-client client-secret-all](flexera-cli_iam_service-account-client_client-secret-all.md)	 - Rotate a service account client secret
+* [flexera-cli iam service-account-client client-secret](flexera-cli_iam_service-account-client_client-secret.md)	 - client-secret operations
 * [flexera-cli iam service-account-client client-secrets](flexera-cli_iam_service-account-client_client-secrets.md)	 - Index a service account client's secrets
-* [flexera-cli iam service-account-client clients](flexera-cli_iam_service-account-client_clients.md)	 - Create a service account client
+* [flexera-cli iam service-account-client create](flexera-cli_iam_service-account-client_create.md)	 - Create a service account client
 * [flexera-cli iam service-account-client delete](flexera-cli_iam_service-account-client_delete.md)	 - Delete a service account client
 * [flexera-cli iam service-account-client get](flexera-cli_iam_service-account-client_get.md)	 - Show service account client details
 * [flexera-cli iam service-account-client list](flexera-cli_iam_service-account-client_list.md)	 - Index a service account's clients

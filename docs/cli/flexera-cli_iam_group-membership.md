@@ -32,8 +32,8 @@ Group Membership operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
+* [flexera-cli iam group-membership create](flexera-cli_iam_group-membership_create.md)	 - Add users to a group
 * [flexera-cli iam group-membership delete](flexera-cli_iam_group-membership_delete.md)	 - Delete user membership of a group
 * [flexera-cli iam group-membership list](flexera-cli_iam_group-membership_list.md)	 - Index user memberships of a group in an organization
-* [flexera-cli iam group-membership memberships](flexera-cli_iam_group-membership_memberships.md)	 - Add users to a group
 * [flexera-cli iam group-membership replace](flexera-cli_iam_group-membership_replace.md)	 - Replace users in a group
 

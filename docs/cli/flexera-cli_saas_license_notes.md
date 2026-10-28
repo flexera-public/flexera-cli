@@ -1,38 +1,11 @@
 ## flexera-cli saas license notes
 
-Update note
-
-### Synopsis
-
-Update note
-
-Update the details of a note associated to resource.
-
-```
-flexera-cli saas license notes [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli saas license notes --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json
-  flexera-cli saas license notes --org-id ORG_ID --license-id LICENSE_ID --id ID --body @request.json --dry-run
-Validated illustrative body, when available (review before use):
-  flexera-cli cli schema saas license notes --example > request.json
-```
+notes operations
 
 ### Options
 
 ```
-      --body string         raw JSON body (inline | @file | @-); overrides body field flags
-      --details string      details (body); required by API; Details of the note.; maxLength: 500; illustrative example: "license had a discount of 10."
-      --dry-run             print the planned operation as JSON and exit without calling the API
-  -h, --help                help for notes
-      --id string           id (path, required); Unique identifier of note.; required by API; illustrative example: "3421"
-  -i, --interactive         edit inputs in a terminal form, review a plan and approve with typed yes
-      --license-id string   licenseId (path, required); Unique identifier of license that note is associated to.; required by API; illustrative example: "34521"
-      --yes                 confirm the operation (required for destructive ops)
+  -h, --help   help for notes
 ```
 
 ### Options inherited from parent commands
@@ -59,4 +32,9 @@ Validated illustrative body, when available (review before use):
 ### SEE ALSO
 
 * [flexera-cli saas license](flexera-cli_saas_license.md)	 - License operations (generated from the unified OpenAPI spec)
+* [flexera-cli saas license notes create](flexera-cli_saas_license_notes_create.md)	 - Create note
+* [flexera-cli saas license notes delete](flexera-cli_saas_license_notes_delete.md)	 - Delete note
+* [flexera-cli saas license notes get](flexera-cli_saas_license_notes_get.md)	 - Show note
+* [flexera-cli saas license notes list](flexera-cli_saas_license_notes_list.md)	 - List notes
+* [flexera-cli saas license notes replace](flexera-cli_saas_license_notes_replace.md)	 - Update note
 

@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "saml2-identity-provider",
 		Short: "SAML2 Identity Provider operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSAML2IdentityProviderCreateCmd(),
-		newSAML2IdentityProviderDeleteCmd(),
-		newSAML2IdentityProviderGetCmd(),
-		newSAML2IdentityProviderListCmd(),
-		newSAML2IdentityProviderMetadataXmlCmd(),
-		newSAML2IdentityProviderUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderGetCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderListCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderMetadataXmlCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderUpdateCmd())
 	return c
 }
 
@@ -179,7 +177,7 @@ func newSAML2IdentityProviderCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -311,7 +309,7 @@ func newSAML2IdentityProviderGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -366,7 +364,7 @@ func newSAML2IdentityProviderListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

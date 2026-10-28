@@ -33,10 +33,9 @@ costs operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli bill-analysis](flexera-cli_bill-analysis.md)	 - Bill Analysis API
 * [flexera-cli bill-analysis costs aggregated](flexera-cli_bill-analysis_costs_aggregated.md)	 - aggregated costs
-* [flexera-cli bill-analysis costs create](flexera-cli_bill-analysis_costs_create.md)	 - exportSelect costs
 * [flexera-cli bill-analysis costs dimensions](flexera-cli_bill-analysis_costs_dimensions.md)	 - dimensions costs
-* [flexera-cli bill-analysis costs get-export](flexera-cli_bill-analysis_costs_get-export.md)	 - exportSelectStatus costs
-* [flexera-cli bill-analysis costs get-select](flexera-cli_bill-analysis_costs_get-select.md)	 - select costs
+* [flexera-cli bill-analysis costs export-select](flexera-cli_bill-analysis_costs_export-select.md)	 - export-select operations
 * [flexera-cli bill-analysis costs metrics](flexera-cli_bill-analysis_costs_metrics.md)	 - metrics costs
 * [flexera-cli bill-analysis costs query](flexera-cli_bill-analysis_costs_query.md)	 - Query costs (auto-routes aggregated/select/export, auto-chunks long windows, auto-slices select)
+* [flexera-cli bill-analysis costs select](flexera-cli_bill-analysis_costs_select.md)	 - select costs
 

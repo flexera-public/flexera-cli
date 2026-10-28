@@ -32,10 +32,10 @@ Contracts operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam contracts activation](flexera-cli_iam_contracts_activation.md)	 - Enable or disable a contract
 * [flexera-cli iam contracts create](flexera-cli_iam_contracts_create.md)	 - Creates a contract
 * [flexera-cli iam contracts delete](flexera-cli_iam_contracts_delete.md)	 - Deletes a contract
 * [flexera-cli iam contracts get](flexera-cli_iam_contracts_get.md)	 - Shows an org's contract details
 * [flexera-cli iam contracts list](flexera-cli_iam_contracts_list.md)	 - Index an org's contracts
-* [flexera-cli iam contracts update](flexera-cli_iam_contracts_update.md)	 - Updates the last seen date of the contract
+* [flexera-cli iam contracts set-activation](flexera-cli_iam_contracts_set-activation.md)	 - Enable or disable a contract
+* [flexera-cli iam contracts update-last-seen](flexera-cli_iam_contracts_update-last-seen.md)	 - Updates the last seen date of the contract
 

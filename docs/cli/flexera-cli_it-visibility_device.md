@@ -32,6 +32,5 @@ Device operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli it-visibility](flexera-cli_it-visibility.md)	 - IT Visibility Insights API
-* [flexera-cli it-visibility device get](flexera-cli_it-visibility_device_get.md)	 - Estimate device evidence deletion
-* [flexera-cli it-visibility device submit](flexera-cli_it-visibility_device_submit.md)	 - Delete device evidence
+* [flexera-cli it-visibility device delete](flexera-cli_it-visibility_device_delete.md)	 - delete operations
 

@@ -33,9 +33,7 @@ Digest Credential operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli credential](flexera-cli_credential.md)	 - Credential API
 * [flexera-cli credential digest-credential get](flexera-cli_credential_digest-credential_get.md)	 - Show a Credential
-* [flexera-cli credential digest-credential get-project](flexera-cli_credential_digest-credential_get-project.md)	 - Show a Credential
+* [flexera-cli credential digest-credential project](flexera-cli_credential_digest-credential_project.md)	 - project operations
 * [flexera-cli credential digest-credential replace](flexera-cli_credential_digest-credential_replace.md)	 - Create a Credential
-* [flexera-cli credential digest-credential replace-project](flexera-cli_credential_digest-credential_replace-project.md)	 - Create a Credential
 * [flexera-cli credential digest-credential update](flexera-cli_credential_digest-credential_update.md)	 - Update a Credential
-* [flexera-cli credential digest-credential update-project](flexera-cli_credential_digest-credential_update-project.md)	 - Update a Credential
 
