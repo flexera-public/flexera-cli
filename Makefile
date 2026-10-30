@@ -55,6 +55,7 @@ update-deps: update-unified-openapi
 # update-unified-openapi downloads an immutable snapshot of the requested
 # upstream branch (main by default) and records its commit and SHA-256.
 update-unified-openapi:
+	go get -u ./... github.com/flexera-public/unified-go-client@latest
 	./scripts/update-unified-openapi $(REF)
 
 generate: 
@@ -63,7 +64,7 @@ generate:
 build:
 	go build -ldflags "$(LDFLAGS)" -o flexera-cli .
 
-refresh: generate build
+refresh: update-unified-openapi generate build
 	@echo "Regenerated flexera-cli source, and built flexera-cli binary"
 
 install:
