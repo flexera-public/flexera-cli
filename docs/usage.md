@@ -56,11 +56,20 @@ Output shaping flags (`--out-jq`, `--out-fields`, `--raw-output`) are CLI-only.
 Each top-level command is one API service from the unified OpenAPI spec:
 
 ```text
-flexera-cli <service> <resource> <action> [flags]
+flexera-cli <service> <resource> [<sub-resource>...] <action> [flags]
 flexera-cli bill-analysis costs aggregated
 flexera-cli iam user list
-flexera-cli finops-onboarding bill-connect aws list
+flexera-cli saas license fees list --license-id LICENSE_ID
+flexera-cli finops-onboarding bill-connect aws validate --id ID
 ```
+
+Actions are `list`, `get`, `create`, `update`, `replace`, and `delete`, or the
+operation's own name (`evaluate`, `revoke`) when it is not plain CRUD. A
+collection-wide twin of an item action ends in `-all` (`rules replace-all`), and
+a project-scoped twin sits under `project`.
+Where a CRUD verb would misdescribe an operation, the command uses a task verb
+instead (`organization-invitation resend`, `bill-months reprocess`,
+`saas data upload`). Earlier spellings remain as aliases; `--help` lists them.
 
 - Service commands use friendly names; short aliases cover the spec service ids
   (`ba`, `bc`, `cred`, `divnt`, `uobs`, `vis`, `optima-recommendations`).
@@ -78,7 +87,7 @@ flexera-cli finops-onboarding bill-connect aws list
 | `iam user-memberships orgs` | Detects the user ID from the access token |
 | `grs project list-for-org` | Org-filtered projects with Policy-ready project IDs |
 | `policy applied-policy` / `action-status` / `archived-incident` / `policy-template` / `meta` | GRS project auto-resolution and relationship-aware workflows |
-| `finops-customizations rule-based-dimension bulk` / `from_csv` | Bulk and CSV-driven dimension updates |
+| `finops-customizations rule-based-dimension bulk` / `from-csv` | Bulk and CSV-driven dimension updates |
 | `bill-upload push` / `verify` | Upload, commit, and local CSV verification |
 | `graphql generate` | Query authoring helper |
 

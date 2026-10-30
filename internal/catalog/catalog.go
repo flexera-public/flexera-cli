@@ -88,6 +88,9 @@ type Catalog struct {
 	byID     map[string]int
 }
 
+// MaxArtifactBytes guards against runaway catalog growth (embedded in the binary).
+const MaxArtifactBytes = 10 * 1024 * 1024
+
 //go:embed catalog_gen.json
 var artifact []byte
 

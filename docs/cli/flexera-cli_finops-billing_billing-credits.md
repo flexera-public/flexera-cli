@@ -32,10 +32,6 @@ Billing Credits operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli finops-billing](flexera-cli_finops-billing.md)	 - FinOps Billing API
-* [flexera-cli finops-billing billing-credits assignments](flexera-cli_finops-billing_billing-credits_assignments.md)	 - Index credit assignments
-* [flexera-cli finops-billing billing-credits create](flexera-cli_finops-billing_billing-credits_create.md)	 - Create a credit assignment
-* [flexera-cli finops-billing billing-credits delete](flexera-cli_finops-billing_billing-credits_delete.md)	 - Remove a credit assignment
-* [flexera-cli finops-billing billing-credits get](flexera-cli_finops-billing_billing-credits_get.md)	 - Show a credit assignment
-* [flexera-cli finops-billing billing-credits replace](flexera-cli_finops-billing_billing-credits_replace.md)	 - Overwrite a credit assignment
+* [flexera-cli finops-billing billing-credits assignments](flexera-cli_finops-billing_billing-credits_assignments.md)	 - assignments operations
 * [flexera-cli finops-billing billing-credits vendor-credits](flexera-cli_finops-billing_billing-credits_vendor-credits.md)	 - Index vendor credits for a bill month
 

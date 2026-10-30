@@ -32,9 +32,9 @@ SAML2 Domain operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam saml2-domain create](flexera-cli_iam_saml2-domain_create.md)	 - Register a new IdP domain
 * [flexera-cli iam saml2-domain delete](flexera-cli_iam_saml2-domain_delete.md)	 - Delete an IdP's domain
 * [flexera-cli iam saml2-domain get](flexera-cli_iam_saml2-domain_get.md)	 - Show an IdP's domain
 * [flexera-cli iam saml2-domain list](flexera-cli_iam_saml2-domain_list.md)	 - Index an IdP's domains
+* [flexera-cli iam saml2-domain register](flexera-cli_iam_saml2-domain_register.md)	 - Register a new IdP domain
 * [flexera-cli iam saml2-domain verify](flexera-cli_iam_saml2-domain_verify.md)	 - Verify an IdP's domain
 

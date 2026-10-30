@@ -37,5 +37,5 @@ Access Policy operations (generated from the unified OpenAPI spec)
 * [flexera-cli iam access-policy get](flexera-cli_iam_access-policy_get.md)	 - Get an access policy by ID.
 * [flexera-cli iam access-policy list](flexera-cli_iam_access-policy_list.md)	 - List all access policies for an organization
 * [flexera-cli iam access-policy replace](flexera-cli_iam_access-policy_replace.md)	 - Update an access policy
-* [flexera-cli iam access-policy users](flexera-cli_iam_access-policy_users.md)	 - Get all access policies for a specific user
+* [flexera-cli iam access-policy users](flexera-cli_iam_access-policy_users.md)	 - users operations
 

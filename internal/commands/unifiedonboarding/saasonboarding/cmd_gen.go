@@ -22,19 +22,17 @@ var (
 	_ = strings.TrimSpace
 )
 
-// NewCmd builds the "saa-s-onboarding" command tree.
+// NewCmd builds the "saas-onboarding" command tree.
 func NewCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "saa-s-onboarding",
+		Use:   "saas-onboarding",
 		Short: "SaaS Onboarding operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSaaSOnboardingCollectCmd(),
-		newSaaSOnboardingCreateCmd(),
-		newSaaSOnboardingValidateCmd(),
-		newSaaSOnboardingDeleteCmd(),
-		newSaaSOnboardingReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSaaSOnboardingCollectCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSOnboardingCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSOnboardingValidateCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSOnboardingDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSOnboardingReplaceCmd())
 	return c
 }
 
@@ -48,7 +46,7 @@ func newSaaSOnboardingCollectCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "collect",
 		Short:       "SaaS Onboarding: Collect now",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli unified-onboarding saa-s-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli unified-onboarding saas-onboarding collect --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -86,7 +84,7 @@ func newSaaSOnboardingCollectCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -118,7 +116,7 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "create",
 		Short:       "SaaS Onboarding: Create",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-onboarding create --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding saa-s-onboarding create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saa-s-onboarding create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-onboarding create --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding saas-onboarding create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saas-onboarding create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -201,7 +199,7 @@ func newSaaSOnboardingCreateCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -236,7 +234,7 @@ func newSaaSOnboardingValidateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "validate",
 		Short:       "SaaS Onboarding: Validate connection",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-onboarding validate --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding saa-s-onboarding validate --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saa-s-onboarding validate --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-onboarding validate --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding saas-onboarding validate --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saas-onboarding validate --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -319,7 +317,7 @@ func newSaaSOnboardingValidateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -351,7 +349,7 @@ func newSaaSOnboardingDeleteCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "delete",
 		Short:       "SaaS Onboarding: Delete",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli unified-onboarding saa-s-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli unified-onboarding saas-onboarding delete --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -389,7 +387,7 @@ func newSaaSOnboardingDeleteCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -422,7 +420,7 @@ func newSaaSOnboardingReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "SaaS Onboarding: Update",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json\n  flexera-cli unified-onboarding saa-s-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saa-s-onboarding replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json\n  flexera-cli unified-onboarding saas-onboarding replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding saas-onboarding replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -508,7 +506,7 @@ func newSaaSOnboardingReplaceCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

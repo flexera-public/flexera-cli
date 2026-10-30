@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "custom-dimension",
 		Short: "CustomDimension operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomDimensionCreateCmd(),
-		newCustomDimensionDeleteCmd(),
-		newCustomDimensionGetCmd(),
-		newCustomDimensionListCmd(),
-		newCustomDimensionReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomDimensionCreateCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDimensionDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDimensionGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDimensionListCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDimensionReplaceCmd())
 	return c
 }
 
@@ -130,7 +128,7 @@ func newCustomDimensionCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -244,7 +242,7 @@ func newCustomDimensionGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -290,7 +288,7 @@ func newCustomDimensionListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -402,7 +400,7 @@ func newCustomDimensionReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

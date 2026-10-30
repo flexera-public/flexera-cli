@@ -32,7 +32,6 @@ Onboarding operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli unified-onboarding](flexera-cli_unified-onboarding.md)	 - Unified Onboarding API
-* [flexera-cli unified-onboarding onboarding create](flexera-cli_unified-onboarding_onboarding_create.md)	 - Onboarding GCP: Create
 * [flexera-cli unified-onboarding onboarding delete](flexera-cli_unified-onboarding_onboarding_delete.md)	 - Onboarding: Delete
-* [flexera-cli unified-onboarding onboarding replace](flexera-cli_unified-onboarding_onboarding_replace.md)	 - Onboarding GCP: Update
+* [flexera-cli unified-onboarding onboarding gcp](flexera-cli_unified-onboarding_onboarding_gcp.md)	 - gcp operations
 

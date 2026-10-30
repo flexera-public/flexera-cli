@@ -35,6 +35,6 @@ Bill Connect - Snowflake operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect snowflake create](flexera-cli_finops-onboarding_bill-connect_snowflake_create.md)	 - Create a Snowflake bill connect
 * [flexera-cli finops-onboarding bill-connect snowflake delete](flexera-cli_finops-onboarding_bill-connect_snowflake_delete.md)	 - Delete a Snowflake bill connect
 * [flexera-cli finops-onboarding bill-connect snowflake get](flexera-cli_finops-onboarding_bill-connect_snowflake_get.md)	 - Show a Snowflake bill connect
-* [flexera-cli finops-onboarding bill-connect snowflake list](flexera-cli_finops-onboarding_bill-connect_snowflake_list.md)	 - Validate a Snowflake bill connect
 * [flexera-cli finops-onboarding bill-connect snowflake update](flexera-cli_finops-onboarding_bill-connect_snowflake_update.md)	 - Update a Snowflake bill connect
+* [flexera-cli finops-onboarding bill-connect snowflake validate](flexera-cli_finops-onboarding_bill-connect_snowflake_validate.md)	 - Validate a Snowflake bill connect
 

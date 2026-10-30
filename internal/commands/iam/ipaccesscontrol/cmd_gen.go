@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "ip-access-control",
 		Short: "IP Access Control operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newIPAccessControlListCmd(),
-		newIPAccessControlReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newIPAccessControlListCmd())
+	clipkg.AddCommandAt(c, nil, newIPAccessControlReplaceCmd())
 	return c
 }
 
@@ -64,7 +62,7 @@ func newIPAccessControlListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

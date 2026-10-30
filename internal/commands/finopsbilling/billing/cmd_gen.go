@@ -29,36 +29,34 @@ func NewCmd() *cobra.Command {
 		Use:   "billing",
 		Short: "Billing operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillingPlansAllCmd(),
-		newBillingCreatePlansCmd(),
-		newBillingPostPlanRulesAllCmd(),
-		newBillingPrePlanRulesAllCmd(),
-		newBillingCreateRulesCmd(),
-		newBillingPlansAll2Cmd(),
-		newBillingDeletePlansCmd(),
-		newBillingPostPlanRulesAll2Cmd(),
-		newBillingPrePlanRulesAll2Cmd(),
-		newBillingDeleteRulesCmd(),
-		newBillingCustomerStatusCmd(),
-		newBillingPlansAll3Cmd(),
-		newBillingPlansAll4Cmd(),
-		newBillingListPlansCmd(),
-		newBillingPostPlanRulesAll3Cmd(),
-		newBillingPrePlanRulesAll3Cmd(),
-		newBillingListRulesCmd(),
-		newBillingPlansCmd(),
-		newBillingReplaceCmd(),
-		newBillingPostPlanRulesCmd(),
-		newBillingPrePlanRulesCmd(),
-		newBillingReplaceAllCmd(),
-		newBillingReplaceAll2Cmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"plans"}, newBillingPlansCreateCmd())
+	clipkg.AddCommandAt(c, []string{"plans", "rules"}, newBillingPlansRulesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"post-plan-rules"}, newBillingPostPlanRulesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"pre-plan-rules"}, newBillingPrePlanRulesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newBillingRulesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"plans"}, newBillingPlansDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"plans", "rules"}, newBillingPlansRulesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"post-plan-rules"}, newBillingPostPlanRulesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"pre-plan-rules"}, newBillingPrePlanRulesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newBillingRulesDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCustomerStatusCmd())
+	clipkg.AddCommandAt(c, []string{"plans"}, newBillingPlansGetCmd())
+	clipkg.AddCommandAt(c, []string{"plans"}, newBillingPlansListCmd())
+	clipkg.AddCommandAt(c, []string{"plans", "rules"}, newBillingPlansRulesListCmd())
+	clipkg.AddCommandAt(c, []string{"post-plan-rules"}, newBillingPostPlanRulesListCmd())
+	clipkg.AddCommandAt(c, []string{"pre-plan-rules"}, newBillingPrePlanRulesListCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newBillingRulesListCmd())
+	clipkg.AddCommandAt(c, []string{"plans"}, newBillingPlansReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"plans", "rules"}, newBillingPlansRulesReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"post-plan-rules"}, newBillingPostPlanRulesReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"pre-plan-rules"}, newBillingPrePlanRulesReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newBillingRulesReplaceAllCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newBillingRulesReplaceCmd())
 	return c
 }
 
-// newBillingPlansAllCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/plans (operationId: FinopsBilling_Billing_createPlan)
-func newBillingPlansAllCmd() *cobra.Command {
+// newBillingPlansCreateCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/plans (operationId: FinopsBilling_Billing_createPlan)
+func newBillingPlansCreateCmd() *cobra.Command {
 	var (
 		bodyRaw      string
 		fDescription string
@@ -68,9 +66,9 @@ func newBillingPlansAllCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "plans-all",
+		Use:         "create",
 		Short:       "Create an adjustment plan",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing plans-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing plans create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPlan", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -153,7 +151,7 @@ func newBillingPlansAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -175,8 +173,8 @@ func newBillingPlansAllCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreatePlansCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules (operationId: FinopsBilling_Billing_createRule)
-func newBillingCreatePlansCmd() *cobra.Command {
+// newBillingPlansRulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules (operationId: FinopsBilling_Billing_createRule)
+func newBillingPlansRulesCreateCmd() *cobra.Command {
 	var (
 		planID      string
 		bodyRaw     string
@@ -190,9 +188,9 @@ func newBillingCreatePlansCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "create-plans",
+		Use:         "create",
 		Short:       "Create an adjustment plan rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing create-plans --org-id ORG_ID --plan-id PLAN_ID --body @request.json\n  flexera-cli finops-billing billing create-plans --org-id ORG_ID --plan-id PLAN_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing create-plans --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans rules create --org-id ORG_ID --plan-id PLAN_ID --body @request.json\n  flexera-cli finops-billing billing plans rules create --org-id ORG_ID --plan-id PLAN_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans rules create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createRule", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -291,7 +289,7 @@ func newBillingCreatePlansCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -317,8 +315,8 @@ func newBillingCreatePlansCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPostPlanRulesAllCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules (operationId: FinopsBilling_Billing_createPostAdjustment)
-func newBillingPostPlanRulesAllCmd() *cobra.Command {
+// newBillingPostPlanRulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules (operationId: FinopsBilling_Billing_createPostAdjustment)
+func newBillingPostPlanRulesCreateCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fEnabled    bool
@@ -331,9 +329,9 @@ func newBillingPostPlanRulesAllCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "post-plan-rules-all",
+		Use:         "create",
 		Short:       "Create an adjustment rule that runs after all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing post-plan-rules-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing post-plan-rules-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing post-plan-rules create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing post-plan-rules create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPostAdjustment", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -425,7 +423,7 @@ func newBillingPostPlanRulesAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -450,8 +448,8 @@ func newBillingPostPlanRulesAllCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPrePlanRulesAllCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules (operationId: FinopsBilling_Billing_createPreAdjustment)
-func newBillingPrePlanRulesAllCmd() *cobra.Command {
+// newBillingPrePlanRulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules (operationId: FinopsBilling_Billing_createPreAdjustment)
+func newBillingPrePlanRulesCreateCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fEnabled    bool
@@ -464,9 +462,9 @@ func newBillingPrePlanRulesAllCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "pre-plan-rules-all",
+		Use:         "create",
 		Short:       "Create an adjustment rule that runs before all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing pre-plan-rules-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing pre-plan-rules-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing pre-plan-rules create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing pre-plan-rules create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createPreAdjustment", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -558,7 +556,7 @@ func newBillingPrePlanRulesAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -583,8 +581,8 @@ func newBillingPrePlanRulesAllCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreateRulesCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_createEnterpriseRule)
-func newBillingCreateRulesCmd() *cobra.Command {
+// newBillingRulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_createEnterpriseRule)
+func newBillingRulesCreateCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fEnabled    bool
@@ -597,9 +595,9 @@ func newBillingCreateRulesCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "create-rules",
+		Use:         "create",
 		Short:       "Create an enterprise adjustment rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing create-rules --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing create-rules --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing create-rules --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing rules create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing rules create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing rules create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_createEnterpriseRule", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -691,7 +689,7 @@ func newBillingCreateRulesCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -716,17 +714,17 @@ func newBillingCreateRulesCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPlansAll2Cmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_deletePlan)
-func newBillingPlansAll2Cmd() *cobra.Command {
+// newBillingPlansDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_deletePlan)
+func newBillingPlansDeleteCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "plans-all-2",
+		Use:         "delete",
 		Short:       "Remove an adjustment plan",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans-all-2 --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing plans-all-2 --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing plans delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePlan", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -779,8 +777,8 @@ func newBillingPlansAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingDeletePlansCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id} (operationId: FinopsBilling_Billing_deleteRule)
-func newBillingDeletePlansCmd() *cobra.Command {
+// newBillingPlansRulesDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id} (operationId: FinopsBilling_Billing_deleteRule)
+func newBillingPlansRulesDeleteCmd() *cobra.Command {
 	var (
 		planID string
 		id     string
@@ -788,9 +786,9 @@ func newBillingDeletePlansCmd() *cobra.Command {
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "delete-plans",
+		Use:         "delete",
 		Short:       "Remove an adjustment plan rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing delete-plans --org-id ORG_ID --plan-id PLAN_ID --id ID\n  flexera-cli finops-billing billing delete-plans --org-id ORG_ID --plan-id PLAN_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans rules delete --org-id ORG_ID --plan-id PLAN_ID --id ID\n  flexera-cli finops-billing billing plans rules delete --org-id ORG_ID --plan-id PLAN_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deleteRule", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -851,17 +849,17 @@ func newBillingDeletePlansCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPostPlanRulesAll2Cmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id} (operationId: FinopsBilling_Billing_deletePostAdjustment)
-func newBillingPostPlanRulesAll2Cmd() *cobra.Command {
+// newBillingPostPlanRulesDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id} (operationId: FinopsBilling_Billing_deletePostAdjustment)
+func newBillingPostPlanRulesDeleteCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "post-plan-rules-all-2",
+		Use:         "delete",
 		Short:       "Remove an adjustment rule that runs after all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules-all-2 --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing post-plan-rules-all-2 --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing post-plan-rules delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePostAdjustment", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -914,17 +912,17 @@ func newBillingPostPlanRulesAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingPrePlanRulesAll2Cmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id} (operationId: FinopsBilling_Billing_deletePreAdjustment)
-func newBillingPrePlanRulesAll2Cmd() *cobra.Command {
+// newBillingPrePlanRulesDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id} (operationId: FinopsBilling_Billing_deletePreAdjustment)
+func newBillingPrePlanRulesDeleteCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "pre-plan-rules-all-2",
+		Use:         "delete",
 		Short:       "Remove an adjustment rule that runs before all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules-all-2 --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing pre-plan-rules-all-2 --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing pre-plan-rules delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deletePreAdjustment", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -977,17 +975,17 @@ func newBillingPrePlanRulesAll2Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingDeleteRulesCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id} (operationId: FinopsBilling_Billing_deleteEnterpriseRule)
-func newBillingDeleteRulesCmd() *cobra.Command {
+// newBillingRulesDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id} (operationId: FinopsBilling_Billing_deleteEnterpriseRule)
+func newBillingRulesDeleteCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "delete-rules",
+		Use:         "delete",
 		Short:       "Remove an enterprise adjustment rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing delete-rules --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing delete-rules --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing rules delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing rules delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_deleteEnterpriseRule", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1069,7 +1067,7 @@ func newBillingCustomerStatusCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1085,15 +1083,15 @@ func newBillingCustomerStatusCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPlansAll3Cmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_showPlan)
-func newBillingPlansAll3Cmd() *cobra.Command {
+// newBillingPlansGetCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_showPlan)
+func newBillingPlansGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "plans-all-3",
+		Use:         "get",
 		Short:       "Show an adjustment plan",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans-all-3 --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_showPlan", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1124,7 +1122,7 @@ func newBillingPlansAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -1141,8 +1139,8 @@ func newBillingPlansAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingPlansAll4Cmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans (operationId: FinopsBilling_Billing_indexPlans)
-func newBillingPlansAll4Cmd() *cobra.Command {
+// newBillingPlansListCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans (operationId: FinopsBilling_Billing_indexPlans)
+func newBillingPlansListCmd() *cobra.Command {
 	var (
 		filter     string
 		limit      int
@@ -1150,9 +1148,9 @@ func newBillingPlansAll4Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "plans-all-4",
+		Use:         "list",
 		Short:       "Index adjustment plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans-all-4 --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPlans", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1180,7 +1178,7 @@ func newBillingPlansAll4Cmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingIndexPlansResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1191,7 +1189,7 @@ func newBillingPlansAll4Cmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1212,8 +1210,8 @@ func newBillingPlansAll4Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingListPlansCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules (operationId: FinopsBilling_Billing_indexRules)
-func newBillingListPlansCmd() *cobra.Command {
+// newBillingPlansRulesListCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules (operationId: FinopsBilling_Billing_indexRules)
+func newBillingPlansRulesListCmd() *cobra.Command {
 	var (
 		planID     string
 		filter     string
@@ -1222,9 +1220,9 @@ func newBillingListPlansCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "list-plans",
+		Use:         "list",
 		Short:       "Index adjustment plan rules",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing list-plans --org-id ORG_ID --plan-id PLAN_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans rules list --org-id ORG_ID --plan-id PLAN_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexRules", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1259,7 +1257,7 @@ func newBillingListPlansCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingIndexRulesResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1270,7 +1268,7 @@ func newBillingListPlansCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1292,8 +1290,8 @@ func newBillingListPlansCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPostPlanRulesAll3Cmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules (operationId: FinopsBilling_Billing_indexPostAdjustments)
-func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
+// newBillingPostPlanRulesListCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules (operationId: FinopsBilling_Billing_indexPostAdjustments)
+func newBillingPostPlanRulesListCmd() *cobra.Command {
 	var (
 		filter     string
 		limit      int
@@ -1301,9 +1299,9 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "post-plan-rules-all-3",
+		Use:         "list",
 		Short:       "Index adjustment rules that run after all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules-all-3 --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPostAdjustments", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1331,7 +1329,7 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingIndexPostAdjustmentsResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1342,7 +1340,7 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1363,8 +1361,8 @@ func newBillingPostPlanRulesAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingPrePlanRulesAll3Cmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules (operationId: FinopsBilling_Billing_indexPreAdjustments)
-func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
+// newBillingPrePlanRulesListCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules (operationId: FinopsBilling_Billing_indexPreAdjustments)
+func newBillingPrePlanRulesListCmd() *cobra.Command {
 	var (
 		filter     string
 		limit      int
@@ -1372,9 +1370,9 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "pre-plan-rules-all-3",
+		Use:         "list",
 		Short:       "Index adjustment rules that run before all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules-all-3 --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexPreAdjustments", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1402,7 +1400,7 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingIndexPreAdjustmentsResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1413,7 +1411,7 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1434,8 +1432,8 @@ func newBillingPrePlanRulesAll3Cmd() *cobra.Command {
 	return c
 }
 
-// newBillingListRulesCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_indexEnterpriseRules)
-func newBillingListRulesCmd() *cobra.Command {
+// newBillingRulesListCmd — GET /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_indexEnterpriseRules)
+func newBillingRulesListCmd() *cobra.Command {
 	var (
 		filter     string
 		limit      int
@@ -1443,9 +1441,9 @@ func newBillingListRulesCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "list-rules",
+		Use:         "list",
 		Short:       "Index enterprise adjustment rules",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing list-rules --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing rules list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_indexEnterpriseRules", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1473,7 +1471,7 @@ func newBillingListRulesCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingIndexEnterpriseRulesResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1484,7 +1482,7 @@ func newBillingListRulesCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -1505,8 +1503,8 @@ func newBillingListRulesCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPlansCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_replacePlan)
-func newBillingPlansCmd() *cobra.Command {
+// newBillingPlansReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{id} (operationId: FinopsBilling_Billing_replacePlan)
+func newBillingPlansReplaceCmd() *cobra.Command {
 	var (
 		id           string
 		bodyRaw      string
@@ -1517,9 +1515,9 @@ func newBillingPlansCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "plans",
+		Use:         "replace",
 		Short:       "Overwrite an adjustment plan",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing plans --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing plans replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePlan", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1624,8 +1622,8 @@ func newBillingPlansCmd() *cobra.Command {
 	return c
 }
 
-// newBillingReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id} (operationId: FinopsBilling_Billing_replaceRule)
-func newBillingReplaceCmd() *cobra.Command {
+// newBillingPlansRulesReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id} (operationId: FinopsBilling_Billing_replaceRule)
+func newBillingPlansRulesReplaceCmd() *cobra.Command {
 	var (
 		planID      string
 		id          string
@@ -1642,7 +1640,7 @@ func newBillingReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Overwrite an adjustment plan rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json\n  flexera-cli finops-billing billing replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing plans rules replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json\n  flexera-cli finops-billing billing plans rules replace --org-id ORG_ID --plan-id PLAN_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing plans rules replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceRule", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1767,8 +1765,8 @@ func newBillingReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPostPlanRulesCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePostAdjustment)
-func newBillingPostPlanRulesCmd() *cobra.Command {
+// newBillingPostPlanRulesReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePostAdjustment)
+func newBillingPostPlanRulesReplaceCmd() *cobra.Command {
 	var (
 		id          string
 		bodyRaw     string
@@ -1782,9 +1780,9 @@ func newBillingPostPlanRulesCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "post-plan-rules",
+		Use:         "replace",
 		Short:       "Overwrite an adjustment rule that runs after all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing post-plan-rules --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing post-plan-rules --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing post-plan-rules replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing post-plan-rules replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing post-plan-rules replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePostAdjustment", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -1901,8 +1899,8 @@ func newBillingPostPlanRulesCmd() *cobra.Command {
 	return c
 }
 
-// newBillingPrePlanRulesCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePreAdjustment)
-func newBillingPrePlanRulesCmd() *cobra.Command {
+// newBillingPrePlanRulesReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id} (operationId: FinopsBilling_Billing_replacePreAdjustment)
+func newBillingPrePlanRulesReplaceCmd() *cobra.Command {
 	var (
 		id          string
 		bodyRaw     string
@@ -1916,9 +1914,9 @@ func newBillingPrePlanRulesCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "pre-plan-rules",
+		Use:         "replace",
 		Short:       "Overwrite an adjustment rule that runs before all plans",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing pre-plan-rules --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing pre-plan-rules --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing pre-plan-rules replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing pre-plan-rules replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing pre-plan-rules replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replacePreAdjustment", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2035,8 +2033,8 @@ func newBillingPrePlanRulesCmd() *cobra.Command {
 	return c
 }
 
-// newBillingReplaceAllCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_replaceEnterpriseRuleset)
-func newBillingReplaceAllCmd() *cobra.Command {
+// newBillingRulesReplaceAllCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules (operationId: FinopsBilling_Billing_replaceEnterpriseRuleset)
+func newBillingRulesReplaceAllCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		dryRun      bool
@@ -2046,7 +2044,7 @@ func newBillingReplaceAllCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace-all",
 		Short:       "Overwrite enterprise adjustment rules",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing replace-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing replace-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing replace-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing rules replace-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing rules replace-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing rules replace-all --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceEnterpriseRuleset", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -2135,8 +2133,8 @@ func newBillingReplaceAllCmd() *cobra.Command {
 	return c
 }
 
-// newBillingReplaceAll2Cmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id} (operationId: FinopsBilling_Billing_replaceEnterpriseRule)
-func newBillingReplaceAll2Cmd() *cobra.Command {
+// newBillingRulesReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/adjustment/rules/{id} (operationId: FinopsBilling_Billing_replaceEnterpriseRule)
+func newBillingRulesReplaceCmd() *cobra.Command {
 	var (
 		id          string
 		bodyRaw     string
@@ -2150,9 +2148,9 @@ func newBillingReplaceAll2Cmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "replace-all-2",
+		Use:         "replace",
 		Short:       "Overwrite an enterprise adjustment rule",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing replace-all-2 --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing replace-all-2 --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing replace-all-2 --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing rules replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing rules replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing rules replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_replaceEnterpriseRule", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

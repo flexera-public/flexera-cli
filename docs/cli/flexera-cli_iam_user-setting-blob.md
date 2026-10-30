@@ -32,6 +32,6 @@ User Setting Blob operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam user-setting-blob list](flexera-cli_iam_user-setting-blob_list.md)	 - Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings
-* [flexera-cli iam user-setting-blob replace](flexera-cli_iam_user-setting-blob_replace.md)	 - Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.
+* [flexera-cli iam user-setting-blob download-url](flexera-cli_iam_user-setting-blob_download-url.md)	 - Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings
+* [flexera-cli iam user-setting-blob upload-url](flexera-cli_iam_user-setting-blob_upload-url.md)	 - Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.
 

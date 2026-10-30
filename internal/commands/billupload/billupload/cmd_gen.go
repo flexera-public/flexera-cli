@@ -30,19 +30,17 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-upload",
 		Short: "BillUpload operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillUploadFilesCmd(),
-		newBillUploadOperationsCmd(),
-		newBillUploadCreateCmd(),
-		newBillUploadDeleteCmd(),
-		newBillUploadGetCmd(),
-		newBillUploadListCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"files"}, newBillUploadFilesCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillUploadOperationsCmd())
+	clipkg.AddCommandAt(c, nil, newBillUploadCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillUploadDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillUploadGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillUploadListCmd())
 	return c
 }
 
-// newBillUploadFilesCmd — POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId} (operationId: BillUpload_BillUpload_createFile)
-func newBillUploadFilesCmd() *cobra.Command {
+// newBillUploadFilesCreateCmd — POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId} (operationId: BillUpload_BillUpload_createFile)
+func newBillUploadFilesCreateCmd() *cobra.Command {
 	var (
 		billUploadID string
 		fileID       string
@@ -51,9 +49,9 @@ func newBillUploadFilesCmd() *cobra.Command {
 		yes          bool
 	)
 	c := &cobra.Command{
-		Use:         "files",
+		Use:         "create",
 		Short:       "POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json\n  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-upload files create --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json\n  flexera-cli bill-upload files create --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "BillUpload_BillUpload_createFile", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -108,7 +106,7 @@ func newBillUploadFilesCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -229,7 +227,7 @@ func newBillUploadOperationsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -347,7 +345,7 @@ func newBillUploadCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -470,7 +468,7 @@ func newBillUploadGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -529,7 +527,7 @@ func newBillUploadListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

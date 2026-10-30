@@ -28,17 +28,15 @@ func NewCmd() *cobra.Command {
 		Use:   "usage-group",
 		Short: "Usage Group operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newUsageGroupCreateCmd(),
-		newUsageGroupCostsAllCmd(),
-		newUsageGroupDeleteCmd(),
-		newUsageGroupCostsAll2Cmd(),
-		newUsageGroupGetCmd(),
-		newUsageGroupCostsAll3Cmd(),
-		newUsageGroupListCmd(),
-		newUsageGroupReplaceCmd(),
-		newUsageGroupCostsCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newUsageGroupCreateCmd())
+	clipkg.AddCommandAt(c, []string{"costs"}, newUsageGroupCostsCreateCmd())
+	clipkg.AddCommandAt(c, nil, newUsageGroupDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"costs"}, newUsageGroupCostsDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newUsageGroupGetCmd())
+	clipkg.AddCommandAt(c, []string{"costs"}, newUsageGroupCostsGetCmd())
+	clipkg.AddCommandAt(c, nil, newUsageGroupListCmd())
+	clipkg.AddCommandAt(c, nil, newUsageGroupReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"costs"}, newUsageGroupCostsReplaceCmd())
 	return c
 }
 
@@ -138,7 +136,7 @@ func newUsageGroupCreateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -160,8 +158,8 @@ func newUsageGroupCreateCmd() *cobra.Command {
 	return c
 }
 
-// newUsageGroupCostsAllCmd — POST /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs (operationId: Saas_Usage_Group_createCost)
-func newUsageGroupCostsAllCmd() *cobra.Command {
+// newUsageGroupCostsCreateCmd — POST /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs (operationId: Saas_Usage_Group_createCost)
+func newUsageGroupCostsCreateCmd() *cobra.Command {
 	var (
 		usageGroupID    string
 		bodyRaw         string
@@ -174,9 +172,9 @@ func newUsageGroupCostsAllCmd() *cobra.Command {
 		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:         "costs-all",
+		Use:         "create",
 		Short:       "Create a usage cost for the specified usage group",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs-all --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --body @request.json\n  flexera-cli saas usage-group costs-all --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas usage-group costs-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs create --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --body @request.json\n  flexera-cli saas usage-group costs create --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas usage-group costs create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_Usage_Group_createCost", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -268,7 +266,7 @@ func newUsageGroupCostsAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -351,8 +349,8 @@ func newUsageGroupDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newUsageGroupCostsAll2Cmd — DELETE /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_deleteCost)
-func newUsageGroupCostsAll2Cmd() *cobra.Command {
+// newUsageGroupCostsDeleteCmd — DELETE /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_deleteCost)
+func newUsageGroupCostsDeleteCmd() *cobra.Command {
 	var (
 		usageGroupID string
 		costID       string
@@ -360,9 +358,9 @@ func newUsageGroupCostsAll2Cmd() *cobra.Command {
 		yes          bool
 	)
 	c := &cobra.Command{
-		Use:         "costs-all-2",
+		Use:         "delete",
 		Short:       "Delete an existing usage cost for the specified Usage Cost object",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs-all-2 --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID\n  flexera-cli saas usage-group costs-all-2 --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs delete --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID\n  flexera-cli saas usage-group costs delete --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Saas_Usage_Group_deleteCost", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -449,7 +447,7 @@ func newUsageGroupGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -466,16 +464,16 @@ func newUsageGroupGetCmd() *cobra.Command {
 	return c
 }
 
-// newUsageGroupCostsAll3Cmd — GET /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_showCost)
-func newUsageGroupCostsAll3Cmd() *cobra.Command {
+// newUsageGroupCostsGetCmd — GET /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_showCost)
+func newUsageGroupCostsGetCmd() *cobra.Command {
 	var (
 		usageGroupID string
 		costID       string
 	)
 	c := &cobra.Command{
-		Use:         "costs-all-3",
+		Use:         "get",
 		Short:       "Show an existing usage cost for the specified Usage group object",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs-all-3 --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs get --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_Usage_Group_showCost", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -505,7 +503,7 @@ func newUsageGroupCostsAll3Cmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -562,7 +560,7 @@ func newUsageGroupListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasUsageGroupIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -573,7 +571,7 @@ func newUsageGroupListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -698,8 +696,8 @@ func newUsageGroupReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newUsageGroupCostsCmd — PUT /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_updateCost)
-func newUsageGroupCostsCmd() *cobra.Command {
+// newUsageGroupCostsReplaceCmd — PUT /saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId} (operationId: Saas_Usage_Group_updateCost)
+func newUsageGroupCostsReplaceCmd() *cobra.Command {
 	var (
 		usageGroupID    string
 		costID          string
@@ -713,9 +711,9 @@ func newUsageGroupCostsCmd() *cobra.Command {
 		interactive     bool
 	)
 	c := &cobra.Command{
-		Use:         "costs",
+		Use:         "replace",
 		Short:       "Update an existing cost for the specified usage group",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --body @request.json\n  flexera-cli saas usage-group costs --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas usage-group costs --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas usage-group costs replace --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --body @request.json\n  flexera-cli saas usage-group costs replace --org-id ORG_ID --usage-group-id USAGE_GROUP_ID --cost-id COST_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas usage-group costs replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_Usage_Group_updateCost", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

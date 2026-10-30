@@ -32,9 +32,7 @@ SCIM Config operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam scim-config resource-types](flexera-cli_iam_scim-config_resource-types.md)	 - Shows a supported resource type for an org.
-* [flexera-cli iam scim-config resource-types-all](flexera-cli_iam_scim-config_resource-types-all.md)	 - Returns a list of supported resource types for an org.
-* [flexera-cli iam scim-config schemas](flexera-cli_iam_scim-config_schemas.md)	 - Shows a supported schema for an org.
-* [flexera-cli iam scim-config schemas-all](flexera-cli_iam_scim-config_schemas-all.md)	 - Returns a list of supported schemas for an org.
+* [flexera-cli iam scim-config resource-types](flexera-cli_iam_scim-config_resource-types.md)	 - resource-types operations
+* [flexera-cli iam scim-config schemas](flexera-cli_iam_scim-config_schemas.md)	 - schemas operations
 * [flexera-cli iam scim-config service-provider-config](flexera-cli_iam_scim-config_service-provider-config.md)	 - Index an org's service provider configuration
 

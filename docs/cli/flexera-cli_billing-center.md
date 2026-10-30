@@ -39,8 +39,7 @@ Service id: billing_center_service
 
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli billing-center access-rules](flexera-cli_billing-center_access-rules.md)	 - AccessRules operations (generated from the unified OpenAPI spec)
-* [flexera-cli billing-center allocation-table](flexera-cli_billing-center_allocation-table.md)	 - Update a BC AllocationTable or create it if it doesn't exist
-* [flexera-cli billing-center allocation-table-all](flexera-cli_billing-center_allocation-table-all.md)	 - List the AllocationTable rules for a given BC
+* [flexera-cli billing-center allocation-table](flexera-cli_billing-center_allocation-table.md)	 - allocation-table operations
 * [flexera-cli billing-center billing-center-access-rules](flexera-cli_billing-center_billing-center-access-rules.md)	 - BillingCenterAccessRules operations (generated from the unified OpenAPI spec)
 * [flexera-cli billing-center create](flexera-cli_billing-center_create.md)	 - Create a new BillingCenter
 * [flexera-cli billing-center delete](flexera-cli_billing-center_delete.md)	 - Delete a BillingCenter

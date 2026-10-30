@@ -34,5 +34,5 @@ bill-months operations (generated from the unified OpenAPI spec)
 * [flexera-cli bill-analysis](flexera-cli_bill-analysis.md)	 - Bill Analysis API
 * [flexera-cli bill-analysis bill-months download](flexera-cli_bill-analysis_bill-months_download.md)	 - download bill-months
 * [flexera-cli bill-analysis bill-months list](flexera-cli_bill-analysis_bill-months_list.md)	 - search bill-months
-* [flexera-cli bill-analysis bill-months update](flexera-cli_bill-analysis_bill-months_update.md)	 - reprocess bill-months
+* [flexera-cli bill-analysis bill-months reprocess](flexera-cli_bill-analysis_bill-months_reprocess.md)	 - reprocess bill-months
 

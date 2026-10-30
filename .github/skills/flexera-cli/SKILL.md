@@ -9,7 +9,7 @@ description: 'Use when querying or automating Flexera One with flexera-cli: disc
 
 1. Check `flexera-cli --version` and `--help`; confirm task, organization, and zone.
 2. Discover with `flexera-cli cli search "<task>"`.
-   Add `--read-only` for reads and `--service <name>` to narrow. Paths are `<service> <resource> <action>`.
+   Add `--read-only` for reads and `--service <name>` to narrow. Use the command paths search returns.
 3. Inspect `flexera-cli <path> --help` and `flexera-cli cli schema <path>`.
    Resolve required inputs; replace synopsis placeholders and example IDs.
 4. Execute requested reads. For writes, preview with `--dry-run` where supported, then obtain approval of the exact target and payload, including creates.
@@ -19,9 +19,18 @@ description: 'Use when querying or automating Flexera One with flexera-cli: disc
 
 ## Command Layout and Services
 
-Commands follow a service-scoped hierarchy: `flexera-cli <service> <resource> <action> [flags]`.
+Commands follow a service-scoped hierarchy: `flexera-cli <service> <resource> [<sub-resource>...] <action> [flags]`.
 
 Full list of available services can be discovered using: `flexera-cli --help`
+
+- Actions are CRUD verbs (`list`, `get`, `create`, `update`, `replace`, `delete`) or a task verb
+  when CRUD would misdescribe the operation (`organization-invitation resend`,
+  `bill-months reprocess`, `saas data upload`, `recommendations update-status`,
+  `bill-connect aws validate`). Don't guess `update`; confirm with search or `--help`.
+- A collection-wide twin of an item action ends in `-all` (`refresh-token delete-all`); a project-scoped twin
+  sits under `project` (`credential oauth2-credential project replace`).
+- Older spellings (`saa-s-data`, `o-auth2-credential`, `from_csv`) still work as aliases, which
+  `--help` lists. Use the current paths that search returns.
 
 ## Resolving Command Inputs & Schemas
 

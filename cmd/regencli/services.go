@@ -19,8 +19,11 @@ type serviceCLI struct {
 	// service command (e.g. `budget list` instead of `budget budget list`).
 	Hoist string
 	// Rename overrides the derived command name of a tag, e.g. when it would
-	// collide with a hoisted leaf.
+	// collide with a hoisted leaf or kebab-casing splits an acronym
+	// ("SaaS" -> "saa-s").
 	Rename map[string]string
+	// TagAliases keeps earlier tag command spellings working after a Rename.
+	TagAliases map[string][]string
 }
 
 // serviceCommands maps every generated x-flexera-service id to its top-level
@@ -33,8 +36,10 @@ var serviceCommands = map[string]serviceCLI{
 		// The hoisted BillingCenters tag already has a per-center
 		// `allocation-table` leaf.
 		Rename: map[string]string{"AllocationTable": "org-allocation-table"}},
-	"budget":                 {Cmd: "budget", Hoist: "Budget"},
-	"cred":                   {Cmd: "credential", Aliases: []string{"cred"}, Hoist: "Credential"},
+	"budget": {Cmd: "budget", Hoist: "Budget"},
+	"cred": {Cmd: "credential", Aliases: []string{"cred"}, Hoist: "Credential",
+		Rename:     map[string]string{"AWS STS Credential": "aws-sts-credential", "OAuth2 Credential": "oauth2-credential"},
+		TagAliases: map[string][]string{"AWS STS Credential": {"awssts-credential"}, "OAuth2 Credential": {"o-auth2-credential"}}},
 	"divnt":                  {Cmd: "data-inventory", Aliases: []string{"divnt"}},
 	"finops_billing":         {Cmd: "finops-billing"},
 	"finops_customizations":  {Cmd: "finops-customizations"},
@@ -45,9 +50,13 @@ var serviceCommands = map[string]serviceCLI{
 	"optima_recommendations": {Cmd: "recommendations", Aliases: []string{"optima-recommendations"}, Hoist: "Recommendations"},
 	"policy":                 {Cmd: "policy"},
 	"risk":                   {Cmd: "risk"},
-	"saas":                   {Cmd: "saas"},
-	"uobs":                   {Cmd: "unified-onboarding", Aliases: []string{"uobs"}},
-	"vis":                    {Cmd: "it-visibility", Aliases: []string{"vis"}},
+	"saas": {Cmd: "saas",
+		Rename:     map[string]string{"SaaS Data": "data"},
+		TagAliases: map[string][]string{"SaaS Data": {"saas-data", "saa-s-data"}}},
+	"uobs": {Cmd: "unified-onboarding", Aliases: []string{"uobs"},
+		Rename:     map[string]string{"SaaS Connector": "saas-connector", "SaaS Onboarding": "saas-onboarding"},
+		TagAliases: map[string][]string{"SaaS Connector": {"saa-s-connector"}, "SaaS Onboarding": {"saa-s-onboarding"}}},
+	"vis": {Cmd: "it-visibility", Aliases: []string{"vis"}},
 }
 
 // nestedTags places tags beneath a sibling tag of the same service instead of
@@ -203,6 +212,7 @@ func planTags(specData []byte) ([]genTag, error) {
 				Service: id,
 				Pkg:     path.Join(servicePkg, uniquePkg(cleanIdent(tag), usedPkg)),
 				Cmd:     cmd,
+				Aliases: cli.TagAliases[tag],
 				Group:   group,
 			}
 			planned[tag] = &t
@@ -213,6 +223,17 @@ func planTags(specData []byte) ([]genTag, error) {
 		for tag := range cli.Rename {
 			if planned[tag] == nil {
 				return nil, fmt.Errorf("service %q renames unknown tag %q", id, tag)
+			}
+		}
+		for tag, aliases := range cli.TagAliases {
+			if planned[tag] == nil {
+				return nil, fmt.Errorf("service %q aliases unknown tag %q", id, tag)
+			}
+			for _, alias := range aliases {
+				if other, dup := cmdOwner[alias]; dup {
+					return nil, fmt.Errorf("service %q tag %q alias %q collides with tag %q", id, tag, alias, other)
+				}
+				cmdOwner[alias] = tag
 			}
 		}
 		for _, tag := range serviceTags {

@@ -32,7 +32,7 @@ Query operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli it-visibility](flexera-cli_it-visibility.md)	 - IT Visibility Insights API
+* [flexera-cli it-visibility query download](flexera-cli_it-visibility_query_download.md)	 - Download query results
+* [flexera-cli it-visibility query execute](flexera-cli_it-visibility_query_execute.md)	 - Execute a query on the delta export data
 * [flexera-cli it-visibility query get](flexera-cli_it-visibility_query_get.md)	 - Show an executed query
-* [flexera-cli it-visibility query get-all](flexera-cli_it-visibility_query_get-all.md)	 - Execute a query on the delta export data
-* [flexera-cli it-visibility query list](flexera-cli_it-visibility_query_list.md)	 - Download query results
 

@@ -22,20 +22,18 @@ var (
 	_ = strings.TrimSpace
 )
 
-// NewCmd builds the "o-auth2-credential" command tree.
+// NewCmd builds the "oauth2-credential" command tree.
 func NewCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "o-auth2-credential",
+		Use:   "oauth2-credential",
 		Short: "OAuth2 Credential operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newOAuth2CredentialGetCmd(),
-		newOAuth2CredentialGetProjectCmd(),
-		newOAuth2CredentialReplaceCmd(),
-		newOAuth2CredentialReplaceProjectCmd(),
-		newOAuth2CredentialUpdateCmd(),
-		newOAuth2CredentialUpdateProjectCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newOAuth2CredentialGetCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newOAuth2CredentialProjectGetCmd())
+	clipkg.AddCommandAt(c, nil, newOAuth2CredentialReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newOAuth2CredentialProjectReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newOAuth2CredentialUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newOAuth2CredentialProjectUpdateCmd())
 	return c
 }
 
@@ -47,7 +45,7 @@ func newOAuth2CredentialGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Show a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential get --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_show_org", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,7 +72,7 @@ func newOAuth2CredentialGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -91,16 +89,16 @@ func newOAuth2CredentialGetCmd() *cobra.Command {
 	return c
 }
 
-// newOAuth2CredentialGetProjectCmd — GET /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_show_project)
-func newOAuth2CredentialGetProjectCmd() *cobra.Command {
+// newOAuth2CredentialProjectGetCmd — GET /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_show_project)
+func newOAuth2CredentialProjectGetCmd() *cobra.Command {
 	var (
 		projectID int64
 		id        string
 	)
 	c := &cobra.Command{
-		Use:         "get-project",
+		Use:         "get",
 		Short:       "Show a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential get-project --project-id PROJECT_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential project get --project-id PROJECT_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_show_project", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -127,7 +125,7 @@ func newOAuth2CredentialGetProjectCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -161,7 +159,7 @@ func newOAuth2CredentialReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Create a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential o-auth2-credential replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential o-auth2-credential replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential oauth2-credential replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential oauth2-credential replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_create_org", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -269,8 +267,8 @@ func newOAuth2CredentialReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newOAuth2CredentialReplaceProjectCmd — PUT /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_create_project)
-func newOAuth2CredentialReplaceProjectCmd() *cobra.Command {
+// newOAuth2CredentialProjectReplaceCmd — PUT /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_create_project)
+func newOAuth2CredentialProjectReplaceCmd() *cobra.Command {
 	var (
 		projectID    int64
 		id           string
@@ -284,9 +282,9 @@ func newOAuth2CredentialReplaceProjectCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "replace-project",
+		Use:         "replace",
 		Short:       "Create a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential replace-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential o-auth2-credential replace-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential o-auth2-credential replace-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential project replace --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential oauth2-credential project replace --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential oauth2-credential project replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_create_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -409,7 +407,7 @@ func newOAuth2CredentialUpdateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "update",
 		Short:       "Update a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential o-auth2-credential update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential o-auth2-credential update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential oauth2-credential update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential oauth2-credential update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_update_org", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -517,8 +515,8 @@ func newOAuth2CredentialUpdateCmd() *cobra.Command {
 	return c
 }
 
-// newOAuth2CredentialUpdateProjectCmd — PATCH /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_update_project)
-func newOAuth2CredentialUpdateProjectCmd() *cobra.Command {
+// newOAuth2CredentialProjectUpdateCmd — PATCH /cred/v2/projects/{projectId}/credentials/oauth2/{id} (operationId: Cred_OAuth2_Credential_update_project)
+func newOAuth2CredentialProjectUpdateCmd() *cobra.Command {
 	var (
 		projectID    int64
 		id           string
@@ -532,9 +530,9 @@ func newOAuth2CredentialUpdateProjectCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "update-project",
+		Use:         "update",
 		Short:       "Update a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential o-auth2-credential update-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential o-auth2-credential update-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential o-auth2-credential update-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential oauth2-credential project update --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential oauth2-credential project update --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential oauth2-credential project update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_OAuth2_Credential_update_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

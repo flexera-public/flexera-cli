@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "scim-user",
 		Short: "SCIM User operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSCIMUserCreateCmd(),
-		newSCIMUserDeleteCmd(),
-		newSCIMUserGetCmd(),
-		newSCIMUserListCmd(),
-		newSCIMUserReplaceCmd(),
-		newSCIMUserUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSCIMUserCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMUserDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMUserGetCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMUserListCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMUserReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMUserUpdateCmd())
 	return c
 }
 
@@ -139,7 +137,7 @@ func newSCIMUserCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -255,7 +253,7 @@ func newSCIMUserGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -309,7 +307,7 @@ func newSCIMUserListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -430,7 +428,7 @@ func newSCIMUserReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -550,7 +548,7 @@ func newSCIMUserUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

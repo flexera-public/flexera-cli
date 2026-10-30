@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "customization-type",
 		Short: "Customization Type operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomizationTypeGetCmd(),
-		newCustomizationTypeListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomizationTypeGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomizationTypeListCmd())
 	return c
 }
 
@@ -76,7 +74,7 @@ func newCustomizationTypeGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -133,7 +131,7 @@ func newCustomizationTypeListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.IamCustomizationTypeIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -144,7 +142,7 @@ func newCustomizationTypeListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

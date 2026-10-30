@@ -28,20 +28,18 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-aws",
 		Short: "Bill Connect - AWS operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectAWSIamRoleAllCmd(),
-		newBillConnectAWSIamUserAllCmd(),
-		newBillConnectAWSDeleteCmd(),
-		newBillConnectAWSGetCmd(),
-		newBillConnectAWSListCmd(),
-		newBillConnectAWSIamRoleCmd(),
-		newBillConnectAWSIamUserCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"iam-role"}, newBillConnectAWSIamRoleCreateCmd())
+	clipkg.AddCommandAt(c, []string{"iam-user"}, newBillConnectAWSIamUserCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAWSDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAWSGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAWSValidateCmd())
+	clipkg.AddCommandAt(c, []string{"iam-role"}, newBillConnectAWSIamRoleUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"iam-user"}, newBillConnectAWSIamUserUpdateCmd())
 	return c
 }
 
-// newBillConnectAWSIamRoleAllCmd — POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role (operationId: FinopsOnboarding_Bill_Connect_AWS_createIAMRole)
-func newBillConnectAWSIamRoleAllCmd() *cobra.Command {
+// newBillConnectAWSIamRoleCreateCmd — POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role (operationId: FinopsOnboarding_Bill_Connect_AWS_createIAMRole)
+func newBillConnectAWSIamRoleCreateCmd() *cobra.Command {
 	var (
 		bodyRaw             string
 		fBillAccountID      string
@@ -56,9 +54,9 @@ func newBillConnectAWSIamRoleAllCmd() *cobra.Command {
 		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:         "iam-role-all",
+		Use:         "create",
 		Short:       "Creates an AWS bill connect using the IAM Role-based authorization method",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-role-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-role-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-role-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-role create --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-role create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-role create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMRole", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -156,7 +154,7 @@ func newBillConnectAWSIamRoleAllCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -183,8 +181,8 @@ func newBillConnectAWSIamRoleAllCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAWSIamUserAllCmd — POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user (operationId: FinopsOnboarding_Bill_Connect_AWS_createIAMUser)
-func newBillConnectAWSIamUserAllCmd() *cobra.Command {
+// newBillConnectAWSIamUserCreateCmd — POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user (operationId: FinopsOnboarding_Bill_Connect_AWS_createIAMUser)
+func newBillConnectAWSIamUserCreateCmd() *cobra.Command {
 	var (
 		bodyRaw          string
 		fAccessKey       string
@@ -199,9 +197,9 @@ func newBillConnectAWSIamUserAllCmd() *cobra.Command {
 		interactive      bool
 	)
 	c := &cobra.Command{
-		Use:         "iam-user-all",
+		Use:         "create",
 		Short:       "Create an AWS bill connect using legacy IAM User-based authorization method",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-user-all --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-user-all --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-user-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-user create --org-id ORG_ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-user create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-user create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_AWS_createIAMUser", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -299,7 +297,7 @@ func newBillConnectAWSIamUserAllCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -419,7 +417,7 @@ func newBillConnectAWSGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -436,15 +434,16 @@ func newBillConnectAWSGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAWSListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_AWS_validate)
-func newBillConnectAWSListCmd() *cobra.Command {
+// newBillConnectAWSValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_AWS_validate)
+func newBillConnectAWSValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate credentials stored for AWS Bill Connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_AWS_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -471,7 +470,7 @@ func newBillConnectAWSListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -488,8 +487,8 @@ func newBillConnectAWSListCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAWSIamRoleCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role/{id} (operationId: FinopsOnboarding_Bill_Connect_AWS_updateIAMRole)
-func newBillConnectAWSIamRoleCmd() *cobra.Command {
+// newBillConnectAWSIamRoleUpdateCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role/{id} (operationId: FinopsOnboarding_Bill_Connect_AWS_updateIAMRole)
+func newBillConnectAWSIamRoleUpdateCmd() *cobra.Command {
 	var (
 		id                  string
 		bodyRaw             string
@@ -504,9 +503,9 @@ func newBillConnectAWSIamRoleCmd() *cobra.Command {
 		interactive         bool
 	)
 	c := &cobra.Command{
-		Use:         "iam-role",
+		Use:         "update",
 		Short:       "Update an AWS bill connect that was created using AWS IAM Role-based create method",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-role --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-role --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-role --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-role update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-role update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-role update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMRole", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -622,8 +621,8 @@ func newBillConnectAWSIamRoleCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAWSIamUserCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user/{id} (operationId: FinopsOnboarding_Bill_Connect_AWS_updateIAMUser)
-func newBillConnectAWSIamUserCmd() *cobra.Command {
+// newBillConnectAWSIamUserUpdateCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user/{id} (operationId: FinopsOnboarding_Bill_Connect_AWS_updateIAMUser)
+func newBillConnectAWSIamUserUpdateCmd() *cobra.Command {
 	var (
 		id               string
 		bodyRaw          string
@@ -637,9 +636,9 @@ func newBillConnectAWSIamUserCmd() *cobra.Command {
 		interactive      bool
 	)
 	c := &cobra.Command{
-		Use:         "iam-user",
+		Use:         "update",
 		Short:       "Update an AWS bill connect that was created using legacy AWS IAM User-based create method",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-user --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-user --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-user --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect aws iam-user update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-onboarding bill-connect aws iam-user update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-onboarding bill-connect aws iam-user update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_AWS_updateIAMUser", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "saml2-domain",
 		Short: "SAML2 Domain operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSAML2DomainVerifyCmd(),
-		newSAML2DomainCreateCmd(),
-		newSAML2DomainDeleteCmd(),
-		newSAML2DomainGetCmd(),
-		newSAML2DomainListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSAML2DomainVerifyCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2DomainRegisterCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2DomainDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2DomainGetCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2DomainListCmd())
 	return c
 }
 
@@ -90,7 +88,7 @@ func newSAML2DomainVerifyCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -110,8 +108,8 @@ func newSAML2DomainVerifyCmd() *cobra.Command {
 	return c
 }
 
-// newSAML2DomainCreateCmd — POST /iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/register (operationId: Iam_SAML2_Domain_register)
-func newSAML2DomainCreateCmd() *cobra.Command {
+// newSAML2DomainRegisterCmd — POST /iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/register (operationId: Iam_SAML2_Domain_register)
+func newSAML2DomainRegisterCmd() *cobra.Command {
 	var (
 		identityProviderID string
 		bodyRaw            string
@@ -121,9 +119,9 @@ func newSAML2DomainCreateCmd() *cobra.Command {
 		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:         "create",
+		Use:         "register",
 		Short:       "Register a new IdP domain",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam saml2-domain create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json\n  flexera-cli iam saml2-domain create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam saml2-domain create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam saml2-domain register --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json\n  flexera-cli iam saml2-domain register --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam saml2-domain register --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Domain_register", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -206,7 +204,7 @@ func newSAML2DomainCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -330,7 +328,7 @@ func newSAML2DomainGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -383,7 +381,7 @@ func newSAML2DomainListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

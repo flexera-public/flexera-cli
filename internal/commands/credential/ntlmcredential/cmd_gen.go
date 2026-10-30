@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "ntlm-credential",
 		Short: "NTLM Credential operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newNTLMCredentialGetCmd(),
-		newNTLMCredentialGetProjectCmd(),
-		newNTLMCredentialReplaceCmd(),
-		newNTLMCredentialReplaceProjectCmd(),
-		newNTLMCredentialUpdateCmd(),
-		newNTLMCredentialUpdateProjectCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newNTLMCredentialGetCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newNTLMCredentialProjectGetCmd())
+	clipkg.AddCommandAt(c, nil, newNTLMCredentialReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newNTLMCredentialProjectReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newNTLMCredentialUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newNTLMCredentialProjectUpdateCmd())
 	return c
 }
 
@@ -74,7 +72,7 @@ func newNTLMCredentialGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -91,16 +89,16 @@ func newNTLMCredentialGetCmd() *cobra.Command {
 	return c
 }
 
-// newNTLMCredentialGetProjectCmd — GET /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_show_project)
-func newNTLMCredentialGetProjectCmd() *cobra.Command {
+// newNTLMCredentialProjectGetCmd — GET /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_show_project)
+func newNTLMCredentialProjectGetCmd() *cobra.Command {
 	var (
 		projectID int64
 		id        string
 	)
 	c := &cobra.Command{
-		Use:         "get-project",
+		Use:         "get",
 		Short:       "Show a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential get-project --project-id PROJECT_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential project get --project-id PROJECT_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_NTLM_Credential_show_project", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -127,7 +125,7 @@ func newNTLMCredentialGetProjectCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -269,8 +267,8 @@ func newNTLMCredentialReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newNTLMCredentialReplaceProjectCmd — PUT /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_create_project)
-func newNTLMCredentialReplaceProjectCmd() *cobra.Command {
+// newNTLMCredentialProjectReplaceCmd — PUT /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_create_project)
+func newNTLMCredentialProjectReplaceCmd() *cobra.Command {
 	var (
 		projectID    int64
 		id           string
@@ -284,9 +282,9 @@ func newNTLMCredentialReplaceProjectCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "replace-project",
+		Use:         "replace",
 		Short:       "Create a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential replace-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential ntlm-credential replace-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential ntlm-credential replace-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential project replace --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential ntlm-credential project replace --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential ntlm-credential project replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_NTLM_Credential_create_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -517,8 +515,8 @@ func newNTLMCredentialUpdateCmd() *cobra.Command {
 	return c
 }
 
-// newNTLMCredentialUpdateProjectCmd — PATCH /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_update_project)
-func newNTLMCredentialUpdateProjectCmd() *cobra.Command {
+// newNTLMCredentialProjectUpdateCmd — PATCH /cred/v2/projects/{projectId}/credentials/ntlm/{id} (operationId: Cred_NTLM_Credential_update_project)
+func newNTLMCredentialProjectUpdateCmd() *cobra.Command {
 	var (
 		projectID    int64
 		id           string
@@ -532,9 +530,9 @@ func newNTLMCredentialUpdateProjectCmd() *cobra.Command {
 		interactive  bool
 	)
 	c := &cobra.Command{
-		Use:         "update-project",
+		Use:         "update",
 		Short:       "Update a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential update-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential ntlm-credential update-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential ntlm-credential update-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential ntlm-credential project update --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential ntlm-credential project update --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential ntlm-credential project update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_NTLM_Credential_update_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

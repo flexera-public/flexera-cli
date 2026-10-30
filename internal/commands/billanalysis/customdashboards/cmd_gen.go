@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "custom-dashboards",
 		Short: "custom_dashboards operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomDashboardsCreateCmd(),
-		newCustomDashboardsDeleteCmd(),
-		newCustomDashboardsGetCmd(),
-		newCustomDashboardsListCmd(),
-		newCustomDashboardsReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomDashboardsCreateCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDashboardsDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDashboardsGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDashboardsListCmd())
+	clipkg.AddCommandAt(c, nil, newCustomDashboardsReplaceCmd())
 	return c
 }
 
@@ -139,7 +137,7 @@ func newCustomDashboardsCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -259,7 +257,7 @@ func newCustomDashboardsGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -315,7 +313,7 @@ func newCustomDashboardsListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -438,7 +436,7 @@ func newCustomDashboardsReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

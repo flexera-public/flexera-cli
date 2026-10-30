@@ -1,42 +1,11 @@
 ## flexera-cli bill-upload files
 
-POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}
-
-### Synopsis
-
-POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}
-
-Uploads a file, adding it to the given bill upload.
-Note, by default, you can only upload 500 files max per bill upload, and each must be smaller than 1000 MB.
-If the upload is successful, a MD5 hash is returned, so that you can verify its integrity.
-
-
-**Required security scopes for JWTAuth**:
-  * `optima:bill_upload:create+optima:bill_connect:create+common:org:own`
-
-Request body: The raw content of the file to upload
-
-```
-flexera-cli bill-upload files [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json
-  flexera-cli bill-upload files --org-id ORG_ID --bill-upload-id BILL_UPLOAD_ID --file-id FILE_ID --body @request.json --dry-run
-```
+files operations
 
 ### Options
 
 ```
-      --bill-upload-id string   billUploadId (path, required); The identifier of the bill upload; required by API; format: uuid
-      --body string             raw request body (@file | @-)
-      --dry-run                 print the planned operation as JSON and exit without calling the API
-      --file-id string          fileId (path, required); The basename of the uploaded file (100 characters max), supported extensions: .csv, .json, .jsonl, gzipped or not; required by API
-  -h, --help                    help for files
-      --yes                     confirm the operation (required for destructive ops)
+  -h, --help   help for files
 ```
 
 ### Options inherited from parent commands
@@ -63,4 +32,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli bill-upload](flexera-cli_bill-upload.md)	 - Bill Upload API
+* [flexera-cli bill-upload files create](flexera-cli_bill-upload_files_create.md)	 - POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}
 

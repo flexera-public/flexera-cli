@@ -32,6 +32,6 @@ Export (Retired) operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli it-visibility](flexera-cli_it-visibility.md)	 - IT Visibility Insights API
-* [flexera-cli it-visibility export-retired get](flexera-cli_it-visibility_export-retired_get.md)	 - Download specified export file
+* [flexera-cli it-visibility export-retired files](flexera-cli_it-visibility_export-retired_files.md)	 - files operations
 * [flexera-cli it-visibility export-retired list](flexera-cli_it-visibility_export-retired_list.md)	 - List all inventory exports
 

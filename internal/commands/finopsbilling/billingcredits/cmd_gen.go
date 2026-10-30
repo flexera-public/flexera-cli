@@ -29,19 +29,17 @@ func NewCmd() *cobra.Command {
 		Use:   "billing-credits",
 		Short: "Billing Credits operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillingCreditsCreateCmd(),
-		newBillingCreditsDeleteCmd(),
-		newBillingCreditsGetCmd(),
-		newBillingCreditsAssignmentsCmd(),
-		newBillingCreditsVendorCreditsCmd(),
-		newBillingCreditsReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"assignments"}, newBillingCreditsAssignmentsCreateCmd())
+	clipkg.AddCommandAt(c, []string{"assignments"}, newBillingCreditsAssignmentsDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"assignments"}, newBillingCreditsAssignmentsGetCmd())
+	clipkg.AddCommandAt(c, []string{"assignments"}, newBillingCreditsAssignmentsListCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCreditsVendorCreditsCmd())
+	clipkg.AddCommandAt(c, []string{"assignments"}, newBillingCreditsAssignmentsReplaceCmd())
 	return c
 }
 
-// newBillingCreditsCreateCmd — POST /finops-billing/v1/orgs/{orgId}/credit/assignments (operationId: FinopsBilling_Billing_Credits_createCreditAssignment)
-func newBillingCreditsCreateCmd() *cobra.Command {
+// newBillingCreditsAssignmentsCreateCmd — POST /finops-billing/v1/orgs/{orgId}/credit/assignments (operationId: FinopsBilling_Billing_Credits_createCreditAssignment)
+func newBillingCreditsAssignmentsCreateCmd() *cobra.Command {
 	var (
 		bodyRaw                   string
 		fAction                   string
@@ -60,7 +58,7 @@ func newBillingCreditsCreateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "create",
 		Short:       "Create a credit assignment",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing-credits create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing-credits create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments create --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing billing-credits assignments create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing-credits assignments create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Credits_createCreditAssignment", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -164,7 +162,7 @@ func newBillingCreditsCreateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -193,8 +191,8 @@ func newBillingCreditsCreateCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreditsDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_deleteCreditAssignment)
-func newBillingCreditsDeleteCmd() *cobra.Command {
+// newBillingCreditsAssignmentsDeleteCmd — DELETE /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_deleteCreditAssignment)
+func newBillingCreditsAssignmentsDeleteCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
@@ -203,7 +201,7 @@ func newBillingCreditsDeleteCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "delete",
 		Short:       "Remove a credit assignment",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing-credits delete --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing-credits assignments delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Credits_deleteCreditAssignment", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -256,15 +254,15 @@ func newBillingCreditsDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreditsGetCmd — GET /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_showCreditAssignment)
-func newBillingCreditsGetCmd() *cobra.Command {
+// newBillingCreditsAssignmentsGetCmd — GET /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_showCreditAssignment)
+func newBillingCreditsAssignmentsGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Show a credit assignment",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits get --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Credits_showCreditAssignment", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -295,7 +293,7 @@ func newBillingCreditsGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -312,8 +310,8 @@ func newBillingCreditsGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreditsAssignmentsCmd — GET /finops-billing/v1/orgs/{orgId}/credit/assignments (operationId: FinopsBilling_Billing_Credits_indexCreditAssignments)
-func newBillingCreditsAssignmentsCmd() *cobra.Command {
+// newBillingCreditsAssignmentsListCmd — GET /finops-billing/v1/orgs/{orgId}/credit/assignments (operationId: FinopsBilling_Billing_Credits_indexCreditAssignments)
+func newBillingCreditsAssignmentsListCmd() *cobra.Command {
 	var (
 		filter     string
 		orderBy    string
@@ -322,9 +320,9 @@ func newBillingCreditsAssignmentsCmd() *cobra.Command {
 		skipToken  string
 	)
 	c := &cobra.Command{
-		Use:         "assignments",
+		Use:         "list",
 		Short:       "Index credit assignments",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Credits_indexCreditAssignments", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -356,7 +354,7 @@ func newBillingCreditsAssignmentsCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingCreditsIndexCreditAssignmentsResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -367,7 +365,7 @@ func newBillingCreditsAssignmentsCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -433,7 +431,7 @@ func newBillingCreditsVendorCreditsCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsBillingBillingCreditsIndexVendorCreditsResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -444,7 +442,7 @@ func newBillingCreditsVendorCreditsCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -466,8 +464,8 @@ func newBillingCreditsVendorCreditsCmd() *cobra.Command {
 	return c
 }
 
-// newBillingCreditsReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_replaceCreditAssignment)
-func newBillingCreditsReplaceCmd() *cobra.Command {
+// newBillingCreditsAssignmentsReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/credit/assignments/{id} (operationId: FinopsBilling_Billing_Credits_replaceCreditAssignment)
+func newBillingCreditsAssignmentsReplaceCmd() *cobra.Command {
 	var (
 		id                        string
 		bodyRaw                   string
@@ -487,7 +485,7 @@ func newBillingCreditsReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Overwrite a credit assignment",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing-credits replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing-credits replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-credits assignments replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli finops-billing billing-credits assignments replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing billing-credits assignments replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Credits_replaceCreditAssignment", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "msp-customer",
 		Short: "MSP Customer operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMSPCustomerCreateCmd(),
-		newMSPCustomerDeleteCmd(),
-		newMSPCustomerGetCmd(),
-		newMSPCustomerListCmd(),
-		newMSPCustomerUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newMSPCustomerCreateCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerGetCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerListCmd())
+	clipkg.AddCommandAt(c, nil, newMSPCustomerUpdateCmd())
 	return c
 }
 
@@ -245,7 +243,7 @@ func newMSPCustomerGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -300,7 +298,7 @@ func newMSPCustomerListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

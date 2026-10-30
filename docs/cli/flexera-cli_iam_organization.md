@@ -33,5 +33,5 @@ Organization operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
 * [flexera-cli iam organization get](flexera-cli_iam_organization_get.md)	 - Show an org
-* [flexera-cli iam organization msp](flexera-cli_iam_organization_msp.md)	 - Show an MSP org
+* [flexera-cli iam organization msp](flexera-cli_iam_organization_msp.md)	 - msp operations
 

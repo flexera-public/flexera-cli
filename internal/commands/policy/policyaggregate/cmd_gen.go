@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "policy-aggregate",
 		Short: "Policy Aggregate operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newPolicyAggregateCreateCmd(),
-		newPolicyAggregateDeleteCmd(),
-		newPolicyAggregateGetCmd(),
-		newPolicyAggregateListCmd(),
-		newPolicyAggregateUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newPolicyAggregateCreateCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyAggregateDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyAggregateGetCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyAggregateListCmd())
+	clipkg.AddCommandAt(c, nil, newPolicyAggregateUpdateCmd())
 	return c
 }
 
@@ -276,7 +274,7 @@ func newPolicyAggregateGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -338,7 +336,7 @@ func newPolicyAggregateListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.PolicyPolicyAggregateIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -349,7 +347,7 @@ func newPolicyAggregateListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

@@ -28,12 +28,10 @@ func NewCmd() *cobra.Command {
 		Use:   "anomalies",
 		Short: "anomalies operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAnomaliesReportCmd(),
-		newAnomaliesAnomaliesCmd(),
-		newAnomaliesListCmd(),
-		newAnomaliesAggregatedCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAnomaliesReportCmd())
+	clipkg.AddCommandAt(c, nil, newAnomaliesGetCmd())
+	clipkg.AddCommandAt(c, nil, newAnomaliesListCmd())
+	clipkg.AddCommandAt(c, nil, newAnomaliesAggregatedCmd())
 	return c
 }
 
@@ -131,7 +129,7 @@ func newAnomaliesReportCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -158,15 +156,15 @@ func newAnomaliesReportCmd() *cobra.Command {
 	return c
 }
 
-// newAnomaliesAnomaliesCmd — GET /bill-analysis/orgs/{orgId}/v2/anomalies/{id} (operationId: BillAnalysis_anomalies_summary)
-func newAnomaliesAnomaliesCmd() *cobra.Command {
+// newAnomaliesGetCmd — GET /bill-analysis/orgs/{orgId}/v2/anomalies/{id} (operationId: BillAnalysis_anomalies_summary)
+func newAnomaliesGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "anomalies",
+		Use:         "get",
 		Short:       "summary anomalies",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis anomalies anomalies --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli bill-analysis anomalies get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "BillAnalysis_anomalies_summary", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -193,7 +191,7 @@ func newAnomaliesAnomaliesCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -292,7 +290,7 @@ func newAnomaliesListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -382,7 +380,7 @@ func newAnomaliesAggregatedCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

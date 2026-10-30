@@ -115,3 +115,38 @@ func TestOfflineStyleEnvironmentAndFlagPrecedence(t *testing.T) {
 		t.Fatalf("flag did not override env: %d %s %s", code, out, stderr)
 	}
 }
+
+func TestRenamedCommandsKeepLegacyPaths(t *testing.T) {
+	var out, errOut bytes.Buffer
+	root, _ := app.NewRootCmd(&out, &errOut, os.Getenv, offlineDoer{t}, "test")
+	for canonical, legacy := range map[string]string{
+		"saas data upload":                                             "saas saa-s-data update",
+		"credential aws-sts-credential get":                            "credential awssts-credential get",
+		"credential oauth2-credential project replace":                 "credential o-auth2-credential project replace",
+		"unified-onboarding saas-connector list":                       "unified-onboarding saa-s-connector list",
+		"unified-onboarding saas-onboarding validate":                  "unified-onboarding saa-s-onboarding validate",
+		"recommendations update-status":                                "recommendations updatestatus",
+		"iam organization-invitation resend":                           "iam organization-invitation update",
+		"bill-analysis bill-months reprocess":                          "bill-analysis bill-months update",
+		"finops-onboarding processing-history reprocess":               "finops-onboarding processing-history update",
+		"finops-billing shared-cost-rules reorder":                     "finops-billing shared-cost-rules operations-reorder",
+		"it-visibility query execute":                                  "it-visibility query get-all",
+		"iam contracts update-last-seen":                               "iam contracts update",
+		"iam contracts set-activation":                                 "iam contracts activation",
+		"iam user-profile get":                                         "iam user-profile list",
+		"iam user-setting-blob download-url":                           "iam user-setting-blob list",
+		"iam user-setting-blob upload-url":                             "iam user-setting-blob replace",
+		"finops-onboarding bill-connect validate-all":                  "finops-onboarding bill-connect validations",
+		"finops-onboarding bill-connect gcp validate":                  "finops-onboarding bill-connect gcp validation",
+		"finops-customizations rule-based-dimension from-csv generate": "finops-customizations rule-based-dimension from_csv generate",
+	} {
+		want, _, err := root.Find(strings.Fields(canonical))
+		if err != nil || want.CommandPath() != "flexera-cli "+canonical {
+			t.Errorf("canonical %q: got %v, %v", canonical, want.CommandPath(), err)
+			continue
+		}
+		if got, _, err := root.Find(strings.Fields(legacy)); err != nil || got != want {
+			t.Errorf("legacy %q resolved to %v, %v; want %q", legacy, got.CommandPath(), err, canonical)
+		}
+	}
+}

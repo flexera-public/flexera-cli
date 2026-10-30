@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-common-bill-ingestion",
 		Short: "Bill Connect - Common Bill Ingestion operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectCommonBillIngestionCreateCmd(),
-		newBillConnectCommonBillIngestionDeleteCmd(),
-		newBillConnectCommonBillIngestionGetCmd(),
-		newBillConnectCommonBillIngestionListCmd(),
-		newBillConnectCommonBillIngestionUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectCommonBillIngestionCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectCommonBillIngestionDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectCommonBillIngestionGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectCommonBillIngestionValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectCommonBillIngestionUpdateCmd())
 	return c
 }
 
@@ -138,7 +136,7 @@ func newBillConnectCommonBillIngestionCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -254,7 +252,7 @@ func newBillConnectCommonBillIngestionGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -271,15 +269,16 @@ func newBillConnectCommonBillIngestionGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectCommonBillIngestionListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/cbi/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_validate)
-func newBillConnectCommonBillIngestionListCmd() *cobra.Command {
+// newBillConnectCommonBillIngestionValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/cbi/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_validate)
+func newBillConnectCommonBillIngestionValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate the credentials stored for an cbi bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect common-bill-ingestion list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect common-bill-ingestion validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Common_Bill_Ingestion_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -306,7 +305,7 @@ func newBillConnectCommonBillIngestionListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
