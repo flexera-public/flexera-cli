@@ -28,29 +28,27 @@ func NewCmd() *cobra.Command {
 		Use:   "service-account-client",
 		Short: "Service Account Client operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newServiceAccountClientClientsCmd(),
-		newServiceAccountClientClientSecretAllCmd(),
-		newServiceAccountClientDeleteCmd(),
-		newServiceAccountClientClientSecretCmd(),
-		newServiceAccountClientGetCmd(),
-		newServiceAccountClientListCmd(),
-		newServiceAccountClientClientSecretsCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newServiceAccountClientCreateCmd())
+	clipkg.AddCommandAt(c, []string{"client-secret"}, newServiceAccountClientClientSecretRotateCmd())
+	clipkg.AddCommandAt(c, nil, newServiceAccountClientDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"client-secret"}, newServiceAccountClientClientSecretDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newServiceAccountClientGetCmd())
+	clipkg.AddCommandAt(c, nil, newServiceAccountClientListCmd())
+	clipkg.AddCommandAt(c, nil, newServiceAccountClientClientSecretsCmd())
 	return c
 }
 
-// newServiceAccountClientClientsCmd — POST /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients (operationId: Iam_Service_Account_Client_Create)
-func newServiceAccountClientClientsCmd() *cobra.Command {
+// newServiceAccountClientCreateCmd — POST /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients (operationId: Iam_Service_Account_Client_Create)
+func newServiceAccountClientCreateCmd() *cobra.Command {
 	var (
 		serviceAccountID int
 		dryRun           bool
 		yes              bool
 	)
 	c := &cobra.Command{
-		Use:         "clients",
+		Use:         "create",
 		Short:       "Create a service account client",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client clients --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID\n  flexera-cli iam service-account-client clients --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client create --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID\n  flexera-cli iam service-account-client create --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Create", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -86,7 +84,7 @@ func newServiceAccountClientClientsCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -105,8 +103,8 @@ func newServiceAccountClientClientsCmd() *cobra.Command {
 	return c
 }
 
-// newServiceAccountClientClientSecretAllCmd — POST /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_Rotate)
-func newServiceAccountClientClientSecretAllCmd() *cobra.Command {
+// newServiceAccountClientClientSecretRotateCmd — POST /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_Rotate)
+func newServiceAccountClientClientSecretRotateCmd() *cobra.Command {
 	var (
 		serviceAccountID int
 		clientID         string
@@ -114,9 +112,9 @@ func newServiceAccountClientClientSecretAllCmd() *cobra.Command {
 		yes              bool
 	)
 	c := &cobra.Command{
-		Use:         "client-secret-all",
+		Use:         "rotate",
 		Short:       "Rotate a service account client secret",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client client-secret-all --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli iam service-account-client client-secret-all --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client client-secret rotate --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli iam service-account-client client-secret rotate --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_Rotate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -155,7 +153,7 @@ func newServiceAccountClientClientSecretAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -235,8 +233,8 @@ func newServiceAccountClientDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newServiceAccountClientClientSecretCmd — DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_DeleteOldSecret)
-func newServiceAccountClientClientSecretCmd() *cobra.Command {
+// newServiceAccountClientClientSecretDeleteCmd — DELETE /iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret (operationId: Iam_Service_Account_Client_DeleteOldSecret)
+func newServiceAccountClientClientSecretDeleteCmd() *cobra.Command {
 	var (
 		serviceAccountID int
 		clientID         string
@@ -244,9 +242,9 @@ func newServiceAccountClientClientSecretCmd() *cobra.Command {
 		yes              bool
 	)
 	c := &cobra.Command{
-		Use:         "client-secret",
+		Use:         "delete",
 		Short:       "Delete old service account client secret",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli iam service-account-client client-secret --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam service-account-client client-secret delete --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID\n  flexera-cli iam service-account-client client-secret delete --org-id ORG_ID --service-account-id SERVICE_ACCOUNT_ID --target-client-id TARGET_CLIENT_ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Service_Account_Client_DeleteOldSecret", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -331,7 +329,7 @@ func newServiceAccountClientGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -381,7 +379,7 @@ func newServiceAccountClientListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -434,7 +432,7 @@ func newServiceAccountClientClientSecretsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

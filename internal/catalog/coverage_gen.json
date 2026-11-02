@@ -103,7 +103,7 @@
     "command": [
       "bill-analysis",
       "anomalies",
-      "anomalies"
+      "get"
     ],
     "ownership": "generated"
   },
@@ -121,7 +121,7 @@
     "command": [
       "bill-analysis",
       "bill-months",
-      "update"
+      "reprocess"
     ],
     "ownership": "generated"
   },
@@ -202,6 +202,7 @@
     "command": [
       "bill-analysis",
       "costs",
+      "export-select",
       "create"
     ],
     "ownership": "generated"
@@ -211,7 +212,8 @@
     "command": [
       "bill-analysis",
       "costs",
-      "get-export"
+      "export-select",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -229,7 +231,7 @@
     "command": [
       "bill-analysis",
       "costs",
-      "get-select"
+      "select"
     ],
     "ownership": "generated"
   },
@@ -407,7 +409,8 @@
     "operationId": "BillUpload_BillUpload_createFile",
     "command": [
       "bill-upload",
-      "files"
+      "files",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -448,7 +451,8 @@
     "command": [
       "billing-center",
       "access-rules",
-      "list-groups"
+      "groups",
+      "report"
     ],
     "ownership": "generated"
   },
@@ -457,7 +461,8 @@
     "command": [
       "billing-center",
       "access-rules",
-      "list-users"
+      "users",
+      "report"
     ],
     "ownership": "generated"
   },
@@ -493,7 +498,7 @@
     "command": [
       "billing-center",
       "billing-center-access-rules",
-      "list"
+      "report"
     ],
     "ownership": "generated"
   },
@@ -542,7 +547,8 @@
     "operationId": "BillingCenterService_BillingCenters_show_allocation_table",
     "command": [
       "billing-center",
-      "allocation-table-all"
+      "allocation-table",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -558,7 +564,8 @@
     "operationId": "BillingCenterService_BillingCenters_upsert_allocation_table",
     "command": [
       "billing-center",
-      "allocation-table"
+      "allocation-table",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -651,7 +658,8 @@
     "command": [
       "credential",
       "api-key-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -669,7 +677,8 @@
     "command": [
       "credential",
       "api-key-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -687,7 +696,8 @@
     "command": [
       "credential",
       "api-key-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -705,7 +715,8 @@
     "command": [
       "credential",
       "aws-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -723,7 +734,8 @@
     "command": [
       "credential",
       "aws-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -741,7 +753,8 @@
     "command": [
       "credential",
       "aws-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -749,7 +762,7 @@
     "operationId": "Cred_AWS_STS_Credential_create_org",
     "command": [
       "credential",
-      "awssts-credential",
+      "aws-sts-credential",
       "replace"
     ],
     "ownership": "generated"
@@ -758,8 +771,9 @@
     "operationId": "Cred_AWS_STS_Credential_create_project",
     "command": [
       "credential",
-      "awssts-credential",
-      "replace-project"
+      "aws-sts-credential",
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -767,7 +781,7 @@
     "operationId": "Cred_AWS_STS_Credential_show_org",
     "command": [
       "credential",
-      "awssts-credential",
+      "aws-sts-credential",
       "get"
     ],
     "ownership": "generated"
@@ -776,8 +790,9 @@
     "operationId": "Cred_AWS_STS_Credential_show_project",
     "command": [
       "credential",
-      "awssts-credential",
-      "get-project"
+      "aws-sts-credential",
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -785,7 +800,7 @@
     "operationId": "Cred_AWS_STS_Credential_update_org",
     "command": [
       "credential",
-      "awssts-credential",
+      "aws-sts-credential",
       "update"
     ],
     "ownership": "generated"
@@ -794,8 +809,9 @@
     "operationId": "Cred_AWS_STS_Credential_update_project",
     "command": [
       "credential",
-      "awssts-credential",
-      "update-project"
+      "aws-sts-credential",
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -813,7 +829,8 @@
     "command": [
       "credential",
       "basic-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -831,7 +848,8 @@
     "command": [
       "credential",
       "basic-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -849,7 +867,8 @@
     "command": [
       "credential",
       "basic-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -865,7 +884,8 @@
     "operationId": "Cred_Credential_delete_project",
     "command": [
       "credential",
-      "delete-project"
+      "project",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -881,7 +901,8 @@
     "operationId": "Cred_Credential_index_project",
     "command": [
       "credential",
-      "list-project"
+      "project",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -899,7 +920,8 @@
     "command": [
       "credential",
       "digest-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -917,7 +939,8 @@
     "command": [
       "credential",
       "digest-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -935,7 +958,8 @@
     "command": [
       "credential",
       "digest-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -953,7 +977,8 @@
     "command": [
       "credential",
       "ntlm-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -971,7 +996,8 @@
     "command": [
       "credential",
       "ntlm-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -989,7 +1015,8 @@
     "command": [
       "credential",
       "ntlm-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -997,7 +1024,7 @@
     "operationId": "Cred_OAuth2_Credential_create_org",
     "command": [
       "credential",
-      "o-auth2-credential",
+      "oauth2-credential",
       "replace"
     ],
     "ownership": "generated"
@@ -1006,8 +1033,9 @@
     "operationId": "Cred_OAuth2_Credential_create_project",
     "command": [
       "credential",
-      "o-auth2-credential",
-      "replace-project"
+      "oauth2-credential",
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1015,7 +1043,7 @@
     "operationId": "Cred_OAuth2_Credential_show_org",
     "command": [
       "credential",
-      "o-auth2-credential",
+      "oauth2-credential",
       "get"
     ],
     "ownership": "generated"
@@ -1024,8 +1052,9 @@
     "operationId": "Cred_OAuth2_Credential_show_project",
     "command": [
       "credential",
-      "o-auth2-credential",
-      "get-project"
+      "oauth2-credential",
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -1033,7 +1062,7 @@
     "operationId": "Cred_OAuth2_Credential_update_org",
     "command": [
       "credential",
-      "o-auth2-credential",
+      "oauth2-credential",
       "update"
     ],
     "ownership": "generated"
@@ -1042,8 +1071,9 @@
     "operationId": "Cred_OAuth2_Credential_update_project",
     "command": [
       "credential",
-      "o-auth2-credential",
-      "update-project"
+      "oauth2-credential",
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -1061,7 +1091,8 @@
     "command": [
       "credential",
       "oracle-credential",
-      "replace-project"
+      "project",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1079,7 +1110,8 @@
     "command": [
       "credential",
       "oracle-credential",
-      "get-project"
+      "project",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -1097,7 +1129,8 @@
     "command": [
       "credential",
       "oracle-credential",
-      "update-project"
+      "project",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -1142,6 +1175,7 @@
     "command": [
       "finops-billing",
       "billing-credits",
+      "assignments",
       "create"
     ],
     "ownership": "generated"
@@ -1151,6 +1185,7 @@
     "command": [
       "finops-billing",
       "billing-credits",
+      "assignments",
       "delete"
     ],
     "ownership": "generated"
@@ -1160,7 +1195,8 @@
     "command": [
       "finops-billing",
       "billing-credits",
-      "assignments"
+      "assignments",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1178,6 +1214,7 @@
     "command": [
       "finops-billing",
       "billing-credits",
+      "assignments",
       "replace"
     ],
     "ownership": "generated"
@@ -1187,6 +1224,7 @@
     "command": [
       "finops-billing",
       "billing-credits",
+      "assignments",
       "get"
     ],
     "ownership": "generated"
@@ -1196,7 +1234,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "create-rules"
+      "rules",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1205,7 +1244,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "plans-all"
+      "plans",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1214,7 +1254,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "post-plan-rules-all"
+      "post-plan-rules",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1223,7 +1264,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "pre-plan-rules-all"
+      "pre-plan-rules",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1232,7 +1274,9 @@
     "command": [
       "finops-billing",
       "billing",
-      "create-plans"
+      "plans",
+      "rules",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1241,7 +1285,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "delete-rules"
+      "rules",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1250,7 +1295,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "plans-all-2"
+      "plans",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1259,7 +1305,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "post-plan-rules-all-2"
+      "post-plan-rules",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1268,7 +1315,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "pre-plan-rules-all-2"
+      "pre-plan-rules",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1277,7 +1325,9 @@
     "command": [
       "finops-billing",
       "billing",
-      "delete-plans"
+      "plans",
+      "rules",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1286,7 +1336,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "list-rules"
+      "rules",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1295,7 +1346,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "plans-all-4"
+      "plans",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1304,7 +1356,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "post-plan-rules-all-3"
+      "post-plan-rules",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1313,7 +1366,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "pre-plan-rules-all-3"
+      "pre-plan-rules",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1322,7 +1376,9 @@
     "command": [
       "finops-billing",
       "billing",
-      "list-plans"
+      "plans",
+      "rules",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -1331,7 +1387,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "replace-all-2"
+      "rules",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1340,6 +1397,7 @@
     "command": [
       "finops-billing",
       "billing",
+      "rules",
       "replace-all"
     ],
     "ownership": "generated"
@@ -1349,7 +1407,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "plans"
+      "plans",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1358,7 +1417,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "post-plan-rules"
+      "post-plan-rules",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1367,7 +1427,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "pre-plan-rules"
+      "pre-plan-rules",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -1376,6 +1437,8 @@
     "command": [
       "finops-billing",
       "billing",
+      "plans",
+      "rules",
       "replace"
     ],
     "ownership": "generated"
@@ -1394,7 +1457,8 @@
     "command": [
       "finops-billing",
       "billing",
-      "plans-all-3"
+      "plans",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -1592,7 +1656,7 @@
     "command": [
       "finops-billing",
       "shared-cost-rules",
-      "replace"
+      "reorder"
     ],
     "ownership": "generated"
   },
@@ -1736,7 +1800,8 @@
     "command": [
       "finops-customizations",
       "rule-based-dimension",
-      "rules-all"
+      "rules",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -1745,6 +1810,7 @@
     "command": [
       "finops-customizations",
       "rule-based-dimension",
+      "rules",
       "replace"
     ],
     "ownership": "generated"
@@ -1754,7 +1820,8 @@
     "command": [
       "finops-customizations",
       "rule-based-dimension",
-      "rules"
+      "rules",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -1872,7 +1939,8 @@
       "finops-onboarding",
       "bill-connect",
       "aws",
-      "iam-role-all"
+      "iam-role",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1882,7 +1950,8 @@
       "finops-onboarding",
       "bill-connect",
       "aws",
-      "iam-user-all"
+      "iam-user",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -1912,7 +1981,8 @@
       "finops-onboarding",
       "bill-connect",
       "aws",
-      "iam-role"
+      "iam-role",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -1922,7 +1992,8 @@
       "finops-onboarding",
       "bill-connect",
       "aws",
-      "iam-user"
+      "iam-user",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -1932,7 +2003,7 @@
       "finops-onboarding",
       "bill-connect",
       "aws",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -1982,7 +2053,7 @@
       "finops-onboarding",
       "bill-connect",
       "azure-csp",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2032,7 +2103,7 @@
       "finops-onboarding",
       "bill-connect",
       "azure-ea-management",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2082,7 +2153,7 @@
       "finops-onboarding",
       "bill-connect",
       "azure-mca",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2132,7 +2203,7 @@
       "finops-onboarding",
       "bill-connect",
       "common-bill-ingestion",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2182,7 +2253,7 @@
       "finops-onboarding",
       "bill-connect",
       "databricks",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2232,7 +2303,7 @@
       "finops-onboarding",
       "bill-connect",
       "gcp",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2282,7 +2353,7 @@
       "finops-onboarding",
       "bill-connect",
       "snowflake",
-      "list"
+      "validate"
     ],
     "ownership": "generated"
   },
@@ -2300,7 +2371,7 @@
     "command": [
       "finops-onboarding",
       "bill-connect",
-      "validations"
+      "validate-all"
     ],
     "ownership": "generated"
   },
@@ -2327,7 +2398,7 @@
     "command": [
       "finops-onboarding",
       "processing-history",
-      "update"
+      "reprocess"
     ],
     "ownership": "generated"
   },
@@ -2397,7 +2468,8 @@
     "command": [
       "iam",
       "access-policy",
-      "users"
+      "users",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -2478,7 +2550,7 @@
     "command": [
       "iam",
       "contracts",
-      "activation"
+      "set-activation"
     ],
     "ownership": "generated"
   },
@@ -2523,7 +2595,7 @@
     "command": [
       "iam",
       "contracts",
-      "update"
+      "update-last-seen"
     ],
     "ownership": "generated"
   },
@@ -2595,7 +2667,7 @@
     "command": [
       "iam",
       "group-membership",
-      "memberships"
+      "create"
     ],
     "ownership": "generated"
   },
@@ -2730,7 +2802,8 @@
     "command": [
       "iam",
       "msp-customer-tag",
-      "tags"
+      "tags",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -2739,6 +2812,7 @@
     "command": [
       "iam",
       "msp-customer-tag",
+      "tags",
       "delete"
     ],
     "ownership": "generated"
@@ -2748,6 +2822,7 @@
     "command": [
       "iam",
       "msp-customer-tag",
+      "tags",
       "list-all"
     ],
     "ownership": "generated"
@@ -2757,6 +2832,7 @@
     "command": [
       "iam",
       "msp-customer-tag",
+      "tags",
       "list"
     ],
     "ownership": "generated"
@@ -2883,7 +2959,7 @@
     "command": [
       "iam",
       "organization-invitation",
-      "update"
+      "resend"
     ],
     "ownership": "generated"
   },
@@ -2910,7 +2986,8 @@
     "command": [
       "iam",
       "organization",
-      "msp"
+      "msp",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -3000,7 +3077,7 @@
     "command": [
       "iam",
       "saml2-domain",
-      "create"
+      "register"
     ],
     "ownership": "generated"
   },
@@ -3027,7 +3104,7 @@
     "command": [
       "iam",
       "saml2-identity-provider-signing-key",
-      "create"
+      "generate"
     ],
     "ownership": "generated"
   },
@@ -3117,7 +3194,8 @@
     "command": [
       "iam",
       "scim-config",
-      "resource-types-all"
+      "resource-types",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -3126,7 +3204,8 @@
     "command": [
       "iam",
       "scim-config",
-      "schemas-all"
+      "schemas",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -3144,7 +3223,8 @@
     "command": [
       "iam",
       "scim-config",
-      "resource-types"
+      "resource-types",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -3153,7 +3233,8 @@
     "command": [
       "iam",
       "scim-config",
-      "schemas"
+      "schemas",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -3270,7 +3351,7 @@
     "command": [
       "iam",
       "service-account-client",
-      "clients"
+      "create"
     ],
     "ownership": "generated"
   },
@@ -3288,7 +3369,8 @@
     "command": [
       "iam",
       "service-account-client",
-      "client-secret"
+      "client-secret",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -3315,7 +3397,8 @@
     "command": [
       "iam",
       "service-account-client",
-      "client-secret-all"
+      "client-secret",
+      "rotate"
     ],
     "ownership": "generated"
   },
@@ -3450,7 +3533,7 @@
     "command": [
       "iam",
       "user-profile",
-      "list"
+      "get"
     ],
     "ownership": "generated"
   },
@@ -3468,7 +3551,7 @@
     "command": [
       "iam",
       "user-setting-blob",
-      "list"
+      "download-url"
     ],
     "ownership": "generated"
   },
@@ -3477,7 +3560,7 @@
     "command": [
       "iam",
       "user-setting-blob",
-      "replace"
+      "upload-url"
     ],
     "ownership": "generated"
   },
@@ -3570,7 +3653,7 @@
     "operationId": "OptimaRecommendations_Recommendations_updateStatus",
     "command": [
       "recommendations",
-      "replace"
+      "update-status"
     ],
     "ownership": "generated"
   },
@@ -3696,7 +3779,8 @@
     "command": [
       "policy",
       "custom-catalog",
-      "tag"
+      "tag",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -3705,6 +3789,7 @@
     "command": [
       "policy",
       "custom-catalog",
+      "tag",
       "replace"
     ],
     "ownership": "generated"
@@ -4074,7 +4159,7 @@
     "command": [
       "risk",
       "misconfiguration-ui",
-      "export"
+      "failed-asset-export"
     ],
     "ownership": "generated"
   },
@@ -4083,7 +4168,7 @@
     "command": [
       "risk",
       "vulnerability",
-      "get-findings-distribution"
+      "findings-distribution-export"
     ],
     "ownership": "generated"
   },
@@ -4092,7 +4177,7 @@
     "command": [
       "risk",
       "vulnerability",
-      "get-failed-assets"
+      "failed-assets-export"
     ],
     "ownership": "generated"
   },
@@ -4101,7 +4186,7 @@
     "command": [
       "risk",
       "vulnerability",
-      "get-list"
+      "list-export"
     ],
     "ownership": "generated"
   },
@@ -4146,7 +4231,7 @@
     "command": [
       "risk",
       "regulatory-compliance",
-      "filter"
+      "catalog-filter"
     ],
     "ownership": "generated"
   },
@@ -4344,7 +4429,7 @@
     "command": [
       "risk",
       "regulatory-compliance",
-      "overview"
+      "misconfiguration-overview"
     ],
     "ownership": "generated"
   },
@@ -4380,7 +4465,8 @@
     "command": [
       "risk",
       "misconfiguration-ui",
-      "remediation-steps"
+      "remediation-steps",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -4389,6 +4475,7 @@
     "command": [
       "risk",
       "misconfiguration-ui",
+      "risk",
       "details"
     ],
     "ownership": "generated"
@@ -4425,7 +4512,7 @@
     "command": [
       "risk",
       "regulatory-compliance",
-      "suppress"
+      "rule-suppress"
     ],
     "ownership": "generated"
   },
@@ -4434,7 +4521,7 @@
     "command": [
       "risk",
       "misconfiguration-ui",
-      "suppress"
+      "rule-suppress"
     ],
     "ownership": "generated"
   },
@@ -4443,7 +4530,7 @@
     "command": [
       "risk",
       "compliance",
-      "update"
+      "favorite"
     ],
     "ownership": "generated"
   },
@@ -4542,7 +4629,10 @@
     "command": [
       "saas",
       "license",
-      "allocations-all"
+      "terms",
+      "purchases",
+      "allocations",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -4551,7 +4641,10 @@
     "command": [
       "saas",
       "license",
-      "allocations-all-2"
+      "terms",
+      "purchases",
+      "allocations",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -4560,7 +4653,10 @@
     "command": [
       "saas",
       "license",
-      "allocations-all-3"
+      "terms",
+      "purchases",
+      "allocations",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -4569,7 +4665,10 @@
     "command": [
       "saas",
       "license",
-      "allocations"
+      "terms",
+      "purchases",
+      "allocations",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -4596,7 +4695,8 @@
     "command": [
       "saas",
       "license",
-      "fees-all"
+      "fees",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -4605,7 +4705,8 @@
     "command": [
       "saas",
       "license",
-      "fees-all-2"
+      "fees",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -4614,7 +4715,8 @@
     "command": [
       "saas",
       "license",
-      "fees-all-4"
+      "fees",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -4623,7 +4725,8 @@
     "command": [
       "saas",
       "license",
-      "fees-all-3"
+      "fees",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -4632,7 +4735,8 @@
     "command": [
       "saas",
       "license",
-      "fees"
+      "fees",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -4650,7 +4754,8 @@
     "command": [
       "saas",
       "license",
-      "notes-all"
+      "notes",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -4659,7 +4764,8 @@
     "command": [
       "saas",
       "license",
-      "notes-all-2"
+      "notes",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -4668,7 +4774,8 @@
     "command": [
       "saas",
       "license",
-      "notes-all-4"
+      "notes",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -4677,7 +4784,8 @@
     "command": [
       "saas",
       "license",
-      "notes-all-3"
+      "notes",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -4686,7 +4794,8 @@
     "command": [
       "saas",
       "license",
-      "notes"
+      "notes",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -4695,7 +4804,9 @@
     "command": [
       "saas",
       "license",
-      "purchases-all"
+      "terms",
+      "purchases",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -4704,7 +4815,9 @@
     "command": [
       "saas",
       "license",
-      "purchases-all-2"
+      "terms",
+      "purchases",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -4713,7 +4826,9 @@
     "command": [
       "saas",
       "license",
-      "purchases-all-4"
+      "terms",
+      "purchases",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -4722,7 +4837,9 @@
     "command": [
       "saas",
       "license",
-      "purchases-all-3"
+      "terms",
+      "purchases",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -4731,7 +4848,9 @@
     "command": [
       "saas",
       "license",
-      "purchases"
+      "terms",
+      "purchases",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -4749,7 +4868,8 @@
     "command": [
       "saas",
       "license",
-      "terms-all"
+      "terms",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -4758,7 +4878,8 @@
     "command": [
       "saas",
       "license",
-      "terms-all-2"
+      "terms",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -4767,7 +4888,8 @@
     "command": [
       "saas",
       "license",
-      "terms-all-4"
+      "terms",
+      "list"
     ],
     "ownership": "generated"
   },
@@ -4776,7 +4898,8 @@
     "command": [
       "saas",
       "license",
-      "terms-all-3"
+      "terms",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -4785,7 +4908,8 @@
     "command": [
       "saas",
       "license",
-      "terms"
+      "terms",
+      "update"
     ],
     "ownership": "generated"
   },
@@ -4955,7 +5079,7 @@
     "operationId": "Saas_SaaS_Data_create",
     "command": [
       "saas",
-      "saa-s-data",
+      "data",
       "create"
     ],
     "ownership": "generated"
@@ -4964,7 +5088,7 @@
     "operationId": "Saas_SaaS_Data_index",
     "command": [
       "saas",
-      "saa-s-data",
+      "data",
       "list"
     ],
     "ownership": "generated"
@@ -4973,7 +5097,7 @@
     "operationId": "Saas_SaaS_Data_show",
     "command": [
       "saas",
-      "saa-s-data",
+      "data",
       "get"
     ],
     "ownership": "generated"
@@ -4982,8 +5106,8 @@
     "operationId": "Saas_SaaS_Data_upload",
     "command": [
       "saas",
-      "saa-s-data",
-      "update"
+      "data",
+      "upload"
     ],
     "ownership": "generated"
   },
@@ -5001,7 +5125,8 @@
     "command": [
       "saas",
       "usage-group",
-      "costs-all"
+      "costs",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -5019,7 +5144,8 @@
     "command": [
       "saas",
       "usage-group",
-      "costs-all-2"
+      "costs",
+      "delete"
     ],
     "ownership": "generated"
   },
@@ -5046,7 +5172,8 @@
     "command": [
       "saas",
       "usage-group",
-      "costs-all-3"
+      "costs",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -5064,7 +5191,8 @@
     "command": [
       "saas",
       "usage-group",
-      "costs"
+      "costs",
+      "replace"
     ],
     "ownership": "generated"
   },
@@ -5081,7 +5209,7 @@
     "operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post",
     "command": [
       "unified-onboarding",
-      "saa-s-onboarding",
+      "saas-onboarding",
       "collect"
     ],
     "ownership": "generated"
@@ -5090,7 +5218,7 @@
     "operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post",
     "command": [
       "unified-onboarding",
-      "saa-s-onboarding",
+      "saas-onboarding",
       "create"
     ],
     "ownership": "generated"
@@ -5099,7 +5227,7 @@
     "operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete",
     "command": [
       "unified-onboarding",
-      "saa-s-onboarding",
+      "saas-onboarding",
       "delete"
     ],
     "ownership": "generated"
@@ -5117,7 +5245,7 @@
     "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_saas_connectors_status_get",
     "command": [
       "unified-onboarding",
-      "saa-s-connector",
+      "saas-connector",
       "status"
     ],
     "ownership": "generated"
@@ -5135,7 +5263,7 @@
     "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_saas_connectors_identifier_get",
     "command": [
       "unified-onboarding",
-      "saa-s-connector",
+      "saas-connector",
       "get"
     ],
     "ownership": "generated"
@@ -5153,7 +5281,7 @@
     "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_saas_connectors_count_get",
     "command": [
       "unified-onboarding",
-      "saa-s-connector",
+      "saas-connector",
       "count"
     ],
     "ownership": "generated"
@@ -5171,7 +5299,7 @@
     "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_saas_connectors_get",
     "command": [
       "unified-onboarding",
-      "saa-s-connector",
+      "saas-connector",
       "list"
     ],
     "ownership": "generated"
@@ -5190,6 +5318,7 @@
     "command": [
       "unified-onboarding",
       "onboarding",
+      "gcp",
       "create"
     ],
     "ownership": "generated"
@@ -5199,6 +5328,7 @@
     "command": [
       "unified-onboarding",
       "onboarding",
+      "gcp",
       "replace"
     ],
     "ownership": "generated"
@@ -5207,7 +5337,7 @@
     "operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put",
     "command": [
       "unified-onboarding",
-      "saa-s-onboarding",
+      "saas-onboarding",
       "replace"
     ],
     "ownership": "generated"
@@ -5216,7 +5346,7 @@
     "operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post",
     "command": [
       "unified-onboarding",
-      "saa-s-onboarding",
+      "saas-onboarding",
       "validate"
     ],
     "ownership": "generated"
@@ -5226,6 +5356,7 @@
     "command": [
       "it-visibility",
       "device",
+      "delete",
       "submit"
     ],
     "ownership": "generated"
@@ -5235,7 +5366,8 @@
     "command": [
       "it-visibility",
       "device",
-      "get"
+      "delete",
+      "estimate"
     ],
     "ownership": "generated"
   },
@@ -5244,6 +5376,7 @@
     "command": [
       "it-visibility",
       "export-retired",
+      "files",
       "get"
     ],
     "ownership": "generated"
@@ -5262,7 +5395,7 @@
     "command": [
       "it-visibility",
       "query",
-      "get-all"
+      "execute"
     ],
     "ownership": "generated"
   },
@@ -5271,7 +5404,7 @@
     "command": [
       "it-visibility",
       "query",
-      "list"
+      "download"
     ],
     "ownership": "generated"
   },

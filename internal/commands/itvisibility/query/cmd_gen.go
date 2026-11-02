@@ -28,16 +28,14 @@ func NewCmd() *cobra.Command {
 		Use:   "query",
 		Short: "Query operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newQueryGetAllCmd(),
-		newQueryGetCmd(),
-		newQueryListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newQueryExecuteCmd())
+	clipkg.AddCommandAt(c, nil, newQueryGetCmd())
+	clipkg.AddCommandAt(c, nil, newQueryDownloadCmd())
 	return c
 }
 
-// newQueryGetAllCmd — POST /vis/v2/orgs/{orgId}/queries (operationId: Vis_Query_create)
-func newQueryGetAllCmd() *cobra.Command {
+// newQueryExecuteCmd — POST /vis/v2/orgs/{orgId}/queries (operationId: Vis_Query_create)
+func newQueryExecuteCmd() *cobra.Command {
 	var (
 		resumeToken       string
 		outputCompression string
@@ -45,9 +43,10 @@ func newQueryGetAllCmd() *cobra.Command {
 		fQueryName        string
 	)
 	c := &cobra.Command{
-		Use:         "get-all",
+		Use:         "execute",
+		Aliases:     []string{"get-all"},
 		Short:       "Execute a query on the delta export data",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility query get-all --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility query get-all --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility query execute --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility query execute --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Query_create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -105,7 +104,7 @@ func newQueryGetAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -160,7 +159,7 @@ func newQueryGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -177,17 +176,17 @@ func newQueryGetCmd() *cobra.Command {
 	return c
 }
 
-// newQueryListCmd — GET /vis/v2/orgs/{orgId}/queries/{id}/download (operationId: Vis_Query_download)
-func newQueryListCmd() *cobra.Command {
+// newQueryDownloadCmd — GET /vis/v2/orgs/{orgId}/queries/{id}/download (operationId: Vis_Query_download)
+func newQueryDownloadCmd() *cobra.Command {
 	var (
 		id         string
 		skipToken  string
 		maxResults int
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "download",
 		Short:       "Download query results",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility query list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility query download --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Query_download", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

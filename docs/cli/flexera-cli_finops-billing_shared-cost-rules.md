@@ -36,6 +36,6 @@ Shared Cost Rules operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing shared-cost-rules delete](flexera-cli_finops-billing_shared-cost-rules_delete.md)	 - Delete a shared cost rule
 * [flexera-cli finops-billing shared-cost-rules get](flexera-cli_finops-billing_shared-cost-rules_get.md)	 - Show a shared cost rule
 * [flexera-cli finops-billing shared-cost-rules list](flexera-cli_finops-billing_shared-cost-rules_list.md)	 - List shared cost rules
-* [flexera-cli finops-billing shared-cost-rules replace](flexera-cli_finops-billing_shared-cost-rules_replace.md)	 - Reorder shared cost rules
+* [flexera-cli finops-billing shared-cost-rules reorder](flexera-cli_finops-billing_shared-cost-rules_reorder.md)	 - Reorder shared cost rules
 * [flexera-cli finops-billing shared-cost-rules update](flexera-cli_finops-billing_shared-cost-rules_update.md)	 - Update a shared cost rule
 

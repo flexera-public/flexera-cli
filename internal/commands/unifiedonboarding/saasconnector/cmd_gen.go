@@ -22,18 +22,16 @@ var (
 	_ = strings.TrimSpace
 )
 
-// NewCmd builds the "saa-s-connector" command tree.
+// NewCmd builds the "saas-connector" command tree.
 func NewCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "saa-s-connector",
+		Use:   "saas-connector",
 		Short: "SaaS Connector operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSaaSConnectorGetCmd(),
-		newSaaSConnectorListCmd(),
-		newSaaSConnectorCountCmd(),
-		newSaaSConnectorStatusCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSaaSConnectorGetCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSConnectorListCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSConnectorCountCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSConnectorStatusCmd())
 	return c
 }
 
@@ -45,7 +43,7 @@ func newSaaSConnectorGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Get an AICM (SaaS) connector by id",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-connector get --org-id ORG_ID --identifier IDENTIFIER",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-connector get --org-id ORG_ID --identifier IDENTIFIER",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_saas_connectors_identifier_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -72,7 +70,7 @@ func newSaaSConnectorGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -100,7 +98,7 @@ func newSaaSConnectorListCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "list",
 		Short:       "List AICM (SaaS) connectors for the Organization",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-connector list --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-connector list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_saas_connectors_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -141,7 +139,7 @@ func newSaaSConnectorListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -166,7 +164,7 @@ func newSaaSConnectorCountCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "count",
 		Short:       "Get AICM (SaaS) connector counts by provider",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-connector count --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-connector count --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_saas_connectors_count_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -190,7 +188,7 @@ func newSaaSConnectorCountCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -214,7 +212,7 @@ func newSaaSConnectorStatusCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "status",
 		Short:       "Get status for all products of an AICM (SaaS) connector",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saa-s-connector status --org-id ORG_ID --connector-id CONNECTOR_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding saas-connector status --org-id ORG_ID --connector-id CONNECTOR_ID",
 		Annotations: map[string]string{"flexera.operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_saas_connectors_status_get", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -242,7 +240,7 @@ func newSaaSConnectorStatusCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

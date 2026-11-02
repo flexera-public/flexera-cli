@@ -33,7 +33,7 @@ anomalies operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli bill-analysis](flexera-cli_bill-analysis.md)	 - Bill Analysis API
 * [flexera-cli bill-analysis anomalies aggregated](flexera-cli_bill-analysis_anomalies_aggregated.md)	 - aggregated anomalies
-* [flexera-cli bill-analysis anomalies anomalies](flexera-cli_bill-analysis_anomalies_anomalies.md)	 - summary anomalies
+* [flexera-cli bill-analysis anomalies get](flexera-cli_bill-analysis_anomalies_get.md)	 - summary anomalies
 * [flexera-cli bill-analysis anomalies investigate](flexera-cli_bill-analysis_anomalies_investigate.md)	 - AI-powered cost anomaly investigation (multi-step workflow)
 * [flexera-cli bill-analysis anomalies list](flexera-cli_bill-analysis_anomalies_list.md)	 - index anomalies
 * [flexera-cli bill-analysis anomalies report](flexera-cli_bill-analysis_anomalies_report.md)	 - report anomalies

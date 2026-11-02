@@ -28,11 +28,9 @@ func NewCmd() *cobra.Command {
 		Use:   "access-rule",
 		Short: "Access Rule operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAccessRuleListCmd(),
-		newAccessRuleGrantCmd(),
-		newAccessRuleRevokeCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAccessRuleListCmd())
+	clipkg.AddCommandAt(c, nil, newAccessRuleGrantCmd())
+	clipkg.AddCommandAt(c, nil, newAccessRuleRevokeCmd())
 	return c
 }
 
@@ -78,7 +76,7 @@ func newAccessRuleListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

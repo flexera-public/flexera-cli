@@ -85,7 +85,7 @@ func TestPublishedCatalogLoads(t *testing.T) {
 	if err != nil || c == nil || len(c.All()) == 0 {
 		t.Fatalf("published catalog failed to load: %v", err)
 	}
-	if len(artifact) > 5*1024*1024 {
+	if len(artifact) > MaxArtifactBytes {
 		t.Fatalf("catalog exceeds approved budget: %d", len(artifact))
 	}
 }

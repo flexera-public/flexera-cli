@@ -41,6 +41,7 @@ Service id: saas
 * [flexera-cli saas application-user-activity-count](flexera-cli_saas_application-user-activity-count.md)	 - Application User Activity Count operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas customer-group](flexera-cli_saas_customer-group.md)	 - Customer Group operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas customer-group-type](flexera-cli_saas_customer-group-type.md)	 - Customer Group Type operations (generated from the unified OpenAPI spec)
+* [flexera-cli saas data](flexera-cli_saas_data.md)	 - SaaS Data operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas discovered-application](flexera-cli_saas_discovered-application.md)	 - Discovered Application operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas import-job](flexera-cli_saas_import-job.md)	 - Import Job operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas license](flexera-cli_saas_license.md)	 - License operations (generated from the unified OpenAPI spec)
@@ -49,7 +50,6 @@ Service id: saas
 * [flexera-cli saas managed-application-user](flexera-cli_saas_managed-application-user.md)	 - Managed Application User operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas metric-query](flexera-cli_saas_metric-query.md)	 - Metric Query operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas object-definition](flexera-cli_saas_object-definition.md)	 - Object Definition operations (generated from the unified OpenAPI spec)
-* [flexera-cli saas saa-s-data](flexera-cli_saas_saa-s-data.md)	 - SaaS Data operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas usage-group](flexera-cli_saas_usage-group.md)	 - Usage Group operations (generated from the unified OpenAPI spec)
 * [flexera-cli saas usage-message-query](flexera-cli_saas_usage-message-query.md)	 - Usage Message Query operations (generated from the unified OpenAPI spec)
 

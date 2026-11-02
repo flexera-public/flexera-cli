@@ -34,5 +34,5 @@ Processing History operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding](flexera-cli_finops-onboarding.md)	 - FinOps Onboarding API
 * [flexera-cli finops-onboarding processing-history download](flexera-cli_finops-onboarding_processing-history_download.md)	 - Download enterprise bill months in CSV
 * [flexera-cli finops-onboarding processing-history list](flexera-cli_finops-onboarding_processing-history_list.md)	 - List enterprise bill months
-* [flexera-cli finops-onboarding processing-history update](flexera-cli_finops-onboarding_processing-history_update.md)	 - Reprocess one or more enterprise bill months
+* [flexera-cli finops-onboarding processing-history reprocess](flexera-cli_finops-onboarding_processing-history_reprocess.md)	 - Reprocess one or more enterprise bill months
 

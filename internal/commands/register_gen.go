@@ -170,11 +170,11 @@ func RegisterAll(root *cobra.Command) {
 		withChildren(service(credentialcredential.NewCmd(), "credential", []string{"cred"}, "Credential API", "Commands for the Credential API (Flexera Credential API, v2).\n\nService id: cred"),
 			credentialapikeycredential.NewCmd(),
 			credentialawscredential.NewCmd(),
-			credentialawsstscredential.NewCmd(),
+			aliased(credentialawsstscredential.NewCmd(), []string{"awssts-credential"}),
 			credentialbasiccredential.NewCmd(),
 			credentialdigestcredential.NewCmd(),
 			credentialntlmcredential.NewCmd(),
-			credentialoauth2credential.NewCmd(),
+			aliased(credentialoauth2credential.NewCmd(), []string{"o-auth2-credential"}),
 			credentialoraclecredential.NewCmd(),
 		),
 		withChildren(service(&cobra.Command{Use: "data-inventory"}, "data-inventory", []string{"divnt"}, "Data Inventory API", "Commands for the Data Inventory API (Flexera Data Inventory API, v1).\n\nService id: divnt"),
@@ -283,6 +283,7 @@ func RegisterAll(root *cobra.Command) {
 			saasapplicationuseractivitycount.NewCmd(),
 			saascustomergroup.NewCmd(),
 			saascustomergrouptype.NewCmd(),
+			aliased(saassaasdata.NewCmd(), []string{"saas-data", "saa-s-data"}),
 			saasdiscoveredapplication.NewCmd(),
 			saasimportjob.NewCmd(),
 			saaslicense.NewCmd(),
@@ -291,15 +292,14 @@ func RegisterAll(root *cobra.Command) {
 			saasmanagedapplicationuser.NewCmd(),
 			saasmetricquery.NewCmd(),
 			saasobjectdefinition.NewCmd(),
-			saassaasdata.NewCmd(),
 			saasusagegroup.NewCmd(),
 			saasusagemessagequery.NewCmd(),
 		),
 		withChildren(service(&cobra.Command{Use: "unified-onboarding"}, "unified-onboarding", []string{"uobs"}, "Unified Onboarding API", "Commands for the Unified Onboarding API (Flexera Unified Onboarding API, v1).\n\nService id: uobs"),
 			unifiedonboardingconnector.NewCmd(),
 			unifiedonboardingonboarding.NewCmd(),
-			unifiedonboardingsaasconnector.NewCmd(),
-			unifiedonboardingsaasonboarding.NewCmd(),
+			aliased(unifiedonboardingsaasconnector.NewCmd(), []string{"saa-s-connector"}),
+			aliased(unifiedonboardingsaasonboarding.NewCmd(), []string{"saa-s-onboarding"}),
 		),
 	)
 }
@@ -313,6 +313,12 @@ func service(c *cobra.Command, use string, aliases []string, short, long string)
 // nest renames a tag command that is registered beneath a sibling tag.
 func nest(c *cobra.Command, use string) *cobra.Command {
 	c.Use = use
+	return c
+}
+
+// aliased keeps earlier spellings of a renamed tag command working.
+func aliased(c *cobra.Command, aliases []string) *cobra.Command {
+	c.Aliases = append(c.Aliases, aliases...)
 	return c
 }
 

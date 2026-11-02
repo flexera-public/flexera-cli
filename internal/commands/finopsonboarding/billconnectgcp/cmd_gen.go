@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-gcp",
 		Short: "Bill Connect - GCP operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectGCPCreateCmd(),
-		newBillConnectGCPDeleteCmd(),
-		newBillConnectGCPGetCmd(),
-		newBillConnectGCPListCmd(),
-		newBillConnectGCPUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectGCPCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectGCPDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectGCPGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectGCPValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectGCPUpdateCmd())
 	return c
 }
 
@@ -138,7 +136,7 @@ func newBillConnectGCPCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -254,7 +252,7 @@ func newBillConnectGCPGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -271,15 +269,16 @@ func newBillConnectGCPGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectGCPListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/gcp/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_GCP_validate)
-func newBillConnectGCPListCmd() *cobra.Command {
+// newBillConnectGCPValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/gcp/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_GCP_validate)
+func newBillConnectGCPValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate the credentials stored for a GCP bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect gcp list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect gcp validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_GCP_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -306,7 +305,7 @@ func newBillConnectGCPListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

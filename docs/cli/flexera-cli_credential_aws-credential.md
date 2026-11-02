@@ -33,9 +33,7 @@ AWS Credential operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli credential](flexera-cli_credential.md)	 - Credential API
 * [flexera-cli credential aws-credential get](flexera-cli_credential_aws-credential_get.md)	 - Show a Credential
-* [flexera-cli credential aws-credential get-project](flexera-cli_credential_aws-credential_get-project.md)	 - Show a Credential
+* [flexera-cli credential aws-credential project](flexera-cli_credential_aws-credential_project.md)	 - project operations
 * [flexera-cli credential aws-credential replace](flexera-cli_credential_aws-credential_replace.md)	 - Create a Credential
-* [flexera-cli credential aws-credential replace-project](flexera-cli_credential_aws-credential_replace-project.md)	 - Create a Credential
 * [flexera-cli credential aws-credential update](flexera-cli_credential_aws-credential_update.md)	 - Update a Credential
-* [flexera-cli credential aws-credential update-project](flexera-cli_credential_aws-credential_update-project.md)	 - Update a Credential
 

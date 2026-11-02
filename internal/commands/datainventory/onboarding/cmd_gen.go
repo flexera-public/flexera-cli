@@ -28,11 +28,9 @@ func NewCmd() *cobra.Command {
 		Use:   "onboarding",
 		Short: "Onboarding operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newOnboardingCreateCmd(),
-		newOnboardingDeleteCmd(),
-		newOnboardingReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newOnboardingCreateCmd())
+	clipkg.AddCommandAt(c, nil, newOnboardingDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newOnboardingReplaceCmd())
 	return c
 }
 
@@ -192,7 +190,7 @@ func newOnboardingCreateCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -282,7 +280,7 @@ func newOnboardingDeleteCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -463,7 +461,7 @@ func newOnboardingReplaceCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

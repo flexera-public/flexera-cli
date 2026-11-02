@@ -1034,7 +1034,7 @@
       "command": [
         "bill-analysis",
         "anomalies",
-        "anomalies"
+        "get"
       ],
       "method": "GET",
       "path": "/bill-analysis/orgs/{orgId}/v2/anomalies/{id}",
@@ -1172,7 +1172,7 @@
       "command": [
         "bill-analysis",
         "bill-months",
-        "update"
+        "reprocess"
       ],
       "method": "PATCH",
       "path": "/bill-analysis/orgs/{orgId}/bill-months",
@@ -1973,6 +1973,7 @@
       "command": [
         "bill-analysis",
         "costs",
+        "export-select",
         "create"
       ],
       "method": "POST",
@@ -2211,7 +2212,8 @@
       "command": [
         "bill-analysis",
         "costs",
-        "get-export"
+        "export-select",
+        "get"
       ],
       "method": "GET",
       "path": "/bill-analysis/orgs/{orgId}/costs/export/select/{exportId}",
@@ -2311,7 +2313,7 @@
       "command": [
         "bill-analysis",
         "costs",
-        "get-select"
+        "select"
       ],
       "method": "POST",
       "path": "/bill-analysis/orgs/{orgId}/costs/select",
@@ -4167,7 +4169,8 @@
       "operationId": "BillUpload_BillUpload_createFile",
       "command": [
         "bill-upload",
-        "files"
+        "files",
+        "create"
       ],
       "method": "POST",
       "path": "/optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}",
@@ -4487,7 +4490,8 @@
       "command": [
         "billing-center",
         "access-rules",
-        "list-groups"
+        "groups",
+        "report"
       ],
       "method": "GET",
       "path": "/analytics/orgs/{org_id}/groups/{group}/access_rules/report",
@@ -4551,7 +4555,8 @@
       "command": [
         "billing-center",
         "access-rules",
-        "list-users"
+        "users",
+        "report"
       ],
       "method": "GET",
       "path": "/analytics/orgs/{org_id}/users/{user}/access_rules/report",
@@ -4888,7 +4893,7 @@
       "command": [
         "billing-center",
         "billing-center-access-rules",
-        "list"
+        "report"
       ],
       "method": "GET",
       "path": "/analytics/orgs/{org_id}/billing_centers/{billing_center}/access_rules/report",
@@ -5337,7 +5342,8 @@
       "operationId": "BillingCenterService_BillingCenters_show_allocation_table",
       "command": [
         "billing-center",
-        "allocation-table-all"
+        "allocation-table",
+        "list"
       ],
       "method": "GET",
       "path": "/analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table",
@@ -5499,7 +5505,8 @@
       "operationId": "BillingCenterService_BillingCenters_upsert_allocation_table",
       "command": [
         "billing-center",
-        "allocation-table"
+        "allocation-table",
+        "replace"
       ],
       "method": "PUT",
       "path": "/analytics/orgs/{org_id}/billing_centers/{billing_center}/allocation_table",
@@ -6612,7 +6619,8 @@
       "command": [
         "credential",
         "api-key-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/api-key/{id}",
@@ -6827,7 +6835,8 @@
       "command": [
         "credential",
         "api-key-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/api-key/{id}",
@@ -7039,7 +7048,8 @@
       "command": [
         "credential",
         "api-key-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/api-key/{id}",
@@ -7341,7 +7351,8 @@
       "command": [
         "credential",
         "aws-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/aws/{id}",
@@ -7551,7 +7562,8 @@
       "command": [
         "credential",
         "aws-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/aws/{id}",
@@ -7758,7 +7770,8 @@
       "command": [
         "credential",
         "aws-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/aws/{id}",
@@ -7904,7 +7917,7 @@
       "operationId": "Cred_AWS_STS_Credential_create_org",
       "command": [
         "credential",
-        "awssts-credential",
+        "aws-sts-credential",
         "replace"
       ],
       "method": "PUT",
@@ -8115,8 +8128,9 @@
       "operationId": "Cred_AWS_STS_Credential_create_project",
       "command": [
         "credential",
-        "awssts-credential",
-        "replace-project"
+        "aws-sts-credential",
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/aws-sts/{id}",
@@ -8326,7 +8340,7 @@
       "operationId": "Cred_AWS_STS_Credential_show_org",
       "command": [
         "credential",
-        "awssts-credential",
+        "aws-sts-credential",
         "get"
       ],
       "method": "GET",
@@ -8386,8 +8400,9 @@
       "operationId": "Cred_AWS_STS_Credential_show_project",
       "command": [
         "credential",
-        "awssts-credential",
-        "get-project"
+        "aws-sts-credential",
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/aws-sts/{id}",
@@ -8446,7 +8461,7 @@
       "operationId": "Cred_AWS_STS_Credential_update_org",
       "command": [
         "credential",
-        "awssts-credential",
+        "aws-sts-credential",
         "update"
       ],
       "method": "PATCH",
@@ -8653,8 +8668,9 @@
       "operationId": "Cred_AWS_STS_Credential_update_project",
       "command": [
         "credential",
-        "awssts-credential",
-        "update-project"
+        "aws-sts-credential",
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/aws-sts/{id}",
@@ -8971,7 +8987,8 @@
       "command": [
         "credential",
         "basic-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/basic/{id}",
@@ -9141,7 +9158,8 @@
       "command": [
         "credential",
         "basic-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/basic/{id}",
@@ -9311,7 +9329,8 @@
       "command": [
         "credential",
         "basic-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/basic/{id}",
@@ -9511,7 +9530,8 @@
       "operationId": "Cred_Credential_delete_project",
       "command": [
         "credential",
-        "delete-project"
+        "project",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/cred/v2/projects/{projectId}/credentials/{scheme}/{id}",
@@ -9673,7 +9693,8 @@
       "operationId": "Cred_Credential_index_project",
       "command": [
         "credential",
-        "list-project"
+        "project",
+        "list"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials",
@@ -9855,7 +9876,8 @@
       "command": [
         "credential",
         "digest-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/digest/{id}",
@@ -10025,7 +10047,8 @@
       "command": [
         "credential",
         "digest-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/digest/{id}",
@@ -10195,7 +10218,8 @@
       "command": [
         "credential",
         "digest-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/digest/{id}",
@@ -10415,7 +10439,8 @@
       "command": [
         "credential",
         "ntlm-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/ntlm/{id}",
@@ -10585,7 +10610,8 @@
       "command": [
         "credential",
         "ntlm-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/ntlm/{id}",
@@ -10755,7 +10781,8 @@
       "command": [
         "credential",
         "ntlm-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/ntlm/{id}",
@@ -10864,7 +10891,7 @@
       "operationId": "Cred_OAuth2_Credential_create_org",
       "command": [
         "credential",
-        "o-auth2-credential",
+        "oauth2-credential",
         "replace"
       ],
       "method": "PUT",
@@ -10980,8 +11007,9 @@
       "operationId": "Cred_OAuth2_Credential_create_project",
       "command": [
         "credential",
-        "o-auth2-credential",
-        "replace-project"
+        "oauth2-credential",
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/oauth2/{id}",
@@ -11096,7 +11124,7 @@
       "operationId": "Cred_OAuth2_Credential_show_org",
       "command": [
         "credential",
-        "o-auth2-credential",
+        "oauth2-credential",
         "get"
       ],
       "method": "GET",
@@ -11156,8 +11184,9 @@
       "operationId": "Cred_OAuth2_Credential_show_project",
       "command": [
         "credential",
-        "o-auth2-credential",
-        "get-project"
+        "oauth2-credential",
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/oauth2/{id}",
@@ -11216,7 +11245,7 @@
       "operationId": "Cred_OAuth2_Credential_update_org",
       "command": [
         "credential",
-        "o-auth2-credential",
+        "oauth2-credential",
         "update"
       ],
       "method": "PATCH",
@@ -11332,8 +11361,9 @@
       "operationId": "Cred_OAuth2_Credential_update_project",
       "command": [
         "credential",
-        "o-auth2-credential",
-        "update-project"
+        "oauth2-credential",
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/oauth2/{id}",
@@ -11595,7 +11625,8 @@
       "command": [
         "credential",
         "oracle-credential",
-        "replace-project"
+        "project",
+        "replace"
       ],
       "method": "PUT",
       "path": "/cred/v2/projects/{projectId}/credentials/oracle/{id}",
@@ -11801,7 +11832,8 @@
       "command": [
         "credential",
         "oracle-credential",
-        "get-project"
+        "project",
+        "get"
       ],
       "method": "GET",
       "path": "/cred/v2/projects/{projectId}/credentials/oracle/{id}",
@@ -12007,7 +12039,8 @@
       "command": [
         "credential",
         "oracle-credential",
-        "update-project"
+        "project",
+        "update"
       ],
       "method": "PATCH",
       "path": "/cred/v2/projects/{projectId}/credentials/oracle/{id}",
@@ -12997,6 +13030,7 @@
       "command": [
         "finops-billing",
         "billing-credits",
+        "assignments",
         "create"
       ],
       "method": "POST",
@@ -13188,6 +13222,7 @@
       "command": [
         "finops-billing",
         "billing-credits",
+        "assignments",
         "delete"
       ],
       "method": "DELETE",
@@ -13257,7 +13292,8 @@
       "command": [
         "finops-billing",
         "billing-credits",
-        "assignments"
+        "assignments",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/credit/assignments",
@@ -13469,6 +13505,7 @@
       "command": [
         "finops-billing",
         "billing-credits",
+        "assignments",
         "replace"
       ],
       "method": "PUT",
@@ -13686,6 +13723,7 @@
       "command": [
         "finops-billing",
         "billing-credits",
+        "assignments",
         "get"
       ],
       "method": "GET",
@@ -13745,7 +13783,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "create-rules"
+        "rules",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/rules",
@@ -13797,6 +13836,7 @@
             "type": "dimension_equals",
             "value": "123456789012"
           },
+          "costAttribution": "upstream",
           "credit": "-125.00"
         },
         "enabled": true,
@@ -13870,7 +13910,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "plans-all"
+        "plans",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans",
@@ -13953,7 +13994,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "post-plan-rules-all"
+        "post-plan-rules",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules",
@@ -14005,6 +14047,7 @@
             "type": "dimension_equals",
             "value": "123456789012"
           },
+          "costAttribution": "upstream",
           "credit": "-125.00"
         },
         "customerIds": [
@@ -14082,7 +14125,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "pre-plan-rules-all"
+        "pre-plan-rules",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules",
@@ -14134,6 +14178,7 @@
             "type": "dimension_equals",
             "value": "123456789012"
           },
+          "costAttribution": "upstream",
           "credit": "-125.00"
         },
         "customerIds": [
@@ -14211,7 +14256,9 @@
       "command": [
         "finops-billing",
         "billing",
-        "create-plans"
+        "plans",
+        "rules",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules",
@@ -14354,7 +14401,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "delete-rules"
+        "rules",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}",
@@ -14423,7 +14471,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "plans-all-2"
+        "plans",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}",
@@ -14492,7 +14541,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "post-plan-rules-all-2"
+        "post-plan-rules",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}",
@@ -14561,7 +14611,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "pre-plan-rules-all-2"
+        "pre-plan-rules",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}",
@@ -14630,7 +14681,9 @@
       "command": [
         "finops-billing",
         "billing",
-        "delete-plans"
+        "plans",
+        "rules",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules/{id}",
@@ -14716,7 +14769,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "list-rules"
+        "rules",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/rules",
@@ -14806,7 +14860,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "plans-all-4"
+        "plans",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans",
@@ -14896,7 +14951,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "post-plan-rules-all-3"
+        "post-plan-rules",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules",
@@ -14986,7 +15042,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "pre-plan-rules-all-3"
+        "pre-plan-rules",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules",
@@ -15076,7 +15133,9 @@
       "command": [
         "finops-billing",
         "billing",
-        "list-plans"
+        "plans",
+        "rules",
+        "list"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{planId}/rules",
@@ -15183,7 +15242,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "replace-all-2"
+        "rules",
+        "replace"
       ],
       "method": "PUT",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/rules/{id}",
@@ -15336,6 +15396,7 @@
       "command": [
         "finops-billing",
         "billing",
+        "rules",
         "replace-all"
       ],
       "method": "PUT",
@@ -15416,7 +15477,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "plans"
+        "plans",
+        "replace"
       ],
       "method": "PUT",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}",
@@ -15517,7 +15579,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "post-plan-rules"
+        "post-plan-rules",
+        "replace"
       ],
       "method": "PUT",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/post-plan-rules/{id}",
@@ -15653,7 +15716,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "pre-plan-rules"
+        "pre-plan-rules",
+        "replace"
       ],
       "method": "PUT",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/pre-plan-rules/{id}",
@@ -15789,6 +15853,8 @@
       "command": [
         "finops-billing",
         "billing",
+        "plans",
+        "rules",
         "replace"
       ],
       "method": "PUT",
@@ -16027,7 +16093,8 @@
       "command": [
         "finops-billing",
         "billing",
-        "plans-all-3"
+        "plans",
+        "get"
       ],
       "method": "GET",
       "path": "/finops-billing/v1/orgs/{orgId}/adjustment/plans/{id}",
@@ -16295,6 +16362,22 @@
           "description": "Optional billing plan filter.",
           "name": "customerBillingPlan",
           "example": "Quia exercitationem."
+        },
+        {
+          "flag": "filter",
+          "source": "flag",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "schema": {
+            "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: scheduleId, customerName, customerBillingPlan, costMetric, status, deliveryStatus, currency, periodType, exportType, invoiceAmount (string); customerId, attempts, filterCount, groupByCount (integer); billMonth (YYYY-MM); issueDate and dueDate (date); createdAt and updatedAt (date-time). Combined with discrete filters using AND.",
+            "example": "deliveryStatus eq 'success' and billMonth eq '2026-09'",
+            "type": "string"
+          },
+          "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: scheduleId, customerName, customerBillingPlan, costMetric, status, deliveryStatus, currency, periodType, exportType, invoiceAmount (string); customerId, attempts, filterCount, groupByCount (integer); billMonth (YYYY-MM); issueDate and dueDate (date); createdAt and updatedAt (date-time). Combined with discrete filters using AND.",
+          "name": "filter",
+          "example": "deliveryStatus eq 'success' and billMonth eq '2026-09'"
         },
         {
           "flag": "skip-token",
@@ -16787,6 +16870,22 @@
           "description": "Optional exact-match filter on schedule name.",
           "name": "scheduleName",
           "example": "Saepe facere veritatis."
+        },
+        {
+          "flag": "filter",
+          "source": "flag",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "schema": {
+            "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: scheduleName, status, customerName, customerBillingPlan, invoiceTemplateId (string); customerId (integer); createdAt and updatedAt (date-time). Customer fields match any customer on the schedule. Combined with discrete filters using AND.",
+            "example": "status eq 'active' and customerId eq 53125",
+            "type": "string"
+          },
+          "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: scheduleName, status, customerName, customerBillingPlan, invoiceTemplateId (string); customerId (integer); createdAt and updatedAt (date-time). Customer fields match any customer on the schedule. Combined with discrete filters using AND.",
+          "name": "filter",
+          "example": "status eq 'active' and customerId eq 53125"
         },
         {
           "flag": "skip-token",
@@ -18127,13 +18226,29 @@
           "required": false,
           "enum": null,
           "schema": {
-            "description": "Optional filter text.",
+            "description": "Legacy substring search of the stored invoice generation filter JSON. This parameter does not accept OData expressions.",
             "example": "Est vitae maiores.",
             "type": "string"
           },
-          "description": "Optional filter text.",
+          "description": "Legacy substring search of the stored invoice generation filter JSON. This parameter does not accept OData expressions.",
           "name": "filter",
           "example": "Tenetur maxime recusandae."
+        },
+        {
+          "flag": "expression-filter",
+          "source": "flag",
+          "in": "query",
+          "type": "string",
+          "required": false,
+          "enum": null,
+          "schema": {
+            "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: customerId, attempts, filterCount, and groupByCount (integer); customerName, customerBillingPlan, currency, invoiceAmount, status, costMetric, periodType, and exportType (string); billMonth (YYYY-MM); issueDate and dueDate (date); createdAt and updatedAt (date-time). Combined with the legacy filter and discrete filters using AND.",
+            "example": "customerName co 'Acme' and exportType eq 'pdf'",
+            "type": "string"
+          },
+          "description": "OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fields are treated as null; only eq null and ne null support null operands. Literal values must be on the right side of an operator.\n\nSupported comparison operators are eq, ne, co, in, gt, ge, lt, and le, subject to the field type. String fields support eq, ne, in, and co; numeric and date fields support eq, ne, in, gt, ge, lt, and le. Boolean operators are and, or, and not. Parentheses group expressions. Expressions are limited to depth 10 and 100 predicates. Malformed syntax, unsupported fields or operators, and limit violations return invalid_filter with HTTP 400.\n\nFilterable fields: customerId, attempts, filterCount, and groupByCount (integer); customerName, customerBillingPlan, currency, invoiceAmount, status, costMetric, periodType, and exportType (string); billMonth (YYYY-MM); issueDate and dueDate (date); createdAt and updatedAt (date-time). Combined with the legacy filter and discrete filters using AND.",
+          "name": "expressionFilter",
+          "example": "customerName co 'Acme' and exportType eq 'pdf'"
         },
         {
           "flag": "group-by-count",
@@ -18655,7 +18770,7 @@
       "command": [
         "finops-billing",
         "shared-cost-rules",
-        "replace"
+        "reorder"
       ],
       "method": "PUT",
       "path": "/finops-billing/v1/orgs/{orgId}/shared-cost-rules/operations/reorder",
@@ -19955,7 +20070,8 @@
       "command": [
         "finops-customizations",
         "rule-based-dimension",
-        "rules-all"
+        "rules",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt}",
@@ -20028,6 +20144,7 @@
       "command": [
         "finops-customizations",
         "rule-based-dimension",
+        "rules",
         "replace"
       ],
       "method": "PUT",
@@ -20123,7 +20240,8 @@
       "command": [
         "finops-customizations",
         "rule-based-dimension",
-        "rules"
+        "rules",
+        "get"
       ],
       "method": "GET",
       "path": "/finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt}",
@@ -21427,7 +21545,8 @@
         "finops-onboarding",
         "bill-connect",
         "aws",
-        "iam-role-all"
+        "iam-role",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role",
@@ -21575,7 +21694,8 @@
         "finops-onboarding",
         "bill-connect",
         "aws",
-        "iam-user-all"
+        "iam-user",
+        "create"
       ],
       "method": "POST",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user",
@@ -21830,7 +21950,8 @@
         "finops-onboarding",
         "bill-connect",
         "aws",
-        "iam-role"
+        "iam-role",
+        "update"
       ],
       "method": "PATCH",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role/{id}",
@@ -21978,7 +22099,8 @@
         "finops-onboarding",
         "bill-connect",
         "aws",
-        "iam-user"
+        "iam-user",
+        "update"
       ],
       "method": "PATCH",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-user/{id}",
@@ -22103,7 +22225,7 @@
         "finops-onboarding",
         "bill-connect",
         "aws",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/{id}/validation",
@@ -22535,7 +22657,7 @@
         "finops-onboarding",
         "bill-connect",
         "azure-csp",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-csp/{id}/validation",
@@ -22945,7 +23067,7 @@
         "finops-onboarding",
         "bill-connect",
         "azure-ea-management",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-ea-management/{id}/validation",
@@ -23371,7 +23493,7 @@
         "finops-onboarding",
         "bill-connect",
         "azure-mca",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-mca/{id}/validation",
@@ -23732,7 +23854,7 @@
         "finops-onboarding",
         "bill-connect",
         "common-bill-ingestion",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/cbi/{id}/validation",
@@ -24131,7 +24253,7 @@
         "finops-onboarding",
         "bill-connect",
         "databricks",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}/validation",
@@ -24469,7 +24591,7 @@
         "finops-onboarding",
         "bill-connect",
         "gcp",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/gcp/{id}/validation",
@@ -24869,7 +24991,7 @@
         "finops-onboarding",
         "bill-connect",
         "snowflake",
-        "list"
+        "validate"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/snowflake/{id}/validation",
@@ -24969,7 +25091,7 @@
       "command": [
         "finops-onboarding",
         "bill-connect",
-        "validations"
+        "validate-all"
       ],
       "method": "GET",
       "path": "/finops-onboarding/v1/orgs/{orgId}/bill-connects/validations",
@@ -25193,7 +25315,7 @@
       "command": [
         "finops-onboarding",
         "processing-history",
-        "update"
+        "reprocess"
       ],
       "method": "PATCH",
       "path": "/finops-onboarding/v1/orgs/{orgId}/processing/bill-months",
@@ -25803,7 +25925,8 @@
       "command": [
         "iam",
         "access-policy",
-        "users"
+        "users",
+        "get"
       ],
       "method": "GET",
       "path": "/iam/v1/orgs/{orgId}/access-policies/users/{userId}",
@@ -26511,7 +26634,7 @@
       "command": [
         "iam",
         "contracts",
-        "activation"
+        "set-activation"
       ],
       "method": "PATCH",
       "path": "/iam/v1/orgs/{orgId}/contracts/{id}/activation",
@@ -27393,7 +27516,7 @@
       "command": [
         "iam",
         "contracts",
-        "update"
+        "update-last-seen"
       ],
       "method": "PATCH",
       "path": "/iam/v1/orgs/{orgId}/contracts/{id}",
@@ -28043,7 +28166,7 @@
       "command": [
         "iam",
         "group-membership",
-        "memberships"
+        "create"
       ],
       "method": "POST",
       "path": "/iam/v1/orgs/{orgId}/groups/{groupId}/memberships",
@@ -29160,7 +29283,8 @@
       "command": [
         "iam",
         "msp-customer-tag",
-        "tags"
+        "tags",
+        "create"
       ],
       "method": "POST",
       "path": "/msp/v1/orgs/{orgId}/customers/{customerId}/tags",
@@ -29237,6 +29361,7 @@
       "command": [
         "iam",
         "msp-customer-tag",
+        "tags",
         "delete"
       ],
       "method": "DELETE",
@@ -29312,6 +29437,7 @@
       "command": [
         "iam",
         "msp-customer-tag",
+        "tags",
         "list-all"
       ],
       "method": "GET",
@@ -29385,6 +29511,7 @@
       "command": [
         "iam",
         "msp-customer-tag",
+        "tags",
         "list"
       ],
       "method": "GET",
@@ -29629,7 +29756,7 @@
       "action": "create",
       "summary": "Bulk delete MSP customers (v2)",
       "description": "BulkDelete removes multiple managed service provider customer tenants in a single request. \nThis operation is limited to 100 customers in a single request.\nIndividual customer deletion attempts can succeed or fail independently. The response includes detailed \nstatus information for each customer deletion attempt, along with summary statistics.\n\nUse the optional 'status' query parameter to filter which results are included in the response:\n- Without filter: returns all results (both successful and failed)\n- status=success: returns only successfully deleted customers\n- status=failed: returns only failed customer deletion attempts\n\nV2 API enhancements over v1:\n* Validates that each organization has no child organizations before deletion\n* Returns specific error codes for constraint violations in individual results\n* Allows partial success - some deletions may succeed while others fail",
-      "destructive": false,
+      "destructive": true,
       "paginated": false,
       "responseEnvelope": "none",
       "params": [
@@ -30485,7 +30612,7 @@
       "command": [
         "iam",
         "organization-invitation",
-        "update"
+        "resend"
       ],
       "method": "PATCH",
       "path": "/iam/v1/orgs/{orgId}/invitations/{id}",
@@ -30664,7 +30791,8 @@
       "command": [
         "iam",
         "organization",
-        "msp"
+        "msp",
+        "get"
       ],
       "method": "GET",
       "path": "/iam/v1/orgs/{orgId}/msp/{targetOrgId}",
@@ -31319,7 +31447,7 @@
       "command": [
         "iam",
         "saml2-domain",
-        "create"
+        "register"
       ],
       "method": "POST",
       "path": "/iam/v1/orgs/{orgId}/idps/{identityProviderId}/domains/register",
@@ -31559,7 +31687,7 @@
       "command": [
         "iam",
         "saml2-identity-provider-signing-key",
-        "create"
+        "generate"
       ],
       "method": "POST",
       "path": "/iam/v1/orgs/{orgId}/idps/{identityProviderId}/signing-keys/generate",
@@ -32617,7 +32745,8 @@
       "command": [
         "iam",
         "scim-config",
-        "resource-types-all"
+        "resource-types",
+        "list"
       ],
       "method": "GET",
       "path": "/scim/v2/orgs/{orgId}/ResourceTypes",
@@ -32659,7 +32788,8 @@
       "command": [
         "iam",
         "scim-config",
-        "schemas-all"
+        "schemas",
+        "list"
       ],
       "method": "GET",
       "path": "/scim/v2/orgs/{orgId}/Schemas",
@@ -32743,7 +32873,8 @@
       "command": [
         "iam",
         "scim-config",
-        "resource-types"
+        "resource-types",
+        "get"
       ],
       "method": "GET",
       "path": "/scim/v2/orgs/{orgId}/ResourceTypes/{id}",
@@ -32801,7 +32932,8 @@
       "command": [
         "iam",
         "scim-config",
-        "schemas"
+        "schemas",
+        "get"
       ],
       "method": "GET",
       "path": "/scim/v2/orgs/{orgId}/Schemas/{id}",
@@ -33855,7 +33987,7 @@
       "command": [
         "iam",
         "service-account-client",
-        "clients"
+        "create"
       ],
       "method": "POST",
       "path": "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients",
@@ -34001,7 +34133,8 @@
       "command": [
         "iam",
         "service-account-client",
-        "client-secret"
+        "client-secret",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret",
@@ -34211,7 +34344,8 @@
       "command": [
         "iam",
         "service-account-client",
-        "client-secret-all"
+        "client-secret",
+        "rotate"
       ],
       "method": "POST",
       "path": "/iam/v1/orgs/{orgId}/service-accounts/{serviceAccountId}/clients/{clientId}/client-secret",
@@ -35245,7 +35379,7 @@
       "command": [
         "iam",
         "user-profile",
-        "list"
+        "get"
       ],
       "method": "GET",
       "path": "/iam/v1/users/me",
@@ -35359,7 +35493,7 @@
       "command": [
         "iam",
         "user-setting-blob",
-        "list"
+        "download-url"
       ],
       "method": "GET",
       "path": "/iam/v1/users/me/settings/blob",
@@ -35461,7 +35595,7 @@
       "command": [
         "iam",
         "user-setting-blob",
-        "replace"
+        "upload-url"
       ],
       "method": "PUT",
       "path": "/iam/v1/users/me/settings/blob",
@@ -36393,7 +36527,7 @@
       "operationId": "OptimaRecommendations_Recommendations_updateStatus",
       "command": [
         "recommendations",
-        "replace"
+        "update-status"
       ],
       "method": "PUT",
       "path": "/recommendations/orgs/{orgId}/recommendations/updatestatus",
@@ -37942,7 +38076,8 @@
       "command": [
         "policy",
         "custom-catalog",
-        "tag"
+        "tag",
+        "list"
       ],
       "method": "GET",
       "path": "/policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag",
@@ -38001,6 +38136,7 @@
       "command": [
         "policy",
         "custom-catalog",
+        "tag",
         "replace"
       ],
       "method": "PUT",
@@ -42511,7 +42647,7 @@
       "command": [
         "risk",
         "misconfiguration-ui",
-        "export"
+        "failed-asset-export"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/misconfiguration/failed-asset/export",
@@ -42691,7 +42827,7 @@
       "command": [
         "risk",
         "vulnerability",
-        "get-findings-distribution"
+        "findings-distribution-export"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/vulnerability/findings-distribution/export/",
@@ -42932,7 +43068,7 @@
       "command": [
         "risk",
         "vulnerability",
-        "get-failed-assets"
+        "failed-assets-export"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/vulnerability/failed-assets/export/",
@@ -43011,7 +43147,7 @@
       "command": [
         "risk",
         "vulnerability",
-        "get-list"
+        "list-export"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/vulnerability/list/export/",
@@ -43476,7 +43612,7 @@
       "command": [
         "risk",
         "regulatory-compliance",
-        "filter"
+        "catalog-filter"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/regulatory-compliance/catalog/filter",
@@ -47111,7 +47247,7 @@
       "command": [
         "risk",
         "regulatory-compliance",
-        "overview"
+        "misconfiguration-overview"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/regulatory-compliance/misconfiguration/overview",
@@ -47776,7 +47912,8 @@
       "command": [
         "risk",
         "misconfiguration-ui",
-        "remediation-steps"
+        "remediation-steps",
+        "get"
       ],
       "method": "GET",
       "path": "/risk/v1/orgs/{orgId}/misconfiguration/remediation-steps/{riskId}/{remediationMethod}",
@@ -47846,6 +47983,7 @@
       "command": [
         "risk",
         "misconfiguration-ui",
+        "risk",
         "details"
       ],
       "method": "GET",
@@ -48344,7 +48482,7 @@
       "command": [
         "risk",
         "regulatory-compliance",
-        "suppress"
+        "rule-suppress"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/regulatory-compliance/rule/suppress",
@@ -48415,7 +48553,7 @@
       "command": [
         "risk",
         "misconfiguration-ui",
-        "suppress"
+        "rule-suppress"
       ],
       "method": "POST",
       "path": "/risk/v1/orgs/{orgId}/misconfiguration/rule/suppress",
@@ -48487,7 +48625,7 @@
       "command": [
         "risk",
         "compliance",
-        "update"
+        "favorite"
       ],
       "method": "PATCH",
       "path": "/risk/v1/orgs/{orgId}/compliance/favorite",
@@ -49341,7 +49479,10 @@
       "command": [
         "saas",
         "license",
-        "allocations-all"
+        "terms",
+        "purchases",
+        "allocations",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations",
@@ -49553,7 +49694,10 @@
       "command": [
         "saas",
         "license",
-        "allocations-all-2"
+        "terms",
+        "purchases",
+        "allocations",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id}",
@@ -49659,7 +49803,10 @@
       "command": [
         "saas",
         "license",
-        "allocations-all-3"
+        "terms",
+        "purchases",
+        "allocations",
+        "list"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations",
@@ -49752,7 +49899,10 @@
       "command": [
         "saas",
         "license",
-        "allocations"
+        "terms",
+        "purchases",
+        "allocations",
+        "replace"
       ],
       "method": "PUT",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{purchaseId}/allocations/{id}",
@@ -50157,7 +50307,8 @@
       "command": [
         "saas",
         "license",
-        "fees-all"
+        "fees",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/fees",
@@ -50313,7 +50464,8 @@
       "command": [
         "saas",
         "license",
-        "fees-all-2"
+        "fees",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId}",
@@ -50386,7 +50538,8 @@
       "command": [
         "saas",
         "license",
-        "fees-all-4"
+        "fees",
+        "list"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/fees",
@@ -50492,7 +50645,8 @@
       "command": [
         "saas",
         "license",
-        "fees-all-3"
+        "fees",
+        "get"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId}",
@@ -50568,7 +50722,8 @@
       "command": [
         "saas",
         "license",
-        "fees"
+        "fees",
+        "update"
       ],
       "method": "PATCH",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/fees/{feeId}",
@@ -50827,7 +50982,8 @@
       "command": [
         "saas",
         "license",
-        "notes-all"
+        "notes",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/notes",
@@ -50908,7 +51064,8 @@
       "command": [
         "saas",
         "license",
-        "notes-all-2"
+        "notes",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id}",
@@ -50979,7 +51136,8 @@
       "command": [
         "saas",
         "license",
-        "notes-all-4"
+        "notes",
+        "list"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/notes",
@@ -51111,7 +51269,8 @@
       "command": [
         "saas",
         "license",
-        "notes-all-3"
+        "notes",
+        "get"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id}",
@@ -51185,7 +51344,8 @@
       "command": [
         "saas",
         "license",
-        "notes"
+        "notes",
+        "replace"
       ],
       "method": "PUT",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/notes/{id}",
@@ -51282,7 +51442,9 @@
       "command": [
         "saas",
         "license",
-        "purchases-all"
+        "terms",
+        "purchases",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases",
@@ -51489,7 +51651,9 @@
       "command": [
         "saas",
         "license",
-        "purchases-all-2"
+        "terms",
+        "purchases",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id}",
@@ -51579,7 +51743,9 @@
       "command": [
         "saas",
         "license",
-        "purchases-all-4"
+        "terms",
+        "purchases",
+        "list"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases",
@@ -51744,7 +51910,9 @@
       "command": [
         "saas",
         "license",
-        "purchases-all-3"
+        "terms",
+        "purchases",
+        "get"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id}",
@@ -51837,7 +52005,9 @@
       "command": [
         "saas",
         "license",
-        "purchases"
+        "terms",
+        "purchases",
+        "update"
       ],
       "method": "PATCH",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}/purchases/{id}",
@@ -52105,7 +52275,8 @@
       "command": [
         "saas",
         "license",
-        "terms-all"
+        "terms",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms",
@@ -52447,7 +52618,8 @@
       "command": [
         "saas",
         "license",
-        "terms-all-2"
+        "terms",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}",
@@ -52520,7 +52692,8 @@
       "command": [
         "saas",
         "license",
-        "terms-all-4"
+        "terms",
+        "list"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms",
@@ -52626,7 +52799,8 @@
       "command": [
         "saas",
         "license",
-        "terms-all-3"
+        "terms",
+        "get"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}",
@@ -52702,7 +52876,8 @@
       "command": [
         "saas",
         "license",
-        "terms"
+        "terms",
+        "update"
       ],
       "method": "PATCH",
       "path": "/saas/v1/orgs/{orgId}/licenses/{licenseId}/terms/{termId}",
@@ -55106,7 +55281,7 @@
       "operationId": "Saas_SaaS_Data_create",
       "command": [
         "saas",
-        "saa-s-data",
+        "data",
         "create"
       ],
       "method": "POST",
@@ -55170,7 +55345,7 @@
       "operationId": "Saas_SaaS_Data_index",
       "command": [
         "saas",
-        "saa-s-data",
+        "data",
         "list"
       ],
       "method": "GET",
@@ -55244,7 +55419,7 @@
       "operationId": "Saas_SaaS_Data_show",
       "command": [
         "saas",
-        "saa-s-data",
+        "data",
         "get"
       ],
       "method": "GET",
@@ -55300,8 +55475,8 @@
       "operationId": "Saas_SaaS_Data_upload",
       "command": [
         "saas",
-        "saa-s-data",
-        "update"
+        "data",
+        "upload"
       ],
       "method": "PATCH",
       "path": "/saas/v1/orgs/{orgId}/saas-data/{id}",
@@ -55507,7 +55682,8 @@
       "command": [
         "saas",
         "usage-group",
-        "costs-all"
+        "costs",
+        "create"
       ],
       "method": "POST",
       "path": "/saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs",
@@ -55686,7 +55862,8 @@
       "command": [
         "saas",
         "usage-group",
-        "costs-all-2"
+        "costs",
+        "delete"
       ],
       "method": "DELETE",
       "path": "/saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId}",
@@ -55906,7 +56083,8 @@
       "command": [
         "saas",
         "usage-group",
-        "costs-all-3"
+        "costs",
+        "get"
       ],
       "method": "GET",
       "path": "/saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId}",
@@ -56051,7 +56229,8 @@
       "command": [
         "saas",
         "usage-group",
-        "costs"
+        "costs",
+        "replace"
       ],
       "method": "PUT",
       "path": "/saas/v1/orgs/{orgId}/usage-groups/{usageGroupID}/costs/{costId}",
@@ -56387,7 +56566,7 @@
       "operationId": "Uobs_collect_saas_connector_uobs_v1_orgs_org_id_saas_onboarding_connector_id_collect_post",
       "command": [
         "unified-onboarding",
-        "saa-s-onboarding",
+        "saas-onboarding",
         "collect"
       ],
       "method": "POST",
@@ -56442,7 +56621,7 @@
       "operationId": "Uobs_create_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_post",
       "command": [
         "unified-onboarding",
-        "saa-s-onboarding",
+        "saas-onboarding",
         "create"
       ],
       "method": "POST",
@@ -56521,7 +56700,7 @@
       "operationId": "Uobs_delete_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_delete",
       "command": [
         "unified-onboarding",
-        "saa-s-onboarding",
+        "saas-onboarding",
         "delete"
       ],
       "method": "DELETE",
@@ -56647,7 +56826,7 @@
       "operationId": "Uobs_get_connector_status_uobs_v1_orgs_org_id_saas_connectors_status_get",
       "command": [
         "unified-onboarding",
-        "saa-s-connector",
+        "saas-connector",
         "status"
       ],
       "method": "GET",
@@ -56757,7 +56936,7 @@
       "operationId": "Uobs_get_connector_uobs_v1_orgs_org_id_saas_connectors_identifier_get",
       "command": [
         "unified-onboarding",
-        "saa-s-connector",
+        "saas-connector",
         "get"
       ],
       "method": "GET",
@@ -56852,7 +57031,7 @@
       "operationId": "Uobs_get_connectors_count_uobs_v1_orgs_org_id_saas_connectors_count_get",
       "command": [
         "unified-onboarding",
-        "saa-s-connector",
+        "saas-connector",
         "count"
       ],
       "method": "GET",
@@ -56982,7 +57161,7 @@
       "operationId": "Uobs_list_connectors_uobs_v1_orgs_org_id_saas_connectors_get",
       "command": [
         "unified-onboarding",
-        "saa-s-connector",
+        "saas-connector",
         "list"
       ],
       "method": "GET",
@@ -57157,6 +57336,7 @@
       "command": [
         "unified-onboarding",
         "onboarding",
+        "gcp",
         "create"
       ],
       "method": "POST",
@@ -57256,6 +57436,7 @@
       "command": [
         "unified-onboarding",
         "onboarding",
+        "gcp",
         "replace"
       ],
       "method": "PUT",
@@ -57371,7 +57552,7 @@
       "operationId": "Uobs_update_saas_onboarding_uobs_v1_orgs_org_id_saas_onboarding_connector_id_put",
       "command": [
         "unified-onboarding",
-        "saa-s-onboarding",
+        "saas-onboarding",
         "replace"
       ],
       "method": "PUT",
@@ -57465,7 +57646,7 @@
       "operationId": "Uobs_validate_saas_connection_uobs_v1_orgs_org_id_saas_onboarding_validate_post",
       "command": [
         "unified-onboarding",
-        "saa-s-onboarding",
+        "saas-onboarding",
         "validate"
       ],
       "method": "POST",
@@ -57545,6 +57726,7 @@
       "command": [
         "it-visibility",
         "device",
+        "delete",
         "submit"
       ],
       "method": "POST",
@@ -57555,7 +57737,7 @@
       "action": "action",
       "summary": "Delete device evidence",
       "description": "Submits a request to delete device evidence for the specified device IDs.\n\nA datasource is included if it matches any datasource selector. If no datasource selectors are provided, evidence from every datasource associated with the specified devices is included.\n\nSubmitting a deletion request does not guarantee that all selected evidence will be deleted because inventory may change while the request is processed. If a device remains active in the environment, its evidence may reappear after new inventory data is collected.\n\nRepeating a deletion request is allowed and does not return an error when the selected evidence has already been deleted.\n\n### Client guidance\n* Submit no more than 500 unique device IDs per request. This recommendation is not enforced, but larger requests provide no processing benefit and may increase latency or timeout risk.\n* Split larger workloads into batches and process one batch at a time per organization. Use the same datasource selectors for every batch in one logical operation.\n* There is currently no specific concurrency limit or hard cap in place. We recommend that customers test and tune their request volume based on their network conditions, performance requirements, and business needs.\n* The API does not automatically retry failed deletion requests. Clients must not automatically retry timed-out requests because inventory may change and the original deletion may already have been submitted.",
-      "destructive": false,
+      "destructive": true,
       "paginated": false,
       "responseEnvelope": "none",
       "params": [
@@ -57638,7 +57820,8 @@
       "command": [
         "it-visibility",
         "device",
-        "get"
+        "delete",
+        "estimate"
       ],
       "method": "POST",
       "path": "/vis/v2/orgs/{orgId}/devices/delete/estimate",
@@ -57738,6 +57921,7 @@
       "command": [
         "it-visibility",
         "export-retired",
+        "files",
         "get"
       ],
       "method": "GET",
@@ -57866,7 +58050,7 @@
       "command": [
         "it-visibility",
         "query",
-        "get-all"
+        "execute"
       ],
       "method": "POST",
       "path": "/vis/v2/orgs/{orgId}/queries",
@@ -58011,7 +58195,7 @@
       "command": [
         "it-visibility",
         "query",
-        "list"
+        "download"
       ],
       "method": "GET",
       "path": "/vis/v2/orgs/{orgId}/queries/{id}/download",
@@ -76550,7 +76734,8 @@
             "dimension": "SubAccountId",
             "type": "dimension_equals",
             "value": "123456789012"
-          }
+          },
+          "costAttribution": "upstream"
         }
       },
       "properties": {
@@ -76641,7 +76826,8 @@
             "name": "Overhead",
             "type": "upchargeDiscount",
             "upchargeDiscount": {
-              "amount": 3.5
+              "amount": 3.5,
+              "costAttribution": "self"
             }
           }
         ]
@@ -76686,7 +76872,8 @@
               "name": "Overhead",
               "type": "upchargeDiscount",
               "upchargeDiscount": {
-                "amount": 3.5
+                "amount": 3.5,
+                "costAttribution": "self"
               }
             }
           ],
@@ -76751,7 +76938,8 @@
             "dimension": "SubAccountId",
             "type": "dimension_equals",
             "value": "123456789012"
-          }
+          },
+          "costAttribution": "upstream"
         }
       },
       "properties": {
@@ -77948,11 +78136,21 @@
           "type": "dimension_equals",
           "value": "233522084241"
         },
+        "costAttribution": "upstream",
         "credit": "-150.00"
       },
       "properties": {
         "condition": {
           "$ref": "#/components/schemas/FinopsBilling_AdjustmentCondition"
+        },
+        "costAttribution": {
+          "description": "Selects the invoice issuer, provider, or publisher attribution of new line items generated by the rule.\nWith self, the organization that configures the rule is the invoice issuer, provider, or publisher of the new line items.\nWith upstream, the new line items retain the upstream provider or issuer attribution from the source billing data.\nWhen omitted, self is used.",
+          "enum": [
+            "self",
+            "upstream"
+          ],
+          "example": "upstream",
+          "type": "string"
         },
         "credit": {
           "description": "Credit is the decimal value to add to the bill. Negative numbers reduce the bill.",
@@ -78291,7 +78489,8 @@
           "type": "dimension_equals",
           "value": "233522084241"
         },
-        "cost": "150.00"
+        "cost": "150.00",
+        "costAttribution": "upstream"
       },
       "properties": {
         "condition": {
@@ -78301,6 +78500,15 @@
           "description": "Cost is the decimal value to add to the bill. Negative numbers reduce the bill.",
           "example": "150.00",
           "pattern": "^[-+]?[0-9]+(?:[.][0-9]+)?(?:[eE][-+]?[0-9]+)?$",
+          "type": "string"
+        },
+        "costAttribution": {
+          "description": "Selects the invoice issuer, provider, or publisher attribution of new line items generated by the rule.\nWith self, the organization that configures the rule is the invoice issuer, provider, or publisher of the new line items.\nWith upstream, the new line items retain the upstream provider or issuer attribution from the source billing data.\nWhen omitted, self is used.",
+          "enum": [
+            "self",
+            "upstream"
+          ],
+          "example": "upstream",
           "type": "string"
         }
       },
@@ -80272,6 +80480,7 @@
           "type": "dimension_equals",
           "value": "EC2"
         },
+        "costAttribution": "upstream",
         "rate": "7.5"
       },
       "properties": {
@@ -80287,6 +80496,15 @@
         },
         "condition": {
           "$ref": "#/components/schemas/FinopsBilling_AdjustmentCondition"
+        },
+        "costAttribution": {
+          "description": "Selects the invoice issuer, provider, or publisher attribution of new line items generated by the rule.\nWith self, the organization that configures the rule is the invoice issuer, provider, or publisher of the new line items.\nWith upstream, the new line items retain the upstream provider or issuer attribution from the source billing data.\nWhen omitted, self is used.",
+          "enum": [
+            "self",
+            "upstream"
+          ],
+          "example": "upstream",
+          "type": "string"
         },
         "rate": {
           "description": "Rate is the percentage of the cost selected by baseOn to add to the bill as tax.",
@@ -80387,7 +80605,8 @@
             "scheduled": "after",
             "type": "upchargeDiscount",
             "upchargeDiscount": {
-              "amount": 3.5
+              "amount": 3.5,
+              "costAttribution": "upstream"
             },
             "updatedAt": "2020-11-26T12:17:38.369Z",
             "updatedBy": {
@@ -81195,7 +81414,8 @@
             "name": "Overhead",
             "type": "upchargeDiscount",
             "upchargeDiscount": {
-              "amount": -2
+              "amount": -2,
+              "costAttribution": "upstream"
             },
             "updatedAt": "2020-11-26T12:17:38.369Z",
             "updatedBy": {
@@ -82347,7 +82567,8 @@
             "name": "Overhead",
             "type": "upchargeDiscount",
             "upchargeDiscount": {
-              "amount": 3.5
+              "amount": 3.5,
+              "costAttribution": "upstream"
             }
           },
           {
@@ -82403,7 +82624,8 @@
               "name": "Overhead",
               "type": "upchargeDiscount",
               "upchargeDiscount": {
-                "amount": 3.5
+                "amount": 3.5,
+                "costAttribution": "upstream"
               }
             }
           ],
@@ -82641,7 +82863,8 @@
             "name": "Overhead",
             "type": "upchargeDiscount",
             "upchargeDiscount": {
-              "amount": -2
+              "amount": -2,
+              "costAttribution": "upstream"
             },
             "updatedAt": "2020-11-26T12:17:38.369Z",
             "updatedBy": {
@@ -82743,7 +82966,8 @@
               "name": "Overhead",
               "type": "upchargeDiscount",
               "upchargeDiscount": {
-                "amount": -2
+                "amount": -2,
+                "costAttribution": "upstream"
               },
               "updatedAt": "2020-11-26T12:17:38.369Z",
               "updatedBy": {
@@ -83110,6 +83334,7 @@
           "type": "dimension_equals",
           "value": "EC2"
         },
+        "costAttribution": "upstream",
         "maxAmountToCharge": "99999.99",
         "minAmountToCharge": "99.99",
         "tiers": [
@@ -83150,6 +83375,15 @@
         },
         "condition": {
           "$ref": "#/components/schemas/FinopsBilling_AdjustmentCondition"
+        },
+        "costAttribution": {
+          "description": "Selects the invoice issuer, provider, or publisher attribution of new line items generated by the rule.\nWith self, the organization that configures the rule is the invoice issuer, provider, or publisher of the new line items.\nWith upstream, the new line items retain the upstream provider or issuer attribution from the source billing data.\nWhen omitted, self is used.",
+          "enum": [
+            "self",
+            "upstream"
+          ],
+          "example": "upstream",
+          "type": "string"
         },
         "maxAmountToCharge": {
           "description": "Limit the maximum charge for a single tier.",

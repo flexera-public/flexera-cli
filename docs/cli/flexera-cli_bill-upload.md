@@ -40,7 +40,7 @@ Service id: bill_upload
 * [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
 * [flexera-cli bill-upload create](flexera-cli_bill-upload_create.md)	 - POST /optima/orgs/{orgId}/billUploads
 * [flexera-cli bill-upload delete](flexera-cli_bill-upload_delete.md)	 - DELETE /optima/orgs/{orgId}/billUploads/{billUploadId}
-* [flexera-cli bill-upload files](flexera-cli_bill-upload_files.md)	 - POST /optima/orgs/{orgId}/billUploads/{billUploadId}/files/{fileId}
+* [flexera-cli bill-upload files](flexera-cli_bill-upload_files.md)	 - files operations
 * [flexera-cli bill-upload get](flexera-cli_bill-upload_get.md)	 - GET /optima/orgs/{orgId}/billUploads/{billUploadId}
 * [flexera-cli bill-upload list](flexera-cli_bill-upload_list.md)	 - GET /optima/orgs/{orgId}/billUploads
 * [flexera-cli bill-upload operations](flexera-cli_bill-upload_operations.md)	 - POST /optima/orgs/{orgId}/billUploads/{billUploadId}/operations

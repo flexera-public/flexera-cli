@@ -28,11 +28,9 @@ func NewCmd() *cobra.Command {
 		Use:   "custom-catalog",
 		Short: "CustomCatalog operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomCatalogListCmd(),
-		newCustomCatalogTagCmd(),
-		newCustomCatalogReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomCatalogListCmd())
+	clipkg.AddCommandAt(c, []string{"tag"}, newCustomCatalogTagListCmd())
+	clipkg.AddCommandAt(c, []string{"tag"}, newCustomCatalogTagReplaceCmd())
 	return c
 }
 
@@ -85,7 +83,7 @@ func newCustomCatalogListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.PolicyCustomCatalogIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -96,7 +94,7 @@ func newCustomCatalogListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -119,15 +117,15 @@ func newCustomCatalogListCmd() *cobra.Command {
 	return c
 }
 
-// newCustomCatalogTagCmd — GET /policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag (operationId: Policy_CustomCatalog_showTag)
-func newCustomCatalogTagCmd() *cobra.Command {
+// newCustomCatalogTagListCmd — GET /policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag (operationId: Policy_CustomCatalog_showTag)
+func newCustomCatalogTagListCmd() *cobra.Command {
 	var (
 		publishedTemplateID string
 	)
 	c := &cobra.Command{
-		Use:         "tag",
+		Use:         "list",
 		Short:       "Retrieve custom catalog tags for a published template in an organization",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli policy custom-catalog tag --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli policy custom-catalog tag list --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID",
 		Annotations: map[string]string{"flexera.operationId": "Policy_CustomCatalog_showTag", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -154,7 +152,7 @@ func newCustomCatalogTagCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -171,8 +169,8 @@ func newCustomCatalogTagCmd() *cobra.Command {
 	return c
 }
 
-// newCustomCatalogReplaceCmd — PUT /policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag (operationId: Policy_CustomCatalog_upsertTag)
-func newCustomCatalogReplaceCmd() *cobra.Command {
+// newCustomCatalogTagReplaceCmd — PUT /policy/v1/orgs/{orgId}/custom-catalog/{publishedTemplateId}/tag (operationId: Policy_CustomCatalog_upsertTag)
+func newCustomCatalogTagReplaceCmd() *cobra.Command {
 	var (
 		publishedTemplateID  string
 		bodyRaw              string
@@ -184,7 +182,7 @@ func newCustomCatalogReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Create or update custom catalog tags for a published template under an MSP parent organization",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli policy custom-catalog replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json\n  flexera-cli policy custom-catalog replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema policy custom-catalog replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli policy custom-catalog tag replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json\n  flexera-cli policy custom-catalog tag replace --org-id ORG_ID --published-template-id PUBLISHED_TEMPLATE_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema policy custom-catalog tag replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Policy_CustomCatalog_upsertTag", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "scim-group",
 		Short: "SCIM Group operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSCIMGroupCreateCmd(),
-		newSCIMGroupDeleteCmd(),
-		newSCIMGroupGetCmd(),
-		newSCIMGroupListCmd(),
-		newSCIMGroupReplaceCmd(),
-		newSCIMGroupUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSCIMGroupCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMGroupDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMGroupGetCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMGroupListCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMGroupReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMGroupUpdateCmd())
 	return c
 }
 
@@ -135,7 +133,7 @@ func newSCIMGroupCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -250,7 +248,7 @@ func newSCIMGroupGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -304,7 +302,7 @@ func newSCIMGroupListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -421,7 +419,7 @@ func newSCIMGroupReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -540,7 +538,7 @@ func newSCIMGroupUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

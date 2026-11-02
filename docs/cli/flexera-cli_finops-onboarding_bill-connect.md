@@ -41,5 +41,5 @@ Bill Connect operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect gcp](flexera-cli_finops-onboarding_bill-connect_gcp.md)	 - Bill Connect - GCP operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect list](flexera-cli_finops-onboarding_bill-connect_list.md)	 - Index all bill connects
 * [flexera-cli finops-onboarding bill-connect snowflake](flexera-cli_finops-onboarding_bill-connect_snowflake.md)	 - Bill Connect - Snowflake operations (generated from the unified OpenAPI spec)
-* [flexera-cli finops-onboarding bill-connect validations](flexera-cli_finops-onboarding_bill-connect_validations.md)	 - Validate the credentials of all bill connects across all cloud vendors
+* [flexera-cli finops-onboarding bill-connect validate-all](flexera-cli_finops-onboarding_bill-connect_validate-all.md)	 - Validate the credentials of all bill connects across all cloud vendors
 

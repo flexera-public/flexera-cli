@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-databricks",
 		Short: "Bill Connect - Databricks operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectDatabricksCreateCmd(),
-		newBillConnectDatabricksDeleteCmd(),
-		newBillConnectDatabricksGetCmd(),
-		newBillConnectDatabricksListCmd(),
-		newBillConnectDatabricksUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectDatabricksCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectDatabricksDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectDatabricksGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectDatabricksValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectDatabricksUpdateCmd())
 	return c
 }
 
@@ -146,7 +144,7 @@ func newBillConnectDatabricksCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -264,7 +262,7 @@ func newBillConnectDatabricksGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -281,15 +279,16 @@ func newBillConnectDatabricksGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectDatabricksListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Databricks_validate)
-func newBillConnectDatabricksListCmd() *cobra.Command {
+// newBillConnectDatabricksValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/databricks/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Databricks_validate)
+func newBillConnectDatabricksValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate a Databricks bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect databricks list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect databricks validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Databricks_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -316,7 +315,7 @@ func newBillConnectDatabricksListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

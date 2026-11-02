@@ -35,6 +35,6 @@ Bill Connect - Databricks operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect databricks create](flexera-cli_finops-onboarding_bill-connect_databricks_create.md)	 - Create a Databricks bill connect
 * [flexera-cli finops-onboarding bill-connect databricks delete](flexera-cli_finops-onboarding_bill-connect_databricks_delete.md)	 - Delete a Databricks bill connect
 * [flexera-cli finops-onboarding bill-connect databricks get](flexera-cli_finops-onboarding_bill-connect_databricks_get.md)	 - Show a Databricks bill connect
-* [flexera-cli finops-onboarding bill-connect databricks list](flexera-cli_finops-onboarding_bill-connect_databricks_list.md)	 - Validate a Databricks bill connect
 * [flexera-cli finops-onboarding bill-connect databricks update](flexera-cli_finops-onboarding_bill-connect_databricks_update.md)	 - Update a Databricks bill connect
+* [flexera-cli finops-onboarding bill-connect databricks validate](flexera-cli_finops-onboarding_bill-connect_databricks_validate.md)	 - Validate a Databricks bill connect
 

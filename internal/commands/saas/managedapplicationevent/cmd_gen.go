@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "managed-application-event",
 		Short: "Managed Application Event operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newManagedApplicationEventGetCmd(),
-		newManagedApplicationEventListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newManagedApplicationEventGetCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationEventListCmd())
 	return c
 }
 
@@ -70,7 +68,7 @@ func newManagedApplicationEventGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -126,7 +124,7 @@ func newManagedApplicationEventListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasManagedApplicationEventIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -137,7 +135,7 @@ func newManagedApplicationEventListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

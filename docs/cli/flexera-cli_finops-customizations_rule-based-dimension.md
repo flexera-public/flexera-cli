@@ -35,12 +35,10 @@ Rule-Based Dimension operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-customizations rule-based-dimension bulk](flexera-cli_finops-customizations_rule-based-dimension_bulk.md)	 - Create or update rule-based dimensions from JSON input
 * [flexera-cli finops-customizations rule-based-dimension create](flexera-cli_finops-customizations_rule-based-dimension_create.md)	 - Creates a rule-based dimension
 * [flexera-cli finops-customizations rule-based-dimension delete](flexera-cli_finops-customizations_rule-based-dimension_delete.md)	 - Delete a rule-based dimension
-* [flexera-cli finops-customizations rule-based-dimension from_csv](flexera-cli_finops-customizations_rule-based-dimension_from_csv.md)	 - Generate and apply rule-based dimensions from CSV
+* [flexera-cli finops-customizations rule-based-dimension from-csv](flexera-cli_finops-customizations_rule-based-dimension_from-csv.md)	 - Generate and apply rule-based dimensions from CSV
 * [flexera-cli finops-customizations rule-based-dimension get](flexera-cli_finops-customizations_rule-based-dimension_get.md)	 - Shows a rule-based dimension
 * [flexera-cli finops-customizations rule-based-dimension list](flexera-cli_finops-customizations_rule-based-dimension_list.md)	 - Index rule-based dimensions
-* [flexera-cli finops-customizations rule-based-dimension replace](flexera-cli_finops-customizations_rule-based-dimension_replace.md)	 - Creates/Replace a rules list
-* [flexera-cli finops-customizations rule-based-dimension rules](flexera-cli_finops-customizations_rule-based-dimension_rules.md)	 - Shows the rules list
-* [flexera-cli finops-customizations rule-based-dimension rules-all](flexera-cli_finops-customizations_rule-based-dimension_rules-all.md)	 - Deletes the rules list
+* [flexera-cli finops-customizations rule-based-dimension rules](flexera-cli_finops-customizations_rule-based-dimension_rules.md)	 - rules operations
 * [flexera-cli finops-customizations rule-based-dimension summary](flexera-cli_finops-customizations_rule-based-dimension_summary.md)	 - Show a rule-based dimension summary
 * [flexera-cli finops-customizations rule-based-dimension update](flexera-cli_finops-customizations_rule-based-dimension_update.md)	 - Updates a rule-based dimension
 

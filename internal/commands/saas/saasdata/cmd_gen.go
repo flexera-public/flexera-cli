@@ -22,18 +22,16 @@ var (
 	_ = strings.TrimSpace
 )
 
-// NewCmd builds the "saa-s-data" command tree.
+// NewCmd builds the "data" command tree.
 func NewCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "saa-s-data",
+		Use:   "data",
 		Short: "SaaS Data operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSaaSDataCreateCmd(),
-		newSaaSDataGetCmd(),
-		newSaaSDataListCmd(),
-		newSaaSDataUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSaaSDataCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSDataGetCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSDataListCmd())
+	clipkg.AddCommandAt(c, nil, newSaaSDataUploadCmd())
 	return c
 }
 
@@ -49,7 +47,7 @@ func newSaaSDataCreateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "create",
 		Short:       "Create SaaS data entry",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas saa-s-data create --org-id ORG_ID --body @request.json\n  flexera-cli saas saa-s-data create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas saa-s-data create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas data create --org-id ORG_ID --body @request.json\n  flexera-cli saas data create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas data create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_SaaS_Data_create", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -149,7 +147,7 @@ func newSaaSDataGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Show SaaS data",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas saa-s-data get --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas data get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_SaaS_Data_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -176,7 +174,7 @@ func newSaaSDataGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -202,7 +200,7 @@ func newSaaSDataListCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "list",
 		Short:       "List SaaS data",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas saa-s-data list --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas data list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Saas_SaaS_Data_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -235,7 +233,7 @@ func newSaaSDataListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -253,8 +251,8 @@ func newSaaSDataListCmd() *cobra.Command {
 	return c
 }
 
-// newSaaSDataUpdateCmd — PATCH /saas/v1/orgs/{orgId}/saas-data/{id} (operationId: Saas_SaaS_Data_upload)
-func newSaaSDataUpdateCmd() *cobra.Command {
+// newSaaSDataUploadCmd — PATCH /saas/v1/orgs/{orgId}/saas-data/{id} (operationId: Saas_SaaS_Data_upload)
+func newSaaSDataUploadCmd() *cobra.Command {
 	var (
 		id          string
 		bodyRaw     string
@@ -263,9 +261,10 @@ func newSaaSDataUpdateCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "update",
+		Use:         "upload",
+		Aliases:     []string{"update"},
 		Short:       "Upload data",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas saa-s-data update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli saas saa-s-data update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas saa-s-data update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli saas data upload --org-id ORG_ID --id ID --body @request.json\n  flexera-cli saas data upload --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema saas data upload --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Saas_SaaS_Data_upload", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect",
 		Short: "Bill Connect operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectListCmd(),
-		newBillConnectValidationsCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectListCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectValidateAllCmd())
 	return c
 }
 
@@ -64,7 +62,7 @@ func newBillConnectListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -80,12 +78,13 @@ func newBillConnectListCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectValidationsCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/validations (operationId: FinopsOnboarding_Bill_Connect_validate)
-func newBillConnectValidationsCmd() *cobra.Command {
+// newBillConnectValidateAllCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/validations (operationId: FinopsOnboarding_Bill_Connect_validate)
+func newBillConnectValidateAllCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:         "validations",
+		Use:         "validate-all",
+		Aliases:     []string{"validations"},
 		Short:       "Validate the credentials of all bill connects across all cloud vendors",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect validations --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect validate-all --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -109,7 +108,7 @@ func newBillConnectValidationsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

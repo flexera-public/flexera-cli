@@ -28,11 +28,9 @@ func NewCmd() *cobra.Command {
 		Use:   "customer-group-type",
 		Short: "Customer Group Type operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomerGroupTypeGetCmd(),
-		newCustomerGroupTypeListCmd(),
-		newCustomerGroupTypeSummaryCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomerGroupTypeGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomerGroupTypeListCmd())
+	clipkg.AddCommandAt(c, nil, newCustomerGroupTypeSummaryCmd())
 	return c
 }
 
@@ -71,7 +69,7 @@ func newCustomerGroupTypeGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -127,7 +125,7 @@ func newCustomerGroupTypeListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasCustomerGroupTypeIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -138,7 +136,7 @@ func newCustomerGroupTypeListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -207,7 +205,7 @@ func newCustomerGroupTypeSummaryCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasCustomerGroupTypeSummaryResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -218,7 +216,7 @@ func newCustomerGroupTypeSummaryCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

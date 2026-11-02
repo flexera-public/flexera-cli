@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "group",
 		Short: "Group operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newGroupCreateCmd(),
-		newGroupDeleteCmd(),
-		newGroupGetCmd(),
-		newGroupListCmd(),
-		newGroupUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newGroupCreateCmd())
+	clipkg.AddCommandAt(c, nil, newGroupDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newGroupGetCmd())
+	clipkg.AddCommandAt(c, nil, newGroupListCmd())
+	clipkg.AddCommandAt(c, nil, newGroupUpdateCmd())
 	return c
 }
 
@@ -134,7 +132,7 @@ func newGroupCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -249,7 +247,7 @@ func newGroupGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -304,7 +302,7 @@ func newGroupListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -418,7 +416,7 @@ func newGroupUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

@@ -22,20 +22,18 @@ var (
 	_ = strings.TrimSpace
 )
 
-// NewCmd builds the "awssts-credential" command tree.
+// NewCmd builds the "aws-sts-credential" command tree.
 func NewCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "awssts-credential",
+		Use:   "aws-sts-credential",
 		Short: "AWS STS Credential operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAWSSTSCredentialGetCmd(),
-		newAWSSTSCredentialGetProjectCmd(),
-		newAWSSTSCredentialReplaceCmd(),
-		newAWSSTSCredentialReplaceProjectCmd(),
-		newAWSSTSCredentialUpdateCmd(),
-		newAWSSTSCredentialUpdateProjectCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAWSSTSCredentialGetCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newAWSSTSCredentialProjectGetCmd())
+	clipkg.AddCommandAt(c, nil, newAWSSTSCredentialReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newAWSSTSCredentialProjectReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newAWSSTSCredentialUpdateCmd())
+	clipkg.AddCommandAt(c, []string{"project"}, newAWSSTSCredentialProjectUpdateCmd())
 	return c
 }
 
@@ -47,7 +45,7 @@ func newAWSSTSCredentialGetCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Show a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential get --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_show_org", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,7 +72,7 @@ func newAWSSTSCredentialGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -91,16 +89,16 @@ func newAWSSTSCredentialGetCmd() *cobra.Command {
 	return c
 }
 
-// newAWSSTSCredentialGetProjectCmd — GET /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_show_project)
-func newAWSSTSCredentialGetProjectCmd() *cobra.Command {
+// newAWSSTSCredentialProjectGetCmd — GET /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_show_project)
+func newAWSSTSCredentialProjectGetCmd() *cobra.Command {
 	var (
 		projectID int64
 		id        string
 	)
 	c := &cobra.Command{
-		Use:         "get-project",
+		Use:         "get",
 		Short:       "Show a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential get-project --project-id PROJECT_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential project get --project-id PROJECT_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_show_project", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -127,7 +125,7 @@ func newAWSSTSCredentialGetProjectCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -169,7 +167,7 @@ func newAWSSTSCredentialReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Create a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential awssts-credential replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential awssts-credential replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential replace --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential aws-sts-credential replace --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential aws-sts-credential replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_create_org", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -309,8 +307,8 @@ func newAWSSTSCredentialReplaceCmd() *cobra.Command {
 	return c
 }
 
-// newAWSSTSCredentialReplaceProjectCmd — PUT /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_create_project)
-func newAWSSTSCredentialReplaceProjectCmd() *cobra.Command {
+// newAWSSTSCredentialProjectReplaceCmd — PUT /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_create_project)
+func newAWSSTSCredentialProjectReplaceCmd() *cobra.Command {
 	var (
 		projectID        int64
 		id               string
@@ -332,9 +330,9 @@ func newAWSSTSCredentialReplaceProjectCmd() *cobra.Command {
 		interactive      bool
 	)
 	c := &cobra.Command{
-		Use:         "replace-project",
+		Use:         "replace",
 		Short:       "Create a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential replace-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential awssts-credential replace-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential awssts-credential replace-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential project replace --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential aws-sts-credential project replace --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential aws-sts-credential project replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_create_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -497,7 +495,7 @@ func newAWSSTSCredentialUpdateCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "update",
 		Short:       "Update a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential awssts-credential update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential awssts-credential update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli credential aws-sts-credential update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential aws-sts-credential update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_update_org", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -637,8 +635,8 @@ func newAWSSTSCredentialUpdateCmd() *cobra.Command {
 	return c
 }
 
-// newAWSSTSCredentialUpdateProjectCmd — PATCH /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_update_project)
-func newAWSSTSCredentialUpdateProjectCmd() *cobra.Command {
+// newAWSSTSCredentialProjectUpdateCmd — PATCH /cred/v2/projects/{projectId}/credentials/aws-sts/{id} (operationId: Cred_AWS_STS_Credential_update_project)
+func newAWSSTSCredentialProjectUpdateCmd() *cobra.Command {
 	var (
 		projectID        int64
 		id               string
@@ -660,9 +658,9 @@ func newAWSSTSCredentialUpdateProjectCmd() *cobra.Command {
 		interactive      bool
 	)
 	c := &cobra.Command{
-		Use:         "update-project",
+		Use:         "update",
 		Short:       "Update a Credential",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential awssts-credential update-project --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential awssts-credential update-project --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential awssts-credential update-project --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli credential aws-sts-credential project update --project-id PROJECT_ID --id ID --body @request.json\n  flexera-cli credential aws-sts-credential project update --project-id PROJECT_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema credential aws-sts-credential project update --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Cred_AWS_STS_Credential_update_project", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -206,27 +206,6 @@ func render(deps *clipkg.Deps, v any) error {
 	return deps.Printer.Render(deps.Stdout, deps.Config.Output, v)
 }
 
-func collectPolicyPages[T any](ctx context.Context, noPaginate bool, initial *string, table bool, fetch flexera.PageFetcher) (any, error) {
-	result, err := flexera.CollectPages(ctx, noPaginate, initial, fetch)
-	if err != nil {
-		return nil, err
-	}
-	if table {
-		if merged, ok := result.(map[string]any); ok {
-			data, err := json.Marshal(merged)
-			if err != nil {
-				return nil, err
-			}
-			var typed T
-			if err := json.Unmarshal(data, &typed); err != nil {
-				return nil, fmt.Errorf("decoding merged policy page: %w", err)
-			}
-			return &typed, nil
-		}
-	}
-	return result, nil
-}
-
 // ===================== applied-policy (project-scoped) =====================
 
 func newAppliedPolicyListCmd() *cobra.Command {
@@ -268,7 +247,7 @@ func newAppliedPolicyListCmd() *cobra.Command {
 			if token := strings.TrimSpace(skipToken); token != "" {
 				initialSkipToken = &token
 			}
-			result, err := collectPolicyPages[flexera.PolicyAppliedPolicyList](cmd.Context(), noPaginate, initialSkipToken, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.PolicyAppliedPolicyList), func(ctx context.Context, token *string) (any, error) {
 				pageParams := flexera.PolicyAppliedPolicyIndexParams{}
 				if params != nil {
 					pageParams = *params
@@ -624,7 +603,7 @@ func newActionStatusListCmd() *cobra.Command {
 			if token := strings.TrimSpace(skipToken); token != "" {
 				initial = &token
 			}
-			result, err := collectPolicyPages[flexera.PolicyActionStatusList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initial, new(flexera.PolicyActionStatusList), func(ctx context.Context, token *string) (any, error) {
 				page := flexera.PolicyActionStatusIndexParams{}
 				if params != nil {
 					page = *params
@@ -737,7 +716,7 @@ func newArchivedIncidentListCmd() *cobra.Command {
 			if token := strings.TrimSpace(skipToken); token != "" {
 				initial = &token
 			}
-			result, err := collectPolicyPages[flexera.PolicyArchivedIncidentList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initial, new(flexera.PolicyArchivedIncidentList), func(ctx context.Context, token *string) (any, error) {
 				page := flexera.PolicyArchivedIncidentIndexParams{}
 				if params != nil {
 					page = *params
@@ -850,7 +829,7 @@ func newPolicyTemplateListCmd() *cobra.Command {
 			if token := strings.TrimSpace(skipToken); token != "" {
 				initial = &token
 			}
-			result, err := collectPolicyPages[flexera.PolicyPolicyTemplateList](cmd.Context(), noPaginate, initial, deps.Config.Output == "table", func(ctx context.Context, token *string) (any, error) {
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initial, new(flexera.PolicyPolicyTemplateList), func(ctx context.Context, token *string) (any, error) {
 				page := flexera.PolicyPolicyTemplateIndexParams{}
 				if params != nil {
 					page = *params

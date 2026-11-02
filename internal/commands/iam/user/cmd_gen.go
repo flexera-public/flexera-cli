@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "user",
 		Short: "User operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newUserCreateCmd(),
-		newUserDeleteCmd(),
-		newUserGetCmd(),
-		newUserListCmd(),
-		newUserGroupsCmd(),
-		newUserUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newUserCreateCmd())
+	clipkg.AddCommandAt(c, nil, newUserDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newUserGetCmd())
+	clipkg.AddCommandAt(c, nil, newUserListCmd())
+	clipkg.AddCommandAt(c, nil, newUserGroupsCmd())
+	clipkg.AddCommandAt(c, nil, newUserUpdateCmd())
 	return c
 }
 
@@ -139,7 +137,7 @@ func newUserCreateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -249,7 +247,7 @@ func newUserGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -315,7 +313,7 @@ func newUserListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.IamUserIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -326,7 +324,7 @@ func newUserListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -381,7 +379,7 @@ func newUserGroupsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -495,7 +493,7 @@ func newUserUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

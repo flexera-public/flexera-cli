@@ -35,6 +35,6 @@ Bill Connect - Azure EA Management operations (generated from the unified OpenAP
 * [flexera-cli finops-onboarding bill-connect azure-ea-management create](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_create.md)	 - Create an Azure EA (Enterprise Agreement) Management bill connect
 * [flexera-cli finops-onboarding bill-connect azure-ea-management delete](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_delete.md)	 - Delete an Azure EA (Enterprise Agreement) Management bill connect
 * [flexera-cli finops-onboarding bill-connect azure-ea-management get](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_get.md)	 - Show an Azure EA (Enterprise Agreement) Management bill connect
-* [flexera-cli finops-onboarding bill-connect azure-ea-management list](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_list.md)	 - Validate the credentials stored for an Azure EA (Enterprise Agreement) Management bill connect
 * [flexera-cli finops-onboarding bill-connect azure-ea-management update](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_update.md)	 - Update an Azure EA (Enterprise Agreement) Management bill connect
+* [flexera-cli finops-onboarding bill-connect azure-ea-management validate](flexera-cli_finops-onboarding_bill-connect_azure-ea-management_validate.md)	 - Validate the credentials stored for an Azure EA (Enterprise Agreement) Management bill connect
 

@@ -28,23 +28,21 @@ func NewCmd() *cobra.Command {
 		Use:   "billing-center-access-rules",
 		Short: "BillingCenterAccessRules operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillingCenterAccessRulesListCmd(),
-		newBillingCenterAccessRulesGrantCmd(),
-		newBillingCenterAccessRulesRevokeCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillingCenterAccessRulesReportCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCenterAccessRulesGrantCmd())
+	clipkg.AddCommandAt(c, nil, newBillingCenterAccessRulesRevokeCmd())
 	return c
 }
 
-// newBillingCenterAccessRulesListCmd — GET /analytics/orgs/{org_id}/billing_centers/{billing_center}/access_rules/report (operationId: BillingCenterService_BillingCenterAccessRules_report)
-func newBillingCenterAccessRulesListCmd() *cobra.Command {
+// newBillingCenterAccessRulesReportCmd — GET /analytics/orgs/{org_id}/billing_centers/{billing_center}/access_rules/report (operationId: BillingCenterService_BillingCenterAccessRules_report)
+func newBillingCenterAccessRulesReportCmd() *cobra.Command {
 	var (
 		billingCenter string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "report",
 		Short:       "List roles of users, groups or service accounts",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center billing-center-access-rules list --org-id ORG_ID --billing-center BILLING_CENTER",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli billing-center billing-center-access-rules report --org-id ORG_ID --billing-center BILLING_CENTER",
 		Annotations: map[string]string{"flexera.operationId": "BillingCenterService_BillingCenterAccessRules_report", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -72,7 +70,7 @@ func newBillingCenterAccessRulesListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

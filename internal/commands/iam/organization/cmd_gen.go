@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "organization",
 		Short: "Organization operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newOrganizationGetCmd(),
-		newOrganizationMspCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newOrganizationGetCmd())
+	clipkg.AddCommandAt(c, []string{"msp"}, newOrganizationMspGetCmd())
 	return c
 }
 
@@ -64,7 +62,7 @@ func newOrganizationGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -80,15 +78,15 @@ func newOrganizationGetCmd() *cobra.Command {
 	return c
 }
 
-// newOrganizationMspCmd — GET /iam/v1/orgs/{orgId}/msp/{targetOrgId} (operationId: Iam_Organization_show_msp)
-func newOrganizationMspCmd() *cobra.Command {
+// newOrganizationMspGetCmd — GET /iam/v1/orgs/{orgId}/msp/{targetOrgId} (operationId: Iam_Organization_show_msp)
+func newOrganizationMspGetCmd() *cobra.Command {
 	var (
 		targetOrgID int
 	)
 	c := &cobra.Command{
-		Use:         "msp",
+		Use:         "get",
 		Short:       "Show an MSP org",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam organization msp --org-id ORG_ID --target-org-id TARGET_ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam organization msp get --org-id ORG_ID --target-org-id TARGET_ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Organization_show_msp", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -112,7 +110,7 @@ func newOrganizationMspCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

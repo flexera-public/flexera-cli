@@ -28,24 +28,23 @@ func NewCmd() *cobra.Command {
 		Use:   "user-setting-blob",
 		Short: "User Setting Blob operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newUserSettingBlobListCmd(),
-		newUserSettingBlobReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newUserSettingBlobDownloadUrlCmd())
+	clipkg.AddCommandAt(c, nil, newUserSettingBlobUploadUrlCmd())
 	return c
 }
 
-// newUserSettingBlobListCmd — GET /iam/v1/users/me/settings/blob (operationId: Iam_User_Setting_Blob_retrive_get_url)
-func newUserSettingBlobListCmd() *cobra.Command {
+// newUserSettingBlobDownloadUrlCmd — GET /iam/v1/users/me/settings/blob (operationId: Iam_User_Setting_Blob_retrive_get_url)
+func newUserSettingBlobDownloadUrlCmd() *cobra.Command {
 	var (
 		id     string
 		expiry int
 		type_  string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "download-url",
+		Aliases:     []string{"list"},
 		Short:       "Generates a signed URL to retrieve a user settings object from a specified key, which may represent a page ID, a combination of page ID and prefix ID, or another identifier for accessing user-specific settings",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam user-setting-blob list --id ID --expiry EXPIRY",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam user-setting-blob download-url --id ID --expiry EXPIRY",
 		Annotations: map[string]string{"flexera.operationId": "Iam_User_Setting_Blob_retrive_get_url", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -84,7 +83,7 @@ func newUserSettingBlobListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -103,8 +102,8 @@ func newUserSettingBlobListCmd() *cobra.Command {
 	return c
 }
 
-// newUserSettingBlobReplaceCmd — PUT /iam/v1/users/me/settings/blob (operationId: Iam_User_Setting_Blob_retrive_put_url)
-func newUserSettingBlobReplaceCmd() *cobra.Command {
+// newUserSettingBlobUploadUrlCmd — PUT /iam/v1/users/me/settings/blob (operationId: Iam_User_Setting_Blob_retrive_put_url)
+func newUserSettingBlobUploadUrlCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fExpiry     int
@@ -116,9 +115,10 @@ func newUserSettingBlobReplaceCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "replace",
+		Use:         "upload-url",
+		Aliases:     []string{"replace"},
 		Short:       "Generates a signed URL to store a user settings object at a specified key, which may represent a page ID or a combination of page ID and prefix ID, used for retrieving user-specific settings.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam user-setting-blob replace --body @request.json\n  flexera-cli iam user-setting-blob replace --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam user-setting-blob replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam user-setting-blob upload-url --body @request.json\n  flexera-cli iam user-setting-blob upload-url --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam user-setting-blob upload-url --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_User_Setting_Blob_retrive_put_url", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -205,7 +205,7 @@ func newUserSettingBlobReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

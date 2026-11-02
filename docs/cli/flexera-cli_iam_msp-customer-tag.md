@@ -32,8 +32,5 @@ MSP Customer Tag operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam msp-customer-tag delete](flexera-cli_iam_msp-customer-tag_delete.md)	 - Delete a tag for an MSP's customer
-* [flexera-cli iam msp-customer-tag list](flexera-cli_iam_msp-customer-tag_list.md)	 - Show the tags for an MSP's customer
-* [flexera-cli iam msp-customer-tag list-all](flexera-cli_iam_msp-customer-tag_list-all.md)	 - Index an MSP's customers based on tag filter
-* [flexera-cli iam msp-customer-tag tags](flexera-cli_iam_msp-customer-tag_tags.md)	 - Sets a tag on an MSP's customer
+* [flexera-cli iam msp-customer-tag tags](flexera-cli_iam_msp-customer-tag_tags.md)	 - tags operations
 

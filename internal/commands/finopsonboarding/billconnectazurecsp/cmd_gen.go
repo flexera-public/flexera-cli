@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-azure-csp",
 		Short: "Bill Connect - Azure CSP operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectAzureCSPCreateCmd(),
-		newBillConnectAzureCSPDeleteCmd(),
-		newBillConnectAzureCSPGetCmd(),
-		newBillConnectAzureCSPListCmd(),
-		newBillConnectAzureCSPUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureCSPCreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureCSPDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureCSPGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureCSPValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureCSPUpdateCmd())
 	return c
 }
 
@@ -150,7 +148,7 @@ func newBillConnectAzureCSPCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -269,7 +267,7 @@ func newBillConnectAzureCSPGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -286,15 +284,16 @@ func newBillConnectAzureCSPGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAzureCSPListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-csp/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Azure_CSP_validate)
-func newBillConnectAzureCSPListCmd() *cobra.Command {
+// newBillConnectAzureCSPValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-csp/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Azure_CSP_validate)
+func newBillConnectAzureCSPValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate the credentials stored for an Azure CSP bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect azure-csp list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect azure-csp validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Azure_CSP_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -321,7 +320,7 @@ func newBillConnectAzureCSPListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

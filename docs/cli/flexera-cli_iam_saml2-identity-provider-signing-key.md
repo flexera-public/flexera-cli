@@ -32,7 +32,7 @@ SAML2 Identity Provider Signing Key operations (generated from the unified OpenA
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam saml2-identity-provider-signing-key create](flexera-cli_iam_saml2-identity-provider-signing-key_create.md)	 - Generate a new signing key
+* [flexera-cli iam saml2-identity-provider-signing-key generate](flexera-cli_iam_saml2-identity-provider-signing-key_generate.md)	 - Generate a new signing key
 * [flexera-cli iam saml2-identity-provider-signing-key get](flexera-cli_iam_saml2-identity-provider-signing-key_get.md)	 - Show a signing key
 * [flexera-cli iam saml2-identity-provider-signing-key list](flexera-cli_iam_saml2-identity-provider-signing-key_list.md)	 - Index an IdP's signing keys
 

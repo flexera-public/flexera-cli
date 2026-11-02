@@ -18,8 +18,9 @@ import (
 // rule-based-dimension command.
 func NewFromCSVCommand() *cobra.Command {
 	c := &cobra.Command{
-		Use:   "from_csv",
-		Short: "Generate and apply rule-based dimensions from CSV",
+		Use:     "from-csv",
+		Aliases: []string{"from_csv"},
+		Short:   "Generate and apply rule-based dimensions from CSV",
 	}
 	c.AddCommand(newGenerateCmd(), newApplyCmd("create"), newApplyCmd("update"))
 	return c

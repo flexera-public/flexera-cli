@@ -7,7 +7,9 @@
 // internal/commands/register_gen.go registers one top-level command per
 // service with its tags beneath it:
 //
-//	flexera-cli <service> <tag> <operation>
+//	flexera-cli <service> <tag> [<sub-resource>...] <action>
+//
+// Operation names are derived in cmd/gencli/naming.go.
 //
 // Usage:
 //
@@ -28,6 +30,8 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+
+	"github.com/flexera-public/flexera-cli/internal/catalog"
 )
 
 const (
@@ -37,10 +41,11 @@ const (
 )
 
 type genTag struct {
-	Tag     string // OpenAPI tag
-	Service string // x-flexera-service id ("" in focused tests)
-	Pkg     string // directory relative to internal/commands; base is the Go package name
-	Cmd     string // provisional tag command name emitted by gencli
+	Tag     string   // OpenAPI tag
+	Service string   // x-flexera-service id ("" in focused tests)
+	Pkg     string   // directory relative to internal/commands; base is the Go package name
+	Cmd     string   // provisional tag command name emitted by gencli
+	Aliases []string // earlier tag command names kept for compatibility
 	// Path is the final command path of the tag command (service first).
 	// Empty means the tag command is registered at the root as Cmd.
 	Path  []string
@@ -180,8 +185,8 @@ func preparePublication(stage string, tags []genTag) (artifacts []publicationArt
 	if err != nil {
 		return nil, err
 	}
-	if len(data) > 5*1024*1024 {
-		return nil, fmt.Errorf("catalog size %d exceeds the approved 5 MiB budget", len(data))
+	if len(data) > catalog.MaxArtifactBytes {
+		return nil, fmt.Errorf("catalog size %d exceeds the %d-byte budget", len(data), catalog.MaxArtifactBytes)
 	}
 	second, err := buildCatalog(stage, tags, specData, curated...)
 	if err != nil {
@@ -352,6 +357,9 @@ func writeRegister(directory string, tags []genTag) error {
 			if n.use != n.tag.Cmd {
 				base = fmt.Sprintf("nest(%s, %q)", base, n.use)
 			}
+			if len(n.tag.Aliases) > 0 {
+				base = fmt.Sprintf("aliased(%s, %#v)", base, n.tag.Aliases)
+			}
 		case n.group != nil:
 			base = fmt.Sprintf("&cobra.Command{Use: %q}", n.use)
 		default:
@@ -419,6 +427,12 @@ func service(c *cobra.Command, use string, aliases []string, short, long string)
 // nest renames a tag command that is registered beneath a sibling tag.
 func nest(c *cobra.Command, use string) *cobra.Command {
 	c.Use = use
+	return c
+}
+
+// aliased keeps earlier spellings of a renamed tag command working.
+func aliased(c *cobra.Command, aliases []string) *cobra.Command {
+	c.Aliases = append(c.Aliases, aliases...)
 	return c
 }
 

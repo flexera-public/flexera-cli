@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "recommendations",
 		Short: "Recommendations operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newRecommendationsListCmd(),
-		newRecommendationsExportCmd(),
-		newRecommendationsGroupsCmd(),
-		newRecommendationsPagedCmd(),
-		newRecommendationsSavingsSummaryCmd(),
-		newRecommendationsReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newRecommendationsListCmd())
+	clipkg.AddCommandAt(c, nil, newRecommendationsExportCmd())
+	clipkg.AddCommandAt(c, nil, newRecommendationsGroupsCmd())
+	clipkg.AddCommandAt(c, nil, newRecommendationsPagedCmd())
+	clipkg.AddCommandAt(c, nil, newRecommendationsSavingsSummaryCmd())
+	clipkg.AddCommandAt(c, nil, newRecommendationsUpdateStatusCmd())
 	return c
 }
 
@@ -89,7 +87,7 @@ func newRecommendationsListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -205,7 +203,7 @@ func newRecommendationsGroupsCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -272,7 +270,7 @@ func newRecommendationsPagedCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.OptimaRecommendationsRecommendationsRecommendationsPagedResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -283,7 +281,7 @@ func newRecommendationsPagedCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -343,7 +341,7 @@ func newRecommendationsSavingsSummaryCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -360,8 +358,8 @@ func newRecommendationsSavingsSummaryCmd() *cobra.Command {
 	return c
 }
 
-// newRecommendationsReplaceCmd — PUT /recommendations/orgs/{orgId}/recommendations/updatestatus (operationId: OptimaRecommendations_Recommendations_updateStatus)
-func newRecommendationsReplaceCmd() *cobra.Command {
+// newRecommendationsUpdateStatusCmd — PUT /recommendations/orgs/{orgId}/recommendations/updatestatus (operationId: OptimaRecommendations_Recommendations_updateStatus)
+func newRecommendationsUpdateStatusCmd() *cobra.Command {
 	var (
 		bodyRaw            string
 		fGenerationID      string
@@ -374,9 +372,10 @@ func newRecommendationsReplaceCmd() *cobra.Command {
 		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:         "replace",
+		Use:         "update-status",
+		Aliases:     []string{"updatestatus"},
 		Short:       "updateStatus Recommendations",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations replace --org-id ORG_ID --body @request.json\n  flexera-cli recommendations replace --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema recommendations replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli recommendations update-status --org-id ORG_ID --body @request.json\n  flexera-cli recommendations update-status --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema recommendations update-status --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "OptimaRecommendations_Recommendations_updateStatus", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -28,17 +28,15 @@ func NewCmd() *cobra.Command {
 		Use:   "msp-customer-tag",
 		Short: "MSP Customer Tag operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newMSPCustomerTagTagsCmd(),
-		newMSPCustomerTagDeleteCmd(),
-		newMSPCustomerTagListAllCmd(),
-		newMSPCustomerTagListCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"tags"}, newMSPCustomerTagTagsCreateCmd())
+	clipkg.AddCommandAt(c, []string{"tags"}, newMSPCustomerTagTagsDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"tags"}, newMSPCustomerTagTagsListAllCmd())
+	clipkg.AddCommandAt(c, []string{"tags"}, newMSPCustomerTagTagsListCmd())
 	return c
 }
 
-// newMSPCustomerTagTagsCmd — POST /msp/v1/orgs/{orgId}/customers/{customerId}/tags (operationId: Iam_MSP_Customer_Tag_Create)
-func newMSPCustomerTagTagsCmd() *cobra.Command {
+// newMSPCustomerTagTagsCreateCmd — POST /msp/v1/orgs/{orgId}/customers/{customerId}/tags (operationId: Iam_MSP_Customer_Tag_Create)
+func newMSPCustomerTagTagsCreateCmd() *cobra.Command {
 	var (
 		customerID  int
 		bodyRaw     string
@@ -47,9 +45,9 @@ func newMSPCustomerTagTagsCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "tags",
+		Use:         "create",
 		Short:       "Sets a tag on an MSP's customer",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json\n  flexera-cli iam msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam msp-customer-tag tags --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag tags create --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json\n  flexera-cli iam msp-customer-tag tags create --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam msp-customer-tag tags create --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Create", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -126,7 +124,7 @@ func newMSPCustomerTagTagsCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -147,8 +145,8 @@ func newMSPCustomerTagTagsCmd() *cobra.Command {
 	return c
 }
 
-// newMSPCustomerTagDeleteCmd — DELETE /msp/v1/orgs/{orgId}/customers/{customerId}/tags/{tag} (operationId: Iam_MSP_Customer_Tag_Delete)
-func newMSPCustomerTagDeleteCmd() *cobra.Command {
+// newMSPCustomerTagTagsDeleteCmd — DELETE /msp/v1/orgs/{orgId}/customers/{customerId}/tags/{tag} (operationId: Iam_MSP_Customer_Tag_Delete)
+func newMSPCustomerTagTagsDeleteCmd() *cobra.Command {
 	var (
 		customerID int
 		tag        string
@@ -158,7 +156,7 @@ func newMSPCustomerTagDeleteCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "delete",
 		Short:       "Delete a tag for an MSP's customer",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG\n  flexera-cli iam msp-customer-tag delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag tags delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG\n  flexera-cli iam msp-customer-tag tags delete --org-id ORG_ID --customer-id CUSTOMER_ID --tag TAG --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -207,8 +205,8 @@ func newMSPCustomerTagDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newMSPCustomerTagListAllCmd — GET /msp/v1/orgs/{orgId}/customers/tags (operationId: Iam_MSP_Customer_Tag_Index_Customers)
-func newMSPCustomerTagListAllCmd() *cobra.Command {
+// newMSPCustomerTagTagsListAllCmd — GET /msp/v1/orgs/{orgId}/customers/tags (operationId: Iam_MSP_Customer_Tag_Index_Customers)
+func newMSPCustomerTagTagsListAllCmd() *cobra.Command {
 	var (
 		filter     string
 		noPaginate bool
@@ -217,7 +215,7 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "list-all",
 		Short:       "Index an MSP's customers based on tag filter",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag list-all --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag tags list-all --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Index_Customers", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -241,7 +239,7 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.IamMSPCustomerTagIndexCustomersResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -252,7 +250,7 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -272,15 +270,15 @@ func newMSPCustomerTagListAllCmd() *cobra.Command {
 	return c
 }
 
-// newMSPCustomerTagListCmd — GET /msp/v1/orgs/{orgId}/customers/{customerId}/tags (operationId: Iam_MSP_Customer_Tag_Show)
-func newMSPCustomerTagListCmd() *cobra.Command {
+// newMSPCustomerTagTagsListCmd — GET /msp/v1/orgs/{orgId}/customers/{customerId}/tags (operationId: Iam_MSP_Customer_Tag_Show)
+func newMSPCustomerTagTagsListCmd() *cobra.Command {
 	var (
 		customerID int
 	)
 	c := &cobra.Command{
 		Use:         "list",
 		Short:       "Show the tags for an MSP's customer",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag list --org-id ORG_ID --customer-id CUSTOMER_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam msp-customer-tag tags list --org-id ORG_ID --customer-id CUSTOMER_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_MSP_Customer_Tag_Show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -304,7 +302,7 @@ func newMSPCustomerTagListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

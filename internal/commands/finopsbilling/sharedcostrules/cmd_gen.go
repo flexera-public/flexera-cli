@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "shared-cost-rules",
 		Short: "Shared Cost Rules operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSharedCostRulesCreateCmd(),
-		newSharedCostRulesDeleteCmd(),
-		newSharedCostRulesGetCmd(),
-		newSharedCostRulesListCmd(),
-		newSharedCostRulesReplaceCmd(),
-		newSharedCostRulesUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesGetCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesListCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesReorderCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesUpdateCmd())
 	return c
 }
 
@@ -139,7 +137,7 @@ func newSharedCostRulesCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -256,7 +254,7 @@ func newSharedCostRulesGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -302,7 +300,7 @@ func newSharedCostRulesListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -318,8 +316,8 @@ func newSharedCostRulesListCmd() *cobra.Command {
 	return c
 }
 
-// newSharedCostRulesReplaceCmd — PUT /finops-billing/v1/orgs/{orgId}/shared-cost-rules/operations/reorder (operationId: FinopsBilling_Shared_Cost_Rules_reorder)
-func newSharedCostRulesReplaceCmd() *cobra.Command {
+// newSharedCostRulesReorderCmd — PUT /finops-billing/v1/orgs/{orgId}/shared-cost-rules/operations/reorder (operationId: FinopsBilling_Shared_Cost_Rules_reorder)
+func newSharedCostRulesReorderCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		dryRun      bool
@@ -327,9 +325,10 @@ func newSharedCostRulesReplaceCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "replace",
+		Use:         "reorder",
+		Aliases:     []string{"operations-reorder"},
 		Short:       "Reorder shared cost rules",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing shared-cost-rules replace --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing shared-cost-rules replace --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing shared-cost-rules replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing shared-cost-rules reorder --org-id ORG_ID --body @request.json\n  flexera-cli finops-billing shared-cost-rules reorder --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-billing shared-cost-rules reorder --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Shared_Cost_Rules_reorder", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -527,7 +526,7 @@ func newSharedCostRulesUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

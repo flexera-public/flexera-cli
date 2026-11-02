@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "organization-invitation",
 		Short: "Organization Invitation operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newOrganizationInvitationCreateCmd(),
-		newOrganizationInvitationDeleteCmd(),
-		newOrganizationInvitationGetCmd(),
-		newOrganizationInvitationListCmd(),
-		newOrganizationInvitationUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newOrganizationInvitationCreateCmd())
+	clipkg.AddCommandAt(c, nil, newOrganizationInvitationDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newOrganizationInvitationGetCmd())
+	clipkg.AddCommandAt(c, nil, newOrganizationInvitationListCmd())
+	clipkg.AddCommandAt(c, nil, newOrganizationInvitationResendCmd())
 	return c
 }
 
@@ -261,7 +259,7 @@ func newOrganizationInvitationGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -321,7 +319,7 @@ func newOrganizationInvitationListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -339,17 +337,18 @@ func newOrganizationInvitationListCmd() *cobra.Command {
 	return c
 }
 
-// newOrganizationInvitationUpdateCmd — PATCH /iam/v1/orgs/{orgId}/invitations/{id} (operationId: Iam_Organization_Invitation_resend)
-func newOrganizationInvitationUpdateCmd() *cobra.Command {
+// newOrganizationInvitationResendCmd — PATCH /iam/v1/orgs/{orgId}/invitations/{id} (operationId: Iam_Organization_Invitation_resend)
+func newOrganizationInvitationResendCmd() *cobra.Command {
 	var (
 		id     string
 		dryRun bool
 		yes    bool
 	)
 	c := &cobra.Command{
-		Use:         "update",
+		Use:         "resend",
+		Aliases:     []string{"update"},
 		Short:       "Resend an invitation to an org",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam organization-invitation update --org-id ORG_ID --id ID\n  flexera-cli iam organization-invitation update --org-id ORG_ID --id ID --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam organization-invitation resend --org-id ORG_ID --id ID\n  flexera-cli iam organization-invitation resend --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Organization_Invitation_resend", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

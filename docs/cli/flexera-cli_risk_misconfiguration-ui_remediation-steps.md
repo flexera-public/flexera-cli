@@ -1,30 +1,11 @@
 ## flexera-cli risk misconfiguration-ui remediation-steps
 
-Remediation Steps for Risk.
-
-### Synopsis
-
-Remediation Steps for Risk.
-
-Endpoint that forwards request for remediation steps to the Secops UI API.
-
-```
-flexera-cli risk misconfiguration-ui remediation-steps [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli risk misconfiguration-ui remediation-steps --org-id ORG_ID --risk-id RISK_ID --remediation-method REMEDIATION_METHOD
-```
+remediation-steps operations
 
 ### Options
 
 ```
-  -h, --help                        help for remediation-steps
-      --remediation-method string   remediationMethod (path, required); Remediation method (e.g., code, cli); required by API
-      --risk-id string              riskId (path, required); Risk ID; required by API
+  -h, --help   help for remediation-steps
 ```
 
 ### Options inherited from parent commands
@@ -51,4 +32,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli risk misconfiguration-ui](flexera-cli_risk_misconfiguration-ui.md)	 - misconfiguration-ui operations (generated from the unified OpenAPI spec)
+* [flexera-cli risk misconfiguration-ui remediation-steps get](flexera-cli_risk_misconfiguration-ui_remediation-steps_get.md)	 - Remediation Steps for Risk.
 

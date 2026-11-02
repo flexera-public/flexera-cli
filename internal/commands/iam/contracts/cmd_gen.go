@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "contracts",
 		Short: "Contracts operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newContractsCreateCmd(),
-		newContractsDeleteCmd(),
-		newContractsGetCmd(),
-		newContractsListCmd(),
-		newContractsUpdateCmd(),
-		newContractsActivationCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newContractsCreateCmd())
+	clipkg.AddCommandAt(c, nil, newContractsDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newContractsGetCmd())
+	clipkg.AddCommandAt(c, nil, newContractsListCmd())
+	clipkg.AddCommandAt(c, nil, newContractsUpdateLastSeenCmd())
+	clipkg.AddCommandAt(c, nil, newContractsSetActivationCmd())
 	return c
 }
 
@@ -139,7 +137,7 @@ func newContractsCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -255,7 +253,7 @@ func newContractsGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -325,7 +323,7 @@ func newContractsListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -345,8 +343,8 @@ func newContractsListCmd() *cobra.Command {
 	return c
 }
 
-// newContractsUpdateCmd — PATCH /iam/v1/orgs/{orgId}/contracts/{id} (operationId: Iam_Contracts_update)
-func newContractsUpdateCmd() *cobra.Command {
+// newContractsUpdateLastSeenCmd — PATCH /iam/v1/orgs/{orgId}/contracts/{id} (operationId: Iam_Contracts_update)
+func newContractsUpdateLastSeenCmd() *cobra.Command {
 	var (
 		id          int
 		bodyRaw     string
@@ -356,9 +354,10 @@ func newContractsUpdateCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "update",
+		Use:         "update-last-seen",
+		Aliases:     []string{"update"},
 		Short:       "Updates the last seen date of the contract",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam contracts update --org-id ORG_ID --id ID --body @request.json\n  flexera-cli iam contracts update --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam contracts update --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam contracts update-last-seen --org-id ORG_ID --id ID --body @request.json\n  flexera-cli iam contracts update-last-seen --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam contracts update-last-seen --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Contracts_update", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -451,8 +450,8 @@ func newContractsUpdateCmd() *cobra.Command {
 	return c
 }
 
-// newContractsActivationCmd — PATCH /iam/v1/orgs/{orgId}/contracts/{id}/activation (operationId: Iam_Contracts_activation)
-func newContractsActivationCmd() *cobra.Command {
+// newContractsSetActivationCmd — PATCH /iam/v1/orgs/{orgId}/contracts/{id}/activation (operationId: Iam_Contracts_activation)
+func newContractsSetActivationCmd() *cobra.Command {
 	var (
 		id          int
 		bodyRaw     string
@@ -462,9 +461,10 @@ func newContractsActivationCmd() *cobra.Command {
 		interactive bool
 	)
 	c := &cobra.Command{
-		Use:         "activation",
+		Use:         "set-activation",
+		Aliases:     []string{"activation"},
 		Short:       "Enable or disable a contract",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam contracts activation --org-id ORG_ID --id ID --body @request.json\n  flexera-cli iam contracts activation --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam contracts activation --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam contracts set-activation --org-id ORG_ID --id ID --body @request.json\n  flexera-cli iam contracts set-activation --org-id ORG_ID --id ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam contracts set-activation --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_Contracts_activation", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

@@ -32,11 +32,11 @@ misconfiguration-ui operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli risk](flexera-cli_risk.md)	 - Risk Management API
-* [flexera-cli risk misconfiguration-ui details](flexera-cli_risk_misconfiguration-ui_details.md)	 - Risk Details
-* [flexera-cli risk misconfiguration-ui export](flexera-cli_risk_misconfiguration-ui_export.md)	 - Export Failed Assets List.
 * [flexera-cli risk misconfiguration-ui failed-asset](flexera-cli_risk_misconfiguration-ui_failed-asset.md)	 - Failed Assets List.
+* [flexera-cli risk misconfiguration-ui failed-asset-export](flexera-cli_risk_misconfiguration-ui_failed-asset-export.md)	 - Export Failed Assets List.
 * [flexera-cli risk misconfiguration-ui list](flexera-cli_risk_misconfiguration-ui_list.md)	 - Risk Misconfiguration Rules List.
 * [flexera-cli risk misconfiguration-ui overview](flexera-cli_risk_misconfiguration-ui_overview.md)	 - Risk Misconfiguration Overview.
-* [flexera-cli risk misconfiguration-ui remediation-steps](flexera-cli_risk_misconfiguration-ui_remediation-steps.md)	 - Remediation Steps for Risk.
-* [flexera-cli risk misconfiguration-ui suppress](flexera-cli_risk_misconfiguration-ui_suppress.md)	 - Suppress API for Rule and Failed Asset
+* [flexera-cli risk misconfiguration-ui remediation-steps](flexera-cli_risk_misconfiguration-ui_remediation-steps.md)	 - remediation-steps operations
+* [flexera-cli risk misconfiguration-ui risk](flexera-cli_risk_misconfiguration-ui_risk.md)	 - risk operations
+* [flexera-cli risk misconfiguration-ui rule-suppress](flexera-cli_risk_misconfiguration-ui_rule-suppress.md)	 - Suppress API for Rule and Failed Asset
 

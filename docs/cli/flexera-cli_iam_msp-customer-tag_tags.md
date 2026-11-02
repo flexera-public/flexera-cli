@@ -1,36 +1,11 @@
 ## flexera-cli iam msp-customer-tag tags
 
-Sets a tag on an MSP's customer
-
-### Synopsis
-
-Sets a tag on an MSP's customer
-
-Create sets a tag on a customer tenant for a managed service provider.
-
-```
-flexera-cli iam msp-customer-tag tags [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json
-  flexera-cli iam msp-customer-tag tags --org-id ORG_ID --customer-id CUSTOMER_ID --body @request.json --dry-run
-Validated illustrative body, when available (review before use):
-  flexera-cli cli schema iam msp-customer-tag tags --example > request.json
-```
+tags operations
 
 ### Options
 
 ```
-      --body string       raw JSON body (inline | @file | @-); overrides body field flags
-      --customer-id int   customerId (path, required); ID of the managed service provider's customer tenant; required by API; minimum: 1; illustrative example: 1234
-      --dry-run           print the planned operation as JSON and exit without calling the API
-  -h, --help              help for tags
-  -i, --interactive       edit inputs in a terminal form, review a plan and approve with typed yes
-      --yes               confirm the operation (required for destructive ops)
+  -h, --help   help for tags
 ```
 
 ### Options inherited from parent commands
@@ -57,4 +32,8 @@ Validated illustrative body, when available (review before use):
 ### SEE ALSO
 
 * [flexera-cli iam msp-customer-tag](flexera-cli_iam_msp-customer-tag.md)	 - MSP Customer Tag operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam msp-customer-tag tags create](flexera-cli_iam_msp-customer-tag_tags_create.md)	 - Sets a tag on an MSP's customer
+* [flexera-cli iam msp-customer-tag tags delete](flexera-cli_iam_msp-customer-tag_tags_delete.md)	 - Delete a tag for an MSP's customer
+* [flexera-cli iam msp-customer-tag tags list](flexera-cli_iam_msp-customer-tag_tags_list.md)	 - Show the tags for an MSP's customer
+* [flexera-cli iam msp-customer-tag tags list-all](flexera-cli_iam_msp-customer-tag_tags_list-all.md)	 - Index an MSP's customers based on tag filter
 

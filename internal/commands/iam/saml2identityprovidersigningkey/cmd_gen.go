@@ -28,16 +28,14 @@ func NewCmd() *cobra.Command {
 		Use:   "saml2-identity-provider-signing-key",
 		Short: "SAML2 Identity Provider Signing Key operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSAML2IdentityProviderSigningKeyCreateCmd(),
-		newSAML2IdentityProviderSigningKeyGetCmd(),
-		newSAML2IdentityProviderSigningKeyListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderSigningKeyGenerateCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderSigningKeyGetCmd())
+	clipkg.AddCommandAt(c, nil, newSAML2IdentityProviderSigningKeyListCmd())
 	return c
 }
 
-// newSAML2IdentityProviderSigningKeyCreateCmd — POST /iam/v1/orgs/{orgId}/idps/{identityProviderId}/signing-keys/generate (operationId: Iam_SAML2_Identity_Provider_Signing_Key_generate)
-func newSAML2IdentityProviderSigningKeyCreateCmd() *cobra.Command {
+// newSAML2IdentityProviderSigningKeyGenerateCmd — POST /iam/v1/orgs/{orgId}/idps/{identityProviderId}/signing-keys/generate (operationId: Iam_SAML2_Identity_Provider_Signing_Key_generate)
+func newSAML2IdentityProviderSigningKeyGenerateCmd() *cobra.Command {
 	var (
 		identityProviderID string
 		bodyRaw            string
@@ -47,9 +45,9 @@ func newSAML2IdentityProviderSigningKeyCreateCmd() *cobra.Command {
 		interactive        bool
 	)
 	c := &cobra.Command{
-		Use:         "create",
+		Use:         "generate",
 		Short:       "Generate a new signing key",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam saml2-identity-provider-signing-key create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json\n  flexera-cli iam saml2-identity-provider-signing-key create --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam saml2-identity-provider-signing-key create --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam saml2-identity-provider-signing-key generate --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json\n  flexera-cli iam saml2-identity-provider-signing-key generate --org-id ORG_ID --identity-provider-id IDENTITY_PROVIDER_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema iam saml2-identity-provider-signing-key generate --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SAML2_Identity_Provider_Signing_Key_generate", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -132,7 +130,7 @@ func newSAML2IdentityProviderSigningKeyCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -193,7 +191,7 @@ func newSAML2IdentityProviderSigningKeyGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -246,7 +244,7 @@ func newSAML2IdentityProviderSigningKeyListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

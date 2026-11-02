@@ -1,40 +1,11 @@
 ## flexera-cli billing-center allocation-table
 
-Update a BC AllocationTable or create it if it doesn't exist
-
-### Synopsis
-
-Update a BC AllocationTable or create it if it doesn't exist
-
-Update a BC AllocationTable
-
-**Required security scopes for GlobalSession**:
-  * `optima:billing_center:update+common:org:own`
-
-```
-flexera-cli billing-center allocation-table [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli billing-center allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json
-  flexera-cli billing-center allocation-table --org-id ORG_ID --billing-center BILLING_CENTER --body @request.json --dry-run
-Validated illustrative body, when available (review before use):
-  flexera-cli cli schema billing-center allocation-table --example > request.json
-```
+allocation-table operations
 
 ### Options
 
 ```
-      --billing-center string   billing_center (path, required); required by API
-      --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run                 print the planned operation as JSON and exit without calling the API
-  -h, --help                    help for allocation-table
-  -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --sequence-number int     sequence_number (query); The version sequence number
-      --yes                     confirm the operation (required for destructive ops)
+  -h, --help   help for allocation-table
 ```
 
 ### Options inherited from parent commands
@@ -61,4 +32,6 @@ Validated illustrative body, when available (review before use):
 ### SEE ALSO
 
 * [flexera-cli billing-center](flexera-cli_billing-center.md)	 - Billing Center API
+* [flexera-cli billing-center allocation-table list](flexera-cli_billing-center_allocation-table_list.md)	 - List the AllocationTable rules for a given BC
+* [flexera-cli billing-center allocation-table replace](flexera-cli_billing-center_allocation-table_replace.md)	 - Update a BC AllocationTable or create it if it doesn't exist
 

@@ -32,6 +32,6 @@ User Profile operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
-* [flexera-cli iam user-profile list](flexera-cli_iam_user-profile_list.md)	 - Show current user's profile
+* [flexera-cli iam user-profile get](flexera-cli_iam_user-profile_get.md)	 - Show current user's profile
 * [flexera-cli iam user-profile update](flexera-cli_iam_user-profile_update.md)	 - Update current user's name
 

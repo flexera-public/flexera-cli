@@ -28,22 +28,20 @@ func NewCmd() *cobra.Command {
 		Use:   "export-retired",
 		Short: "Export (Retired) operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newExportRetiredGetCmd(),
-		newExportRetiredListCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"files"}, newExportRetiredFilesGetCmd())
+	clipkg.AddCommandAt(c, nil, newExportRetiredListCmd())
 	return c
 }
 
-// newExportRetiredGetCmd — GET /vis/v2/orgs/{orgId}/exports/files/{id} (operationId: Vis_ExportDownload)
-func newExportRetiredGetCmd() *cobra.Command {
+// newExportRetiredFilesGetCmd — GET /vis/v2/orgs/{orgId}/exports/files/{id} (operationId: Vis_ExportDownload)
+func newExportRetiredFilesGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
 		Use:         "get",
 		Short:       "Download specified export file",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility export-retired get --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility export-retired files get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Vis_ExportDownload", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -112,7 +110,7 @@ func newExportRetiredListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.VisExportIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -123,7 +121,7 @@ func newExportRetiredListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

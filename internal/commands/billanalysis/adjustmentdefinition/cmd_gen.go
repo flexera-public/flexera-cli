@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "adjustment-definition",
 		Short: "adjustment-definition operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAdjustmentDefinitionListCmd(),
-		newAdjustmentDefinitionReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAdjustmentDefinitionListCmd())
+	clipkg.AddCommandAt(c, nil, newAdjustmentDefinitionReplaceCmd())
 	return c
 }
 
@@ -64,7 +62,7 @@ func newAdjustmentDefinitionListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

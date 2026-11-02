@@ -1,50 +1,11 @@
 ## flexera-cli saas license terms
 
-Update license term
-
-### Synopsis
-
-Update license term
-
-Updates a license term associated with license agreement.
-
-```
-flexera-cli saas license terms [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli saas license terms --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json
-  flexera-cli saas license terms --org-id ORG_ID --license-id LICENSE_ID --term-id TERM_ID --body @request.json --dry-run
-Validated illustrative body, when available (review before use):
-  flexera-cli cli schema saas license terms --example > request.json
-```
+terms operations
 
 ### Options
 
 ```
-      --additional string                  additional (body); JSON encoded map of additional license term information (if any).; format: binary; illustrative example: "{\"product_name\":\"Sample Product\"}"
-      --body string                        raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run                            print the planned operation as JSON and exit without calling the API
-      --effective-at string                effectiveAt (body); Start date associated with license agreement.; illustrative example: "2019-10-15T16:05:36.1000Z"
-      --effective-date-reminder-days int   effectiveDateReminderDays (body); Effective date reminder day count.; maximum: 10950; illustrative example: 5
-      --end-date-reminder-days int         endDateReminderDays (body); End date reminder day count.; maximum: 10950; illustrative example: 14
-      --ends-at string                     endsAt (body); End date associated with license agreement.; illustrative example: "2020-12-30T00:00:00.1000Z"
-  -h, --help                               help for terms
-      --hidden                             hidden (body); Boolean value to check license term is explicitly removed by customer or not.; illustrative example: true
-  -i, --interactive                        edit inputs in a terminal form, review a plan and approve with typed yes
-      --is-active                          isActive (body); Determines whether the license term is active.; illustrative example: true
-      --is-vendor-set-provisioned-count    isVendorSetProvisionedCount (body); Flag to indicate if 'provisionedCount' is determined through vendor api for auto-generated licenses.; illustrative example: true
-      --license-id string                  licenseId (path, required); Unique identifier of license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "234553"
-      --managed-app-id string              managedAppId (body); It identifies a managed application by given ID.; pattern: "^[0-9a-f]+$"; illustrative example: "38932"
-      --name string                        name (body); Name of the licensed product.; illustrative example: "Workday"
-      --sku string                         sku (body); License term SKU.; illustrative example: "c7df2760-2c81-4ef7-b578-5b5392b571df"
-      --term-id string                     termId (path, required); Identifies a license term associated with the license.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "42214"
-      --term-type string                   termType (body); Term type is to distinguish types of license terms.; enum: ["perUser","perLogin","perNode","perLocation","perOrg"]; illustrative example: "perLocation"
-      --unique-id string                   uniqueId (body); Vendor unique ID associated with license term.; illustrative example: "48a80680-7326-48cd-9935-b556b81d3"
-      --yes                                confirm the operation (required for destructive ops)
+  -h, --help   help for terms
 ```
 
 ### Options inherited from parent commands
@@ -71,4 +32,10 @@ Validated illustrative body, when available (review before use):
 ### SEE ALSO
 
 * [flexera-cli saas license](flexera-cli_saas_license.md)	 - License operations (generated from the unified OpenAPI spec)
+* [flexera-cli saas license terms create](flexera-cli_saas_license_terms_create.md)	 - Create license term
+* [flexera-cli saas license terms delete](flexera-cli_saas_license_terms_delete.md)	 - Delete license term
+* [flexera-cli saas license terms get](flexera-cli_saas_license_terms_get.md)	 - Show license term
+* [flexera-cli saas license terms list](flexera-cli_saas_license_terms_list.md)	 - List license terms
+* [flexera-cli saas license terms purchases](flexera-cli_saas_license_terms_purchases.md)	 - purchases operations
+* [flexera-cli saas license terms update](flexera-cli_saas_license_terms_update.md)	 - Update license term
 

@@ -193,8 +193,8 @@ func check(err error) {
 // supportedActions enumerates every x-flexera-action verb gencli emits
 // a cobra leaf for. "action" covers RPC-style POST sub-action paths
 // (e.g. /policy/v1/orgs/{orgId}/applied-policies/{id}/evaluate); the
-// leaf's CLI verb is derived from the trailing path literal by
-// assignVerbs, not the literal string "action". ("query" was a reserved
+// leaf's command name is derived from the path by commandPaths, not the
+// literal string "action". ("query" was a reserved
 // future verb in the design's Architecture but no annotateForCLI branch
 // emits it, so it is dropped here per design Q3 / S3 plan-review.)
 var supportedActions = map[string]bool{
@@ -903,7 +903,8 @@ type renderOp struct {
 	SuccessResponses  []successResponse
 	ConfigQueryParams []param
 	Constructor       string
-	Verb              string
+	Command           []string // path relative to the tag command; last element is the leaf
+	Aliases           []string // earlier leaf names kept for compatibility
 	Short             string
 	Method            string
 	Path              string
@@ -922,6 +923,7 @@ type renderOp struct {
 	NeedsOrgID        bool
 	ParamsType        string
 	CanPaginate       bool
+	PageType          string // Go expression whose type is the typed page (see clipkg.CollectPages)
 	Success2xx        string
 	HasJSONResp       bool
 	HasSchemaResp     bool
@@ -938,11 +940,35 @@ func isWriteAction(a string) bool {
 	return false
 }
 
-// isDestructiveVerb flags verbs that destructively mutate/remove even though
-// their HTTP action is not DELETE (e.g. PUT .../revoke). These require --yes.
-func isDestructiveVerb(v string) bool {
-	switch v {
-	case "revoke", "revoke-all", "deactivate", "delete-all":
+// isDestructive flags operations that remove or revoke something and so
+// require --yes: DELETEs, plus writes whose path says so even though the
+// method does not (PUT .../revoke, POST .../bulk-delete, POST .../delete-all).
+func isDestructive(o operation) bool {
+	if o.Action == "delete" || o.Method == "delete" {
+		return true
+	}
+	if !isWriteAction(o.Action) && (o.Action != "action" || o.Method == "get") {
+		return false
+	}
+	segs := strings.Split(strings.Trim(o.Path, "/"), "/")
+	if isDestructiveLeaf(lastLiteral(segs)) {
+		return true
+	}
+	for _, seg := range segs {
+		switch seg {
+		case "delete", "bulk-delete", "delete-all":
+			return true
+		}
+	}
+	return false
+}
+
+// isDestructiveLeaf flags command leaves and trailing path literals that
+// remove or revoke something, including the "-all" collection twins that
+// resolveTwins derives (revoke -> revoke-all).
+func isDestructiveLeaf(name string) bool {
+	switch name {
+	case "revoke", "revoke-all", "deactivate", "deactivate-all", "delete-all":
 		return true
 	}
 	return false
@@ -971,10 +997,13 @@ func renderWithMetadata(tag, pkg, cmdName string, ops []operation) ([]byte, map[
 		return ops[i].Path < ops[j].Path
 	})
 
-	verbs := assignVerbs(ops)
+	commands, err := commandPaths(ops, cmdName)
+	if err != nil {
+		return nil, nil, fmt.Errorf("tag %q: %w", tag, err)
+	}
 
 	for idx, o := range ops {
-		verb := verbs[idx]
+		command := commands[idx]
 
 		genMethod := methodName(o.OperationID)
 
@@ -1036,7 +1065,7 @@ func renderWithMetadata(tag, pkg, cmdName string, ops []operation) ([]byte, map[
 			}
 			if o.Paginated && qp.Name == "skipToken" {
 				canPaginate = true
-				continue // driven by CollectPages, not a normal flag
+				continue // driven by clipkg.CollectPages, not a normal flag
 			}
 			q := qp
 			if q.IsEnum {
@@ -1094,8 +1123,9 @@ func renderWithMetadata(tag, pkg, cmdName string, ops []operation) ([]byte, map[
 		r := renderOp{
 			SuccessResponses:  responses,
 			ConfigQueryParams: configQueryParams,
-			Constructor:       "new" + tagIdent + pascal(verb) + "Cmd",
-			Verb:              verb,
+			Constructor:       "new" + tagIdent + pascal(strings.Join(command, "-")) + "Cmd",
+			Command:           command,
+			Aliases:           commandAliases[o.OperationID],
 			Short:             shortFor(o),
 			Method:            strings.ToUpper(o.Method),
 			Path:              o.Path,
@@ -1119,7 +1149,17 @@ func renderWithMetadata(tag, pkg, cmdName string, ops []operation) ([]byte, map[
 			HasSchemaResp:     o.HasSchemaResp,
 			HasRawJSONResp:    o.Action == "list" && o.Success2xx == "200" && !o.HasJSONResp && o.HasSchemaResp,
 			IsWrite:           isWriteAction(o.Action) || (o.Action == "action" && o.Method != "get"),
-			IsDestructive:     o.Action == "delete" || isDestructiveVerb(verb),
+			IsDestructive:     isDestructive(o) || isDestructiveLeaf(command[len(command)-1]),
+		}
+		r.PageType = "any(nil)"
+		var typedCodes []string
+		for _, response := range responses {
+			if response.HasJSON && response.HasSchema {
+				typedCodes = append(typedCodes, response.Code)
+			}
+		}
+		if len(typedCodes) == 1 {
+			r.PageType = "new(flexera." + genMethod + "Response).JSON" + typedCodes[0]
 		}
 		r.OutputContract = "structured"
 		for _, response := range responses {
@@ -1222,7 +1262,7 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 		envelope = "values"
 	}
 	m := map[string]interface{}{
-		"operationId": r.OperationID, "command": []string{cmdName, r.Verb},
+		"operationId": r.OperationID, "command": append([]string{cmdName}, r.Command...),
 		"method": r.Method, "path": r.Path, "tag": o.Tag, "resource": o.Resource, "action": o.Action,
 		"summary": o.Summary, "description": o.Description, "destructive": r.IsDestructive,
 		"paginated": r.CanPaginate, "responseEnvelope": envelope, "params": params, "bodyFlags": bodyFlags,
@@ -1256,7 +1296,8 @@ func containsString(value interface{}, want string) bool {
 }
 
 func helpExample(cmdName string, o operation, r renderOp) string {
-	parts := []string{"flexera-cli", cmdName, r.Verb}
+	command := cmdName + " " + strings.Join(r.Command, " ")
+	parts := []string{"flexera-cli", command}
 	params, _ := r.Metadata["params"].([]interface{})
 	for _, value := range params {
 		p := value.(map[string]interface{})
@@ -1274,7 +1315,7 @@ func helpExample(cmdName string, o operation, r renderOp) string {
 		text += "\n" + line + " --dry-run"
 	}
 	if r.HasBody {
-		text += "\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema " + cmdName + " " + r.Verb + " --example > request.json"
+		text += "\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema " + command + " --example > request.json"
 	}
 	return text
 }
@@ -1286,235 +1327,17 @@ func shortFor(o operation) string {
 	return strings.ToUpper(o.Method) + " " + o.Path
 }
 
-// assignVerbs derives a friendly CLI verb for each operation. A single op for
-// an action uses the action name (list/get/create/update/replace/delete).
-// When an action repeats within a tag, the ops are disambiguated by the path
-// suffix after the group's common prefix: a literal trailing segment becomes
-// the verb (e.g. "accept", "grant", "revoke", "report", "activation"); a
-// collection-vs-item collision becomes "<action>-all" (broader) and
-// "<action>" (item). Any residual collision gets a numeric suffix.
-func assignVerbs(ops []operation) []string {
-	verbs := make([]string, len(ops))
-
-	// Action-verb special case: x-flexera-action == "action" represents
-	// RPC-style POST sub-actions (e.g. /policy/.../{id}/evaluate) where
-	// the literal verb name "action" is not a useful CLI command. Use
-	// the path's trailing literal segment (e.g. "evaluate"). Indices
-	// pre-assigned here are excluded from the action-keyed grouping in
-	// the initial pass; collision passes 1–3 still run over the full
-	// verbs slice, so a pre-assigned "evaluate" colliding across two
-	// resources gets disambiguated by scope (pass 1) or pluralized by
-	// numeric dedupe (pass 3).
-	for i, o := range ops {
-		if o.Action != "action" {
-			continue
-		}
-		verb := lastLiteralSeg(segsOf(o.Path))
-		if verb == "" {
-			verb = o.Action // unreachable in practice; pass 3 dedupes
-		}
-		verbs[i] = verb
-	}
-
-	// Initial pass: a unique distinguishing literal tail becomes the verb
-	// (accept/decline/grant/revoke/report/activation); otherwise the action.
-	// Skip indices already assigned by the action-verb special case above.
-	byAction := map[string][]int{}
-	for i, o := range ops {
-		if verbs[i] != "" {
-			continue
-		}
-		byAction[o.Action] = append(byAction[o.Action], i)
-	}
-	for action, idxs := range byAction {
-		if len(idxs) == 1 {
-			verbs[idxs[0]] = action
-			continue
-		}
-		grp := make([][]string, len(idxs))
-		for k, i := range idxs {
-			grp[k] = segsOf(ops[i].Path)
-		}
-		cp := commonPrefixLen(grp)
-		lits := make([]string, len(idxs))
-		litCount := map[string]int{}
-		for k := range idxs {
-			lits[k] = lastLiteralSeg(grp[k][cp:])
-			if lits[k] != "" {
-				litCount[lits[k]]++
-			}
-		}
-		for k, i := range idxs {
-			if lits[k] != "" && litCount[lits[k]] == 1 {
-				verbs[i] = lits[k]
-			} else {
-				verbs[i] = action
-			}
-		}
-	}
-
-	// Pass 1: resolve collisions by the first distinguishing literal segment
-	// (e.g. scope orgs/projects, or service root iam/policy). orgs is treated
-	// as the canonical/bare variant; projects becomes "-project"; any other
-	// distinguishing root (iam/policy/risk/...) is appended verbatim.
-	for v, idxs := range groupVerbs(verbs) {
-		if len(idxs) < 2 {
-			continue
-		}
-		segs := make([][]string, len(idxs))
-		for k, i := range idxs {
-			segs[k] = segsOf(ops[i].Path)
-		}
-		cp := commonPrefixLen(segs)
-		disc := make([]string, len(idxs))
-		ok := true
-		for k := range idxs {
-			disc[k] = firstLiteralAtOrAfter(segs[k], cp)
-			if disc[k] == "" {
-				ok = false
-			}
-		}
-		if !ok || !allDistinct(disc) {
-			continue
-		}
-		for k, i := range idxs {
-			switch disc[k] {
-			case "orgs", "org":
-				verbs[i] = v // canonical
-			case "projects":
-				verbs[i] = v + "-project"
-			default:
-				verbs[i] = v + "-" + pathSuffixIdent("/"+disc[k])
-			}
-		}
-	}
-
-	// Pass 2: remaining collisions — the deepest (most path segments) op keeps
-	// the bare verb; broader ones get "-all".
-	for v, idxs := range groupVerbs(verbs) {
-		if len(idxs) < 2 {
-			continue
-		}
-		sort.SliceStable(idxs, func(a, b int) bool {
-			return len(segsOf(ops[idxs[a]].Path)) < len(segsOf(ops[idxs[b]].Path))
-		})
-		for j := 0; j < len(idxs)-1; j++ {
-			verbs[idxs[j]] = v + "-all"
-		}
-	}
-
-	// Pass 3: global numeric dedupe for any residual collisions.
-	final := map[string]bool{}
-	for i := range verbs {
-		base := verbs[i]
-		v := base
-		for n := 2; final[v]; n++ {
-			v = fmt.Sprintf("%s-%d", base, n)
-		}
-		final[v] = true
-		verbs[i] = v
-	}
-	return verbs
-}
-
-// groupVerbs maps each verb to the op indices currently using it (index order).
-func groupVerbs(verbs []string) map[string][]int {
-	g := map[string][]int{}
-	for i, v := range verbs {
-		g[v] = append(g[v], i)
-	}
-	return g
-}
-
-// firstLiteralAtOrAfter returns the first non-parameter segment at or after
-// index start, or "" if none.
-func firstLiteralAtOrAfter(segs []string, start int) string {
-	for i := start; i < len(segs); i++ {
-		if !strings.HasPrefix(segs[i], "{") {
-			return segs[i]
-		}
-	}
-	return ""
-}
-
-// allDistinct reports whether every string in xs is unique.
-func allDistinct(xs []string) bool {
-	seen := make(map[string]bool, len(xs))
-	for _, x := range xs {
-		if seen[x] {
-			return false
-		}
-		seen[x] = true
-	}
-	return true
-}
-
-// segsOf splits a path into non-empty segments.
-func segsOf(p string) []string {
-	var out []string
-	for _, s := range strings.Split(strings.Trim(p, "/"), "/") {
-		if s != "" {
-			out = append(out, s)
-		}
-	}
-	return out
-}
-
-// commonPrefixLen returns the number of leading path segments shared by every
-// group member.
-func commonPrefixLen(groups [][]string) int {
+// commandGroupsLiteral renders the group part of a command path as Go source.
+func commandGroupsLiteral(command []string) string {
+	groups := command[:len(command)-1]
 	if len(groups) == 0 {
-		return 0
+		return "nil"
 	}
-	minLen := len(groups[0])
-	for _, g := range groups {
-		if len(g) < minLen {
-			minLen = len(g)
-		}
+	quoted := make([]string, len(groups))
+	for i, g := range groups {
+		quoted[i] = strconv.Quote(g)
 	}
-	n := 0
-	for ; n < minLen; n++ {
-		seg := groups[0][n]
-		for _, g := range groups {
-			if g[n] != seg {
-				return n
-			}
-		}
-	}
-	return n
-}
-
-// lastLiteralSeg returns the last non-parameter segment of a suffix as a
-// kebab-case verb, or "" when the suffix is empty or all parameters.
-func lastLiteralSeg(suffix []string) string {
-	for i := len(suffix) - 1; i >= 0; i-- {
-		if strings.HasPrefix(suffix[i], "{") {
-			continue
-		}
-		return pathSuffixIdent("/" + suffix[i])
-	}
-	return ""
-}
-
-func pathSuffixIdent(p string) string {
-	segs := strings.Split(strings.Trim(p, "/"), "/")
-	for i := len(segs) - 1; i >= 0; i-- {
-		s := segs[i]
-		if strings.HasPrefix(s, "{") {
-			continue
-		}
-		s = strings.Map(func(r rune) rune {
-			switch {
-			case r >= 'a' && r <= 'z', r >= 'A' && r <= 'Z', r >= '0' && r <= '9':
-				return r
-			case r == '-' || r == '_' || r == '.':
-				return '-'
-			}
-			return -1
-		}, s)
-		return kebab(s)
-	}
-	return "x"
+	return "[]string{" + strings.Join(quoted, ", ") + "}"
 }
 
 func pascal(s string) string {
@@ -1532,6 +1355,8 @@ var tmpl = template.Must(template.New("file").Funcs(template.FuncMap{
 	"pascal": pascal,
 	"quote":  strconv.Quote,
 	"join":   func(s []string) string { return strings.Join(s, ", ") },
+	"groups": commandGroupsLiteral,
+	"leaf":   func(s []string) string { return s[len(s)-1] },
 }).Parse(`// Code generated by cmd/gencli. DO NOT EDIT.
 // Source: unified OpenAPI spec, tag {{.Tag}}.
 
@@ -1574,11 +1399,9 @@ func NewCmd() *cobra.Command {
 		Use:   "{{.CmdName}}",
 		Short: "{{.Short}}",
 	}
-	c.AddCommand(
 {{- range .Ops }}
-		{{.Constructor}}(),
+	clipkg.AddCommandAt(c, {{groups .Command}}, {{.Constructor}}())
 {{- end }}
-	)
 	return c
 }
 
@@ -1616,7 +1439,10 @@ func {{.Constructor}}() *cobra.Command {
 	)
 {{- end }}
 	c := &cobra.Command{
-		Use:   "{{.Verb}}",
+		Use:   "{{leaf .Command}}",
+{{- if .Aliases }}
+		Aliases: []string{ {{- range $i, $a := .Aliases}}{{if $i}}, {{end}}{{quote $a}}{{end -}} },
+{{- end }}
 		Short: {{quote .Short}},
 		Example: {{quote .Example}},
 		Annotations: map[string]string{"flexera.operationId": {{quote .OperationID}}, "flexera.output": {{quote .OutputContract}}, "flexera.validation": "{{if .HasBody}}body{{else}}params{{end}}"},
@@ -1797,7 +1623,7 @@ func {{.Constructor}}() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, {{.PageType}},
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -1810,7 +1636,7 @@ func {{.Constructor}}() *cobra.Command {
 {{- if and .HasJSON .HasSchema }}
 					case {{.Code}}:
 						if resp.JSON{{.Code}} != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 { return resp.JSON{{.Code}}, nil }
+							if deps.TypedOutput() { return resp.JSON{{.Code}}, nil }
 							return clipkg.DecodeResponseJSON(resp.Body)
 						}
 {{- else if or .HasJSON .HasSchema }}
@@ -1835,7 +1661,7 @@ func {{.Constructor}}() *cobra.Command {
 			case {{.Code}}:
 {{- if and .HasJSON .HasSchema }}
 				if resp.JSON{{.Code}} == nil { return flexera.ResponseError(resp.StatusCode(), resp.Body) }
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 { return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON{{.Code}}) }
+				if deps.TypedOutput() { return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON{{.Code}}) }
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
 				if err != nil { return err }
 				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)

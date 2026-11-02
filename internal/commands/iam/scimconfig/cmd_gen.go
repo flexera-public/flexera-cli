@@ -28,25 +28,23 @@ func NewCmd() *cobra.Command {
 		Use:   "scim-config",
 		Short: "SCIM Config operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSCIMConfigResourceTypesCmd(),
-		newSCIMConfigSchemasCmd(),
-		newSCIMConfigResourceTypesAllCmd(),
-		newSCIMConfigSchemasAllCmd(),
-		newSCIMConfigServiceProviderConfigCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"resource-types"}, newSCIMConfigResourceTypesGetCmd())
+	clipkg.AddCommandAt(c, []string{"schemas"}, newSCIMConfigSchemasGetCmd())
+	clipkg.AddCommandAt(c, []string{"resource-types"}, newSCIMConfigResourceTypesListCmd())
+	clipkg.AddCommandAt(c, []string{"schemas"}, newSCIMConfigSchemasListCmd())
+	clipkg.AddCommandAt(c, nil, newSCIMConfigServiceProviderConfigCmd())
 	return c
 }
 
-// newSCIMConfigResourceTypesCmd — GET /scim/v2/orgs/{orgId}/ResourceTypes/{id} (operationId: Iam_SCIM_Config_show_resource_type)
-func newSCIMConfigResourceTypesCmd() *cobra.Command {
+// newSCIMConfigResourceTypesGetCmd — GET /scim/v2/orgs/{orgId}/ResourceTypes/{id} (operationId: Iam_SCIM_Config_show_resource_type)
+func newSCIMConfigResourceTypesGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "resource-types",
+		Use:         "get",
 		Short:       "Shows a supported resource type for an org.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config resource-types --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config resource-types get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SCIM_Config_show_resource_type", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -73,7 +71,7 @@ func newSCIMConfigResourceTypesCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -90,15 +88,15 @@ func newSCIMConfigResourceTypesCmd() *cobra.Command {
 	return c
 }
 
-// newSCIMConfigSchemasCmd — GET /scim/v2/orgs/{orgId}/Schemas/{id} (operationId: Iam_SCIM_Config_show_schema)
-func newSCIMConfigSchemasCmd() *cobra.Command {
+// newSCIMConfigSchemasGetCmd — GET /scim/v2/orgs/{orgId}/Schemas/{id} (operationId: Iam_SCIM_Config_show_schema)
+func newSCIMConfigSchemasGetCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "schemas",
+		Use:         "get",
 		Short:       "Shows a supported schema for an org.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config schemas --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config schemas get --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SCIM_Config_show_schema", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -125,7 +123,7 @@ func newSCIMConfigSchemasCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -142,12 +140,12 @@ func newSCIMConfigSchemasCmd() *cobra.Command {
 	return c
 }
 
-// newSCIMConfigResourceTypesAllCmd — GET /scim/v2/orgs/{orgId}/ResourceTypes (operationId: Iam_SCIM_Config_index_resource_types)
-func newSCIMConfigResourceTypesAllCmd() *cobra.Command {
+// newSCIMConfigResourceTypesListCmd — GET /scim/v2/orgs/{orgId}/ResourceTypes (operationId: Iam_SCIM_Config_index_resource_types)
+func newSCIMConfigResourceTypesListCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:         "resource-types-all",
+		Use:         "list",
 		Short:       "Returns a list of supported resource types for an org.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config resource-types-all --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config resource-types list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SCIM_Config_index_resource_types", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -171,7 +169,7 @@ func newSCIMConfigResourceTypesAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -187,12 +185,12 @@ func newSCIMConfigResourceTypesAllCmd() *cobra.Command {
 	return c
 }
 
-// newSCIMConfigSchemasAllCmd — GET /scim/v2/orgs/{orgId}/Schemas (operationId: Iam_SCIM_Config_index_schemas)
-func newSCIMConfigSchemasAllCmd() *cobra.Command {
+// newSCIMConfigSchemasListCmd — GET /scim/v2/orgs/{orgId}/Schemas (operationId: Iam_SCIM_Config_index_schemas)
+func newSCIMConfigSchemasListCmd() *cobra.Command {
 	c := &cobra.Command{
-		Use:         "schemas-all",
+		Use:         "list",
 		Short:       "Returns a list of supported schemas for an org.",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config schemas-all --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli iam scim-config schemas list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "Iam_SCIM_Config_index_schemas", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -216,7 +214,7 @@ func newSCIMConfigSchemasAllCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -261,7 +259,7 @@ func newSCIMConfigServiceProviderConfigCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

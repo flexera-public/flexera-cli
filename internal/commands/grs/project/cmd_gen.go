@@ -28,9 +28,7 @@ func NewCmd() *cobra.Command {
 		Use:   "project",
 		Short: "Project operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newProjectListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newProjectListCmd())
 	return c
 }
 
@@ -67,7 +65,7 @@ func newProjectListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

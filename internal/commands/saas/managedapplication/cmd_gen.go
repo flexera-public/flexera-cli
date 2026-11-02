@@ -28,14 +28,12 @@ func NewCmd() *cobra.Command {
 		Use:   "managed-application",
 		Short: "Managed Application operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newManagedApplicationDeleteCmd(),
-		newManagedApplicationGetCmd(),
-		newManagedApplicationListCmd(),
-		newManagedApplicationAppEventsCmd(),
-		newManagedApplicationAppUsersCmd(),
-		newManagedApplicationUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newManagedApplicationDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationGetCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationListCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationAppEventsCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationAppUsersCmd())
+	clipkg.AddCommandAt(c, nil, newManagedApplicationUpdateCmd())
 	return c
 }
 
@@ -138,7 +136,7 @@ func newManagedApplicationGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -200,7 +198,7 @@ func newManagedApplicationListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasManagedApplicationIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -211,7 +209,7 @@ func newManagedApplicationListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -271,7 +269,7 @@ func newManagedApplicationAppEventsCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasManagedApplicationIndexEventsResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -282,7 +280,7 @@ func newManagedApplicationAppEventsCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -346,7 +344,7 @@ func newManagedApplicationAppUsersCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasManagedApplicationIndexUsersResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -357,7 +355,7 @@ func newManagedApplicationAppUsersCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)

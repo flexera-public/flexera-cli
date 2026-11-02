@@ -18,7 +18,7 @@ func TestSearchGoldenQueries(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, tc := range []struct{ query, want string }{{"delete a budget", "flexera-cli budget delete"}, {"list cloud bill connects", "flexera-cli finops-onboarding bill-connect list"}, {"who has access to org", "flexera-cli iam access-policy users"}, {"run a policy", "flexera-cli policy applied-policy evaluate"}} {
+	for _, tc := range []struct{ query, want string }{{"delete a budget", "flexera-cli budget delete"}, {"list cloud bill connects", "flexera-cli finops-onboarding bill-connect list"}, {"who has access to org", "flexera-cli iam access-policy users get"}, {"run a policy", "flexera-cli policy applied-policy evaluate"}} {
 		results := index.Search(tc.query, catalog.SearchOptions{Limit: 3})
 		found := false
 		for _, r := range results {

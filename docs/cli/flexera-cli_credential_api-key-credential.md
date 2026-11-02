@@ -33,9 +33,7 @@ API Key Credential operations (generated from the unified OpenAPI spec)
 
 * [flexera-cli credential](flexera-cli_credential.md)	 - Credential API
 * [flexera-cli credential api-key-credential get](flexera-cli_credential_api-key-credential_get.md)	 - Show a Credential
-* [flexera-cli credential api-key-credential get-project](flexera-cli_credential_api-key-credential_get-project.md)	 - Show a Credential
+* [flexera-cli credential api-key-credential project](flexera-cli_credential_api-key-credential_project.md)	 - project operations
 * [flexera-cli credential api-key-credential replace](flexera-cli_credential_api-key-credential_replace.md)	 - Create a Credential
-* [flexera-cli credential api-key-credential replace-project](flexera-cli_credential_api-key-credential_replace-project.md)	 - Create a Credential
 * [flexera-cli credential api-key-credential update](flexera-cli_credential_api-key-credential_update.md)	 - Update a Credential
-* [flexera-cli credential api-key-credential update-project](flexera-cli_credential_api-key-credential_update-project.md)	 - Update a Credential
 

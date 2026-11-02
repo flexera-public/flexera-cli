@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "org-allocation-table",
 		Short: "AllocationTable operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newAllocationTableListCmd(),
-		newAllocationTableReplaceCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newAllocationTableListCmd())
+	clipkg.AddCommandAt(c, nil, newAllocationTableReplaceCmd())
 	return c
 }
 
@@ -65,7 +63,7 @@ func newAllocationTableListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

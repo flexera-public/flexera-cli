@@ -1,30 +1,11 @@
 ## flexera-cli finops-customizations rule-based-dimension rules
 
-Shows the rules list
-
-### Synopsis
-
-Shows the rules list
-
-Show the rules list for the given rule-based dimension and effectiveAt date.
-
-```
-flexera-cli finops-customizations rule-based-dimension rules [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli finops-customizations rule-based-dimension rules --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT
-```
+rules operations
 
 ### Options
 
 ```
-      --effective-at string   effectiveAt (path, required); The date (year-month) when this rules list takes effect, superseding any previous list. The list remains in effect until a subsequent list is defined to take effect at a later date.; required by API; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "2023-01"
-  -h, --help                  help for rules
-      --id string             id (path, required); ID of the rule-based dimension; required by API; pattern: "^rbd_[\\S]*$"; illustrative example: "rbd_department"
+  -h, --help   help for rules
 ```
 
 ### Options inherited from parent commands
@@ -51,4 +32,7 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli finops-customizations rule-based-dimension](flexera-cli_finops-customizations_rule-based-dimension.md)	 - Rule-Based Dimension operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-customizations rule-based-dimension rules delete](flexera-cli_finops-customizations_rule-based-dimension_rules_delete.md)	 - Deletes the rules list
+* [flexera-cli finops-customizations rule-based-dimension rules get](flexera-cli_finops-customizations_rule-based-dimension_rules_get.md)	 - Shows the rules list
+* [flexera-cli finops-customizations rule-based-dimension rules replace](flexera-cli_finops-customizations_rule-based-dimension_rules_replace.md)	 - Creates/Replace a rules list
 

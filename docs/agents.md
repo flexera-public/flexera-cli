@@ -22,7 +22,9 @@ chat; this checkout already includes the project skill.
 Use this task instruction:
 
 > Discover commands with `flexera-cli cli search`; use `--read-only` for reads
-> and `--service <name>` to narrow. Paths are `<service> <resource> <action>`.
+> and `--service <name>` to narrow. Paths are
+> `<service> <resource> [<sub-resource>...] <action>`; use the paths search returns
+> (older spellings are aliases) and don't assume a CRUD verb for task actions.
 > Inspect help/schema and confirm organization and zone. Use local credentials;
 > never expose secrets. Preview writes with `--dry-run` where supported and obtain
 > approval of the target and payload before execution. Do not blindly retry writes.

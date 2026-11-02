@@ -32,6 +32,6 @@ AccessRules operations (generated from the unified OpenAPI spec)
 ### SEE ALSO
 
 * [flexera-cli billing-center](flexera-cli_billing-center.md)	 - Billing Center API
-* [flexera-cli billing-center access-rules list-groups](flexera-cli_billing-center_access-rules_list-groups.md)	 - List group's roles in every BillingCenter.
-* [flexera-cli billing-center access-rules list-users](flexera-cli_billing-center_access-rules_list-users.md)	 - List user's roles in every BillingCenter.
+* [flexera-cli billing-center access-rules groups](flexera-cli_billing-center_access-rules_groups.md)	 - groups operations
+* [flexera-cli billing-center access-rules users](flexera-cli_billing-center_access-rules_users.md)	 - users operations
 

@@ -1,29 +1,11 @@
 ## flexera-cli iam scim-config schemas
 
-Shows a supported schema for an org.
-
-### Synopsis
-
-Shows a supported schema for an org.
-
-Show returns a supported schema for an org.
-
-```
-flexera-cli iam scim-config schemas [flags]
-```
-
-### Examples
-
-```
-Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli iam scim-config schemas --org-id ORG_ID --id ID
-```
+schemas operations
 
 ### Options
 
 ```
-  -h, --help        help for schemas
-      --id string   id (path, required); Unique identifier for the configuration.; required by API; illustrative example: "orgName"
+  -h, --help   help for schemas
 ```
 
 ### Options inherited from parent commands
@@ -50,4 +32,6 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### SEE ALSO
 
 * [flexera-cli iam scim-config](flexera-cli_iam_scim-config.md)	 - SCIM Config operations (generated from the unified OpenAPI spec)
+* [flexera-cli iam scim-config schemas get](flexera-cli_iam_scim-config_schemas_get.md)	 - Shows a supported schema for an org.
+* [flexera-cli iam scim-config schemas list](flexera-cli_iam_scim-config_schemas_list.md)	 - Returns a list of supported schemas for an org.
 

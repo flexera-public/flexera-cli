@@ -35,6 +35,6 @@ Bill Connect - GCP operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-onboarding bill-connect gcp create](flexera-cli_finops-onboarding_bill-connect_gcp_create.md)	 - Create a GCP bill connect
 * [flexera-cli finops-onboarding bill-connect gcp delete](flexera-cli_finops-onboarding_bill-connect_gcp_delete.md)	 - Delete a GCP bill connect
 * [flexera-cli finops-onboarding bill-connect gcp get](flexera-cli_finops-onboarding_bill-connect_gcp_get.md)	 - Show a GCP bill connect
-* [flexera-cli finops-onboarding bill-connect gcp list](flexera-cli_finops-onboarding_bill-connect_gcp_list.md)	 - Validate the credentials stored for a GCP bill connect
 * [flexera-cli finops-onboarding bill-connect gcp update](flexera-cli_finops-onboarding_bill-connect_gcp_update.md)	 - Update a GCP bill connect
+* [flexera-cli finops-onboarding bill-connect gcp validate](flexera-cli_finops-onboarding_bill-connect_gcp_validate.md)	 - Validate the credentials stored for a GCP bill connect
 

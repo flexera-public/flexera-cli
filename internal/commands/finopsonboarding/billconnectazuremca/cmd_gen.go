@@ -28,13 +28,11 @@ func NewCmd() *cobra.Command {
 		Use:   "bill-connect-azure-mca",
 		Short: "Bill Connect - Azure MCA operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newBillConnectAzureMCACreateCmd(),
-		newBillConnectAzureMCADeleteCmd(),
-		newBillConnectAzureMCAGetCmd(),
-		newBillConnectAzureMCAListCmd(),
-		newBillConnectAzureMCAUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureMCACreateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureMCADeleteCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureMCAGetCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureMCAValidateCmd())
+	clipkg.AddCommandAt(c, nil, newBillConnectAzureMCAUpdateCmd())
 	return c
 }
 
@@ -150,7 +148,7 @@ func newBillConnectAzureMCACreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -269,7 +267,7 @@ func newBillConnectAzureMCAGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -286,15 +284,16 @@ func newBillConnectAzureMCAGetCmd() *cobra.Command {
 	return c
 }
 
-// newBillConnectAzureMCAListCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-mca/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Azure_MCA_validate)
-func newBillConnectAzureMCAListCmd() *cobra.Command {
+// newBillConnectAzureMCAValidateCmd — GET /finops-onboarding/v1/orgs/{orgId}/bill-connects/azure-mca/{id}/validation (operationId: FinopsOnboarding_Bill_Connect_Azure_MCA_validate)
+func newBillConnectAzureMCAValidateCmd() *cobra.Command {
 	var (
 		id string
 	)
 	c := &cobra.Command{
-		Use:         "list",
+		Use:         "validate",
+		Aliases:     []string{"validation"},
 		Short:       "Validate the credentials stored for an Azure MCA bill connect",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect azure-mca list --org-id ORG_ID --id ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding bill-connect azure-mca validate --org-id ORG_ID --id ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Bill_Connect_Azure_MCA_validate", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -321,7 +320,7 @@ func newBillConnectAzureMCAListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

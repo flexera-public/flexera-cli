@@ -29,14 +29,12 @@ func NewCmd() *cobra.Command {
 		Use:   "saved-filters",
 		Short: "Saved Filters operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newSavedFiltersCreateCmd(),
-		newSavedFiltersDeleteCmd(),
-		newSavedFiltersGetCmd(),
-		newSavedFiltersListCmd(),
-		newSavedFiltersReplaceCmd(),
-		newSavedFiltersUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newSavedFiltersCreateCmd())
+	clipkg.AddCommandAt(c, nil, newSavedFiltersDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newSavedFiltersGetCmd())
+	clipkg.AddCommandAt(c, nil, newSavedFiltersListCmd())
+	clipkg.AddCommandAt(c, nil, newSavedFiltersReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newSavedFiltersUpdateCmd())
 	return c
 }
 
@@ -148,7 +146,7 @@ func newSavedFiltersCreateCmd() *cobra.Command {
 				if resp.JSON201 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON201)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -275,7 +273,7 @@ func newSavedFiltersGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -341,7 +339,7 @@ func newSavedFiltersListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.FinopsCustomizationsSavedFiltersIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -352,7 +350,7 @@ func newSavedFiltersListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
@@ -492,7 +490,7 @@ func newSavedFiltersReplaceCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -635,7 +633,7 @@ func newSavedFiltersUpdateCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

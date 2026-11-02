@@ -28,15 +28,13 @@ func NewCmd() *cobra.Command {
 		Use:   "device",
 		Short: "Device operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newDeviceSubmitCmd(),
-		newDeviceGetCmd(),
-	)
+	clipkg.AddCommandAt(c, []string{"delete"}, newDeviceDeleteSubmitCmd())
+	clipkg.AddCommandAt(c, []string{"delete"}, newDeviceDeleteEstimateCmd())
 	return c
 }
 
-// newDeviceSubmitCmd — POST /vis/v2/orgs/{orgId}/devices/delete/submit (operationId: Vis_Device_delete)
-func newDeviceSubmitCmd() *cobra.Command {
+// newDeviceDeleteSubmitCmd — POST /vis/v2/orgs/{orgId}/devices/delete/submit (operationId: Vis_Device_delete)
+func newDeviceDeleteSubmitCmd() *cobra.Command {
 	var (
 		bodyRaw     string
 		fDeviceIDs  []string
@@ -47,7 +45,7 @@ func newDeviceSubmitCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "submit",
 		Short:       "Delete device evidence",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device submit --org-id ORG_ID --body @request.json\n  flexera-cli it-visibility device submit --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device submit --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device delete submit --org-id ORG_ID --body @request.json\n  flexera-cli it-visibility device delete submit --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device delete submit --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Device_delete", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -98,7 +96,7 @@ func newDeviceSubmitCmd() *cobra.Command {
 				return err
 			}
 			planParams := effectiveParams
-			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/vis/v2/orgs/{orgId}/devices/delete/submit", Params: planParams, Destructive: false}
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/vis/v2/orgs/{orgId}/devices/delete/submit", Params: planParams, Destructive: true}
 			writePlan.OrgID = deps.Config.OrgID
 			planParams["org-id"] = deps.Config.OrgID
 			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
@@ -127,7 +125,7 @@ func newDeviceSubmitCmd() *cobra.Command {
 				if resp.JSON202 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -148,16 +146,16 @@ func newDeviceSubmitCmd() *cobra.Command {
 	return c
 }
 
-// newDeviceGetCmd — POST /vis/v2/orgs/{orgId}/devices/delete/estimate (operationId: Vis_Device_estimateDelete)
-func newDeviceGetCmd() *cobra.Command {
+// newDeviceDeleteEstimateCmd — POST /vis/v2/orgs/{orgId}/devices/delete/estimate (operationId: Vis_Device_estimateDelete)
+func newDeviceDeleteEstimateCmd() *cobra.Command {
 	var (
 		bodyRaw    string
 		fDeviceIDs []string
 	)
 	c := &cobra.Command{
-		Use:         "get",
+		Use:         "estimate",
 		Short:       "Estimate device evidence deletion",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device get --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device get --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli it-visibility device delete estimate --org-id ORG_ID --body @request.json\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema it-visibility device delete estimate --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "Vis_Device_estimateDelete", "flexera.output": "structured", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -206,7 +204,7 @@ func newDeviceGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)

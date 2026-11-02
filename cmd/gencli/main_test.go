@@ -421,7 +421,7 @@ func TestSpecMetadataDeterministic(t *testing.T) {
 	}
 }
 
-func TestMetadataAssignedVerbsAndPagination(t *testing.T) {
+func TestMetadataCommandPathsAndPagination(t *testing.T) {
 	ops := []operation{
 		{Method: "get", Path: "/orgs/{orgId}/widgets", OperationID: "Org_list", Action: "list", Success2xx: "200", HasJSONResp: true, Paginated: true,
 			PathParams:  []param{{Name: "orgId", FlagName: "org-id", In: "path", GoType: "int", Required: true}},
@@ -434,7 +434,7 @@ func TestMetadataAssignedVerbsAndPagination(t *testing.T) {
 	}
 	org := metadata["Org_list"].(map[string]interface{})
 	project := metadata["Project_list"].(map[string]interface{})
-	if org["command"].([]string)[1] != "list" || project["command"].([]string)[1] != "list-project" {
+	if strings.Join(org["command"].([]string), " ") != "widget list" || strings.Join(project["command"].([]string), " ") != "widget project list" {
 		t.Fatal(metadata)
 	}
 	if org["paginated"] != true || org["responseEnvelope"] != "values" || project["responseEnvelope"] != "none" {

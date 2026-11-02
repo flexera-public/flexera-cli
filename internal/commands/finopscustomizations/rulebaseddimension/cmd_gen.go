@@ -28,17 +28,15 @@ func NewCmd() *cobra.Command {
 		Use:   "rule-based-dimension",
 		Short: "Rule-Based Dimension operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newRuleBasedDimensionCreateCmd(),
-		newRuleBasedDimensionDeleteCmd(),
-		newRuleBasedDimensionRulesAllCmd(),
-		newRuleBasedDimensionGetCmd(),
-		newRuleBasedDimensionRulesCmd(),
-		newRuleBasedDimensionListCmd(),
-		newRuleBasedDimensionSummaryCmd(),
-		newRuleBasedDimensionReplaceCmd(),
-		newRuleBasedDimensionUpdateCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionCreateCmd())
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newRuleBasedDimensionRulesDeleteCmd())
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionGetCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newRuleBasedDimensionRulesGetCmd())
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionListCmd())
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionSummaryCmd())
+	clipkg.AddCommandAt(c, []string{"rules"}, newRuleBasedDimensionRulesReplaceCmd())
+	clipkg.AddCommandAt(c, nil, newRuleBasedDimensionUpdateCmd())
 	return c
 }
 
@@ -209,8 +207,8 @@ func newRuleBasedDimensionDeleteCmd() *cobra.Command {
 	return c
 }
 
-// newRuleBasedDimensionRulesAllCmd — DELETE /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_delete)
-func newRuleBasedDimensionRulesAllCmd() *cobra.Command {
+// newRuleBasedDimensionRulesDeleteCmd — DELETE /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_delete)
+func newRuleBasedDimensionRulesDeleteCmd() *cobra.Command {
 	var (
 		id          string
 		effectiveAt string
@@ -218,9 +216,9 @@ func newRuleBasedDimensionRulesAllCmd() *cobra.Command {
 		yes         bool
 	)
 	c := &cobra.Command{
-		Use:         "rules-all",
+		Use:         "delete",
 		Short:       "Deletes the rules list",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension rules-all --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT\n  flexera-cli finops-customizations rule-based-dimension rules-all --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --dry-run",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension rules delete --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT\n  flexera-cli finops-customizations rule-based-dimension rules delete --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_delete", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -307,7 +305,7 @@ func newRuleBasedDimensionGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -324,16 +322,16 @@ func newRuleBasedDimensionGetCmd() *cobra.Command {
 	return c
 }
 
-// newRuleBasedDimensionRulesCmd — GET /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_show)
-func newRuleBasedDimensionRulesCmd() *cobra.Command {
+// newRuleBasedDimensionRulesGetCmd — GET /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_show)
+func newRuleBasedDimensionRulesGetCmd() *cobra.Command {
 	var (
 		id          string
 		effectiveAt string
 	)
 	c := &cobra.Command{
-		Use:         "rules",
+		Use:         "get",
 		Short:       "Shows the rules list",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension rules --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension rules get --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT",
 		Annotations: map[string]string{"flexera.operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_show", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -363,7 +361,7 @@ func newRuleBasedDimensionRulesCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -410,7 +408,7 @@ func newRuleBasedDimensionListCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -461,7 +459,7 @@ func newRuleBasedDimensionSummaryCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -478,8 +476,8 @@ func newRuleBasedDimensionSummaryCmd() *cobra.Command {
 	return c
 }
 
-// newRuleBasedDimensionReplaceCmd — PUT /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_replace)
-func newRuleBasedDimensionReplaceCmd() *cobra.Command {
+// newRuleBasedDimensionRulesReplaceCmd — PUT /finops-customizations/v1/orgs/{orgId}/rule-based-dimensions/{id}/rules/{effectiveAt} (operationId: FinopsCustomizations_Rule_Based_Dimension_rules_list_replace)
+func newRuleBasedDimensionRulesReplaceCmd() *cobra.Command {
 	var (
 		id          string
 		effectiveAt string
@@ -491,7 +489,7 @@ func newRuleBasedDimensionReplaceCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "replace",
 		Short:       "Creates/Replace a rules list",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension replace --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --body @request.json\n  flexera-cli finops-customizations rule-based-dimension replace --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-customizations rule-based-dimension replace --example > request.json",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-customizations rule-based-dimension rules replace --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --body @request.json\n  flexera-cli finops-customizations rule-based-dimension rules replace --org-id ORG_ID --id ID --effective-at EFFECTIVE_AT --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema finops-customizations rule-based-dimension rules replace --example > request.json",
 		Annotations: map[string]string{"flexera.operationId": "FinopsCustomizations_Rule_Based_Dimension_rules_list_replace", "flexera.output": "text", "flexera.validation": "body"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

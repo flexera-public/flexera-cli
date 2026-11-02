@@ -28,10 +28,8 @@ func NewCmd() *cobra.Command {
 		Use:   "customer-group",
 		Short: "Customer Group operations (generated from the unified OpenAPI spec)",
 	}
-	c.AddCommand(
-		newCustomerGroupGetCmd(),
-		newCustomerGroupListCmd(),
-	)
+	clipkg.AddCommandAt(c, nil, newCustomerGroupGetCmd())
+	clipkg.AddCommandAt(c, nil, newCustomerGroupListCmd())
 	return c
 }
 
@@ -70,7 +68,7 @@ func newCustomerGroupGetCmd() *cobra.Command {
 				if resp.JSON200 == nil {
 					return flexera.ResponseError(resp.StatusCode(), resp.Body)
 				}
-				if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+				if deps.TypedOutput() {
 					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
 				}
 				result, err := clipkg.DecodeResponseJSON(resp.Body)
@@ -126,7 +124,7 @@ func newCustomerGroupListCmd() *cobra.Command {
 			if t := strings.TrimSpace(skipToken); t != "" {
 				initialSkipToken = &t
 			}
-			result, err := flexera.CollectPages(cmd.Context(), noPaginate, initialSkipToken,
+			result, err := clipkg.CollectPages(cmd.Context(), deps, noPaginate, initialSkipToken, new(flexera.SaasCustomerGroupIndexResponse).JSON200,
 				func(ctx context.Context, st *string) (any, error) {
 					p := params
 					p.SkipToken = st
@@ -137,7 +135,7 @@ func newCustomerGroupListCmd() *cobra.Command {
 					switch resp.StatusCode() {
 					case 200:
 						if resp.JSON200 != nil {
-							if deps.Config.Output == "table" && deps.Printer.JQ == nil && len(deps.Printer.Fields) == 0 {
+							if deps.TypedOutput() {
 								return resp.JSON200, nil
 							}
 							return clipkg.DecodeResponseJSON(resp.Body)
