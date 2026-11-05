@@ -56,6 +56,7 @@ type operation struct {
 	HasHeaders           bool
 	HasBody              bool
 	HasRawBody           bool
+	HasMultipartBody     bool
 	RawBodyType          string
 	BodyTypeName         string // generated client's "<Method>JSONRequestBody"
 	BodyFields           []bodyField
@@ -101,6 +102,7 @@ type bodyField struct {
 	FlagName string // kebab-case CLI flag
 	GoType   string // string|int|int64|float64|bool|[]string
 	Required bool
+	IsFile   bool
 	Schema   map[string]interface{}
 }
 
@@ -302,6 +304,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 
 			hasBody := false
 			hasRawBody := false
+			hasMultipartBody := false
 			rawBodyType := ""
 			hasUnsupportedBody := false
 			var bodyFields []bodyField
@@ -320,6 +323,19 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 						hasRawBody = true
 						rawBodyType = "application/octet-stream"
 						requestSchema, _ = octets["schema"].(map[string]interface{})
+					} else if multipart, ok := content["multipart/form-data"].(map[string]interface{}); ok {
+						hasMultipartBody = true
+						bodyFields = extractBodyFields(s, multipart)
+						requestSchema, _ = multipart["schema"].(map[string]interface{})
+						fileFields := 0
+						for _, field := range bodyFields {
+							if field.IsFile {
+								fileFields++
+							}
+						}
+						if fileFields != 1 {
+							hasUnsupportedBody = true
+						}
 					} else if len(content) > 0 {
 						hasUnsupportedBody = true
 					}
@@ -355,6 +371,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 				HasHeaders:           hasHeaders,
 				HasBody:              hasBody,
 				HasRawBody:           hasRawBody,
+				HasMultipartBody:     hasMultipartBody,
 				RawBodyType:          rawBodyType,
 				BodyTypeName:         methodName(opID) + "JSONRequestBody",
 				BodyFields:           bodyFields,
@@ -431,6 +448,7 @@ func extractBodyFields(s *spec, jsonContent map[string]interface{}) []bodyField 
 			continue // nested object reference — leave to --body
 		}
 		t, _ := ps["type"].(string)
+		format, _ := ps["format"].(string)
 		var goType string
 		switch t {
 		case "string":
@@ -469,6 +487,7 @@ func extractBodyFields(s *spec, jsonContent map[string]interface{}) []bodyField 
 			FlagName: flag,
 			GoType:   goType,
 			Required: containsString(schema["required"], name),
+			IsFile:   format == "binary",
 			Schema:   ps,
 		})
 	}
@@ -917,6 +936,7 @@ type renderOp struct {
 	HasUUIDParams     bool
 	HasBody           bool
 	HasRawBody        bool
+	HasMultipartBody  bool
 	RawBodyType       string
 	BodyTypeName      string
 	BodyFields        []bodyField
@@ -1138,6 +1158,7 @@ func renderWithMetadata(tag, pkg, cmdName string, ops []operation) ([]byte, map[
 			HasUUIDParams:     hasUUIDParams,
 			HasBody:           o.HasBody,
 			HasRawBody:        o.HasRawBody,
+			HasMultipartBody:  o.HasMultipartBody,
 			RawBodyType:       o.RawBodyType,
 			BodyTypeName:      o.BodyTypeName,
 			BodyFields:        bodyFields,
@@ -1252,8 +1273,17 @@ func operationMetadata(cmdName string, o operation, r renderOp) map[string]inter
 	for _, f := range r.BodyFields {
 		bodyFlags = append(bodyFlags, f.FlagName)
 		if f.Schema != nil {
+			schema := f.Schema
+			if f.IsFile {
+				schema = make(map[string]interface{}, len(f.Schema))
+				for key, value := range f.Schema {
+					if key != "example" && key != "examples" {
+						schema[key] = value
+					}
+				}
+			}
 			bodyFields = append(bodyFields, map[string]interface{}{
-				"flag": f.FlagName, "property": f.JSONKey, "required": f.Required, "schema": f.Schema,
+				"flag": f.FlagName, "property": f.JSONKey, "required": f.Required, "schema": schema,
 			})
 		}
 	}
@@ -1306,11 +1336,21 @@ func helpExample(cmdName string, o operation, r renderOp) string {
 			parts = append(parts, "--"+flag, strings.ToUpper(strings.ReplaceAll(flag, "-", "_")))
 		}
 	}
-	if r.HasBody || r.HasRawBody {
+	if r.HasMultipartBody {
+		for _, field := range r.BodyFields {
+			if field.Required {
+				parts = append(parts, "--"+field.FlagName, strings.ToUpper(strings.ReplaceAll(field.FlagName, "-", "_")))
+			}
+		}
+	} else if r.HasBody || r.HasRawBody {
 		parts = append(parts, "--body", "@request.json")
 	}
 	line := "  " + strings.Join(parts, " ")
-	text := "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n" + line
+	intro := "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n"
+	if r.HasMultipartBody {
+		intro = "Illustrative only: replace uppercase tokens; provide your own upload file.\n"
+	}
+	text := intro + line
 	if r.IsWrite {
 		text += "\n" + line + " --dry-run"
 	}
@@ -1373,7 +1413,7 @@ import (
 {{- if .HasDate }}
 	openapi_types "github.com/oapi-codegen/runtime/types"
 {{- end }}
-{{- range .Ops }}{{- if .HasRawBody }}
+{{- range .Ops }}{{- if or .HasRawBody .HasMultipartBody }}
 	"bytes"
 {{- break}}{{- end}}{{- end}}
 {{- range .Ops }}{{- if .HasUUIDParams }}
@@ -1409,7 +1449,7 @@ func NewCmd() *cobra.Command {
 {{- $op := . }}
 // {{.Constructor}} — {{.Method}} {{.Path}} (operationId: {{.OperationID}})
 func {{.Constructor}}() *cobra.Command {
-{{- if or .PathParams .QueryParams .CanPaginate .HasBody .HasRawBody .IsWrite }}
+{{- if or .PathParams .QueryParams .CanPaginate .HasBody .HasRawBody .HasMultipartBody .IsWrite }}
 	var (
 {{- range .PathParams }}
 		{{.GoName}} {{.GoType}}
@@ -1424,7 +1464,7 @@ func {{.Constructor}}() *cobra.Command {
 {{- if or .HasBody .HasRawBody }}
 		bodyRaw string
 {{- end }}
-{{- if .HasBody }}
+{{- if or .HasBody .HasMultipartBody }}
 {{- range .BodyFields }}
 		{{.GoVar}} {{.GoType}}
 {{- end }}
@@ -1589,6 +1629,27 @@ func {{.Constructor}}() *cobra.Command {
 				return fmt.Errorf("a request body is required: pass --body @file or --body @-")
 			}
 {{- end }}
+{{- if .HasMultipartBody }}
+{{- range .BodyFields }}
+{{- if .Required }}
+			if strings.TrimSpace({{.GoVar}}) == "" {
+				return clipkg.Exit(2, fmt.Errorf("--{{.FlagName}} is required"))
+			}
+{{- end }}
+{{- end }}
+			multipartFields := map[string]string{}
+{{- range .BodyFields }}
+{{- if not .IsFile }}
+			if cmd.Flags().Changed("{{.FlagName}}") {
+				multipartFields["{{.JSONKey}}"] = {{.GoVar}}
+			}
+{{- end }}
+{{- end }}
+			multipartBody, multipartContentType, err := clipkg.BuildMultipartBody({{range .BodyFields}}{{if .IsFile}}{{quote .JSONKey}}, {{.GoVar}}{{end}}{{end}}, multipartFields)
+			if err != nil {
+				return err
+			}
+{{- end }}
 {{- if .IsWrite }}
 			planParams := effectiveParams
 			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "{{.Method}}", Path: "{{.Path}}", Params: planParams, Destructive: {{.IsDestructive}}}
@@ -1600,6 +1661,10 @@ func {{.Constructor}}() *cobra.Command {
 			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
 {{- else if .HasRawBody }}
 			writePlan.Body = raw
+			writePlan.RawUpload = true
+			writePlan.Validation = &clipkg.ValidationResult{Status: "unsupported"}
+{{- else if .HasMultipartBody }}
+			writePlan.Body = multipartBody
 			writePlan.RawUpload = true
 			writePlan.Validation = &clipkg.ValidationResult{Status: "unsupported"}
 {{- end }}
@@ -1652,7 +1717,7 @@ func {{.Constructor}}() *cobra.Command {
 			}
 			return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
 {{- else }}
-			resp, err := client.{{.GenMethod}}{{if .HasRawBody}}WithBody{{end}}WithResponse(cmd.Context(){{ range .PathArgExprs }}, {{.}}{{ end }}{{ if .ParamsType }}, &params{{ end }}{{ if .HasBody }}, body{{ end }}{{ if .HasRawBody }}, "{{.RawBodyType}}", bytes.NewReader(raw){{ end }})
+			resp, err := client.{{.GenMethod}}{{if or .HasRawBody .HasMultipartBody}}WithBody{{end}}WithResponse(cmd.Context(){{ range .PathArgExprs }}, {{.}}{{ end }}{{ if .ParamsType }}, &params{{ end }}{{ if .HasBody }}, body{{ end }}{{ if .HasRawBody }}, "{{.RawBodyType}}", bytes.NewReader(raw){{ else if .HasMultipartBody }}, multipartContentType, bytes.NewReader(multipartBody){{ end }})
 			if err != nil {
 				return err
 			}
@@ -1719,10 +1784,10 @@ func {{.Constructor}}() *cobra.Command {
 	c.Flags().BoolVar(&noPaginate, "no-paginate", false, "return only the first page (do not follow nextPage)")
 	c.Flags().StringVar(&skipToken, "skip-token", "", "resume pagination from this token")
 {{- end }}
-{{- if or .HasBody .HasRawBody }}
+{{- if or .HasBody .HasRawBody .HasMultipartBody }}
 {{- range .BodyFields }}
 {{- if eq .GoType "string" }}
-	c.Flags().StringVar(&{{.GoVar}}, "{{.FlagName}}", "", "{{.JSONKey}} (body)")
+	c.Flags().StringVar(&{{.GoVar}}, "{{.FlagName}}", "", "{{.JSONKey}}{{if .IsFile}} (multipart file path){{else if $op.HasMultipartBody}} (multipart form field){{else}} (body){{end}}")
 {{- else if eq .GoType "int64" }}
 	c.Flags().Int64Var(&{{.GoVar}}, "{{.FlagName}}", 0, "{{.JSONKey}} (body)")
 {{- else if eq .GoType "int" }}
@@ -1735,7 +1800,9 @@ func {{.Constructor}}() *cobra.Command {
 	c.Flags().StringSliceVar(&{{.GoVar}}, "{{.FlagName}}", nil, "{{.JSONKey}} (body)")
 {{- end }}
 {{- end }}
+{{- if not .HasMultipartBody }}
 	c.Flags().StringVar(&bodyRaw, "body", "", "{{if .HasRawBody}}raw request body (@file | @-){{else}}raw JSON body (inline | @file | @-); overrides body field flags{{end}}")
+{{- end }}
 {{- end }}
 {{- if .IsWrite }}
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")

@@ -3,6 +3,9 @@ package cli
 import (
 	"bytes"
 	"context"
+	"io"
+	"mime"
+	"mime/multipart"
 	"os"
 	"path/filepath"
 	"strings"
@@ -125,6 +128,56 @@ func TestResolveBodyStdin(t *testing.T) {
 func TestResolveBodyInvalidJSON(t *testing.T) {
 	if _, err := ResolveBody("not json", nil, nil); err == nil {
 		t.Fatal("expected invalid JSON error for raw --body")
+	}
+}
+
+func TestBuildMultipartBody(t *testing.T) {
+	filePath := filepath.Join(t.TempDir(), "telemetry.csv")
+	const content = "Date,Team,Metrics\n2026-10-01,Orion,10\n"
+	if err := os.WriteFile(filePath, []byte(content), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	body, contentType, err := BuildMultipartBody("file", filePath, map[string]string{
+		"dimensionId": "rbd_team",
+		"ruleId":      "rule-1",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	mediaType, params, err := mime.ParseMediaType(contentType)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if mediaType != "multipart/form-data" {
+		t.Fatalf("media type = %q", mediaType)
+	}
+	reader := multipart.NewReader(bytes.NewReader(body), params["boundary"])
+	form, err := reader.ReadForm(1 << 20)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer form.RemoveAll()
+	if got := form.Value["dimensionId"]; len(got) != 1 || got[0] != "rbd_team" {
+		t.Fatalf("dimensionId = %v", got)
+	}
+	if got := form.Value["ruleId"]; len(got) != 1 || got[0] != "rule-1" {
+		t.Fatalf("ruleId = %v", got)
+	}
+	if len(form.File["file"]) != 1 || form.File["file"][0].Filename != "telemetry.csv" {
+		t.Fatalf("file part = %v", form.File["file"])
+	}
+	uploaded, err := form.File["file"][0].Open()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer uploaded.Close()
+	got, err := io.ReadAll(uploaded)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != content {
+		t.Fatalf("uploaded file = %q", got)
 	}
 }
 

@@ -1643,6 +1643,15 @@
     "ownership": "generated"
   },
   {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_downloadTelemetry",
+    "command": [
+      "finops-billing",
+      "shared-cost-rules",
+      "telemetry"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "FinopsBilling_Shared_Cost_Rules_index",
     "command": [
       "finops-billing",
@@ -1670,11 +1679,31 @@
     "ownership": "generated"
   },
   {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_showTelemetryUpload",
+    "command": [
+      "finops-billing",
+      "shared-cost-rules",
+      "telemetry-uploads",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "FinopsBilling_Shared_Cost_Rules_update",
     "command": [
       "finops-billing",
       "shared-cost-rules",
       "update"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Shared_Cost_Rules_uploadTelemetry",
+    "command": [
+      "finops-billing",
+      "shared-cost-rules",
+      "telemetry-uploads",
+      "create"
     ],
     "ownership": "generated"
   },
@@ -2380,7 +2409,7 @@
     "command": [
       "finops-onboarding",
       "processing-history",
-      "download"
+      "bill-months-download"
     ],
     "ownership": "generated"
   },
@@ -2389,6 +2418,7 @@
     "command": [
       "finops-onboarding",
       "processing-history",
+      "bill-months",
       "list"
     ],
     "ownership": "generated"
@@ -2399,6 +2429,17 @@
       "finops-onboarding",
       "processing-history",
       "reprocess"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsOnboarding_Processing_History_show",
+    "command": [
+      "finops-onboarding",
+      "processing-history",
+      "bill-connects",
+      "bill-months",
+      "get"
     ],
     "ownership": "generated"
   },
@@ -5305,6 +5346,16 @@
     "ownership": "generated"
   },
   {
+    "operationId": "Uobs_trigger_collect_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_collect_post",
+    "command": [
+      "unified-onboarding",
+      "onboarding",
+      "snowflake",
+      "collect"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "Uobs_trigger_onboarding_delete_uobs_v1_orgs_org_id_cloud_onboarding_delete",
     "command": [
       "unified-onboarding",
@@ -5324,11 +5375,31 @@
     "ownership": "generated"
   },
   {
+    "operationId": "Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post",
+    "command": [
+      "unified-onboarding",
+      "onboarding",
+      "snowflake",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "Uobs_trigger_onboarding_put_gcp_uobs_v1_orgs_org_id_cloud_onboarding_gcp_connector_id_put",
     "command": [
       "unified-onboarding",
       "onboarding",
       "gcp",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put",
+    "command": [
+      "unified-onboarding",
+      "onboarding",
+      "snowflake",
       "replace"
     ],
     "ownership": "generated"
@@ -5348,6 +5419,15 @@
       "unified-onboarding",
       "saas-onboarding",
       "validate"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post",
+    "command": [
+      "unified-onboarding",
+      "onboarding",
+      "snowflake-validate"
     ],
     "ownership": "generated"
   },

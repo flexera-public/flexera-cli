@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"go/format"
@@ -487,6 +488,72 @@ func TestCollectOps_AcceptsOctetStreamBody(t *testing.T) {
 	}
 	if len(ops) != 1 || !ops[0].HasRawBody || ops[0].RawBodyType != "application/octet-stream" {
 		t.Fatalf("unexpected raw-body operation: %+v", ops)
+	}
+}
+
+func TestCollectOps_AcceptsMultipartFileBody(t *testing.T) {
+	post := map[string]interface{}{
+		"tags":             []interface{}{"sample"},
+		"x-flexera-action": "create",
+		"operationId":      "uploadTelemetry",
+		"requestBody": map[string]interface{}{
+			"content": map[string]interface{}{
+				"multipart/form-data": map[string]interface{}{
+					"schema": map[string]interface{}{"$ref": "#/components/schemas/UploadBody"},
+				},
+			},
+		},
+		"responses": map[string]interface{}{
+			"200": map[string]interface{}{"description": "ok"},
+		},
+	}
+	rawPath, err := json.Marshal(map[string]interface{}{"post": post})
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := &spec{Paths: map[string]json.RawMessage{"/uploads": rawPath}}
+	s.Components.Schemas = map[string]json.RawMessage{
+		"UploadBody": json.RawMessage(`{"type":"object","required":["dimensionId","file"],"properties":{"dimensionId":{"type":"string"},"file":{"type":"string","format":"binary","example":"inline CSV data"},"ruleId":{"type":"string"}}}`),
+	}
+	ops, drops := collectOps(s, "sample")
+	if len(drops) != 0 {
+		t.Fatalf("unexpected drops: %v", drops)
+	}
+	if len(ops) != 1 || !ops[0].HasMultipartBody {
+		t.Fatalf("unexpected multipart operation: %+v", ops)
+	}
+	if len(ops[0].BodyFields) != 3 {
+		t.Fatalf("body fields = %+v", ops[0].BodyFields)
+	}
+	fileFound, dimensionFound := false, false
+	for _, field := range ops[0].BodyFields {
+		switch field.JSONKey {
+		case "file":
+			fileFound = field.IsFile && field.Required
+		case "dimensionId":
+			dimensionFound = field.Required && !field.IsFile
+		}
+	}
+	if !fileFound || !dimensionFound {
+		t.Fatalf("required multipart fields not extracted: %+v", ops[0].BodyFields)
+	}
+	source, metadata, err := renderWithMetadata("sample", "sample", "sample", ops)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Contains(source, []byte("clipkg.BuildMultipartBody")) ||
+		!bytes.Contains(source, []byte("client.UploadTelemetryWithBodyWithResponse")) {
+		t.Fatalf("multipart upload code not rendered:\n%s", source)
+	}
+	fields := metadata["uploadTelemetry"].(map[string]interface{})["bodyFields"].([]interface{})
+	for _, value := range fields {
+		field := value.(map[string]interface{})
+		if field["property"] == "file" {
+			schema := field["schema"].(map[string]interface{})
+			if _, hasExample := schema["example"]; hasExample {
+				t.Fatal("multipart file content must not be shown as a file-path example")
+			}
+		}
 	}
 }
 

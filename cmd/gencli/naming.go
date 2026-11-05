@@ -59,6 +59,7 @@ var commandOverrides = map[string][]string{
 	"Vis_Query_create":         {"execute"},
 	"Iam_Contracts_update":     {"update-last-seen"},
 	"Iam_Contracts_activation": {"set-activation"},
+	"Uobs_trigger_onboarding_delete_uobs_v1_orgs_org_id_cloud_onboarding_delete": {"delete"},
 	// GET /users/me is a singleton read.
 	"Iam_User_Profile_show": {"get"},
 	// Both return a signed URL rather than the settings object itself.

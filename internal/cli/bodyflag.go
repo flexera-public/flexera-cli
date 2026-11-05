@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"os"
+	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -43,6 +47,44 @@ func ResolveRawBody(raw string, stdin io.Reader) ([]byte, error) {
 		return nil, nil
 	}
 	return readBodyArg(raw, stdin)
+}
+
+func BuildMultipartBody(fileField, filePath string, fields map[string]string) ([]byte, string, error) {
+	if strings.TrimSpace(fileField) == "" || strings.TrimSpace(filePath) == "" {
+		return nil, "", Exit(2, fmt.Errorf("a multipart upload file is required"))
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, "", fmt.Errorf("opening multipart upload file %q: %w", filePath, err)
+	}
+	defer file.Close()
+
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	keys := make([]string, 0, len(fields))
+	for key := range fields {
+		keys = append(keys, key)
+	}
+	slices.Sort(keys)
+	for _, key := range keys {
+		if err := writer.WriteField(key, fields[key]); err != nil {
+			return nil, "", fmt.Errorf("writing multipart field %q: %w", key, err)
+		}
+	}
+	part, err := writer.CreateFormFile(fileField, filepath.Base(filePath))
+	if err != nil {
+		return nil, "", fmt.Errorf("creating multipart file field %q: %w", fileField, err)
+	}
+	if _, err := io.Copy(part, file); err != nil {
+		return nil, "", fmt.Errorf("reading multipart upload file %q: %w", filePath, err)
+	}
+	if err := file.Close(); err != nil {
+		return nil, "", fmt.Errorf("closing multipart upload file %q: %w", filePath, err)
+	}
+	if err := writer.Close(); err != nil {
+		return nil, "", fmt.Errorf("finishing multipart request body: %w", err)
+	}
+	return body.Bytes(), writer.FormDataContentType(), nil
 }
 
 // ConfirmWrite enforces the shared write-op confirmation contract used by
