@@ -28,9 +28,80 @@ func NewCmd() *cobra.Command {
 		Use:   "onboarding",
 		Short: "Onboarding operations (generated from the unified OpenAPI spec)",
 	}
+	clipkg.AddCommandAt(c, []string{"snowflake"}, newOnboardingSnowflakeCollectCmd())
 	clipkg.AddCommandAt(c, []string{"gcp"}, newOnboardingGcpCreateCmd())
+	clipkg.AddCommandAt(c, []string{"snowflake"}, newOnboardingSnowflakeCreateCmd())
+	clipkg.AddCommandAt(c, nil, newOnboardingSnowflakeValidateCmd())
 	clipkg.AddCommandAt(c, nil, newOnboardingDeleteCmd())
 	clipkg.AddCommandAt(c, []string{"gcp"}, newOnboardingGcpReplaceCmd())
+	clipkg.AddCommandAt(c, []string{"snowflake"}, newOnboardingSnowflakeReplaceCmd())
+	return c
+}
+
+// newOnboardingSnowflakeCollectCmd — POST /uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake/{connector_id}/collect (operationId: Uobs_trigger_collect_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_collect_post)
+func newOnboardingSnowflakeCollectCmd() *cobra.Command {
+	var (
+		connectorID string
+		dryRun      bool
+		yes         bool
+	)
+	c := &cobra.Command{
+		Use:         "collect",
+		Short:       "Onboarding Snowflake: Collect now",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding onboarding snowflake collect --org-id ORG_ID --connector-id CONNECTOR_ID\n  flexera-cli unified-onboarding onboarding snowflake collect --org-id ORG_ID --connector-id CONNECTOR_ID --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_trigger_collect_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_collect_post", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_trigger_collect_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_collect_post")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake/{connector_id}/collect", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsTriggerCollectSnowflakeUobsV1OrgsOrgIdCloudOnboardingSnowflakeConnectorIdCollectPostWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID))
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -155,6 +226,287 @@ func newOnboardingGcpCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fServiceAccountKeyJson, "service-account-key-json", "", "ServiceAccountKeyJson (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newOnboardingSnowflakeCreateCmd — POST /uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake (operationId: Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post)
+func newOnboardingSnowflakeCreateCmd() *cobra.Command {
+	var (
+		bodyRaw                  string
+		fAccountID               string
+		fConnectorName           string
+		fIncludeCostAndUsage     string
+		fIncludeDCO              string
+		fProgrammaticAccessToken string
+		fRole                    string
+		fUserName                string
+		fWarehouseName           string
+		dryRun                   bool
+		yes                      bool
+		interactive              bool
+	)
+	c := &cobra.Command{
+		Use:         "create",
+		Short:       "Onboarding Snowflake: Create",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding onboarding snowflake create --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding onboarding snowflake create --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding onboarding snowflake create --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post")
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("account-id") {
+				fields["AccountId"] = fAccountID
+			}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-dco") {
+				fields["IncludeDCO"] = fIncludeDCO
+			}
+			if cmd.Flags().Changed("programmatic-access-token") {
+				fields["ProgrammaticAccessToken"] = fProgrammaticAccessToken
+			}
+			if cmd.Flags().Changed("role") {
+				fields["Role"] = fRole
+			}
+			if cmd.Flags().Changed("user-name") {
+				fields["UserName"] = fUserName
+			}
+			if cmd.Flags().Changed("warehouse-name") {
+				fields["WarehouseName"] = fWarehouseName
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post", raw)
+				if err != nil {
+					return err
+				}
+			}
+			var body flexera.UobsTriggerOnboardingPostSnowflakeUobsV1OrgsOrgIdCloudOnboardingSnowflakePostJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_trigger_onboarding_post_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsTriggerOnboardingPostSnowflakeUobsV1OrgsOrgIdCloudOnboardingSnowflakePostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&fAccountID, "account-id", "", "AccountId (body)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeDCO, "include-dco", "", "IncludeDCO (body)")
+	c.Flags().StringVar(&fProgrammaticAccessToken, "programmatic-access-token", "", "ProgrammaticAccessToken (body)")
+	c.Flags().StringVar(&fRole, "role", "", "Role (body)")
+	c.Flags().StringVar(&fUserName, "user-name", "", "UserName (body)")
+	c.Flags().StringVar(&fWarehouseName, "warehouse-name", "", "WarehouseName (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newOnboardingSnowflakeValidateCmd — POST /uobs/v1/orgs/{org_id}/cloud/snowflake/validate (operationId: Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post)
+func newOnboardingSnowflakeValidateCmd() *cobra.Command {
+	var (
+		bodyRaw                  string
+		fAccountID               string
+		fProgrammaticAccessToken string
+		fRole                    string
+		fUserName                string
+		fWarehouseName           string
+		dryRun                   bool
+		yes                      bool
+		interactive              bool
+	)
+	c := &cobra.Command{
+		Use:         "snowflake-validate",
+		Short:       "Snowflake Onboarding: Validate connection",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding onboarding snowflake-validate --org-id ORG_ID --body @request.json\n  flexera-cli unified-onboarding onboarding snowflake-validate --org-id ORG_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding onboarding snowflake-validate --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post")
+			if err != nil {
+				return err
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("account-id") {
+				fields["AccountId"] = fAccountID
+			}
+			if cmd.Flags().Changed("programmatic-access-token") {
+				fields["ProgrammaticAccessToken"] = fProgrammaticAccessToken
+			}
+			if cmd.Flags().Changed("role") {
+				fields["Role"] = fRole
+			}
+			if cmd.Flags().Changed("user-name") {
+				fields["UserName"] = fUserName
+			}
+			if cmd.Flags().Changed("warehouse-name") {
+				fields["WarehouseName"] = fWarehouseName
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post", raw)
+				if err != nil {
+					return err
+				}
+			}
+			var body flexera.UobsValidateSnowflakeUobsV1OrgsOrgIdCloudSnowflakeValidatePostJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_validate_snowflake_uobs_v1_orgs_org_id_cloud_snowflake_validate_post", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/uobs/v1/orgs/{org_id}/cloud/snowflake/validate", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsValidateSnowflakeUobsV1OrgsOrgIdCloudSnowflakeValidatePostWithResponse(cmd.Context(), fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&fAccountID, "account-id", "", "AccountId (body)")
+	c.Flags().StringVar(&fProgrammaticAccessToken, "programmatic-access-token", "", "ProgrammaticAccessToken (body)")
+	c.Flags().StringVar(&fRole, "role", "", "Role (body)")
+	c.Flags().StringVar(&fUserName, "user-name", "", "UserName (body)")
+	c.Flags().StringVar(&fWarehouseName, "warehouse-name", "", "WarehouseName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
@@ -356,6 +708,154 @@ func newOnboardingGcpReplaceCmd() *cobra.Command {
 	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
 	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
 	c.Flags().StringVar(&fServiceAccountKeyJson, "service-account-key-json", "", "ServiceAccountKeyJson (body)")
+	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newOnboardingSnowflakeReplaceCmd — PUT /uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake/{connector_id} (operationId: Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put)
+func newOnboardingSnowflakeReplaceCmd() *cobra.Command {
+	var (
+		connectorID              string
+		bodyRaw                  string
+		fConnectorName           string
+		fIncludeCostAndUsage     string
+		fIncludeDCO              string
+		fProgrammaticAccessToken string
+		fRole                    string
+		fUserName                string
+		fWarehouseName           string
+		dryRun                   bool
+		yes                      bool
+		interactive              bool
+	)
+	c := &cobra.Command{
+		Use:         "replace",
+		Short:       "Onboarding Snowflake: Update",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli unified-onboarding onboarding snowflake replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json\n  flexera-cli unified-onboarding onboarding snowflake replace --org-id ORG_ID --connector-id CONNECTOR_ID --body @request.json --dry-run\nValidated illustrative body, when available (review before use):\n  flexera-cli cli schema unified-onboarding onboarding snowflake replace --example > request.json",
+		Annotations: map[string]string{"flexera.operationId": "Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put", "flexera.output": "structured", "flexera.validation": "body"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if interactive {
+				if err := clipkg.GuardInteractive(cmd, bodyRaw); err != nil {
+					return err
+				}
+				if err := clipkg.GatherInteractiveParams(cmd, "Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put"); err != nil {
+					return err
+				}
+			}
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(connectorID) == "" {
+				return fmt.Errorf("--connector-id is required")
+			}
+			fields := map[string]any{}
+			if cmd.Flags().Changed("connector-name") {
+				fields["ConnectorName"] = fConnectorName
+			}
+			if cmd.Flags().Changed("include-cost-and-usage") {
+				fields["IncludeCostAndUsage"] = fIncludeCostAndUsage
+			}
+			if cmd.Flags().Changed("include-dco") {
+				fields["IncludeDCO"] = fIncludeDCO
+			}
+			if cmd.Flags().Changed("programmatic-access-token") {
+				fields["ProgrammaticAccessToken"] = fProgrammaticAccessToken
+			}
+			if cmd.Flags().Changed("role") {
+				fields["Role"] = fRole
+			}
+			if cmd.Flags().Changed("user-name") {
+				fields["UserName"] = fUserName
+			}
+			if cmd.Flags().Changed("warehouse-name") {
+				fields["WarehouseName"] = fWarehouseName
+			}
+			var typed any
+			if len(fields) > 0 {
+				typed = fields
+			}
+			raw, err := clipkg.ResolveBody(bodyRaw, typed, cmd.InOrStdin())
+			if err != nil {
+				return err
+			}
+			if len(raw) == 0 {
+				if !interactive {
+					return clipkg.Exit(2, fmt.Errorf("a request body is required: pass --body (inline JSON, @file, or @-) or the body field flags"))
+				}
+			}
+			if interactive {
+				raw, err = clipkg.GatherInteractiveBody(cmd, "Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put", raw)
+				if err != nil {
+					return err
+				}
+			}
+			var body flexera.UobsTriggerOnboardingPutSnowflakeUobsV1OrgsOrgIdCloudOnboardingSnowflakeConnectorIdPutJSONRequestBody
+			noValidate, err := cmd.Flags().GetBool(clipkg.FlagNoValidate)
+			if err != nil {
+				return clipkg.Exit(2, err)
+			}
+			effectiveBody, validation, requestSchema, err := clipkg.PrepareRequestBody("Uobs_trigger_onboarding_put_snowflake_uobs_v1_orgs_org_id_cloud_onboarding_snowflake_connector_id_put", raw, &body, noValidate)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "PUT", Path: "/uobs/v1/orgs/{org_id}/cloud/onboarding/snowflake/{connector_id}", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body, writePlan.Validation, writePlan.RequestSchema = effectiveBody, validation, requestSchema
+			var writeDone bool
+			var werr error
+			if interactive {
+				writeDone, werr = clipkg.ConfirmInteractive(cmd, dryRun, yes, writePlan, deps.Printer)
+			} else {
+				writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			}
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.UobsTriggerOnboardingPutSnowflakeUobsV1OrgsOrgIdCloudOnboardingSnowflakeConnectorIdPutWithResponse(cmd.Context(), connectorID, fmt.Sprint(deps.Config.OrgID), body)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 202:
+				if resp.JSON202 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON202)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&connectorID, "connector-id", "", "connector_id (path, required)")
+	c.Flags().StringVar(&fConnectorName, "connector-name", "", "ConnectorName (body)")
+	c.Flags().StringVar(&fIncludeCostAndUsage, "include-cost-and-usage", "", "IncludeCostAndUsage (body)")
+	c.Flags().StringVar(&fIncludeDCO, "include-dco", "", "IncludeDCO (body)")
+	c.Flags().StringVar(&fProgrammaticAccessToken, "programmatic-access-token", "", "ProgrammaticAccessToken (body)")
+	c.Flags().StringVar(&fRole, "role", "", "Role (body)")
+	c.Flags().StringVar(&fUserName, "user-name", "", "UserName (body)")
+	c.Flags().StringVar(&fWarehouseName, "warehouse-name", "", "WarehouseName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

@@ -4,6 +4,7 @@
 package sharedcostrules
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -29,9 +30,12 @@ func NewCmd() *cobra.Command {
 		Short: "Shared Cost Rules operations (generated from the unified OpenAPI spec)",
 	}
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesCreateCmd())
+	clipkg.AddCommandAt(c, []string{"telemetry-uploads"}, newSharedCostRulesTelemetryUploadsCreateCmd())
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesDeleteCmd())
+	clipkg.AddCommandAt(c, []string{"telemetry-uploads"}, newSharedCostRulesTelemetryUploadsGetCmd())
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesGetCmd())
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesListCmd())
+	clipkg.AddCommandAt(c, nil, newSharedCostRulesTelemetryCmd())
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesReorderCmd())
 	clipkg.AddCommandAt(c, nil, newSharedCostRulesUpdateCmd())
 	return c
@@ -40,13 +44,14 @@ func NewCmd() *cobra.Command {
 // newSharedCostRulesCreateCmd — POST /finops-billing/v1/orgs/{orgId}/shared-cost-rules (operationId: FinopsBilling_Shared_Cost_Rules_create)
 func newSharedCostRulesCreateCmd() *cobra.Command {
 	var (
-		bodyRaw        string
-		fEffectiveFrom string
-		fEffectiveTo   string
-		fName          string
-		dryRun         bool
-		yes            bool
-		interactive    bool
+		bodyRaw            string
+		fEffectiveFrom     string
+		fEffectiveTo       string
+		fName              string
+		fTelemetryUploadID string
+		dryRun             bool
+		yes                bool
+		interactive        bool
 	)
 	c := &cobra.Command{
 		Use:         "create",
@@ -78,6 +83,9 @@ func newSharedCostRulesCreateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("name") {
 				fields["name"] = fName
+			}
+			if cmd.Flags().Changed("telemetry-upload-id") {
+				fields["telemetryUploadId"] = fTelemetryUploadID
 			}
 			var typed any
 			if len(fields) > 0 {
@@ -153,10 +161,99 @@ func newSharedCostRulesCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fEffectiveFrom, "effective-from", "", "effectiveFrom (body)")
 	c.Flags().StringVar(&fEffectiveTo, "effective-to", "", "effectiveTo (body)")
 	c.Flags().StringVar(&fName, "name", "", "name (body)")
+	c.Flags().StringVar(&fTelemetryUploadID, "telemetry-upload-id", "", "telemetryUploadId (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	c.Flags().BoolVarP(&interactive, "interactive", "i", false, "edit inputs in a terminal form, review a plan and approve with typed yes")
+	return c
+}
+
+// newSharedCostRulesTelemetryUploadsCreateCmd — POST /finops-billing/v1/orgs/{orgId}/shared-cost-rules/telemetry-uploads (operationId: FinopsBilling_Shared_Cost_Rules_uploadTelemetry)
+func newSharedCostRulesTelemetryUploadsCreateCmd() *cobra.Command {
+	var (
+		fDimensionID string
+		fFile        string
+		fRuleID      string
+		dryRun       bool
+		yes          bool
+	)
+	c := &cobra.Command{
+		Use:         "create",
+		Short:       "Upload a telemetry file",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own upload file.\n  flexera-cli finops-billing shared-cost-rules telemetry-uploads create --org-id ORG_ID --dimension-id DIMENSION_ID --file FILE\n  flexera-cli finops-billing shared-cost-rules telemetry-uploads create --org-id ORG_ID --dimension-id DIMENSION_ID --file FILE --dry-run",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Shared_Cost_Rules_uploadTelemetry", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Shared_Cost_Rules_uploadTelemetry")
+			if err != nil {
+				return err
+			}
+			if strings.TrimSpace(fDimensionID) == "" {
+				return clipkg.Exit(2, fmt.Errorf("--dimension-id is required"))
+			}
+			if strings.TrimSpace(fFile) == "" {
+				return clipkg.Exit(2, fmt.Errorf("--file is required"))
+			}
+			multipartFields := map[string]string{}
+			if cmd.Flags().Changed("dimension-id") {
+				multipartFields["dimensionId"] = fDimensionID
+			}
+			if cmd.Flags().Changed("rule-id") {
+				multipartFields["ruleId"] = fRuleID
+			}
+			multipartBody, multipartContentType, err := clipkg.BuildMultipartBody("file", fFile, multipartFields)
+			if err != nil {
+				return err
+			}
+			planParams := effectiveParams
+			writePlan := clipkg.Plan{Command: cmd.CommandPath(), Method: "POST", Path: "/finops-billing/v1/orgs/{orgId}/shared-cost-rules/telemetry-uploads", Params: planParams, Destructive: false}
+			writePlan.OrgID = deps.Config.OrgID
+			planParams["org-id"] = deps.Config.OrgID
+			writePlan.Body = multipartBody
+			writePlan.RawUpload = true
+			writePlan.Validation = &clipkg.ValidationResult{Status: "unsupported"}
+			var writeDone bool
+			var werr error
+			writeDone, werr = clipkg.ConfirmPlan(dryRun, yes, deps.Stdout, writePlan, deps.Printer)
+			if werr != nil {
+				return werr
+			} else if writeDone {
+				return nil
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.FinopsBillingSharedCostRulesUploadTelemetryWithBodyWithResponse(cmd.Context(), deps.Config.OrgID, multipartContentType, bytes.NewReader(multipartBody))
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&fDimensionID, "dimension-id", "", "dimensionId (multipart form field)")
+	c.Flags().StringVar(&fFile, "file", "", "file (multipart file path)")
+	c.Flags().StringVar(&fRuleID, "rule-id", "", "ruleId (multipart form field)")
+	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
+	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
 	return c
 }
 
@@ -216,6 +313,77 @@ func newSharedCostRulesDeleteCmd() *cobra.Command {
 	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")
+	return c
+}
+
+// newSharedCostRulesTelemetryUploadsGetCmd — GET /finops-billing/v1/orgs/{orgId}/shared-cost-rules/telemetry-uploads/{uploadId} (operationId: FinopsBilling_Shared_Cost_Rules_showTelemetryUpload)
+func newSharedCostRulesTelemetryUploadsGetCmd() *cobra.Command {
+	var (
+		uploadID string
+		offset   int
+		limit    int
+		filter   string
+	)
+	c := &cobra.Command{
+		Use:         "get",
+		Short:       "Show a telemetry upload",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing shared-cost-rules telemetry-uploads get --org-id ORG_ID --upload-id UPLOAD_ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Shared_Cost_Rules_showTelemetryUpload", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Shared_Cost_Rules_showTelemetryUpload")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(uploadID) == "" {
+				return fmt.Errorf("--upload-id is required")
+			}
+			params := flexera.FinopsBillingSharedCostRulesShowTelemetryUploadParams{}
+			if cmd.Flags().Changed("offset") {
+				v := offset
+				params.Offset = &v
+			}
+			if cmd.Flags().Changed("limit") {
+				v := limit
+				params.Limit = &v
+			}
+			if cmd.Flags().Changed("filter") {
+				ev := flexera.FinopsBillingSharedCostRulesShowTelemetryUploadParamsFilter(filter)
+				params.Filter = &ev
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.FinopsBillingSharedCostRulesShowTelemetryUploadWithResponse(cmd.Context(), deps.Config.OrgID, uploadID, &params)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&uploadID, "upload-id", "", "uploadId (path, required)")
+	c.Flags().IntVar(&offset, "offset", 0, "offset (query)")
+	c.Flags().IntVar(&limit, "limit", 0, "limit (query)")
+	c.Flags().StringVar(&filter, "filter", "", "filter (query)")
 	return c
 }
 
@@ -313,6 +481,49 @@ func newSharedCostRulesListCmd() *cobra.Command {
 			}
 		},
 	}
+	return c
+}
+
+// newSharedCostRulesTelemetryCmd — GET /finops-billing/v1/orgs/{orgId}/shared-cost-rules/{id}/telemetry (operationId: FinopsBilling_Shared_Cost_Rules_downloadTelemetry)
+func newSharedCostRulesTelemetryCmd() *cobra.Command {
+	var (
+		id string
+	)
+	c := &cobra.Command{
+		Use:         "telemetry",
+		Short:       "Download a rule's telemetry",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing shared-cost-rules telemetry --org-id ORG_ID --id ID",
+		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Shared_Cost_Rules_downloadTelemetry", "flexera.output": "text", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsBilling_Shared_Cost_Rules_downloadTelemetry")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(id) == "" {
+				return fmt.Errorf("--id is required")
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.FinopsBillingSharedCostRulesDownloadTelemetryWithResponse(cmd.Context(), deps.Config.OrgID, id)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				fmt.Fprintln(deps.Stdout, "OK")
+				return nil
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&id, "id", "", "id (path, required)")
 	return c
 }
 
@@ -420,15 +631,16 @@ func newSharedCostRulesReorderCmd() *cobra.Command {
 // newSharedCostRulesUpdateCmd — PATCH /finops-billing/v1/orgs/{orgId}/shared-cost-rules/{id} (operationId: FinopsBilling_Shared_Cost_Rules_update)
 func newSharedCostRulesUpdateCmd() *cobra.Command {
 	var (
-		id             string
-		bodyRaw        string
-		fEffectiveFrom string
-		fEffectiveTo   string
-		fName          string
-		fStatus        string
-		dryRun         bool
-		yes            bool
-		interactive    bool
+		id                 string
+		bodyRaw            string
+		fEffectiveFrom     string
+		fEffectiveTo       string
+		fName              string
+		fStatus            string
+		fTelemetryUploadID string
+		dryRun             bool
+		yes                bool
+		interactive        bool
 	)
 	c := &cobra.Command{
 		Use:         "update",
@@ -467,6 +679,9 @@ func newSharedCostRulesUpdateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("status") {
 				fields["status"] = fStatus
+			}
+			if cmd.Flags().Changed("telemetry-upload-id") {
+				fields["telemetryUploadId"] = fTelemetryUploadID
 			}
 			var typed any
 			if len(fields) > 0 {
@@ -544,6 +759,7 @@ func newSharedCostRulesUpdateCmd() *cobra.Command {
 	c.Flags().StringVar(&fEffectiveTo, "effective-to", "", "effectiveTo (body)")
 	c.Flags().StringVar(&fName, "name", "", "name (body)")
 	c.Flags().StringVar(&fStatus, "status", "", "status (body)")
+	c.Flags().StringVar(&fTelemetryUploadID, "telemetry-upload-id", "", "telemetryUploadId (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
 	c.Flags().BoolVar(&dryRun, "dry-run", false, "print the planned operation as JSON and exit without calling the API")
 	c.Flags().BoolVar(&yes, "yes", false, "confirm the operation (required for destructive ops)")

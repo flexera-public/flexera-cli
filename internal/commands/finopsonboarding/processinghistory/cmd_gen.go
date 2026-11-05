@@ -28,14 +28,72 @@ func NewCmd() *cobra.Command {
 		Use:   "processing-history",
 		Short: "Processing History operations (generated from the unified OpenAPI spec)",
 	}
-	clipkg.AddCommandAt(c, nil, newProcessingHistoryListCmd())
-	clipkg.AddCommandAt(c, nil, newProcessingHistoryDownloadCmd())
+	clipkg.AddCommandAt(c, []string{"bill-connects", "bill-months"}, newProcessingHistoryBillConnectsBillMonthsGetCmd())
+	clipkg.AddCommandAt(c, []string{"bill-months"}, newProcessingHistoryBillMonthsListCmd())
+	clipkg.AddCommandAt(c, nil, newProcessingHistoryBillMonthsDownloadCmd())
 	clipkg.AddCommandAt(c, nil, newProcessingHistoryReprocessCmd())
 	return c
 }
 
-// newProcessingHistoryListCmd — GET /finops-onboarding/v1/orgs/{orgId}/processing/bill-months (operationId: FinopsOnboarding_Processing_History_index)
-func newProcessingHistoryListCmd() *cobra.Command {
+// newProcessingHistoryBillConnectsBillMonthsGetCmd — GET /finops-onboarding/v1/orgs/{orgId}/processing/bill-connects/{billConnectId}/bill-months/{billMonth} (operationId: FinopsOnboarding_Processing_History_show)
+func newProcessingHistoryBillConnectsBillMonthsGetCmd() *cobra.Command {
+	var (
+		billConnectID string
+		billMonth     string
+	)
+	c := &cobra.Command{
+		Use:         "get",
+		Short:       "Get enterprise bill processing details",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history bill-connects bill-months get --org-id ORG_ID --bill-connect-id BILL_CONNECT_ID --bill-month BILL_MONTH",
+		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_show", "flexera.output": "structured", "flexera.validation": "params"},
+		Args:        cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			// Parse formatted query flags before client creation/authentication.
+			deps := clipkg.DepsFrom(cmd.Context())
+			effectiveParams, err := clipkg.ValidateCommandParams(cmd, "FinopsOnboarding_Processing_History_show")
+			if err != nil {
+				return err
+			}
+			_ = effectiveParams
+			if strings.TrimSpace(billConnectID) == "" {
+				return fmt.Errorf("--bill-connect-id is required")
+			}
+			if strings.TrimSpace(billMonth) == "" {
+				return fmt.Errorf("--bill-month is required")
+			}
+			client, err := deps.APIClient()
+			if err != nil {
+				return err
+			}
+			resp, err := client.FinopsOnboardingProcessingHistoryShowWithResponse(cmd.Context(), deps.Config.OrgID, billConnectID, billMonth)
+			if err != nil {
+				return err
+			}
+			switch resp.StatusCode() {
+			case 200:
+				if resp.JSON200 == nil {
+					return flexera.ResponseError(resp.StatusCode(), resp.Body)
+				}
+				if deps.TypedOutput() {
+					return deps.Printer.Render(deps.Stdout, deps.Config.Output, resp.JSON200)
+				}
+				result, err := clipkg.DecodeResponseJSON(resp.Body)
+				if err != nil {
+					return err
+				}
+				return deps.Printer.Render(deps.Stdout, deps.Config.Output, result)
+			default:
+				return flexera.ResponseError(resp.StatusCode(), resp.Body)
+			}
+		},
+	}
+	c.Flags().StringVar(&billConnectID, "bill-connect-id", "", "billConnectId (path, required)")
+	c.Flags().StringVar(&billMonth, "bill-month", "", "billMonth (path, required)")
+	return c
+}
+
+// newProcessingHistoryBillMonthsListCmd — GET /finops-onboarding/v1/orgs/{orgId}/processing/bill-months (operationId: FinopsOnboarding_Processing_History_index)
+func newProcessingHistoryBillMonthsListCmd() *cobra.Command {
 	var (
 		limit      int
 		orderBy    string
@@ -46,7 +104,7 @@ func newProcessingHistoryListCmd() *cobra.Command {
 	c := &cobra.Command{
 		Use:         "list",
 		Short:       "List enterprise bill months",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history list --org-id ORG_ID",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history bill-months list --org-id ORG_ID",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_index", "flexera.output": "structured", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -111,16 +169,16 @@ func newProcessingHistoryListCmd() *cobra.Command {
 	return c
 }
 
-// newProcessingHistoryDownloadCmd — GET /finops-onboarding/v1/orgs/{orgId}/processing/bill-months/download (operationId: FinopsOnboarding_Processing_History_download)
-func newProcessingHistoryDownloadCmd() *cobra.Command {
+// newProcessingHistoryBillMonthsDownloadCmd — GET /finops-onboarding/v1/orgs/{orgId}/processing/bill-months/download (operationId: FinopsOnboarding_Processing_History_download)
+func newProcessingHistoryBillMonthsDownloadCmd() *cobra.Command {
 	var (
 		downloadToken string
 		format        string
 	)
 	c := &cobra.Command{
-		Use:         "download",
+		Use:         "bill-months-download",
 		Short:       "Download enterprise bill months in CSV",
-		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history download --org-id ORG_ID --download-token DOWNLOAD_TOKEN",
+		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-onboarding processing-history bill-months-download --org-id ORG_ID --download-token DOWNLOAD_TOKEN",
 		Annotations: map[string]string{"flexera.operationId": "FinopsOnboarding_Processing_History_download", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {

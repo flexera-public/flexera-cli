@@ -597,7 +597,7 @@ func newLicenseTermsCreateCmd() *cobra.Command {
 		},
 	}
 	c.Flags().StringVar(&licenseID, "license-id", "", "licenseId (path, required)")
-	c.Flags().StringVar(&fAdditional, "additional", "", "additional (body)")
+	c.Flags().StringVar(&fAdditional, "additional", "", "additional (multipart file path)")
 	c.Flags().StringVar(&fEffectiveAt, "effective-at", "", "effectiveAt (body)")
 	c.Flags().IntVar(&fEffectiveDateReminderDays, "effective-date-reminder-days", 0, "effectiveDateReminderDays (body)")
 	c.Flags().IntVar(&fEndDateReminderDays, "end-date-reminder-days", 0, "endDateReminderDays (body)")
@@ -2638,7 +2638,7 @@ func newLicenseTermsUpdateCmd() *cobra.Command {
 	}
 	c.Flags().StringVar(&licenseID, "license-id", "", "licenseId (path, required)")
 	c.Flags().StringVar(&termID, "term-id", "", "termId (path, required)")
-	c.Flags().StringVar(&fAdditional, "additional", "", "additional (body)")
+	c.Flags().StringVar(&fAdditional, "additional", "", "additional (multipart file path)")
 	c.Flags().StringVar(&fEffectiveAt, "effective-at", "", "effectiveAt (body)")
 	c.Flags().IntVar(&fEffectiveDateReminderDays, "effective-date-reminder-days", 0, "effectiveDateReminderDays (body)")
 	c.Flags().IntVar(&fEndDateReminderDays, "end-date-reminder-days", 0, "endDateReminderDays (body)")
