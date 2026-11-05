@@ -1,6 +1,6 @@
 module github.com/flexera-public/flexera-cli
 
-go 1.26.0
+go 1.27.3
 
 // Uncomment the following `replace` line to override go module reference and use a local source (../unified-go-client)
 // Helpful if you want to test changes in the local version of unified-go-client without publishing it.

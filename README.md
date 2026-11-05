@@ -18,7 +18,7 @@ We welcome feedback and contributions, but recommend evaluating the current leve
 go install github.com/flexera-public/flexera-cli@latest
 ```
 
-Current source requires **Go 1.26+**. Add `$(go env GOBIN)` to your `PATH` if
+Current source requires **Go 1.27.3 or newer**. Add `$(go env GOBIN)` to your `PATH` if
 set; otherwise add `$(go env GOPATH)/bin` (usually `$HOME/go/bin`).
 Prebuilt binaries and Homebrew are not available yet.
 For a checkout, see [build from source](CONTRIBUTING.md#build-from-source).

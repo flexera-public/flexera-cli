@@ -2,7 +2,7 @@
 
 ## Build from source
 
-Current source requires **Go 1.26+**, Git, and Make.
+Current source requires **Go 1.27.3 or newer**, Git, and Make.
 
 ```sh
 git clone https://github.com/flexera-public/flexera-cli
