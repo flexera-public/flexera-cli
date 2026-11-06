@@ -64,7 +64,7 @@ generate:
 build:
 	go build -ldflags "$(LDFLAGS)" -o flexera-cli .
 
-refresh: update-unified-openapi generate build
+refresh: update-unified-openapi generate completions docs build
 	@echo "Regenerated flexera-cli source, and built flexera-cli binary"
 
 install:
