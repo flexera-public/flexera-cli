@@ -1,0 +1,57 @@
+## flexera-cli finops-onboarding processing-history bill-months list
+
+List enterprise bill months
+
+### Synopsis
+
+List enterprise bill months
+
+Lists enterprise bill months with their BLS processing outcomes: processing, warning, error, or completed. Clear skipToken when changing filters or sorting so a new search is performed.
+
+```
+flexera-cli finops-onboarding processing-history bill-months list [flags]
+```
+
+### Examples
+
+```
+Illustrative only: replace uppercase tokens; provide your own request.json for body input.
+  flexera-cli finops-onboarding processing-history bill-months list --org-id ORG_ID
+```
+
+### Options
+
+```
+      --filter string              filter (query); Supports operators: eq, ne, gt, ge, lt, le, co, sw, ew, in, nin, and, or and nested parentheses for grouping. AND takes precedence over OR. Filterable fields are billConnectId, billMonth, status, lastProcessStartAt, lastProcessEndAt, and lastProcessedAt. Membership values use a quoted comma-separated list. Status outcomes are processing, warning, error, and ... (see cli schema); illustrative example: "(billConnectId sw 'cbi-oi-gcp') and (billMonth eq '202507' or billMonth eq '202506') and (status eq 'processing')"
+  -h, --help[=true|false]          help for list
+      --limit int                  limit (query); Maximum number of records to return; minimum: 1; maximum: 1000; API default: 100; illustrative example: 250
+      --no-paginate[=true|false]   return only the first page (do not follow nextPage)
+      --order-by string            orderBy (query); Format: field [asc|desc][,field [asc|desc]...]. Direction is separated by one or more spaces.; illustrative example: "billMonth asc,billConnectId desc"
+      --skip-token string          resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
+```
+
+### Options inherited from parent commands
+
+```
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
+```
+
+### SEE ALSO
+
+* [flexera-cli finops-onboarding processing-history bill-months](flexera-cli_finops-onboarding_processing-history_bill-months.md)	 - bill-months operations
+

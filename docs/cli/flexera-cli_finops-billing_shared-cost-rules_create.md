@@ -6,7 +6,7 @@ Create a shared cost rule
 
 Create a shared cost rule
 
-Creates a new shared cost rule in the organization. The rule name must be unique within the organization. Source dimensions identify the costs to reallocate, and the allocation block defines how those costs are distributed.
+Creates a new shared cost rule in the organization. The rule name must be unique within the organization. Source dimensions identify the costs to reallocate, and the allocation block defines how those costs are distributed. A dynamicProportionateSplit rule is created together with its first telemetry upload, named by telemetryUploadId; the upload's applied.monthsTouched then lists the months to reprocess.
 
 ```
 flexera-cli finops-billing shared-cost-rules create [flags]
@@ -25,35 +25,36 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string             raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run                 print the planned operation as JSON and exit without calling the API
-      --effective-from string   effectiveFrom (body); required by API; The month (inclusive) from which the rule applies, formatted YYYY-MM. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-07"
-      --effective-to string     effectiveTo (body); The month (exclusive) before which the rule applies, formatted YYYY-MM. Must be > effectiveFrom. Omit this field for no end date; the rule applies indefinitely. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-12"
-  -h, --help                    help for create
-  -i, --interactive             edit inputs in a terminal form, review a plan and approve with typed yes
-      --name string             name (body); required by API; Display name for the shared cost rule. Must be unique within the organization. Must not contain "(", ")" or ">".; minLength: 1; maxLength: 255; pattern: "^[^()\u003e]+$"; illustrative example: "Equal split for AWS between Teams A, B and C"
-      --yes                     confirm the operation (required for destructive ops)
+      --body string                  raw JSON body (inline | @file | @-); overrides body field flags
+      --dry-run[=true|false]         print the planned operation as JSON and exit without calling the API
+      --effective-from string        effectiveFrom (body); required by API; The month (inclusive) from which the rule applies, formatted YYYY-MM. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-07"
+      --effective-to string          effectiveTo (body); The month (exclusive) before which the rule applies, formatted YYYY-MM. Must be > effectiveFrom. Omit this field for no end date; the rule applies indefinitely. This is applicable on ChargePeriod only.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-12"
+  -h, --help[=true|false]            help for create
+  -i, --interactive[=true|false]     edit inputs in a terminal form, review a plan and approve with typed yes
+      --name string                  name (body); required by API; Display name for the shared cost rule. Must be unique within the organization. Must not contain "(", ")" or ">".; minLength: 1; maxLength: 255; pattern: "^[^()\u003e]+$"; illustrative example: "Equal split for AWS between Teams A, B and C"
+      --telemetry-upload-id string   telemetryUploadId (body); A valid staged telemetry upload for a new rule, applied in the same save. Required for dynamicProportionateSplit and not allowed for any other type.; illustrative example: "tu_01JAB3K9Q2X7V5R8M4N6P0T1W3"
+      --yes[=true|false]             confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

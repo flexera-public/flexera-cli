@@ -30,7 +30,7 @@ Validated illustrative body, when available (review before use):
       --dimensions strings           dimensions (body); The list of supported dimensions by which to roll up the costs.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["vendor","category","service","instance_type","billing_center_id"]
       --end-at string                endAt (body); required by API; Latest timestamp (exclusive) of the costs. For month granularity: consists of a year and month in YYYY-MM format. For day granularity: consists of a year, month, and day in YYYY-MM-DD format. Will be interpreted as UTC, which is used for period boundaries. No records will be returned on or after this timestamp.; pattern: "^\\d{4}-\\d{2}(-\\d{2})?$"; illustrative example: "2019-01"
       --granularity string           granularity (body); Indicates which data source to query, having costs already aggregated up to this granularity. Choosing this granularity wisely can improve performance, as choosing to fetch 1 month of costs with 'month' granularity will be faster than fetching the same 31 days at 'day' granularity.; enum: ["day","month"]; API default: "month"; illustrative example: "month"
-  -h, --help                         help for report
+  -h, --help[=true|false]            help for report
       --limit int                    limit (body); limit number of records to return.; format: int32; minimum: 1; illustrative example: 10
       --metric string                metric (body); required by API; Metric to perform anomaly detection on. Currently only cost metrics supported.; enum: ["cost_nonamortized_unblended_adj","cost_amortized_unblended_adj","cost_nonamortized_blended_adj","cost_amortized_blended_adj","BilledCost","ModifiedBilledCost","EffectiveCost","Mo... (see cli schema); illustrative example: "cost_amortized_blended_adj"
       --standard-deviations float    standardDeviations (body); required by API; number of standard deviations to use for bollinger band calculations; format: double; minimum: 0; API default: 2; illustrative example: 2
@@ -41,22 +41,22 @@ Validated illustrative body, when available (review before use):
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

@@ -38,9 +38,9 @@ Validated illustrative body, when available (review before use):
       --action string                        action (body); required by API; Disposition of this credit assignment: one of reassign, show, or hide.; enum: ["reassign","show","hide"]; illustrative example: "reassign"
       --bill-month string                    billMonth (body); required by API; Bill month in YYYYMM format this assignment applies to.; pattern: "^\\d{4}(0[1-9]|1[0-2])$"; illustrative example: "202601"
       --body string                          raw JSON body (inline | @file | @-); overrides body field flags
-      --dry-run                              print the planned operation as JSON and exit without calling the API
-  -h, --help                                 help for create
-  -i, --interactive                          edit inputs in a terminal form, review a plan and approve with typed yes
+      --dry-run[=true|false]                 print the planned operation as JSON and exit without calling the API
+  -h, --help[=true|false]                    help for create
+  -i, --interactive[=true|false]             edit inputs in a terminal form, review a plan and approve with typed yes
       --name string                          name (body); required by API; Human-readable name for this assignment.; illustrative example: "EDP Credits Q1"
       --provider string                      provider (body); The unique provider affected by the credit assignment.; illustrative example: "AWS"
       --target-billing-account-id string     targetBillingAccountId (body); Required when action is reassign.; illustrative example: "4"
@@ -48,28 +48,28 @@ Validated illustrative body, when available (review before use):
       --target-customer-id int               targetCustomerId (body); The customer (child org) identifier to reassign the credit to. Used when action is reassign.; illustrative example: 2001
       --target-sub-account-id string         targetSubAccountId (body); The sub-account to reassign the credit to. Required when action is reassign.; illustrative example: "111122223333"
       --target-sub-account-name string       targetSubAccountName (body); The sub-account to reassign the credit to. Used when action is reassign.; illustrative example: "acme-target-us-east"
-      --yes                                  confirm the operation (required for destructive ops)
+      --yes[=true|false]                     confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

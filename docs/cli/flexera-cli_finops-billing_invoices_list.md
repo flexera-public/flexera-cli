@@ -24,40 +24,40 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 ### Options
 
 ```
-      --bill-month string          billMonth (query); Optional bill month filter.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "Georgiana Boyle"
-      --customer-name string       customerName (query); Optional customer name filter.; illustrative example: "Ratione atque."
+      --bill-month string          billMonth (query); Optional bill month filter.; pattern: "^\\d{4}-\\d{2}$"; illustrative example: "Myriam Kreiger"
+      --customer-name string       customerName (query); Optional customer name filter.; illustrative example: "Omnis est harum inventore aut et atque."
       --export-type string         exportType (query); Optional export type filter.; enum: ["pdf","csv"]; illustrative example: "pdf"
       --expression-filter string   expressionFilter (query); OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fiel... (see cli schema); illustrative example: "customerName co 'Acme' and exportType eq 'pdf'"
-      --filter string              filter (query); Legacy substring search of the stored invoice generation filter JSON. This parameter does not accept OData expressions.; illustrative example: "Tenetur maxime recusandae."
-      --group-by-count int         groupByCount (query); Optional group-by dimension count filter.; illustrative example: 532853165886189060
-  -h, --help                       help for list
+      --filter string              filter (query); Legacy substring search of the stored invoice generation filter JSON. This parameter does not accept OData expressions.; illustrative example: "Ratione culpa sit."
+      --group-by-count int         groupByCount (query); Optional group-by dimension count filter.; illustrative example: 17278469956312916000
+  -h, --help[=true|false]          help for list
       --invoice-number string      invoiceNumber (query); Optional exact, case-sensitive invoice number filter.; maxLength: 29; pattern: "^[A-Za-z0-9_-]+$"; illustrative example: "INV-000042"
-      --limit int                  limit (query); Page size (default 10, max 200); minimum: 1; maximum: 200; API default: 10; illustrative example: 26
-      --no-paginate                return only the first page (do not follow nextPage)
+      --limit int                  limit (query); Page size (default 10, max 200); minimum: 1; maximum: 200; API default: 10; illustrative example: 174
+      --no-paginate[=true|false]   return only the first page (do not follow nextPage)
       --order-by string            orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "invoiceNumber asc"
       --skip-token string          resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
-      --status string              status (query); Optional status filter.; illustrative example: "Veniam ad illo a ipsa eveniet."
+      --status string              status (query); Optional status filter.; illustrative example: "Fugiat enim."
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

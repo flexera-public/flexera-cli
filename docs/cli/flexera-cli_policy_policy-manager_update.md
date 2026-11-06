@@ -25,42 +25,42 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --allow-delete-policy      allowDeletePolicy (body); When true, allows deletion of policies at the child organization level.; illustrative example: false
-      --allow-edit-policy        allowEditPolicy (body); When true, allows editing of policy options at the child organization level.; illustrative example: false
-      --body string              raw JSON body (inline | @file | @-); overrides body field flags
-      --body-dry-run             dryRun (body); Flag for testing a policy without taking actions.; illustrative example: false
-      --description string       description (body); Human readable description for this specific application of the policy.; illustrative example: "Delete unattached volumes after 24 hours in US-East."
-      --dry-run                  print the planned operation as JSON and exit without calling the API
-  -h, --help                     help for update
-      --id string                id (path, required); ID of the policy manager.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "def01234567890abcdef0123"
-  -i, --interactive              edit inputs in a terminal form, review a plan and approve with typed yes
-      --log-level string         logLevel (body); Defines the logging level.; enum: ["full","context","error"]; illustrative example: "full"
-      --name string              name (body); Name of the policy manager.; illustrative example: "AWS Oversized Instances Recommendations"
-      --org-tags-filter string   orgTagsFilter (body); Filter expression for targeting organizations by tags for policy application. ### Operators | Operator | Description | Example | | -------- | ----------- | ------- | | co | Contains | tags co 'service:level' | | eq | Equal | tags eq 'region:us-east' | | ne | Not Equal | tags ne 'service:level:basic' | ### Usage Notes * Operators are case-sensitive (lowercase... (see cli schema); illustrative example: "(tags co 'service:level:basic' or tags eq 'region:us-east')"
-      --severity string          severity (body); Severity level of incidents raised by applied policies.; enum: ["low","medium","high","critical"]; illustrative example: "low"
-      --skip-approvals           skipApprovals (body); Automatically apply policies without manual approval.; illustrative example: false
-      --yes                      confirm the operation (required for destructive ops)
+      --allow-delete-policy[=true|false]   allowDeletePolicy (body); When true, allows deletion of policies at the child organization level.; illustrative example: false
+      --allow-edit-policy[=true|false]     allowEditPolicy (body); When true, allows editing of policy options at the child organization level.; illustrative example: false
+      --body string                        raw JSON body (inline | @file | @-); overrides body field flags
+      --body-dry-run[=true|false]          dryRun (body); Flag for testing a policy without taking actions.; illustrative example: false
+      --description string                 description (body); Human readable description for this specific application of the policy.; illustrative example: "Delete unattached volumes after 24 hours in US-East."
+      --dry-run[=true|false]               print the planned operation as JSON and exit without calling the API
+  -h, --help[=true|false]                  help for update
+      --id string                          id (path, required); ID of the policy manager.; required by API; pattern: "^[0-9a-f]+$"; illustrative example: "def01234567890abcdef0123"
+  -i, --interactive[=true|false]           edit inputs in a terminal form, review a plan and approve with typed yes
+      --log-level string                   logLevel (body); Defines the logging level.; enum: ["full","context","error"]; illustrative example: "full"
+      --name string                        name (body); Name of the policy manager.; illustrative example: "AWS Oversized Instances Recommendations"
+      --org-tags-filter string             orgTagsFilter (body); Filter expression for targeting organizations by tags for policy application. ### Operators | Operator | Description | Example | | -------- | ----------- | ------- | | co | Contains | tags co 'service:level' | | eq | Equal | tags eq 'region:us-east' | | ne | Not Equal | tags ne 'service:level:basic' | ### Usage Notes * Operators are case-sensitive (lowercase... (see cli schema); illustrative example: "(tags co 'service:level:basic' or tags eq 'region:us-east')"
+      --severity string                    severity (body); Severity level of incidents raised by applied policies.; enum: ["low","medium","high","critical"]; illustrative example: "low"
+      --skip-approvals[=true|false]        skipApprovals (body); Automatically apply policies without manual approval.; illustrative example: false
+      --yes[=true|false]                   confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

@@ -32,43 +32,43 @@ Validated illustrative body, when available (review before use):
       --body-client-secret string       ClientSecret (body); Client secret.
       --connector-id string             connector_id (path, required); Connector (Schedule) ID; required by API
       --connector-name string           ConnectorName (body); Connector name.; minLength: 1
-      --dry-run                         print the planned operation as JSON and exit without calling the API
+      --dry-run[=true|false]            print the planned operation as JSON and exit without calling the API
       --exclude-region strings          ExcludeRegion (body); Regions to exclude from onboarding.; API default: []; CLI: comma-separated values or repeated flag
       --external-id string              ExternalId (body); External ID.
       --have-billing-access string      HaveBillingAccess (body); Indicates if the service principal has billing access.
-  -h, --help                            help for replace
+  -h, --help[=true|false]               help for replace
       --include-bpc string              IncludeBPC (body); Include BPC flag.
       --include-cost-and-usage string   IncludeCostAndUsage (body); Include CCO flag.
       --include-inventory string        IncludeInventory (body); Include inventory flag.
-  -i, --interactive                     edit inputs in a terminal form, review a plan and approve with typed yes
+  -i, --interactive[=true|false]        edit inputs in a terminal form, review a plan and approve with typed yes
       --partner-tenant-id string        PartnerTenantId (body); Partner Tenant ID (CSP only).; minLength: 1
       --provider string                 provider (query); Provider (aws/azure) - required; required by API
       --role-arn string                 RoleARN (body); Role ARN.; pattern: "^arn:(?:aws|aws-cn|aws-us-gov):iam::\\d{12}:role/.+$"
       --subscription-id string          SubscriptionId (body); Subscription ID.; minLength: 1
       --tenant-id string                TenantId (body); Azure Tenant ID.; minLength: 1
       --token-url string                TokenUrl (body); Token URL.
-      --yes                             confirm the operation (required for destructive ops)
+      --yes[=true|false]                confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

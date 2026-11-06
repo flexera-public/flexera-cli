@@ -25,35 +25,35 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string           raw JSON body (inline | @file | @-); overrides body field flags
-      --display-name string   displayName (body); required by API; The display name of the group.; illustrative example: "Administrators"
-      --dry-run               print the planned operation as JSON and exit without calling the API
-  -h, --help                  help for replace
-      --id string             id (path, required); Unique identifier for the group.; required by API; illustrative example: "12345"
-  -i, --interactive           edit inputs in a terminal form, review a plan and approve with typed yes
-      --schemas strings       schemas (body); List of URIs of the SCIM schemas supported.; CLI: comma-separated values or repeated flag; illustrative example: ["urn:ietf:params:scim:schemas:core:2.0:Group"]
-      --yes                   confirm the operation (required for destructive ops)
+      --body string                raw JSON body (inline | @file | @-); overrides body field flags
+      --display-name string        displayName (body); required by API; The display name of the group.; illustrative example: "Administrators"
+      --dry-run[=true|false]       print the planned operation as JSON and exit without calling the API
+  -h, --help[=true|false]          help for replace
+      --id string                  id (path, required); Unique identifier for the group.; required by API; illustrative example: "12345"
+  -i, --interactive[=true|false]   edit inputs in a terminal form, review a plan and approve with typed yes
+      --schemas strings            schemas (body); List of URIs of the SCIM schemas supported.; CLI: comma-separated values or repeated flag; illustrative example: ["urn:ietf:params:scim:schemas:core:2.0:Group"]
+      --yes[=true|false]           confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

@@ -79,7 +79,7 @@ Validated illustrative body, when available (review before use):
       --dimensions strings   dimensions (body); An array of dimensions desired for the result.; minItems: 1; CLI: comma-separated values or repeated flag; items.enum: ["resourceType","group","resourceStatus"]; illustrative example: ["group"]
       --filter string        filter (body); A filter query string. The filter string is required. The available fields are [managedAppId, date, sku] | Filter | Description | Allowed operators | Example | |--------------|--------------------------------------------|-------------------|-----------------------------------------------------------------------------| | managedAppId | Filter to a single mana... (see cli schema); illustrative example: "date ge '2020-02-01T00:00:00Z' AND date lt '2020-10-01T00:00:00Z' AND managedAppId eq '1234'"
       --granularity string   granularity (body); The granularity desired for the metric result.; enum: ["day","month","firstOfMonth"]; API default: "month"; illustrative example: "month"
-  -h, --help                 help for get
+  -h, --help[=true|false]    help for get
       --limit int            limit (body); A limit field limits the number of top records returned to the specified number. This field is valid only for orgGroupSpend and orgApplicationUsagequeries. Max limit is 100.; maximum: 100; illustrative example: 8
       --metrics strings      metrics (body); The metrics to calculate. costTotalAmortized will amortize the cost across all items. numOfTotal will returnthe total number of items.; CLI: comma-separated values or repeated flag; items.enum: ["numOfTotal","costTotalAmortized"]; illustrative example: ["numOfTotal","numOfTotal","numOfTotal"]
       --query-name string    queryName (path, required); queryName identifies a query to execute and return results.; required by API; enum: ["departmentSpend","applicationUsage","applicationUsageOverTime","daysSinceActiveRange","licenseUsage","licenseUsageOverTime","totalNumberOfUsers","totalNumberOfUsersOverTime","org... (see cli schema); illustrative example: "departmentSpend"
@@ -88,22 +88,22 @@ Validated illustrative body, when available (review before use):
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

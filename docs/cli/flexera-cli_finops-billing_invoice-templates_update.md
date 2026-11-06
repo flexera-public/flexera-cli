@@ -25,42 +25,42 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string               raw JSON body (inline | @file | @-); overrides body field flags
-      --cost-metric string        costMetric (body); Updated cost metric.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "effectiveCost"
-      --dimensions strings        dimensions (body); Updated grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Sit sunt eveniet sunt est facere temporibus.","Sit laboriosam.","Provident at ipsum."]
-      --display-logo-within-pdf   displayLogoWithinPdf (body); Updated PDF logo display flag.; illustrative example: false
-      --dry-run                   print the planned operation as JSON and exit without calling the API
-      --export-layout string      exportLayout (body); Updated PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "nested"
-      --export-type string        exportType (body); Updated export type.; enum: ["pdf","csv"]; illustrative example: "csv"
-      --free-text string          freeText (body); Updated free-text company/address block.; illustrative example: "Quia sit."
-  -h, --help                      help for update
-      --id string                 id (path, required); Invoice template identifier; required by API; illustrative example: "tmpl_9001"
-  -i, --interactive               edit inputs in a terminal form, review a plan and approve with typed yes
-      --logo string               logo (body); Updated logo payload.; illustrative example: "Nulla ducimus ut dolores quibusdam voluptas."
-      --period-type string        periodType (body); Updated period type.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "billPeriod"
-      --template-name string      templateName (body); Updated template name.; maxLength: 255; illustrative example: "39a"
-      --yes                       confirm the operation (required for destructive ops)
+      --body string                            raw JSON body (inline | @file | @-); overrides body field flags
+      --cost-metric string                     costMetric (body); Updated cost metric.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "billedCost"
+      --dimensions strings                     dimensions (body); Updated grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Rerum occaecati accusamus quod amet.","Quaerat sapiente est delectus.","Enim doloremque quisquam sapiente voluptatibus."]
+      --display-logo-within-pdf[=true|false]   displayLogoWithinPdf (body); Updated PDF logo display flag.; illustrative example: true
+      --dry-run[=true|false]                   print the planned operation as JSON and exit without calling the API
+      --export-layout string                   exportLayout (body); Updated PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "nested"
+      --export-type string                     exportType (body); Updated export type.; enum: ["pdf","csv"]; illustrative example: "csv"
+      --free-text string                       freeText (body); Updated free-text company/address block.; illustrative example: "Nihil excepturi sunt."
+  -h, --help[=true|false]                      help for update
+      --id string                              id (path, required); Invoice template identifier; required by API; illustrative example: "tmpl_9001"
+  -i, --interactive[=true|false]               edit inputs in a terminal form, review a plan and approve with typed yes
+      --logo string                            logo (body); Updated logo payload.; illustrative example: "Ipsa dicta eaque qui."
+      --period-type string                     periodType (body); Updated period type.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "billPeriod"
+      --template-name string                   templateName (body); Updated template name.; maxLength: 255; illustrative example: "pyh"
+      --yes[=true|false]                       confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

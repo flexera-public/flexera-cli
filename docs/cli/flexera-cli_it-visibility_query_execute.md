@@ -25,7 +25,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                 raw JSON body (inline | @file | @-); overrides body field flags
-  -h, --help                        help for execute
+  -h, --help[=true|false]           help for execute
       --output-compression string   outputCompression (query); If set to 'gzip', the server will return a gzip-compressed CSV. Supported value: gzip; enum: ["gzip"]; illustrative example: "gzip"
       --query-name string           queryName (body); required by API; The query to execute.; enum: ["hardware_business_services","hardware_contextualized","hardware_evidence","hardware_inventory","hardware_inventory_source","hardware_technopedia","hardware_technopedia_lifecycle"... (see cli schema); illustrative example: "software_inventory"
       --resume-token string         resumeToken (query); An opaque token to be provided when requesting a subsequent set of delta changes for the same query.
@@ -34,22 +34,22 @@ Validated illustrative body, when available (review before use):
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO

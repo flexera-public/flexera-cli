@@ -28,8 +28,8 @@ Validated illustrative body, when available (review before use):
       --body string            raw JSON body (inline | @file | @-); overrides body field flags
       --category strings       category (body); List of control categories to filter by; CLI: comma-separated values or repeated flag; illustrative example: ["Identity And Access Management","Storage","Logging","Monitoring","Networking"]
       --etime string           etime (body); End time for data in YYYY-MM-DD format; illustrative example: "2025-11-02"
-  -h, --help                   help for control
-      --imc                    imc (body); IMC filter flag; illustrative example: false
+  -h, --help[=true|false]      help for control
+      --imc[=true|false]       imc (body); IMC filter flag; illustrative example: false
       --level int              level (body); CIS level filter. Allowed values: 1 or 2; API default: 1; illustrative example: 1
       --provider-type string   providerType (body); Provider type. Use 'on-prem' to query on-premises compliance data. Omit or set to 'cloud' for cloud provider data.; illustrative example: "on-prem"
       --providers strings      providers (body); required by API; List of cloud providers. Allowed values: 'aws', 'azure', 'all'; minItems: 1; CLI: comma-separated values or repeated flag; illustrative example: ["aws","azure"]
@@ -41,22 +41,22 @@ Validated illustrative body, when available (review before use):
 ### Options inherited from parent commands
 
 ```
-      --access-token string     static bearer access token
-      --api-base-url string     override API base URL
-      --client-id string        OAuth client ID
-      --client-secret string    OAuth client secret
-      --config string           config file (default $HOME/.flexera/config.yaml)
-  -d, --debug                   log HTTP requests/responses to stderr (Authorization redacted)
-      --json-style string       JSON whitespace style (auto|pretty|compact) (default "auto")
-      --login-base-url string   override login base URL
-      --no-validate             skip API schema constraints (never JSON syntax or request data-loss checks)
-      --org-id int              organization ID
-      --out-fields string       project JSON output fields (comma-separated paths)
-      --out-jq string           shape JSON output with a jq expression
-  -o, --output string           output format (json|table)
-  -r, --raw-output              write jq string results without JSON quotes (requires --out-jq)
-      --refresh-token string    OAuth refresh token
-      --zone string             API zone (nam|eu|apac|test)
+      --access-token string        static bearer access token
+      --api-base-url string        override API base URL
+      --client-id string           OAuth client ID
+      --client-secret string       OAuth client secret
+      --config string              config file (default $HOME/.flexera/config.yaml)
+  -d, --debug[=true|false]         log HTTP requests/responses to stderr (Authorization redacted)
+      --json-style string          JSON whitespace style (auto|pretty|compact) (default "auto")
+      --login-base-url string      override login base URL
+      --no-validate[=true|false]   skip API schema constraints (never JSON syntax or request data-loss checks)
+      --org-id int                 organization ID
+      --out-fields string          project JSON output fields (comma-separated paths)
+      --out-jq string              shape JSON output with a jq expression
+  -o, --output string              output format (json|table)
+  -r, --raw-output[=true|false]    write jq string results without JSON quotes (requires --out-jq)
+      --refresh-token string       OAuth refresh token
+      --zone string                API zone (nam|eu|apac|test)
 ```
 
 ### SEE ALSO
