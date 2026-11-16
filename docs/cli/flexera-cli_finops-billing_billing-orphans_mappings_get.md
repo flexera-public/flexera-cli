@@ -1,11 +1,29 @@
-## flexera-cli grs user
+## flexera-cli finops-billing billing-orphans mappings get
 
-User operations (generated from the unified OpenAPI spec)
+Show an Azure cost assignment
+
+### Synopsis
+
+Show an Azure cost assignment
+
+Return an individual assignment. Recurring resources omit billMonth even when opened from a month-filtered list.
+
+```
+flexera-cli finops-billing billing-orphans mappings get [flags]
+```
+
+### Examples
+
+```
+Illustrative only: replace uppercase tokens; provide your own request.json for body input.
+  flexera-cli finops-billing billing-orphans mappings get --org-id ORG_ID --id ID
+```
 
 ### Options
 
 ```
-  -h, --help[=true|false]   help for user
+  -h, --help[=true|false]   help for get
+      --id string           id (path, required); Identifier of the saved assignment, not a provider charge identifier.; required by API; format: uuid; illustrative example: "b2c3d4e5-f6a7-4901-acde-f12345678901"
 ```
 
 ### Options inherited from parent commands
@@ -31,6 +49,5 @@ User operations (generated from the unified OpenAPI spec)
 
 ### SEE ALSO
 
-* [flexera-cli grs](flexera-cli_grs.md)	 - Global Resource Service API
-* [flexera-cli grs user list](flexera-cli_grs_user_list.md)	 - List organizations the authenticated user can access
+* [flexera-cli finops-billing billing-orphans mappings](flexera-cli_finops-billing_billing-orphans_mappings.md)	 - mappings operations
 

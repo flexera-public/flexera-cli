@@ -187,37 +187,37 @@
   {
     "symbol": ".#(ProjectResolver).AutoDetectProjectID",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).GetProjectByID",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).GetProjectByName",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).Invalidate",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).InvalidateAll",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).ListProjects",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(ProjectResolver).ResolveSingleProjectID",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#(Registry).List",
@@ -590,11 +590,6 @@
     "command": "graphql query"
   },
   {
-    "symbol": ".#GrsBaseURLForZone",
-    "status": "excluded",
-    "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
-  },
-  {
     "symbol": ".#IsCanonicalZone",
     "status": "excluded",
     "reason": "zone parsing/base-URL helpers; CLI --zone flag already drives these"
@@ -662,7 +657,7 @@
   {
     "symbol": ".#NewProjectResolver",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#NewRetryingHTTPClient",
@@ -787,17 +782,17 @@
   {
     "symbol": ".#Project",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#ProjectResolver",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#ProjectResolverOption",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#Registry",
@@ -945,24 +940,9 @@
     "reason": "automatic Optima-host routing plumbing wired into every client"
   },
   {
-    "symbol": ".#WithProjectResolverStaticToken",
-    "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
-  },
-  {
-    "symbol": ".#WithProjectResolverTokenSource",
-    "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
-  },
-  {
-    "symbol": ".#WithProjectsAPIVersion",
-    "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
-  },
-  {
     "symbol": ".#WithProjectsCacheTTL",
     "status": "covered",
-    "command": "grs project list / policy (project auto-detection)"
+    "command": "iam project list / policy (project auto-detection)"
   },
   {
     "symbol": ".#WithRetryingHTTPClient",

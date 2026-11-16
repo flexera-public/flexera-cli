@@ -10,7 +10,7 @@ flexera-cli policy meta audit [flags]
 
 ```
   -h, --help[=true|false]   help for audit
-      --project-id int      Project ID (optional; resolved from GRS for the org when omitted)
+      --project-id int      Project ID (optional; resolved from IAM for the org when omitted)
 ```
 
 ### Options inherited from parent commands

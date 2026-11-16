@@ -58,10 +58,8 @@ github.com/dustin/go-humanize v1.1.0 h1:dbKTrvD0klcbBV/h4AWJdMuZogJACoMlvWIWZ5b2
 github.com/dustin/go-humanize v1.1.0/go.mod h1:hc1CvRkJMsgxqjmjMQF3QNRAZBwY8AXBAzKYoSX9sFI=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f h1:Y/CXytFA4m6baUTXGLOoWe4PQhGxaX0KpnayAqC48p4=
 github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f/go.mod h1:vw97MGsxSvLiUE2X8qFplwetxpGLQrlU1Q9AUEIzCaM=
-github.com/flexera-public/unified-go-client v0.0.0-20261105210036-007e244a746f h1:yamt5rVWuub1q13D1Vla/x6bQXtDPgfDtHd6vv/fPyw=
-github.com/flexera-public/unified-go-client v0.0.0-20261105210036-007e244a746f/go.mod h1:mSUmG4jYN585xUAU6TX9Z87ATuVacDSdN3nJPGJa7Mc=
-github.com/flexera-public/unified-go-client v0.0.0-20261106191200-124e3508c750 h1:P37Rv9mWf6XygOR3X94E+veKA2+8Y9aeu9qnrI8Z9Ns=
-github.com/flexera-public/unified-go-client v0.0.0-20261106191200-124e3508c750/go.mod h1:fiyDxtKO1LoZfH52ZvLw8mvxMDi+ftgLpTkx7eTqtnY=
+github.com/flexera-public/unified-go-client v0.0.0-20261116212446-e84fec4d71bd h1:hfmOQcAJuRSO/e02bSYppgl+UQ1Skl1elbjKSAZ+5kA=
+github.com/flexera-public/unified-go-client v0.0.0-20261116212446-e84fec4d71bd/go.mod h1:fiyDxtKO1LoZfH52ZvLw8mvxMDi+ftgLpTkx7eTqtnY=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=

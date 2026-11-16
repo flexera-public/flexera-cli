@@ -38,22 +38,22 @@ Validated illustrative body, when available (review before use):
 ```
       --body string                            raw JSON body (inline | @file | @-); overrides body field flags
       --cost-metric string                     costMetric (body); Cost metric to use for export. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "modifiedBilledCost"
-      --dimensions strings                     dimensions (body); Dimensions to include in export.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Dolores id beatae nemo deserunt cum.","Id ea quisquam facilis sint vitae et.","Qui doloremque aspernatur aut repellendus ipsam consequuntur."]
-      --display-logo-within-pdf[=true|false]   displayLogoWithinPdf (body); Whether to show logo in PDF export. Required only when neither invoiceTemplateId nor template is supplied.; illustrative example: true
+      --dimensions strings                     dimensions (body); Dimensions to include in export.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Delectus et eligendi ut ut sint.","Quaerat commodi molestiae et nisi eos.","Et rerum quisquam."]
+      --display-logo-within-pdf[=true|false]   displayLogoWithinPdf (body); Whether to show logo in PDF export. Required only when neither invoiceTemplateId nor template is supplied.; illustrative example: false
       --dry-run[=true|false]                   print the planned operation as JSON and exit without calling the API
-      --due-date string                        dueDate (body); Invoice due date.; format: date; illustrative example: "2013-03-09"
-      --end-date string                        endDate (body); required by API; Invoice range end date.; format: date; illustrative example: "1997-12-14"
-      --export-layout string                   exportLayout (body); PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "nested"
-      --export-type string                     exportType (body); Export type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["pdf","csv"]; illustrative example: "pdf"
-      --free-text string                       freeText (body); Optional free text.; illustrative example: "Quo aut qui atque."
+      --due-date string                        dueDate (body); Invoice due date.; format: date; illustrative example: "1972-08-31"
+      --end-date string                        endDate (body); required by API; Invoice range end date.; format: date; illustrative example: "2001-06-02"
+      --export-layout string                   exportLayout (body); PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "flatten"
+      --export-type string                     exportType (body); Export type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["pdf","csv"]; illustrative example: "csv"
+      --free-text string                       freeText (body); Optional free text.; illustrative example: "Omnis qui in."
   -h, --help[=true|false]                      help for create
   -i, --interactive[=true|false]               edit inputs in a terminal form, review a plan and approve with typed yes
-      --invoice-template-id string             invoiceTemplateId (body); Optional saved invoice template to source default field values from. Cannot be combined with template. Opaque ID; resolved server-side and snapshotted into the invoice.; illustrative example: "Neque placeat."
+      --invoice-template-id string             invoiceTemplateId (body); Optional saved invoice template to source default field values from. Cannot be combined with template. Opaque ID; resolved server-side and snapshotted into the invoice.; illustrative example: "Harum dolorem eos."
       --is-create-template[=true|false]        isCreateTemplate (body); Whether to create and use a reusable invoice template from template properties.; API default: false; illustrative example: false
-      --issue-date string                      issueDate (body); Invoice issue date.; format: date; illustrative example: "1970-12-15"
-      --logo string                            logo (body); Optional logo payload.; illustrative example: "Iure voluptatem odit eos eveniet quod."
-      --period-type string                     periodType (body); Configured period type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "billPeriod"
-      --start-date string                      startDate (body); required by API; Invoice range start date.; format: date; illustrative example: "2008-03-08"
+      --issue-date string                      issueDate (body); Invoice issue date.; format: date; illustrative example: "1975-11-23"
+      --logo string                            logo (body); Optional logo payload.; illustrative example: "Quae aut est."
+      --period-type string                     periodType (body); Configured period type. Required only when neither invoiceTemplateId nor template is supplied.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "chargePeriod"
+      --start-date string                      startDate (body); required by API; Invoice range start date.; format: date; illustrative example: "2014-04-19"
       --yes[=true|false]                       confirm the operation (required for destructive ops)
 ```
 

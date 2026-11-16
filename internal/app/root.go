@@ -14,7 +14,6 @@ import (
 	billuploadcmd "github.com/flexera-public/flexera-cli/internal/curated/billupload"
 	finopscmd "github.com/flexera-public/flexera-cli/internal/curated/finops"
 	graphqlcmd "github.com/flexera-public/flexera-cli/internal/curated/graphql"
-	grscmd "github.com/flexera-public/flexera-cli/internal/curated/grs"
 	policycmd "github.com/flexera-public/flexera-cli/internal/curated/policy"
 	rulebaseddimensioncmd "github.com/flexera-public/flexera-cli/internal/curated/rulebaseddimension"
 	userorgscmd "github.com/flexera-public/flexera-cli/internal/curated/userorgs"
@@ -57,7 +56,6 @@ func NewRootCmdWithUserAgentVersion(stdout, stderr io.Writer, getenv func(string
 		finopscmd.Attach,
 		workflowscmd.Attach,
 		policycmd.Attach,
-		grscmd.Attach,
 		userorgscmd.Attach,
 	} {
 		if err := attach(root); err != nil {

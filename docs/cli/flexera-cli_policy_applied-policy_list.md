@@ -20,7 +20,7 @@ flexera-cli policy applied-policy list [flags]
       --limit int                  Optional page size; Custom pagination limit to be used.; format: int64; illustrative example: 1000
       --no-paginate[=true|false]   return only the requested page (do not follow nextPage)
       --order-by string            Optional sort expression; Optional order by for returning applied policies in a specific order. ### Supported Order by Keys | Filter | Description | | ---------------------- | ------------------------------------------------------------------------------------------------- | | name | Returns applied policies ordered by 'name' property | | metaParentPolicyId | Returns applied policies... (see cli schema); illustrative example: "createdAt asc"
-      --project-id int             Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --project-id int             Project ID (optional; resolved from IAM for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
       --skip-token string          Optional pagination token; resume from this position; Used in pagination to point to the next or previous set of records.
 ```
 

@@ -1,17 +1,11 @@
-## flexera-cli grs
+## flexera-cli finops-billing billing-orphans
 
-Global Resource Service API
-
-### Synopsis
-
-Commands for the Global Resource Service API (Flexera Global Resource Service API, v2).
-
-Service id: grs
+Billing Orphans operations (generated from the unified OpenAPI spec)
 
 ### Options
 
 ```
-  -h, --help[=true|false]   help for grs
+  -h, --help[=true|false]   help for billing-orphans
 ```
 
 ### Options inherited from parent commands
@@ -37,7 +31,8 @@ Service id: grs
 
 ### SEE ALSO
 
-* [flexera-cli](flexera-cli.md)	 - Flexera One unified API command-line client
-* [flexera-cli grs project](flexera-cli_grs_project.md)	 - Project operations (generated from the unified OpenAPI spec)
-* [flexera-cli grs user](flexera-cli_grs_user.md)	 - User operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-billing](flexera-cli_finops-billing.md)	 - FinOps Billing API
+* [flexera-cli finops-billing billing-orphans billing-accounts](flexera-cli_finops-billing_billing-orphans_billing-accounts.md)	 - List Azure billing accounts with orphaned charges
+* [flexera-cli finops-billing billing-orphans charges](flexera-cli_finops-billing_billing-orphans_charges.md)	 - List unassigned Azure orphaned charges
+* [flexera-cli finops-billing billing-orphans mappings](flexera-cli_finops-billing_billing-orphans_mappings.md)	 - mappings operations
 

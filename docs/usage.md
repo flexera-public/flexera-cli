@@ -7,7 +7,7 @@ Also use `--help` flag to discover available commands; see the [command referenc
 ## Authentication
 
 | Method | Flags | Behavior |
-|---|---|---|
+| --- | --- | --- |
 | OAuth refresh token | `--refresh-token` | Uses a User Refresh Token credential |
 | OAuth client credentials | `--client-id` + `--client-secret` | Uses a Service Account Client ID and Client Secret credential pair |
 | Bearer token | `--access-token` | Uses the supplied bearer token without OAuth exchange |
@@ -16,7 +16,7 @@ For most use-cases, `--refresh-token` or `--client-id` + `--client-secret` is re
 
 ## Configuration
 
-Precedence: **flag > environment > config > default**; discovery has [exceptions](#offline-configuration-safeguards).
+Precedence: **flag > environment > config > default**.
 
 ### Config file
 
@@ -35,7 +35,7 @@ Persistent flags map to `FLEXERA_CLI_` + uppercase name with `-` replaced by `_`
 Output shaping flags (`--out-jq`, `--out-fields`, `--raw-output`) are CLI-only.
 
 | Variable | Flag | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `FLEXERA_CLI_CONFIG` | `--config` | Explicit configuration file path |
 | `FLEXERA_CLI_ZONE` | `--zone` | API zone (`nam`/`eu`/`apac`/`test`) |
 | `FLEXERA_CLI_ORG_ID` | `--org-id` | Organization ID |
@@ -48,7 +48,6 @@ Output shaping flags (`--out-jq`, `--out-fields`, `--raw-output`) are CLI-only.
 | `FLEXERA_CLI_API_BASE_URL` | `--api-base-url` | Override the API gateway base URL |
 | `FLEXERA_CLI_LOGIN_BASE_URL` | `--login-base-url` | Override the login/OAuth base URL |
 | `FLEXERA_CLI_OPTIMA_BASE_URL` | `--optima-base-url` | Override the Optima host (`finops`) |
-| `FLEXERA_CLI_GRS_BASE_URL` | `--grs-base-url` | Override the GRS host (`grs`, project resolution) |
 | `FLEXERA_CLI_DEBUG` | `--debug`/`-d` | HTTP method/host/path/status to stderr; excludes headers, queries, bodies |
 
 ## Command layout
@@ -80,13 +79,12 @@ instead (`organization-invitation resend`, `bill-months reprocess`,
   generated commands for their service:
 
 | Command | Adds |
-|---|---|
+| --- | --- |
 | `bill-analysis costs query` | Picks aggregated/select, defaults billing centers, chunks long windows |
 | `bill-analysis anomalies investigate` | Multi-step AI anomaly investigation |
 | `recommendations list-usage-reduction`, `list-rate-reduction` | Billing-center auto-resolution and category filter |
 | `iam user-memberships orgs` | Detects the user ID from the access token |
-| `grs project list-for-org` | Org-filtered projects with Policy-ready project IDs |
-| `policy applied-policy` / `action-status` / `archived-incident` / `policy-template` / `meta` | GRS project auto-resolution and relationship-aware workflows |
+| `policy applied-policy` / `action-status` / `archived-incident` / `policy-template` / `meta` | IAM project auto-resolution and relationship-aware workflows |
 | `finops-customizations rule-based-dimension bulk` / `from-csv` | Bulk and CSV-driven dimension updates |
 | `bill-upload push` / `verify` | Upload, commit, and local CSV verification |
 | `graphql generate` | Query authoring helper |
@@ -174,7 +172,7 @@ flexera-cli cli search "list budgets" --read-only --out-fields command,summary
 Errors are unshaped JSON on stderr, including pre-configuration/auth failures.
 
 | Exit code | Meaning |
-|---|---|
+| --- | --- |
 | **0** | Success/help (help is text) |
 | **1** | Runtime/API failure |
 | **2** | Syntax/configuration, schema lookup, or jq compilation failure |

@@ -44,11 +44,11 @@ Validated illustrative body, when available (review before use):
 ```
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
       --dry-run[=true|false]       print the planned operation as JSON and exit without calling the API
-      --first-name string          firstName (body); First name to set.; minLength: 1; illustrative example: "Jane"
+      --first-name string          firstName (body); First name to set.; minLength: 1; maxLength: 256; illustrative example: "Jane"
   -h, --help[=true|false]          help for update
       --id int                     id (path, required); ID of the user; required by API; minimum: 1; illustrative example: 12345
   -i, --interactive[=true|false]   edit inputs in a terminal form, review a plan and approve with typed yes
-      --last-name string           lastName (body); Last name to set.; minLength: 1; illustrative example: "Smith"
+      --last-name string           lastName (body); Last name to set.; minLength: 1; maxLength: 256; illustrative example: "Smith"
       --yes[=true|false]           confirm the operation (required for destructive ops)
 ```
 

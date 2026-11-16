@@ -122,7 +122,7 @@ func TestSearchServiceFilter(t *testing.T) {
 			}
 		}
 	}
-	if results := index.Search("list projects", catalog.SearchOptions{Limit: 20, Service: "grs"}); len(results) < 2 {
-		t.Fatalf("curated and generated grs commands not both indexed: %+v", results)
+	if results := index.Search("list projects", catalog.SearchOptions{Limit: 20, Service: "iam"}); len(results) == 0 {
+		t.Fatalf("generated IAM project command not indexed: %+v", results)
 	}
 }
