@@ -20,6 +20,7 @@ flexera-cli finops-billing billing-orphans billing-accounts [flags]
 Illustrative only: replace uppercase tokens; provide your own request.json for body input.
   flexera-cli finops-billing billing-orphans billing-accounts --org-id ORG_ID --bill-month BILL_MONTH
 ```
+
 ### Options
 
 ```

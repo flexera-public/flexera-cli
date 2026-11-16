@@ -32,6 +32,7 @@ cause rows to be skipped or repeated.
 ```
 flexera-cli finops-billing billing-orphans charges [flags]
 ```
+
 ### Examples
 
 ```

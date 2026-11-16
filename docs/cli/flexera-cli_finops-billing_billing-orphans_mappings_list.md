@@ -17,6 +17,7 @@ billing amounts and customer IDs as observed at creation, not live billing data.
 ```
 flexera-cli finops-billing billing-orphans mappings list [flags]
 ```
+
 ### Examples
 
 ```
