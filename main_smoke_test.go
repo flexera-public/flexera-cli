@@ -120,7 +120,7 @@ func TestGeneratedTypedTableSmoke(t *testing.T) {
 
 // TestCuratedCommandSmoke exercises a curated command (policy, which resolves
 // the project) end-to-end against a mock server. Uses an explicit
-// --project-id so no GRS project-resolution call is needed.
+// --project-id so no IAM project-resolution call is needed.
 func TestCuratedCommandSmoke(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/policy/v1/orgs/123/projects/456/applied-policies" {

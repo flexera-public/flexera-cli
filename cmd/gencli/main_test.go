@@ -607,7 +607,7 @@ func TestCollectOpsFilteredByServiceAndExclusions(t *testing.T) {
 	}
 	s := &spec{Paths: map[string]json.RawMessage{
 		"/iam/projects":        op("Iam_Project_Index", "iam"),
-		"/grs/projects":        op("Grs_Project_indexForOrg", "grs"),
+		"/other/projects":      op("Other_Project_Index", "other"),
 		"/iam/projects/hidden": op("Iam_Project_Hidden", "iam"),
 	}}
 	ids := func(ops []operation) []string {

@@ -1230,6 +1230,74 @@
     "ownership": "generated"
   },
   {
+    "operationId": "FinopsBilling_Billing_Orphans_createAzureCostAssignments",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "mappings",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_deleteAzureCostAssignment",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "mappings",
+      "delete"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_indexAzureCostAssignments",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "mappings",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_indexAzureOrphanBillingAccounts",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "billing-accounts"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_indexAzureUnallocatedCharges",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "charges"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_replaceAzureCostAssignment",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "mappings",
+      "replace"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "FinopsBilling_Billing_Orphans_showAzureCostAssignment",
+    "command": [
+      "finops-billing",
+      "billing-orphans",
+      "mappings",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "FinopsBilling_Billing_createEnterpriseRule",
     "command": [
       "finops-billing",
@@ -2456,24 +2524,6 @@
     "command": [
       "graphql",
       "table-schema"
-    ],
-    "ownership": "generated"
-  },
-  {
-    "operationId": "Grs_Project_indexForOrg",
-    "command": [
-      "grs",
-      "project",
-      "list"
-    ],
-    "ownership": "generated"
-  },
-  {
-    "operationId": "Grs_User_orgIndex",
-    "command": [
-      "grs",
-      "user",
-      "list"
     ],
     "ownership": "generated"
   },

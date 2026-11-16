@@ -36,7 +36,7 @@ type Deps struct {
 	Stderr io.Writer
 	// Getenv reads environment variables. In production it is os.Getenv; in
 	// tests it is the injected lookup. Curated commands that honor ad-hoc env
-	// vars (e.g. FLEXERA_CLI_GRS_BASE_URL, FLEXERA_CLI_OPTIMA_BASE_URL) read
+	// vars (e.g. FLEXERA_CLI_OPTIMA_BASE_URL) read
 	// through this rather than os.Getenv directly.
 	Getenv func(string) string
 	// Printer renders API responses in the configured output format.
@@ -60,7 +60,7 @@ func (d *Deps) APIClient() (*flexera.ClientWithResponses, error) {
 }
 
 // Factory exposes the lower-level client factory for curated commands that
-// need auth-token flows or custom (Optima/GRS) base URLs.
+// need auth-token flows or custom Optima base URLs.
 func (d *Deps) Factory() cliflexera.Factory {
 	return cliflexera.Factory{HTTPClient: d.HTTP, UserAgentVersion: d.UserAgentVersion}
 }

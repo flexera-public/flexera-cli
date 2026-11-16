@@ -44,7 +44,6 @@ Find commands for a task: flexera-cli cli search "<what you want to do>"
 * [flexera-cli finops-customizations](flexera-cli_finops-customizations.md)	 - FinOps Customizations API
 * [flexera-cli finops-onboarding](flexera-cli_finops-onboarding.md)	 - FinOps Onboarding API
 * [flexera-cli graphql](flexera-cli_graphql.md)	 - GraphQL API
-* [flexera-cli grs](flexera-cli_grs.md)	 - Global Resource Service API
 * [flexera-cli iam](flexera-cli_iam.md)	 - Identity and Access Management API
 * [flexera-cli it-visibility](flexera-cli_it-visibility.md)	 - IT Visibility Insights API
 * [flexera-cli policy](flexera-cli_policy.md)	 - Policy API

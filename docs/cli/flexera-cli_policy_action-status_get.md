@@ -17,7 +17,7 @@ flexera-cli policy action-status get [flags]
 ```
   -h, --help[=true|false]   help for get
       --id string           Action status ID; The unique identifier for the action status.; required by API; illustrative example: "5b06ead5e0dacc007058c784"
-      --project-id int      Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --project-id int      Project ID (optional; resolved from IAM for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
       --view string         Optional Policy action-status view; View used to render action statuses.; enum: ["default","extended"]; illustrative example: "default"
 ```
 

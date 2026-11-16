@@ -1,33 +1,36 @@
-## flexera-cli grs project list
+## flexera-cli finops-billing billing-orphans mappings delete
 
-List projects accessible by the authenticated user
+Delete an Azure orphan cost mapping
 
 ### Synopsis
 
-List projects accessible by the authenticated user
+Delete an Azure orphan cost mapping
 
-Returns the projects accessible by the user identified by `{userId}`. The authoritative project ID for legacy Flexera APIs is `legacy.account_id` when present (fall back to top-level `id` when `legacy.account_id` is absent).
-
-NOTE: This endpoint is served by the legacy GRS service, which is being deprecated. Prefer newer Flexera One APIs when available.
-
-Deprecated in the upstream API.
+Delete an individual mapping using the ETag from show.
+Eligible charges become discoverable again once the mapping is deleted.
+Deletion does not immediately revert attribution in processed billing data;
+normalization reprocessing is required. Existing work-order snapshots remain unchanged.
+Missing If-Match is a bad request; an outdated ETag returns 412.
 
 ```
-flexera-cli grs project list [flags]
+flexera-cli finops-billing billing-orphans mappings delete [flags]
 ```
 
 ### Examples
 
 ```
 Illustrative only: replace uppercase tokens; provide your own request.json for body input.
-  flexera-cli grs project list --user-id USER_ID
+  flexera-cli finops-billing billing-orphans mappings delete --org-id ORG_ID --id ID
+  flexera-cli finops-billing billing-orphans mappings delete --org-id ORG_ID --id ID --dry-run
 ```
 
 ### Options
 
 ```
-  -h, --help[=true|false]    help for list
-      --user-id u-{userId}   userId (path, required); Flexera user ID (numeric). For a user-issued access token this is the integer suffix of the JWT 'sub' claim (u-{userId}) or the legacy 'user' claim. Service-account tokens cannot call this endpoint.; required by API; format: int64; minimum: 1
+      --dry-run[=true|false]   print the planned operation as JSON and exit without calling the API
+  -h, --help[=true|false]      help for delete
+      --id string              id (path, required); Identifier of the saved assignment, not a provider charge identifier.; required by API; format: uuid; illustrative example: "b2c3d4e5-f6a7-4901-acde-f12345678901"
+      --yes[=true|false]       confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands
@@ -53,5 +56,5 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
 
 ### SEE ALSO
 
-* [flexera-cli grs project](flexera-cli_grs_project.md)	 - Project operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-billing billing-orphans mappings](flexera-cli_finops-billing_billing-orphans_mappings.md)	 - mappings operations
 

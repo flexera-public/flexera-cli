@@ -6,7 +6,7 @@ Upload a telemetry file
 
 Upload a telemetry file
 
-Validates a telemetry CSV for a dynamicProportionateSplit rule, compares it with the rule's saved telemetry and stages the result for 24 hours. Returns the summary and every error and warning in the file, without rows; showTelemetryUpload pages the rows. Staging changes nothing; an upload is applied only by a rule save that names it. The request body must not exceed 50 MB.
+Validates a telemetry CSV for a dynamicProportionateSplit rule, compares it with the rule's saved telemetry and stages the result for 24 hours. Returns the summary and every error and warning in the file, without rows; showTelemetryUpload pages the rows. Staging changes nothing; an upload is applied only by a rule save that names it. The request body must not exceed 50 MB. Either the create or the update privilege can stage a file; saving the rule that names it still needs create (new rule) or update (existing rule).
 
 ```
 flexera-cli finops-billing shared-cost-rules telemetry-uploads create [flags]

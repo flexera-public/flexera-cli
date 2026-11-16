@@ -39,6 +39,7 @@ import (
 	finopsbillingbilling "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billing"
 	finopsbillingbillingaudit "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billingaudit"
 	finopsbillingbillingcredits "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billingcredits"
+	finopsbillingbillingorphans "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/billingorphans"
 	finopsbillinginvoices "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoices"
 	finopsbillinginvoicescheduleinvoices "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoicescheduleinvoices"
 	finopsbillinginvoiceschedules "github.com/flexera-public/flexera-cli/internal/commands/finopsbilling/invoiceschedules"
@@ -62,8 +63,6 @@ import (
 	finopsonboardingbillconnectsnowflake "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectsnowflake"
 	finopsonboardingprocessinghistory "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/processinghistory"
 	graphqlgraphql "github.com/flexera-public/flexera-cli/internal/commands/graphql/graphql"
-	grsproject "github.com/flexera-public/flexera-cli/internal/commands/grs/project"
-	grsuser "github.com/flexera-public/flexera-cli/internal/commands/grs/user"
 	iamaccesspolicy "github.com/flexera-public/flexera-cli/internal/commands/iam/accesspolicy"
 	iamaccessrule "github.com/flexera-public/flexera-cli/internal/commands/iam/accessrule"
 	iamapievent "github.com/flexera-public/flexera-cli/internal/commands/iam/apievent"
@@ -184,6 +183,7 @@ func RegisterAll(root *cobra.Command) {
 			finopsbillingbilling.NewCmd(),
 			finopsbillingbillingaudit.NewCmd(),
 			finopsbillingbillingcredits.NewCmd(),
+			finopsbillingbillingorphans.NewCmd(),
 			finopsbillinginvoicescheduleinvoices.NewCmd(),
 			finopsbillinginvoiceschedules.NewCmd(),
 			finopsbillinginvoicetemplates.NewCmd(),
@@ -213,10 +213,6 @@ func RegisterAll(root *cobra.Command) {
 			finopsonboardingprocessinghistory.NewCmd(),
 		),
 		service(graphqlgraphql.NewCmd(), "graphql", nil, "GraphQL API", "Commands for the GraphQL API (Flexera GraphQL API, v1).\n\nService id: graphql"),
-		withChildren(service(&cobra.Command{Use: "grs"}, "grs", nil, "Global Resource Service API", "Commands for the Global Resource Service API (Flexera Global Resource Service API, v2).\n\nService id: grs"),
-			grsproject.NewCmd(),
-			grsuser.NewCmd(),
-		),
 		withChildren(service(&cobra.Command{Use: "iam"}, "iam", nil, "Identity and Access Management API", "Commands for the Identity and Access Management API (Flexera Identity and Access Management API, v1).\n\nService id: iam"),
 			iamaccesspolicy.NewCmd(),
 			iamaccessrule.NewCmd(),

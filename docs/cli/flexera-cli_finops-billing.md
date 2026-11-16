@@ -41,6 +41,7 @@ Service id: finops_billing
 * [flexera-cli finops-billing billing](flexera-cli_finops-billing_billing.md)	 - Billing operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing billing-audit](flexera-cli_finops-billing_billing-audit.md)	 - Billing Audit operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing billing-credits](flexera-cli_finops-billing_billing-credits.md)	 - Billing Credits operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-billing billing-orphans](flexera-cli_finops-billing_billing-orphans.md)	 - Billing Orphans operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing invoice-schedule-invoices](flexera-cli_finops-billing_invoice-schedule-invoices.md)	 - Invoice Schedule Invoices operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing invoice-schedules](flexera-cli_finops-billing_invoice-schedules.md)	 - Invoice Schedules operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing invoice-templates](flexera-cli_finops-billing_invoice-templates.md)	 - Invoice Templates operations (generated from the unified OpenAPI spec)

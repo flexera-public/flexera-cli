@@ -6,7 +6,7 @@ Download a rule's telemetry
 
 Download a rule's telemetry
 
-Downloads the telemetry a dynamicProportionateSplit rule holds now (Download History) as CSV with exactly the upload template's columns: Date (YYYY-MM-DD), the dimension's name and Metrics (>=0). Rows are sorted by date and then dimension value, with dates formatted YYYY-MM-DD; records deleted by an upload are not included. Dimension values starting with =, +, - or @ are written with a leading ' so spreadsheets do not run them as formulas. The file can be uploaded again unchanged. A rule with no stored records downloads as the header alone.
+Downloads the telemetry a dynamicProportionateSplit rule holds now (Download History) as CSV with exactly the upload template's columns: Date (YYYY-MM-DD), the dimension's name and Metrics (>=0). Rows are sorted by date and then dimension value, with dates formatted YYYY-MM-DD; records deleted by an upload are not included. Dimension values starting with =, +, -, @ or ' are written with one extra leading ' so spreadsheets do not run them as formulas; an upload strips exactly one leading ' that comes before any of those characters, so the file can be uploaded again unchanged. A rule with no stored records downloads as the header alone.
 
 ```
 flexera-cli finops-billing shared-cost-rules telemetry [flags]

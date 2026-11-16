@@ -1,7 +1,7 @@
 // Package policy provides the project-scoped Policy resources (applied-policy,
 // action-status, archived-incident, policy-template) and the meta workflows,
 // attached beneath the generated `policy` service. They are hand-written
-// because of GRS project auto-resolution (--project-id may be omitted),
+// because of IAM project auto-resolution (--project-id may be omitted),
 // envelope pagination, and write-op confirmation.
 package policy
 
@@ -166,31 +166,26 @@ func loadJSONInput(filePath string, stdin io.Reader, target any) error {
 
 // resolvePolicyProjectID returns --project-id when >0, otherwise resolves the
 // org's single project via the library's flexera.ProjectResolver (erroring on
-// zero or multiple). GRS is legacy but is the only source for project
-// enumeration; the client is pointed at the GRS host.
+// zero or multiple).
 func resolvePolicyProjectID(ctx context.Context, deps *clipkg.Deps, projectID int) (int, error) {
 	if projectID > 0 {
 		return projectID, nil
 	}
-	client, err := deps.Factory().NewAPIClientForBaseURL(deps.Config, deps.GRSBaseURL(""))
+	client, err := deps.Factory().NewAPIClient(deps.Config)
 	if err != nil {
-		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
+		return 0, fmt.Errorf("failed to resolve project ID via IAM: %w", err)
 	}
-	opts, err := deps.Factory().ProjectResolverOptions(deps.Config)
+	resolver, err := flexera.NewProjectResolver(client)
 	if err != nil {
-		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
-	}
-	resolver, err := flexera.NewProjectResolver(client, opts...)
-	if err != nil {
-		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
+		return 0, fmt.Errorf("failed to resolve project ID via IAM: %w", err)
 	}
 	projects, err := resolver.ListProjects(ctx, int64(deps.Config.OrgID))
 	if err != nil {
-		return 0, fmt.Errorf("failed to resolve project ID via GRS: %w", err)
+		return 0, fmt.Errorf("failed to resolve project ID via IAM: %w", err)
 	}
 	switch len(projects) {
 	case 0:
-		return 0, fmt.Errorf("no projects found for org %d via GRS; supply --project-id explicitly", deps.Config.OrgID)
+		return 0, fmt.Errorf("no projects found for org %d via IAM; supply --project-id explicitly", deps.Config.OrgID)
 	case 1:
 		return int(projects[0].ID), nil
 	default:
@@ -1260,5 +1255,5 @@ func addListFlags(c *cobra.Command, filter, orderBy, skipToken *string, limit *i
 }
 
 func addProjectFlag(c *cobra.Command, projectID *int) {
-	c.Flags().IntVar(projectID, "project-id", 0, "Project ID (optional; resolved from GRS for the org when omitted)")
+	c.Flags().IntVar(projectID, "project-id", 0, "Project ID (optional; resolved from IAM for the org when omitted)")
 }

@@ -1,11 +1,11 @@
-## flexera-cli grs project
+## flexera-cli finops-billing billing-orphans mappings
 
-Project operations (generated from the unified OpenAPI spec)
+mappings operations
 
 ### Options
 
 ```
-  -h, --help[=true|false]   help for project
+  -h, --help[=true|false]   help for mappings
 ```
 
 ### Options inherited from parent commands
@@ -31,7 +31,10 @@ Project operations (generated from the unified OpenAPI spec)
 
 ### SEE ALSO
 
-* [flexera-cli grs](flexera-cli_grs.md)	 - Global Resource Service API
-* [flexera-cli grs project list](flexera-cli_grs_project_list.md)	 - List projects accessible by the authenticated user
-* [flexera-cli grs project list-for-org](flexera-cli_grs_project_list-for-org.md)	 - List the org's projects for the authenticated user (policy-ready project IDs)
+* [flexera-cli finops-billing billing-orphans](flexera-cli_finops-billing_billing-orphans.md)	 - Billing Orphans operations (generated from the unified OpenAPI spec)
+* [flexera-cli finops-billing billing-orphans mappings create](flexera-cli_finops-billing_billing-orphans_mappings_create.md)	 - Create Azure cost assignments
+* [flexera-cli finops-billing billing-orphans mappings delete](flexera-cli_finops-billing_billing-orphans_mappings_delete.md)	 - Delete an Azure orphan cost mapping
+* [flexera-cli finops-billing billing-orphans mappings get](flexera-cli_finops-billing_billing-orphans_mappings_get.md)	 - Show an Azure cost assignment
+* [flexera-cli finops-billing billing-orphans mappings list](flexera-cli_finops-billing_billing-orphans_mappings_list.md)	 - List Azure cost assignments
+* [flexera-cli finops-billing billing-orphans mappings replace](flexera-cli_finops-billing_billing-orphans_mappings_replace.md)	 - Replace an Azure cost assignment destination
 

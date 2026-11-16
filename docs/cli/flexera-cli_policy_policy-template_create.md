@@ -18,7 +18,7 @@ flexera-cli policy policy-template create [flags]
 ```
       --file string         Path to JSON payload file, or - to read from stdin
   -h, --help[=true|false]   help for create
-      --project-id int      Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --project-id int      Project ID (optional; resolved from IAM for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
 ```
 
 ### Options inherited from parent commands

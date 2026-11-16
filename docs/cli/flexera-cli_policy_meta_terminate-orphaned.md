@@ -11,7 +11,7 @@ flexera-cli policy meta terminate-orphaned [flags]
 ```
       --dry-run[=true|false]   Preview matched orphaned policies without deleting them
   -h, --help[=true|false]      help for terminate-orphaned
-      --project-id int         Project ID (optional; resolved from GRS for the org when omitted)
+      --project-id int         Project ID (optional; resolved from IAM for the org when omitted)
       --yes[=true|false]       Confirm the operation; required unless --dry-run
 ```
 

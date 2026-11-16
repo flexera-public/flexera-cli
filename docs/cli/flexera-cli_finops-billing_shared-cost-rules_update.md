@@ -34,7 +34,7 @@ Validated illustrative body, when available (review before use):
   -i, --interactive[=true|false]     edit inputs in a terminal form, review a plan and approve with typed yes
       --name string                  name (body); Updated display name for the shared cost rule. Must not contain "(", ")" or ">".; minLength: 1; maxLength: 255; pattern: "^[^()\u003e]+$"; illustrative example: "Equal split for AWS between Teams A, B and C - revised"
       --status string                status (body); Updated lifecycle status.; enum: ["active"]; illustrative example: "active"
-      --telemetry-upload-id string   telemetryUploadId (body); A valid staged telemetry upload for this rule, applied in the same save. Required when the save changes the type to dynamicProportionateSplit or changes a dynamic rule's destination dimension; not allowed when the rule's type after the save is not dynamicProportionateSplit.; illustrative example: "tu_01JAB3K9Q2X7V5R8M4N6P0T1W3"
+      --telemetry-upload-id string   telemetryUploadId (body); A valid staged telemetry upload for this rule, applied in the same save. Required when the save changes the type to dynamicProportionateSplit or changes a dynamic rule's destination dimension; not allowed when the rule's type after the save is not dynamicProportionateSplit. Saving again with an upload this rule already applied succeeds without applying it ag... (see cli schema); illustrative example: "tu_01JAB3K9Q2X7V5R8M4N6P0T1W3"
       --yes[=true|false]             confirm the operation (required for destructive ops)
 ```
 

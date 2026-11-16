@@ -60,6 +60,6 @@ Also use `commandOverrides` when a derived CRUD verb misdescribes an operation (
 `resend` or `reprocess` instead of `update`). When renaming an existing command, keep the old
 spelling working: add it to `commandAliases` (leaves) or `TagAliases` (tag commands);
 generation rejects aliases that collide with sibling commands. Curated commands add behavior beyond a
-single API call (auth, FinOps cost queries, policy resolution, GRS, organization
+single API call (auth, FinOps cost queries, policy resolution, organization
 discovery, anomalies) and attach beneath their service via `Attach` in
 `internal/app/root.go`; do not add curated commands that only duplicate a generated one. Use the SDK directly for other integrations.

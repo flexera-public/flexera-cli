@@ -20,7 +20,7 @@ flexera-cli policy archived-incident list [flags]
       --limit int                  Optional page size; Specifies a custom limit for pagination.; format: int64; illustrative example: 1000
       --no-paginate[=true|false]   return only the requested page (do not follow nextPage)
       --order-by string            Optional sort expression; Specifies the order to sort action statuses by fields such as [appliedPolicy.id, state, summary, violationDataCount, severity, category, createdAt, updatedAt, resolvedAt, resolvedBy.email, resolvedBy.name]. Ordering can be [asc] or [desc]. Default ordering is [asc] if no value is set.; illustrative example: "category asc, startedAt desc"
-      --project-id int             Project ID (optional; resolved from GRS for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
+      --project-id int             Project ID (optional; resolved from IAM for the org when omitted); The unique identifier for the project; required by API; format: int64; minimum: 1; illustrative example: 60073
       --skip-token string          Optional pagination token; resume from this position; Used in pagination to point to the next or previous set of records.
       --view string                Optional Policy archived-incident view; View used to render archived incidents.; enum: ["default","extended"]; illustrative example: "default"
 ```
