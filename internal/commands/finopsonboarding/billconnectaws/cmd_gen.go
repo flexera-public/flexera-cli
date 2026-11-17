@@ -41,17 +41,20 @@ func NewCmd() *cobra.Command {
 // newBillConnectAWSIamRoleCreateCmd — POST /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role (operationId: FinopsOnboarding_Bill_Connect_AWS_createIAMRole)
 func newBillConnectAWSIamRoleCreateCmd() *cobra.Command {
 	var (
-		bodyRaw             string
-		fBillAccountID      string
-		fBucketName         string
-		fBucketPath         string
-		fEffectiveFrom      string
-		fStsExternalID      string
-		fStsRoleArn         string
-		fStsRoleSessionName string
-		dryRun              bool
-		yes                 bool
-		interactive         bool
+		bodyRaw                      string
+		fBillAccountID               string
+		fBucketName                  string
+		fBucketPath                  string
+		fEffectiveFrom               string
+		fStsExternalID               string
+		fStsInventoryExternalID      string
+		fStsInventoryRoleArn         string
+		fStsInventoryRoleSessionName string
+		fStsRoleArn                  string
+		fStsRoleSessionName          string
+		dryRun                       bool
+		yes                          bool
+		interactive                  bool
 	)
 	c := &cobra.Command{
 		Use:         "create",
@@ -89,6 +92,15 @@ func newBillConnectAWSIamRoleCreateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("sts-external-id") {
 				fields["stsExternalId"] = fStsExternalID
+			}
+			if cmd.Flags().Changed("sts-inventory-external-id") {
+				fields["stsInventoryExternalId"] = fStsInventoryExternalID
+			}
+			if cmd.Flags().Changed("sts-inventory-role-arn") {
+				fields["stsInventoryRoleArn"] = fStsInventoryRoleArn
+			}
+			if cmd.Flags().Changed("sts-inventory-role-session-name") {
+				fields["stsInventoryRoleSessionName"] = fStsInventoryRoleSessionName
 			}
 			if cmd.Flags().Changed("sts-role-arn") {
 				fields["stsRoleArn"] = fStsRoleArn
@@ -172,6 +184,9 @@ func newBillConnectAWSIamRoleCreateCmd() *cobra.Command {
 	c.Flags().StringVar(&fBucketPath, "bucket-path", "", "bucketPath (body)")
 	c.Flags().StringVar(&fEffectiveFrom, "effective-from", "", "effectiveFrom (body)")
 	c.Flags().StringVar(&fStsExternalID, "sts-external-id", "", "stsExternalId (body)")
+	c.Flags().StringVar(&fStsInventoryExternalID, "sts-inventory-external-id", "", "stsInventoryExternalId (body)")
+	c.Flags().StringVar(&fStsInventoryRoleArn, "sts-inventory-role-arn", "", "stsInventoryRoleArn (body)")
+	c.Flags().StringVar(&fStsInventoryRoleSessionName, "sts-inventory-role-session-name", "", "stsInventoryRoleSessionName (body)")
 	c.Flags().StringVar(&fStsRoleArn, "sts-role-arn", "", "stsRoleArn (body)")
 	c.Flags().StringVar(&fStsRoleSessionName, "sts-role-session-name", "", "stsRoleSessionName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")
@@ -490,17 +505,20 @@ func newBillConnectAWSValidateCmd() *cobra.Command {
 // newBillConnectAWSIamRoleUpdateCmd — PATCH /finops-onboarding/v1/orgs/{orgId}/bill-connects/aws/iam-role/{id} (operationId: FinopsOnboarding_Bill_Connect_AWS_updateIAMRole)
 func newBillConnectAWSIamRoleUpdateCmd() *cobra.Command {
 	var (
-		id                  string
-		bodyRaw             string
-		fBucketName         string
-		fBucketPath         string
-		fEffectiveFrom      string
-		fStsExternalID      string
-		fStsRoleArn         string
-		fStsRoleSessionName string
-		dryRun              bool
-		yes                 bool
-		interactive         bool
+		id                           string
+		bodyRaw                      string
+		fBucketName                  string
+		fBucketPath                  string
+		fEffectiveFrom               string
+		fStsExternalID               string
+		fStsInventoryExternalID      string
+		fStsInventoryRoleArn         string
+		fStsInventoryRoleSessionName string
+		fStsRoleArn                  string
+		fStsRoleSessionName          string
+		dryRun                       bool
+		yes                          bool
+		interactive                  bool
 	)
 	c := &cobra.Command{
 		Use:         "update",
@@ -538,6 +556,15 @@ func newBillConnectAWSIamRoleUpdateCmd() *cobra.Command {
 			}
 			if cmd.Flags().Changed("sts-external-id") {
 				fields["stsExternalId"] = fStsExternalID
+			}
+			if cmd.Flags().Changed("sts-inventory-external-id") {
+				fields["stsInventoryExternalId"] = fStsInventoryExternalID
+			}
+			if cmd.Flags().Changed("sts-inventory-role-arn") {
+				fields["stsInventoryRoleArn"] = fStsInventoryRoleArn
+			}
+			if cmd.Flags().Changed("sts-inventory-role-session-name") {
+				fields["stsInventoryRoleSessionName"] = fStsInventoryRoleSessionName
 			}
 			if cmd.Flags().Changed("sts-role-arn") {
 				fields["stsRoleArn"] = fStsRoleArn
@@ -612,6 +639,9 @@ func newBillConnectAWSIamRoleUpdateCmd() *cobra.Command {
 	c.Flags().StringVar(&fBucketPath, "bucket-path", "", "bucketPath (body)")
 	c.Flags().StringVar(&fEffectiveFrom, "effective-from", "", "effectiveFrom (body)")
 	c.Flags().StringVar(&fStsExternalID, "sts-external-id", "", "stsExternalId (body)")
+	c.Flags().StringVar(&fStsInventoryExternalID, "sts-inventory-external-id", "", "stsInventoryExternalId (body)")
+	c.Flags().StringVar(&fStsInventoryRoleArn, "sts-inventory-role-arn", "", "stsInventoryRoleArn (body)")
+	c.Flags().StringVar(&fStsInventoryRoleSessionName, "sts-inventory-role-session-name", "", "stsInventoryRoleSessionName (body)")
 	c.Flags().StringVar(&fStsRoleArn, "sts-role-arn", "", "stsRoleArn (body)")
 	c.Flags().StringVar(&fStsRoleSessionName, "sts-role-session-name", "", "stsRoleSessionName (body)")
 	c.Flags().StringVar(&bodyRaw, "body", "", "raw JSON body (inline | @file | @-); overrides body field flags")

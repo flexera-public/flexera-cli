@@ -32,7 +32,7 @@ Validated illustrative body, when available (review before use):
       --dry-run[=true|false]                   print the planned operation as JSON and exit without calling the API
       --export-layout string                   exportLayout (body); PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "flatten"
       --export-type string                     exportType (body); required by API; Invoice export type.; enum: ["pdf","csv"]; illustrative example: "pdf"
-      --free-text string                       freeText (body); Optional free-text company/address block.; illustrative example: "Ea sapiente dignissimos corrupti ipsa."
+      --free-text string                       freeText (body); Optional free-text company/address block.; illustrative example: "Nulla dolorem voluptatum."
   -h, --help[=true|false]                      help for create
   -i, --interactive[=true|false]               edit inputs in a terminal form, review a plan and approve with typed yes
       --logo string                            logo (body); Optional logo payload. Ignored when exportType=csv.; illustrative example: "\u003cbase64-or-reference-payload\u003e"

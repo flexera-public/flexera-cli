@@ -6,7 +6,7 @@ List Azure cost assignments
 
 List Azure cost assignments
 
-List individual recurring assignments and one-time assignments for the requested month.
+List individual recurring assignments and one-time or unspecified-frequency assignments for the requested month.
 Return a flat list of matching assignments without grouping by destination.
 Filterable fields are chargeDescription, chargeFrequency, targetSubAccountId,
 billingAccountId, and billSource. Order assignments by targetSubAccountId.

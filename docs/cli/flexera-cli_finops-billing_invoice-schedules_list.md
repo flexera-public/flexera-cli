@@ -25,10 +25,10 @@ Illustrative only: replace uppercase tokens; provide your own request.json for b
       --customer-id int            customerId (query); Optional filter: only schedules covering this customer.; illustrative example: 53125
       --filter string              filter (query); OData-style expression evaluated against each returned resource. Attribute names are case-sensitive and operators are case-insensitive. String eq, ne, and in comparisons are case-sensitive; co performs case-insensitive substring matching. Date values use YYYY-MM-DD; date-time values use ISO-8601 and are normalized to UTC; billMonth uses YYYY-MM. Missing fiel... (see cli schema); illustrative example: "status eq 'active' and customerId eq 53125"
   -h, --help[=true|false]          help for list
-      --limit int                  limit (query); Page size (default 50, max 200); minimum: 1; maximum: 200; API default: 50; illustrative example: 76
+      --limit int                  limit (query); Page size (default 50, max 200); minimum: 1; maximum: 200; API default: 50; illustrative example: 188
       --no-paginate[=true|false]   return only the first page (do not follow nextPage)
       --order-by string            orderBy (query); Optional orderBy query allows to specify an expression for determining what values are used to order the entities. Multiple expressions can be specified using comma separated values.; illustrative example: "updatedAt desc"
-      --schedule-name string       scheduleName (query); Optional exact-match filter on schedule name.; illustrative example: "Illo non."
+      --schedule-name string       scheduleName (query); Optional exact-match filter on schedule name.; illustrative example: "Dolorem eos aperiam."
       --skip-token string          resume pagination from this token; An opaque token to be provided when requesting a subsequent page after receiving a partial response. Partial responses will include a "nextPage" attribute in their response body, which contains the URL of the next page including the appropriate skipToken.
       --status string              status (query); Optional status filter.; enum: ["active","inactive"]; illustrative example: "active"
 ```
