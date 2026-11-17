@@ -12,7 +12,8 @@ native SubscriptionId. chargeDescription is the exact FOCUS ChargeDescription,
 not cco_line_item_type or ProductName. The line-item type is only an eligibility
 filter, never an assignment selector.
 Exclude matching recurring assignments regardless of discovery month, and exclude
-one-time assignments only for the matching month. Match exact description and
+one-time or unspecified-frequency assignments only for the matching month. Treat
+null source frequencies as oneTime for assignment exclusion only. Match exact description and
 frequency within organization, bill source, and billing account. Exclusion takes
 effect on save, even before normalization applies the mapping. Clients cannot
 disable this exclusion. Fail the request if assignment lookup is unavailable.

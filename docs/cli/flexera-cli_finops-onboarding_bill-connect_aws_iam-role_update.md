@@ -25,18 +25,21 @@ Validated illustrative body, when available (review before use):
 ### Options
 
 ```
-      --body string                    raw JSON body (inline | @file | @-); overrides body field flags
-      --bucket-name string             bucketName (body); Name of the S3 bucket where bill files are saved; minLength: 1; illustrative example: "bills-bucket"
-      --bucket-path string             bucketPath (body); Path to the bill files from the AWS S3 bucket root; minLength: 1; illustrative example: "billing/path/"
-      --dry-run[=true|false]           print the planned operation as JSON and exit without calling the API
-      --effective-from string          effectiveFrom (body); The earliest billing month (UTC) from which to start processing data, formatted YYYY-MM. If omitted when creating an AWS bill connect, the current UTC month is used. If omitted when updating, the existing value is unchanged.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-10"
-  -h, --help[=true|false]              help for update
-      --id string                      id (path, required); Identifies a bill connect; required by API; illustrative example: "aws-20194320903"
-  -i, --interactive[=true|false]       edit inputs in a terminal form, review a plan and approve with typed yes
-      --sts-external-id string         stsExternalId (body); Unique identifier used when assuming a role in the customers account. This defaults to the customers org_id; minLength: 2; maxLength: 1224; pattern: "^[^ ]+$"; illustrative example: "abcdef1234567890"
-      --sts-role-arn string            stsRoleArn (body); Amazon Resource Name (ARN) of the assumed sts role; minLength: 1; illustrative example: "arn:aws:iam::123456789012:role/bill_access_role"
-      --sts-role-session-name string   stsRoleSessionName (body); Identifier for the assumed sts role session, this will default to flexera-finops if not supplied; illustrative example: "flexera-finops"
-      --yes[=true|false]               confirm the operation (required for destructive ops)
+      --body string                              raw JSON body (inline | @file | @-); overrides body field flags
+      --bucket-name string                       bucketName (body); Name of the S3 bucket where bill files are saved; minLength: 1; illustrative example: "bills-bucket"
+      --bucket-path string                       bucketPath (body); Path to the bill files from the AWS S3 bucket root; minLength: 1; illustrative example: "billing/path/"
+      --dry-run[=true|false]                     print the planned operation as JSON and exit without calling the API
+      --effective-from string                    effectiveFrom (body); The earliest billing month (UTC) from which to start processing data, formatted YYYY-MM. If omitted when creating an AWS bill connect, the current UTC month is used. If omitted when updating, the existing value is unchanged.; pattern: "^20[\\d]{2}-((0[1-9])|(1[012]))$"; illustrative example: "2025-10"
+  -h, --help[=true|false]                        help for update
+      --id string                                id (path, required); Identifies a bill connect; required by API; illustrative example: "aws-20194320903"
+  -i, --interactive[=true|false]                 edit inputs in a terminal form, review a plan and approve with typed yes
+      --sts-external-id string                   stsExternalId (body); Unique identifier used when assuming a role in the customers account. This defaults to the customers org_id; minLength: 2; maxLength: 1224; pattern: "^[^ ]+$"; illustrative example: "abcdef1234567890"
+      --sts-inventory-external-id string         stsInventoryExternalId (body); Unique identifier used when assuming the inventory role. Only allowed when stsInventoryRoleArn is provided. This defaults to the customer's orgId.; minLength: 2; maxLength: 1224; pattern: "^[^ ]+$"; illustrative example: "abcdef1234567890"
+      --sts-inventory-role-arn string            stsInventoryRoleArn (body); Optional Amazon Resource Name (ARN) of the IAM role used for AWS inventory APIs (Organizations, Reserved Instances, Savings Plans). The role account must match billAccountId, and this should only be provided when stsRoleArn is in a different account than billAccountId.; illustrative example: "arn:aws:iam::123456789012:role/inventory_access_role"
+      --sts-inventory-role-session-name string   stsInventoryRoleSessionName (body); Identifier for the assumed inventory sts role session. Only allowed when stsInventoryRoleArn is provided. This will default to flexera-finops if not supplied.; illustrative example: "flexera-finops"
+      --sts-role-arn string                      stsRoleArn (body); Amazon Resource Name (ARN) of the assumed sts role; minLength: 1; illustrative example: "arn:aws:iam::210987654321:role/bill_access_role"
+      --sts-role-session-name string             stsRoleSessionName (body); Identifier for the assumed sts role session, this will default to flexera-finops if not supplied; illustrative example: "flexera-finops"
+      --yes[=true|false]                         confirm the operation (required for destructive ops)
 ```
 
 ### Options inherited from parent commands

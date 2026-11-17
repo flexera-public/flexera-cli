@@ -176,7 +176,7 @@ func newBillingOrphansMappingsDeleteCmd() *cobra.Command {
 	)
 	c := &cobra.Command{
 		Use:         "delete",
-		Short:       "Delete an Azure orphan cost mapping",
+		Short:       "Delete an Azure cost assignment",
 		Example:     "Illustrative only: replace uppercase tokens; provide your own request.json for body input.\n  flexera-cli finops-billing billing-orphans mappings delete --org-id ORG_ID --id ID\n  flexera-cli finops-billing billing-orphans mappings delete --org-id ORG_ID --id ID --dry-run",
 		Annotations: map[string]string{"flexera.operationId": "FinopsBilling_Billing_Orphans_deleteAzureCostAssignment", "flexera.output": "text", "flexera.validation": "params"},
 		Args:        cobra.NoArgs,

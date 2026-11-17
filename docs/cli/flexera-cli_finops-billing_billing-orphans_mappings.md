@@ -33,7 +33,7 @@ mappings operations
 
 * [flexera-cli finops-billing billing-orphans](flexera-cli_finops-billing_billing-orphans.md)	 - Billing Orphans operations (generated from the unified OpenAPI spec)
 * [flexera-cli finops-billing billing-orphans mappings create](flexera-cli_finops-billing_billing-orphans_mappings_create.md)	 - Create Azure cost assignments
-* [flexera-cli finops-billing billing-orphans mappings delete](flexera-cli_finops-billing_billing-orphans_mappings_delete.md)	 - Delete an Azure orphan cost mapping
+* [flexera-cli finops-billing billing-orphans mappings delete](flexera-cli_finops-billing_billing-orphans_mappings_delete.md)	 - Delete an Azure cost assignment
 * [flexera-cli finops-billing billing-orphans mappings get](flexera-cli_finops-billing_billing-orphans_mappings_get.md)	 - Show an Azure cost assignment
 * [flexera-cli finops-billing billing-orphans mappings list](flexera-cli_finops-billing_billing-orphans_mappings_list.md)	 - List Azure cost assignments
 * [flexera-cli finops-billing billing-orphans mappings replace](flexera-cli_finops-billing_billing-orphans_mappings_replace.md)	 - Replace an Azure cost assignment destination

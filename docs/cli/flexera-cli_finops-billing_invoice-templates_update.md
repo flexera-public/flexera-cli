@@ -26,19 +26,19 @@ Validated illustrative body, when available (review before use):
 
 ```
       --body string                            raw JSON body (inline | @file | @-); overrides body field flags
-      --cost-metric string                     costMetric (body); Updated cost metric.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "effectiveCost"
-      --dimensions strings                     dimensions (body); Updated grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Fugit enim modi culpa aut hic.","Qui quibusdam.","Expedita esse officia eligendi sed quod."]
+      --cost-metric string                     costMetric (body); Updated cost metric.; enum: ["billedCost","effectiveCost","modifiedBilledCost","modifiedEffectiveCost"]; illustrative example: "billedCost"
+      --dimensions strings                     dimensions (body); Updated grouping dimensions.; maxItems: 10; CLI: comma-separated values or repeated flag; illustrative example: ["Quia fugit minus.","Et vitae quo perferendis ullam et velit.","Facere assumenda voluptatem voluptatem illum."]
       --display-logo-within-pdf[=true|false]   displayLogoWithinPdf (body); Updated PDF logo display flag.; illustrative example: false
       --dry-run[=true|false]                   print the planned operation as JSON and exit without calling the API
       --export-layout string                   exportLayout (body); Updated PDF layout format. Exact lowercase flatten or nested; omitted PDF exports default to flatten. Must be omitted for CSV exports.; enum: ["flatten","nested"]; illustrative example: "nested"
-      --export-type string                     exportType (body); Updated export type.; enum: ["pdf","csv"]; illustrative example: "pdf"
-      --free-text string                       freeText (body); Updated free-text company/address block.; illustrative example: "A distinctio qui distinctio voluptatem."
+      --export-type string                     exportType (body); Updated export type.; enum: ["pdf","csv"]; illustrative example: "csv"
+      --free-text string                       freeText (body); Updated free-text company/address block.; illustrative example: "Necessitatibus quis veniam harum corrupti nemo."
   -h, --help[=true|false]                      help for update
       --id string                              id (path, required); Invoice template identifier; required by API; illustrative example: "tmpl_9001"
   -i, --interactive[=true|false]               edit inputs in a terminal form, review a plan and approve with typed yes
-      --logo string                            logo (body); Updated logo payload.; illustrative example: "Enim ab dolore possimus ex aut voluptatem."
+      --logo string                            logo (body); Updated logo payload.; illustrative example: "Aperiam voluptate accusantium quaerat voluptas."
       --period-type string                     periodType (body); Updated period type.; enum: ["chargePeriod","billPeriod","billingPeriod"]; illustrative example: "billingPeriod"
-      --template-name string                   templateName (body); Updated template name.; maxLength: 255; illustrative example: "1fp"
+      --template-name string                   templateName (body); Updated template name.; maxLength: 255; illustrative example: "hco"
       --yes[=true|false]                       confirm the operation (required for destructive ops)
 ```
 

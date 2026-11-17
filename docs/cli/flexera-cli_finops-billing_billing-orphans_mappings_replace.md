@@ -8,7 +8,7 @@ Replace an Azure cost assignment destination
 
 Replace the only mutable field, targetSubAccountId, using the ETag from show.
 Organization, source, billing account, frequency, optional month, and description
-are immutable. Revalidate destination authorization. A changed destination requires
+are immutable. Destination parentage is the caller's responsibility. A changed destination requires
 normalization reprocessing; an unchanged replacement does not reset applied state.
 The saved display metadata is immutable and is preserved and returned unchanged.
 Missing If-Match is a bad request; an outdated ETag returns 412.
@@ -35,7 +35,7 @@ Validated illustrative body, when available (review before use):
   -h, --help[=true|false]              help for replace
       --id string                      id (path, required); Identifier of the saved assignment, not a provider charge identifier.; required by API; format: uuid; illustrative example: "b2c3d4e5-f6a7-4901-acde-f12345678901"
   -i, --interactive[=true|false]       edit inputs in a terminal form, review a plan and approve with typed yes
-      --target-sub-account-id string   targetSubAccountId (body); required by API; Authorized destination subscription selected through Cost Explorer.; minLength: 1; illustrative example: "e9a0360e-2c18-428e-acd0-a76dcee0cc96"
+      --target-sub-account-id string   targetSubAccountId (body); required by API; Destination subscription selected by the caller; billing-account parentage is not verified.; minLength: 1; illustrative example: "e9a0360e-2c18-428e-acd0-a76dcee0cc96"
       --yes[=true|false]               confirm the operation (required for destructive ops)
 ```
 

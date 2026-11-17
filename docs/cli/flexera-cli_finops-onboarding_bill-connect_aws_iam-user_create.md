@@ -29,7 +29,7 @@ Validated illustrative body, when available (review before use):
 
 ```
       --access-key string          accessKey (body); required by API; The AWS IAM user's access key, to access the billAccountId; minLength: 1; illustrative example: "AKIAIOSFODNN7EXAMPLE"
-      --bill-account-id string     billAccountId (body); required by API; Aws account ID of the billing account; minLength: 1; illustrative example: "20194320903"
+      --bill-account-id string     billAccountId (body); required by API; Aws account ID of the billing account; minLength: 1; illustrative example: "123456789012"
       --body string                raw JSON body (inline | @file | @-); overrides body field flags
       --bucket-name string         bucketName (body); required by API; Name of the S3 bucket where bill files are saved; minLength: 1; illustrative example: "bills-bucket"
       --bucket-path string         bucketPath (body); required by API; Path to the bill files from the AWS S3 bucket root; minLength: 1; illustrative example: "billing/path/"

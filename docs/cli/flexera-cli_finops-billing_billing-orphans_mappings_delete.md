@@ -1,10 +1,10 @@
 ## flexera-cli finops-billing billing-orphans mappings delete
 
-Delete an Azure orphan cost mapping
+Delete an Azure cost assignment
 
 ### Synopsis
 
-Delete an Azure orphan cost mapping
+Delete an Azure cost assignment
 
 Delete an individual mapping using the ETag from show.
 Eligible charges become discoverable again once the mapping is deleted.

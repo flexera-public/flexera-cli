@@ -14,14 +14,15 @@ Each entry includes the discovery-time billing amount,
 currency, billing profile, product order, and customer metadata. Validate submitted
 metadata against current eligible rows and persist it directly on the mapping. These
 values are display metadata, not matching criteria or amounts applied by the pipeline.
-Each charges entry supplies chargeFrequency. Every request requires billMonth to
-validate selections against that month's current inventory. Only one-time mappings
-store that month; recurring mappings never store it and remain month-independent.
+Each charges entry may supply chargeFrequency. Omitted or null frequency remains
+omitted in stored mappings and pipeline snapshots; the pipeline matches without
+that key. Every request requires billMonth to validate current inventory.
+One-time and unspecified-frequency mappings store that month; recurring mappings
+never store it and remain month-independent.
 Duplicate description/frequency pairs are invalid.
 An existing mapping for any selected scoped description and
-frequency returns 409 with no partial creation. Validate destination authorization
-within the organization and billing account. Customer boundaries within that
-billing account are not enforced.
+frequency returns 409 with no partial creation. Destination subscription parentage
+is the caller's responsibility and is not validated by this API.
 No native subscription or charge ID is accepted from the client.
 The returned count means configuration saved, not normalization completed.
 A lost-response retry can conflict; refresh assignments before retrying.
@@ -50,7 +51,7 @@ Validated illustrative body, when available (review before use):
       --dry-run[=true|false]           print the planned operation as JSON and exit without calling the API
   -h, --help[=true|false]              help for create
   -i, --interactive[=true|false]       edit inputs in a terminal form, review a plan and approve with typed yes
-      --target-sub-account-id string   targetSubAccountId (body); required by API; Authorized destination subscription selected through Cost Explorer.; minLength: 1; illustrative example: "e9a0360e-2c18-428e-acd0-a76dcee0cc96"
+      --target-sub-account-id string   targetSubAccountId (body); required by API; Destination subscription selected by the caller; billing-account parentage is not verified.; minLength: 1; illustrative example: "e9a0360e-2c18-428e-acd0-a76dcee0cc96"
       --yes[=true|false]               confirm the operation (required for destructive ops)
 ```
 
