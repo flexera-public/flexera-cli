@@ -47,6 +47,33 @@ Spec updates record repository, commit, and SHA-256 for an immutable snapshot in
 `make all` updates dependencies/spec; it is not validation. `cmd/gencli` generates commands;
 `cmd/regencli` orchestrates publication, `cmd/gendocs` writes docs, and completions go to `completions/`.
 
+### Generator failures
+
+`regencli` preflights all annotated, non-curated operations before generating any
+packages. Unsupported operations are reported together with HTTP method, path,
+reason, and remediation. `gencli` also validates before writing either source or
+metadata. To check a spec without generating files:
+
+```sh
+go run ./cmd/gencli -spec unified-openapi/openapi3.json -check
+```
+
+For incorrect/missing operation IDs, actions, parameters, or responses, fix the
+upstream OpenAPI source/annotations and regenerate unified-openapi and
+unified-go-client together, then run `make refresh`. Concrete 2xx responses are
+supported; wildcard/default responses cannot select SDK response fields. GET
+redirects declaring a `Location` header require an upstream SDK download helper
+and an exact curated CLI wrapper rather than generated 2xx/JSON handling.
+API-specific redirect handling, polling, and report filter serialization belong
+in unified-go-client; CLI wrappers should only adapt flags, confirmation, and
+output. Publish the SDK helpers and update the CLI dependency before wiring
+those wrappers. For unsupported shapes, extend the relevant collector
+and renderer in `cmd/gencli` with regression tests. If the operation needs custom
+behavior, implement an exact curated wrapper and register its operation ID in
+`curatedOperations` in `cmd/regencli/coverage.go`; do not silently exclude it or
+edit generated commands. Unknown service errors identify the `serviceCommands`
+entry to add in `cmd/regencli/services.go`.
+
 ## Architecture
 
 The Cobra command tree calls the [unified Go SDK](https://github.com/flexera-public/unified-go-client).

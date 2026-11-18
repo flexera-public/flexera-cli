@@ -19,7 +19,29 @@ func NewSafeDebugDoer(base flexera.HttpRequestDoer, stderr io.Writer) flexera.Ht
 	if stderr == nil {
 		stderr = io.Discard
 	}
+	// Keep http.Client recognizable to the SDK's secure FNMS download helper.
+	if client, ok := base.(*http.Client); ok {
+		clone := *client
+		transport := client.Transport
+		if transport == nil {
+			transport = http.DefaultTransport
+		}
+		clone.Transport = &safeDebugTransport{logger: &safeDebugDoer{base: roundTripDoer{transport}, stderr: stderr}}
+		return &clone
+	}
 	return &safeDebugDoer{base: base, stderr: stderr}
+}
+
+type roundTripDoer struct{ transport http.RoundTripper }
+
+func (d roundTripDoer) Do(req *http.Request) (*http.Response, error) {
+	return d.transport.RoundTrip(req)
+}
+
+type safeDebugTransport struct{ logger *safeDebugDoer }
+
+func (t *safeDebugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	return t.logger.Do(req)
 }
 
 type safeDebugDoer struct {

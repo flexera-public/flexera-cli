@@ -125,9 +125,10 @@ func main() {
 		metadataPath = flag.String("metadata", "", "optional per-tag operation metadata JSON output (keyed by operationId; command paths are provisional)")
 		service      = flag.String("service", "", "optional x-flexera-service id; only operations stamped with this service are generated")
 		exclude      = flag.String("exclude", "", "optional comma-separated operationIds owned by curated commands (not generated)")
+		checkOnly    = flag.Bool("check", false, "validate all selected operations without writing generated files")
 	)
 	flag.Parse()
-	if *specPath == "" || *tag == "" || *outPath == "" || *pkg == "" || *cmdName == "" {
+	if *specPath == "" || (!*checkOnly && (*tag == "" || *outPath == "" || *pkg == "" || *cmdName == "")) {
 		fmt.Fprintln(os.Stderr, "usage: gencli -spec <openapi.json> -tag <Tag> -pkg <pkg> -cmd <name> -out <file.go>")
 		os.Exit(2)
 	}
@@ -145,8 +146,11 @@ func main() {
 		}
 	}
 	ops, drops := collectOpsFiltered(&s, *tag, filter)
-	for _, d := range drops {
-		fmt.Fprintf(os.Stderr, "gencli: skip %s %s — %s\n", strings.ToUpper(d.Method), d.Path, d.Reason)
+	if err := validateDrops(drops); err != nil {
+		check(err)
+	}
+	if *checkOnly {
+		return
 	}
 	if len(ops) == 0 {
 		fmt.Fprintf(os.Stderr, "no operations found for tag %q\n", *tag)
@@ -171,10 +175,33 @@ func main() {
 		check(os.WriteFile(*metadataPath, append(data, '\n'), 0o644))
 	}
 	fmt.Fprintf(os.Stderr, "wrote %d ops to %s\n", len(ops), *outPath)
+}
 
-	if len(drops) > 0 {
-		fmt.Fprintf(os.Stderr, "gencli: %d operation(s) for tag %q were skipped (see stderr above); failing regen build\n", len(drops), *tag)
-		os.Exit(1)
+func validateDrops(drops []drop) error {
+	if len(drops) == 0 {
+		return nil
+	}
+	var message strings.Builder
+	fmt.Fprintf(&message, "%d unsupported operation(s); no files written:\n", len(drops))
+	for _, d := range drops {
+		fmt.Fprintf(&message, "  %s %s — %s\n    Remediation: %s\n", strings.ToUpper(d.Method), d.Path, d.Reason, remediation(d.Reason))
+	}
+	message.WriteString("Fix the upstream OpenAPI source/annotations, regenerate unified-openapi and unified-go-client together, then run make refresh. For intentional custom behavior, implement an exact curated wrapper and register its operationId in cmd/regencli/coverage.go. Do not edit generated commands. See CONTRIBUTING.md (Generator failures).")
+	return fmt.Errorf("%s", message.String())
+}
+
+func remediation(reason string) string {
+	switch {
+	case strings.Contains(reason, "success response"):
+		return "declare a concrete 2xx response if the API returns one; for redirect-only operations use an upstream SDK helper and an exact curated CLI wrapper (wildcard/default responses are unsupported)"
+	case strings.Contains(reason, "operationId"):
+		return "add a unique operationId to the source operation"
+	case strings.Contains(reason, "x-flexera-action"):
+		return "set x-flexera-action to list, get, create, replace, update, delete, or action in the upstream annotations"
+	case strings.Contains(reason, "param"):
+		return "use supported scalar or string-array parameters, extend extractParams in cmd/gencli/main.go with regression tests, or use an upstream SDK helper with an exact curated CLI wrapper for API-specific serialization"
+	default:
+		return "use application/json, application/octet-stream, or multipart/form-data with exactly one file field, or extend request-body support in cmd/gencli/main.go"
 	}
 }
 
@@ -213,6 +240,18 @@ type drop struct {
 	Path   string
 	Action string
 	Reason string
+}
+
+func parameterDropReason(op map[string]interface{}) string {
+	params, _ := op["parameters"].([]interface{})
+	for _, raw := range params {
+		p, _ := raw.(map[string]interface{})
+		schema, _ := p["schema"].(map[string]interface{})
+		if stringValue(schema["type"]) == "object" {
+			return fmt.Sprintf("param extraction failed: %s parameter %q has unsupported object schema", stringValue(p["in"]), stringValue(p["name"]))
+		}
+	}
+	return "param extraction failed (unsupported param shape)"
 }
 
 // opFilter narrows a tag to one service (tags such as "Project" are shared
@@ -265,7 +304,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 				op["parameters"] = merged
 			}
 			tags, _ := op["tags"].([]interface{})
-			matched := false
+			matched := tag == "" && stringValue(op["x-flexera-action"]) != ""
 			for _, t := range tags {
 				if ts, _ := t.(string); ts == tag {
 					matched = true
@@ -298,7 +337,7 @@ func collectOpsFiltered(s *spec, tag string, filter opFilter) ([]operation, []dr
 
 			pps, qps, hasHeaders, ok := extractParams(op)
 			if !ok {
-				drops = append(drops, drop{Method: m, Path: p, Action: action, Reason: "param extraction failed (unsupported param shape)"})
+				drops = append(drops, drop{Method: m, Path: p, Action: action, Reason: parameterDropReason(op)})
 				continue
 			}
 

@@ -62,6 +62,12 @@ import (
 	finopsonboardingbillconnectgcp "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectgcp"
 	finopsonboardingbillconnectsnowflake "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/billconnectsnowflake"
 	finopsonboardingprocessinghistory "github.com/flexera-public/flexera-cli/internal/commands/finopsonboarding/processinghistory"
+	fnmsasset "github.com/flexera-public/flexera-cli/internal/commands/fnms/asset"
+	fnmsinstalledsoftwarev2 "github.com/flexera-public/flexera-cli/internal/commands/fnms/installedsoftwarev2"
+	fnmsinventory "github.com/flexera-public/flexera-cli/internal/commands/fnms/inventory"
+	fnmslicense "github.com/flexera-public/flexera-cli/internal/commands/fnms/license"
+	fnmsreport "github.com/flexera-public/flexera-cli/internal/commands/fnms/report"
+	fnmssystemhealth "github.com/flexera-public/flexera-cli/internal/commands/fnms/systemhealth"
 	graphqlgraphql "github.com/flexera-public/flexera-cli/internal/commands/graphql/graphql"
 	iamaccesspolicy "github.com/flexera-public/flexera-cli/internal/commands/iam/accesspolicy"
 	iamaccessrule "github.com/flexera-public/flexera-cli/internal/commands/iam/accessrule"
@@ -211,6 +217,14 @@ func RegisterAll(root *cobra.Command) {
 				nest(finopsonboardingbillconnectsnowflake.NewCmd(), "snowflake"),
 			),
 			finopsonboardingprocessinghistory.NewCmd(),
+		),
+		withChildren(service(&cobra.Command{Use: "fnms"}, "fnms", nil, "IT Asset Management API", "Commands for the IT Asset Management API (Flexera IT Asset Management API, v1).\n\nService id: fnms"),
+			fnmsasset.NewCmd(),
+			fnmsinstalledsoftwarev2.NewCmd(),
+			fnmsinventory.NewCmd(),
+			fnmslicense.NewCmd(),
+			fnmsreport.NewCmd(),
+			fnmssystemhealth.NewCmd(),
 		),
 		service(graphqlgraphql.NewCmd(), "graphql", nil, "GraphQL API", "Commands for the GraphQL API (Flexera GraphQL API, v1).\n\nService id: graphql"),
 		withChildren(service(&cobra.Command{Use: "iam"}, "iam", nil, "Identity and Access Management API", "Commands for the Identity and Access Management API (Flexera Identity and Access Management API, v1).\n\nService id: iam"),

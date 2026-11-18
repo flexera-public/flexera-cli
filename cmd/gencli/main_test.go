@@ -12,6 +12,62 @@ import (
 	"testing"
 )
 
+func TestPreflightDoesNotWritePartialOutput(t *testing.T) {
+	dir := t.TempDir()
+	input := filepath.Join(dir, "spec.json")
+	output := filepath.Join(dir, "cmd_gen.go")
+	metadata := filepath.Join(dir, "metadata.json")
+	data := []byte(`{"paths":{"/valid":{"get":{"operationId":"Sample_index","tags":["Sample"],"x-flexera-action":"list","responses":{"200":{}}}},"/invalid":{"get":{"operationId":"Sample_show","tags":["Sample"],"x-flexera-action":"get","responses":{"303":{"headers":{"Location":{}}}}}}}}`)
+	if err := os.WriteFile(input, data, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range []string{output, metadata} {
+		if err := os.WriteFile(file, []byte("original"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	cmd := exec.Command("go", "run", ".", "-spec", input, "-tag", "Sample", "-pkg", "sample", "-cmd", "sample", "-out", output, "-metadata", metadata)
+	message, err := cmd.CombinedOutput()
+	if err == nil || !strings.Contains(string(message), "upstream SDK helper") {
+		t.Fatalf("error=%v output=%s", err, message)
+	}
+	for _, file := range []string{output, metadata} {
+		data, err := os.ReadFile(file)
+		if err != nil || string(data) != "original" {
+			t.Fatalf("partial output written: %s %v", data, err)
+		}
+	}
+}
+
+func TestObjectParameterDiagnostic(t *testing.T) {
+	raw := json.RawMessage(`{"post":{"operationId":"Fnms_Report_execute_async","tags":["Report"],"x-flexera-action":"action","parameters":[{"in":"query","name":"filterParams","schema":{"type":"object"}}],"responses":{"202":{}}}}`)
+	_, drops := collectOps(&spec{Paths: map[string]json.RawMessage{"/reports/execute-async": raw}}, "Report")
+	if len(drops) != 1 || !strings.Contains(drops[0].Reason, `query parameter "filterParams"`) {
+		t.Fatalf("drops=%+v", drops)
+	}
+}
+
+func TestPreflightReportsAllDrops(t *testing.T) {
+	s := &spec{Paths: map[string]json.RawMessage{
+		"/a": json.RawMessage(`{"get":{"operationId":"A_show","tags":["A"],"x-flexera-action":"get","responses":{"default":{}}}}`),
+		"/b": json.RawMessage(`{"post":{"tags":["B"],"x-flexera-action":"create","responses":{"200":{}}}}`),
+	}}
+	_, drops := collectOpsFiltered(s, "", opFilter{})
+	err := validateDrops(drops)
+	if err == nil {
+		t.Fatal("expected preflight failure")
+	}
+	for _, want := range []string{"2 unsupported operation(s)", "GET /a", "POST /b", "declare a concrete 2xx", "add a unique operationId", "make refresh", "CONTRIBUTING.md"} {
+		if !strings.Contains(err.Error(), want) {
+			t.Errorf("missing %q: %v", want, err)
+		}
+	}
+	_, drops = collectOpsFiltered(s, "", opFilter{Exclude: map[string]bool{"A_show": true}})
+	if len(drops) != 1 {
+		t.Fatalf("curated operation not excluded: %+v", drops)
+	}
+}
+
 func TestGeneratedOutputContracts(t *testing.T) {
 	for _, tc := range []struct {
 		name, want string

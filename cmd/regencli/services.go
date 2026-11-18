@@ -41,6 +41,7 @@ var serviceCommands = map[string]serviceCLI{
 		Rename:     map[string]string{"AWS STS Credential": "aws-sts-credential", "OAuth2 Credential": "oauth2-credential"},
 		TagAliases: map[string][]string{"AWS STS Credential": {"awssts-credential"}, "OAuth2 Credential": {"o-auth2-credential"}}},
 	"divnt":                  {Cmd: "data-inventory", Aliases: []string{"divnt"}},
+	"fnms":                   {Cmd: "fnms"},
 	"finops_billing":         {Cmd: "finops-billing"},
 	"finops_customizations":  {Cmd: "finops-customizations"},
 	"finops_onboarding":      {Cmd: "finops-onboarding"},

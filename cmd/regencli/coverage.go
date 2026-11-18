@@ -11,6 +11,9 @@ import (
 
 // Only exact wrappers belong here; workflow commands intentionally do not.
 var curatedOperations = map[string]string{
+	"Fnms_File_show":                   "fnms file get",
+	"Fnms_Report_execute_async":        "fnms report execute-async create",
+	"Fnms_Report_export_report":        "fnms report exports create",
 	"Auth_Token_token":                 "auth token create",
 	"Iam_User_Memberships_index":       "iam user-memberships orgs",
 	"Policy_Action_Status_index":       "policy action-status list",
@@ -120,6 +123,9 @@ func curatedEntries(specData []byte) ([]catalog.Entry, error) {
 				}
 			}
 			for _, p := range params {
+				if p.In == "header" {
+					e.Headers = append(e.Headers, catalog.Header{Name: p.Name, Required: p.Required, Description: p.Description, Schema: p.Schema, Example: p.Example, Examples: p.Examples})
+				}
 				if p.In != "path" && p.In != "query" {
 					continue
 				}

@@ -13,6 +13,7 @@ import (
 	authcmd "github.com/flexera-public/flexera-cli/internal/curated/auth"
 	billuploadcmd "github.com/flexera-public/flexera-cli/internal/curated/billupload"
 	finopscmd "github.com/flexera-public/flexera-cli/internal/curated/finops"
+	fnmscmd "github.com/flexera-public/flexera-cli/internal/curated/fnms"
 	graphqlcmd "github.com/flexera-public/flexera-cli/internal/curated/graphql"
 	policycmd "github.com/flexera-public/flexera-cli/internal/curated/policy"
 	rulebaseddimensioncmd "github.com/flexera-public/flexera-cli/internal/curated/rulebaseddimension"
@@ -51,6 +52,7 @@ func NewRootCmdWithUserAgentVersion(stdout, stderr io.Writer, getenv func(string
 	commands.RegisterAll(root)
 	for _, attach := range []func(*cobra.Command) error{
 		billuploadcmd.Attach,
+		fnmscmd.Attach,
 		graphqlcmd.Attach,
 		rulebaseddimensioncmd.Attach,
 		finopscmd.Attach,

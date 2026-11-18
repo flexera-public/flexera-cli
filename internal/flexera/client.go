@@ -138,6 +138,26 @@ func (f Factory) NewAPIClientForBaseURL(cfg cliconfig.CommonConfig, baseURL stri
 	return flexera.NewClientWithResponsesForAuth(auth, opts...)
 }
 
+// NewFNMSClient builds a gateway-only client. FNMS streaming helpers require
+// SDK-supported doers, while the general factory installs Optima routing.
+func (f Factory) NewFNMSClient(cfg cliconfig.CommonConfig) (*flexera.ClientWithResponses, error) {
+	helper, err := f.NewAuthHelper(cfg)
+	if err != nil {
+		return nil, err
+	}
+	options := []flexera.ClientOption{flexera.WithRetryingHTTPClient(flexera.DefaultRetryConfig())}
+	options = append(options, flexera.WithUserAgentProduct("flexera-cli", f.UserAgentVersion))
+	if cfg.HasAccessToken() {
+		return helper.NewStaticTokenClient(cfg.AccessToken, options...)
+	}
+	source, err := f.tokenSourceFor(cfg)
+	if err != nil {
+		return nil, err
+	}
+	options = append([]flexera.ClientOption{flexera.WithSharedTokenSource(source)}, options...)
+	return flexera.NewClientWithResponses(helper.APIBaseURL(), options...)
+}
+
 func (f Factory) TokenWithClientCredentials(ctx context.Context, cfg cliconfig.CommonConfig) (*flexera.AuthTokenResponseBody, error) {
 	helper, err := f.NewAuthHelper(cfg)
 	if err != nil {

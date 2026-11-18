@@ -8,7 +8,7 @@ go 1.27.3
 
 require (
 	github.com/charmbracelet/huh v1.0.0
-	github.com/flexera-public/unified-go-client v0.0.0-20261117171745-5f869939ecec
+	github.com/flexera-public/unified-go-client v0.0.0-20261117233118-45c614b52c7c
 	github.com/getkin/kin-openapi v0.153.0
 	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.20
@@ -16,7 +16,7 @@ require (
 	github.com/spf13/pflag v1.1.0
 	github.com/spf13/viper v1.21.0
 	golang.org/x/term v0.48.0
-	golang.org/x/tools v0.52.0
+	golang.org/x/tools v0.53.0
 )
 
 require (
@@ -38,7 +38,7 @@ require (
 	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fsnotify/fsnotify v1.10.1 // indirect
-	github.com/go-openapi/jsonpointer v1.0.2 // indirect
+	github.com/go-openapi/jsonpointer v1.0.3 // indirect
 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/itchyny/timefmt-go v0.1.9 // indirect

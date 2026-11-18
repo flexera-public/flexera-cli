@@ -2512,6 +2512,148 @@
     "ownership": "generated"
   },
   {
+    "operationId": "Fnms_Asset_index",
+    "command": [
+      "fnms",
+      "asset",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_File_show",
+    "command": [
+      "fnms",
+      "file",
+      "get"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Fnms_Installed_Software_V2_create_v2",
+    "command": [
+      "fnms",
+      "installed-software-v2",
+      "create"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_Inventory_index",
+    "command": [
+      "fnms",
+      "inventory",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_License_allocation",
+    "command": [
+      "fnms",
+      "license",
+      "licenses",
+      "allocation"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_License_attributes",
+    "command": [
+      "fnms",
+      "license",
+      "attributes"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_License_deallocation",
+    "command": [
+      "fnms",
+      "license",
+      "licenses",
+      "deallocation"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_License_entitlements",
+    "command": [
+      "fnms",
+      "license",
+      "entitlements"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_Report_execute_async",
+    "command": [
+      "fnms",
+      "report",
+      "execute-async",
+      "create"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Fnms_Report_execute_async_retrieve",
+    "command": [
+      "fnms",
+      "report",
+      "execute-async",
+      "retrieve"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_Report_execute_async_status",
+    "command": [
+      "fnms",
+      "report",
+      "execute-async",
+      "status"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_Report_export_report",
+    "command": [
+      "fnms",
+      "report",
+      "exports",
+      "create"
+    ],
+    "ownership": "exact-curated"
+  },
+  {
+    "operationId": "Fnms_Report_index",
+    "command": [
+      "fnms",
+      "report",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_Report_report_export_status",
+    "command": [
+      "fnms",
+      "report",
+      "exports",
+      "get"
+    ],
+    "ownership": "generated"
+  },
+  {
+    "operationId": "Fnms_System_Health_get",
+    "command": [
+      "fnms",
+      "system-health",
+      "list"
+    ],
+    "ownership": "generated"
+  },
+  {
     "operationId": "Graphql_graphql_query",
     "command": [
       "graphql",

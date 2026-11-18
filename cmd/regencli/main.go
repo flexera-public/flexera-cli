@@ -86,6 +86,11 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	preflight := exec.Command("go", "run", "./cmd/gencli", "-spec", specPath, "-check", "-exclude", strings.Join(curatedOperationIDs(), ","))
+	preflight.Stderr = os.Stderr
+	if err := preflight.Run(); err != nil {
+		return fmt.Errorf("operation preflight failed; generated commands were not changed: %w", err)
+	}
 	fmt.Fprintf(os.Stderr, "regencli: %d service/tag packages planned\n", len(tags))
 	return regenerate(commandsDir, tags, generationHooks{
 		generate: generateTag,

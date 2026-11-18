@@ -1358,5 +1358,60 @@
     "symbol": "service/billconnect#Service",
     "status": "excluded",
     "reason": "thin facade forwarding 1:1 to FinopsOnboardingBillConnect* generated operations already covered by the generated billconnect* command family"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsDownloadFile",
+    "status": "covered",
+    "command": "fnms file get"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsDownloadReportExport",
+    "status": "covered",
+    "command": "fnms report download-export"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsExecuteReport",
+    "status": "covered",
+    "command": "fnms report execute"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsExportReport",
+    "status": "covered",
+    "command": "fnms report export"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsStartReportExecution",
+    "status": "covered",
+    "command": "fnms report execute-async create"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsStartReportExport",
+    "status": "covered",
+    "command": "fnms report exports create"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsWaitReportExecution",
+    "status": "covered",
+    "command": "fnms report wait-execution"
+  },
+  {
+    "symbol": ".#(ClientWithResponses).FnmsWaitReportExport",
+    "status": "covered",
+    "command": "fnms report wait-export"
+  },
+  {
+    "symbol": ".#(fnmsOAuthDownloadDoer).Do",
+    "status": "excluded",
+    "reason": "FNMS helper infrastructure consumed by curated report polling and binary download commands"
+  },
+  {
+    "symbol": ".#FnmsDownloadOptions",
+    "status": "excluded",
+    "reason": "FNMS helper infrastructure consumed by curated report polling and binary download commands"
+  },
+  {
+    "symbol": ".#FnmsPollOptions",
+    "status": "excluded",
+    "reason": "FNMS helper infrastructure consumed by curated report polling and binary download commands"
   }
 ]
